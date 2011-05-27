@@ -4,31 +4,39 @@
 #   db_user
 #   db_pw
 #
-define mysql::db ( $db_user, $db_pw, $db_charset = 'utf8', $host = 'localhost', $grant='all', $sql='') {
+define mysql::db (
+  $user,
+  $password,
+  $charset = 'utf8',
+  $host = 'localhost',
+  $grant='all',
+  $sql=''
+) {
   #
+  notice($user)
   database { $name:
     ensure => present,
-    charset => $db_charset,
+    charset => $charset,
     provider => 'mysql',
     require => Class['mysql::server']
   }
-  database_user{"${db_user}@${host}":
+  database_user{"${user}@${host}":
     ensure => present,
-    password_hash => mysql_password($db_pw),
+    password_hash => mysql_password($password),
     provider => 'mysql',
     require => Database[$name],
   }
-  database_grant{"${db_user}@${host}/${name}":
+  database_grant{"${user}@${host}/${name}":
   # privileges => [ 'alter_priv', 'insert_priv', 'select_priv', 'update_priv' ],
     privileges => $grant,
     provider => 'mysql',
-    require => Database_user["${db_user}@${host}"],
+    require => Database_user["${user}@${host}"],
   }
   if($sql) {
     exec{"${name}-import-import":
-      command => "/usr/bin/mysql -u ${db_user} -p${db_pw} -h ${host} ${name} < ${sql}",
+      command => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
       logoutput => true,
-      require => Database_grant["${db_user}@${host}/${name}"],
+      require => Database_grant["${user}@${host}/${name}"],
     }
   }
 } 

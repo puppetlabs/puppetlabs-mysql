@@ -1,5 +1,7 @@
 $mysql_root_pw='password'
-include mysql::server
+class { 'mysql::server':
+  root_password => 'password',
+}
 #database_user{['test1@localhost', 'test2@localhost', 'test3@localhost']:
 database_user{'redmine@localhost':
 #  ensure => absent,
