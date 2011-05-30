@@ -12,8 +12,7 @@ define mysql::db (
   $grant='all',
   $sql=''
 ) {
-  #
-  notice($user)
+
   database { $name:
     ensure => present,
     charset => $charset,
