@@ -1,8 +1,29 @@
+# Define: mysql::db
 #
-# this creates a single mysql db, with one user and grants priveleges
-#   db
-#   db_user
-#   db_pw
+# This module creates database instances, a user,
+#  and grants that user privileges to the DB.
+#
+# Parameters:
+#   [*title*]    - database name
+#   [*user*]     - user to create
+#   [*password*] - user's password
+#   [*charset*]  - charset for db
+#   [*host*]     - host for assigning privileges to user
+#   [*grant*]    - array of privileges to grant to user
+#   [*sql*]      - sql to  inject in db (always runs)
+#
+# Actions:
+#
+# Requires:
+#
+# Sample Usage:
+# 
+#  mysql::db { 'mydb':
+#    user     => 'my_user',
+#    password => 'password',
+#    host     => $::hostname,
+#    grant    => ['all']
+#  }
 #
 define mysql::db (
   $user,

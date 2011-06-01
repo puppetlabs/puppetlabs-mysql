@@ -1,4 +1,20 @@
-# installs mysql 
+# Class: mysql::server
+#
+# manages the installation of the mysql server.
+#   manages the package, service, my.cnf
+#
+# Parameters:
+#   [*root_password*]     - root password for database
+#   [*old_root_password*] - previous root password if being changed
+#   [*service_name*]      - name of service
+#   [*package_name*]      - name of package
+#
+# Actions:
+#
+# Requires:
+#
+# Sample Usage:
+#
 class mysql::server(
   $root_password,
   $old_root_password = '',
