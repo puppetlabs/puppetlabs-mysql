@@ -50,7 +50,7 @@ class mysql::server(
   exec{ 'mysqld-restart':
     command     => "service ${service_name} restart",
     refreshonly => true,
-    path        => '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:',
+    path        => '/sbin/:/usr/sbin/',
   }
   File{
     owner   => 'mysql',
