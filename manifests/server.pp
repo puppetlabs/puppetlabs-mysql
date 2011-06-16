@@ -48,8 +48,9 @@ class mysql::server(
   # the reason is that I need the service to be started before mods to the config
   # file which can cause a refresh
   exec{ 'mysqld-restart':
-    command => "/usr/sbin/service ${service_name} restart",
+    command     => "service ${service_name} restart",
     refreshonly => true,
+    path        => '/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:',
   }
   File{
     owner   => 'mysql',
