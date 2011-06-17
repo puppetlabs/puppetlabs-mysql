@@ -9,7 +9,7 @@ Puppet::Type.type(:database).provide(:mysql) do
   commands :mysqlshow  => 'mysqlshow'
 	
   def create
-    mysqladmin("--default-character-set=#{resource[:charset]}", 'create', @resource[:name])
+    mysql('-NBe', "CREATE DATABASE #{@resource[:name]} CHARACTER SET #{resource[:charset]}")
   end
 
   def destroy
