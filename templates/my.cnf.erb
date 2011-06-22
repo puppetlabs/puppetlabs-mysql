@@ -1,4 +1,33 @@
 [client]
-user=root
-host=localhost
-password=<%= root_password -%>
+port    = <%= port %>
+socket    = /var/run/mysqld/mysqld.sock
+[mysqld_safe]
+socket    = /var/run/mysqld/mysqld.sock
+nice    = 0
+[mysqld]
+user    = mysql
+socket    = /var/run/mysqld/mysqld.sock
+port      = <%= port %>
+basedir   = /usr
+datadir   = /var/lib/mysql
+tmpdir    = /tmp
+skip-external-locking
+bind-address    = <%= bind_address %>
+key_buffer         = 16M
+max_allowed_packet = 16M
+thread_stack       = 192K
+thread_cache_size  = 8
+myisam-recover     = BACKUP
+query_cache_limit  = 1M
+query_cache_size   = 16M
+log_error          = /var/log/mysql/error.log
+expire_logs_days   = 10
+max_binlog_size    = 100M
+[mysqldump]
+quick
+quote-names
+max_allowed_packet = 16M
+[mysql]
+[isamchk]
+key_buffer    = 16M
+!includedir /etc/mysql/conf.d/
