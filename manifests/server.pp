@@ -17,22 +17,16 @@
 #
 class mysql::server(
   $service_name = $mysql::params::service_name,
-  $root_password = undef,
-  $old_root_password = undef,
+  $config_hash  = {},
   $package_name = 'mysql-server'
 ) inherits mysql::params {
 
-  case $operatingsystem {
-    'centos', 'redhat', 'fedora': {
-      class { 'mysql::server::redhat':
-        root_password     => $root_password,
-        old_root_password => $old_root_password,
-      }
-    }
-    'ubuntu', 'debian': {
-      # there is not any debian specific config yet
-    }
+  # automatically create a class to deal with
+  # configuration
+  $hash = {
+    "mysql::config" => $config_hash
   }
+  create_resources("class", $hash)
 
   package{'mysql-server':
     name   => $package_name,
