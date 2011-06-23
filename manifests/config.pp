@@ -7,7 +7,6 @@ class mysql::config(
 
   # manage root password if it is set
   if ! $root_password == 'UNSET' {
-    $root_password = $config_hash['root_password']
     case $old_root_password {
       '': {$old_pw=''}
       default: {$old_pw="-p${old_root_password}"}
