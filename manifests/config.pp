@@ -20,7 +20,7 @@ class mysql::config(
       unless   => "mysqladmin -u root -p${root_password} status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin',
       require   => [Package['mysql-server'], Service['mysqld']],
-      before    => File['/root/.my.cnf', '/etc/my.cnf'],
+      before    => File['/root/.my.cnf'],
       notify    => Exec['mysqld-restart'],
     }
     file{'/root/.my.cnf':
@@ -29,6 +29,7 @@ class mysql::config(
     if $etc_root_password {
        file{'/etc/my.cnf':
           content => template('mysql/my.cnf.pass.erb'),
+          require => Exec['set_mysql_rootpw'],
        }
     }
   }
