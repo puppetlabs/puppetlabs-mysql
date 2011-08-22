@@ -20,7 +20,7 @@ class { 'mysql::server':
   root_password => 'foo'
 }
 
-login infomormation in /etc/.my.cnf and /root/.my.cnf
+login information in /etc/.my.cnf and /root/.my.cnf
 
 mysql::db - creates a database with a user and assign some privileges:
 
