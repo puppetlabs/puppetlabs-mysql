@@ -17,7 +17,7 @@ class { 'mysql::ruby': } - installs mysql bindings for ruby
 mysql::server - installs mysql-server, starts service, sets root_pw, and sets root
 
 class { 'mysql::server': 
-  root_password => 'foo'
+  config_hash => { 'root_password' => 'foo' }
 }
 
 login information in /etc/.my.cnf and /root/.my.cnf

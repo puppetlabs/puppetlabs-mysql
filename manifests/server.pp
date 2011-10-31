@@ -4,8 +4,7 @@
 #   manages the package, service, my.cnf
 #
 # Parameters:
-#   [*root_password*]     - root password for database
-#   [*old_root_password*] - previous root password if being changed
+#   [*config_hash*]       - hash of config parameters that need to be set.
 #   [*service_name*]      - name of service
 #   [*package_name*]      - name of package
 #

@@ -1,5 +1,5 @@
 class { 'mysql::server':
-  root_password => 'password',
+  config_hash => {'root_password' => 'password'}
 }
 database{['test1', 'test2', 'test3']:
   ensure => present,
