@@ -40,6 +40,10 @@ class mysql::config(
     notify  => Exec['mysqld-restart'],
     require => Package['mysql-server']
   }
+  file { '/etc/mysql':
+    ensure => directory,
+    mode => '755',
+  }
 
   file { '/etc/mysql/my.cnf':
     content => template('mysql/my.cnf.erb'),
