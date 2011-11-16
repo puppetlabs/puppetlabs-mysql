@@ -4,9 +4,9 @@ Puppet::Type.type(:database).provide(:mysql) do
 
   defaultfor :kernel => 'Linux'
 
-  commands :mysqladmin => 'mysqladmin'
-  commands :mysql      => 'mysql'
-  commands :mysqlshow  => 'mysqlshow'
+  optional_commands :mysqladmin => 'mysqladmin'
+  optional_commands :mysql      => 'mysql'
+  optional_commands :mysqlshow  => 'mysqlshow'
 	
   def create
     mysql('-NBe', "CREATE DATABASE #{@resource[:name]} CHARACTER SET #{resource[:charset]}")
