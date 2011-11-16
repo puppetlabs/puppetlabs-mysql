@@ -4,8 +4,8 @@ Puppet::Type.type(:database_user).provide(:mysql) do
 
   defaultfor :kernel => 'Linux'
 
-  commands :mysql => 'mysql'
-  commands :mysqladmin => 'mysqladmin'
+  optional_commands :mysql => 'mysql'
+  optional_commands :mysqladmin => 'mysqladmin'
 
   def create
     mysql "mysql", "-e", "create user '%s' identified by PASSWORD '%s'" % [ @resource[:name].sub("@", "'@'"), @resource.value(:password_hash) ]
