@@ -24,8 +24,8 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 
         defaultfor :kernel => 'Linux'
 
-	commands :mysql => 'mysql'
-	commands :mysqladmin => 'mysqladmin'
+	optional_commands :mysql => 'mysql'
+	optional_commands :mysqladmin => 'mysqladmin'
 
 	def mysql_flush 
 		mysqladmin "flush-privileges"
