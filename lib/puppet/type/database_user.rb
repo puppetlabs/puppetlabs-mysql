@@ -7,7 +7,7 @@ Puppet::Type.newtype(:database_user) do
   newparam(:name) do
     desc "The name of the user. This uses the 'username@hostname' or username@hosname."
     validate do |value|
-      unless value =~ /\w+@\w+/
+      unless value =~ /\w+@[\w%]+/
         raise ArgumentError, "Invalid database user #{value}"
       end
       list = value.split('@')
