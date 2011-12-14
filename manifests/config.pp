@@ -46,7 +46,6 @@ class mysql::config(
   }
   file { '/etc/mysql/conf.d':
     ensure  => directory,
-    require => File['/etc/mysql'],
     mode    => '755',
   }
 
