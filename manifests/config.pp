@@ -44,6 +44,10 @@ class mysql::config(
     ensure => directory,
     mode => '755',
   }
+  file { '/etc/mysql/conf.d':
+    ensure  => directory,
+    mode    => '755',
+  }
 
   file { '/etc/mysql/my.cnf':
     content => template('mysql/my.cnf.erb'),
