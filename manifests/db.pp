@@ -31,32 +31,46 @@ define mysql::db (
   $charset = 'utf8',
   $host = 'localhost',
   $grant='all',
+  $enforce_sql = false,
   $sql=''
 ) {
 
+  if $grant == 'all' {
+    $safe_grant = [ 'alter_priv','alter_routine_priv','create_priv','create_routine_priv','create_tmp_table_priv','create_view_priv','delete_priv','drop_priv','event_priv','execute_priv','grant_priv','index_priv','insert_priv','lock_tables_priv','references_priv','select_priv','show_view_priv','trigger_priv','update_priv']
+  } else {
+    $safe_grant = $grant
+  }
+
   database { $name:
-    ensure => present,
-    charset => $charset,
+    ensure   => present,
+    charset  => $charset,
     provider => 'mysql',
-    require => Class['mysql::server']
+    require  => Class['mysql::server'],
+    notify   => Exec["${name}-import-import"],
   }
+
   database_user{"${user}@${host}":
-    ensure => present,
+    ensure        => present,
     password_hash => mysql_password($password),
-    provider => 'mysql',
-    require => Database[$name],
+    provider      => 'mysql',
+    require       => Database[$name],
   }
+
   database_grant{"${user}@${host}/${name}":
   # privileges => [ 'alter_priv', 'insert_priv', 'select_priv', 'update_priv' ],
-    privileges => $grant,
-    provider => 'mysql',
-    require => Database_user["${user}@${host}"],
+    privileges => $safe_grant,
+    provider   => 'mysql',
+    require    => Database_user["${user}@${host}"],
   }
+
   if($sql) {
     exec{"${name}-import-import":
-      command => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
-      logoutput => true,
-      require => Database_grant["${user}@${host}/${name}"],
+      command     => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
+      logoutput   => true,
+      refreshonly => $enforce_sql ? {
+        true => false,
+        false => true,
+      },
     }
   }
-} 
+}
