@@ -46,7 +46,10 @@ define mysql::db (
     charset  => $charset,
     provider => 'mysql',
     require  => Class['mysql::server'],
-    notify   => Exec["${name}-import-import"],
+    notify   => $sql ? {
+      ''      => undef,
+      default => Exec["${name}-import-import"],
+    }
   }
 
   database_user{"${user}@${host}":
@@ -68,7 +71,7 @@ define mysql::db (
       command     => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
       logoutput   => true,
       refreshonly => $enforce_sql ? {
-        true => false,
+        true  => false,
         false => true,
       },
     }
