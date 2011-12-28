@@ -1,7 +1,7 @@
 # This has to be a separate type to enable collecting
 Puppet::Type.newtype(:database_grant) do
   @doc = "Manage a database user's rights."
-  #ensurable
+  ensurable
 
   autorequire :database do
     # puts "Starting db autoreq for %s" % self[:name]
@@ -31,43 +31,32 @@ Puppet::Type.newtype(:database_grant) do
 
   newproperty(:privileges, :array_matching => :all) do
     desc "The privileges the user should have. The possible values are implementation dependent."
+
     munge do |v|
-      symbolize(v)
+      symbolize v
+      symbolize v
     end
 
-    def should_to_s(newvalue = @should)
-      if newvalue
-        unless newvalue.is_a?(Array)
-          newvalue = [ newvalue ]
-        end
-        newvalue.collect do |v| v.to_s end.sort.join ", "
+    def is_to_s(i_val = @is)
+      if i_val
+        i_val.to_a.map { |v| v.to_s }.sort.inspect
       else
         nil
       end
     end
 
-    def is_to_s(currentvalue = @is)
-      if currentvalue
-        unless currentvalue.is_a?(Array)
-          currentvalue = [ currentvalue ]
-        end
-        currentvalue.collect do |v| v.to_s end.sort.join ", "
+    def should_to_s(s_val = @should)
+      if s_val
+        s_val.to_a.map { |v| v.to_s }.sort.inspect
       else
         nil
       end
     end
 
-    # use the sorted outputs for comparison
     def insync?(is)
-      if defined? @should and @should
-        case self.should_to_s 
-        when "all"
-          self.provider.all_privs_set?
-        when self.is_to_s(is)
-          true
-        else
-          false
-        end
+      if defined?(@should) and @should
+        is_privs = self.provider.privileges.map{|v| v.to_s}.sort.inspect
+        is_privs == self.should_to_s
       else
         true
       end
@@ -75,4 +64,3 @@ Puppet::Type.newtype(:database_grant) do
 
   end
 end
-
