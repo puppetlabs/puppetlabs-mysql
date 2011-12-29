@@ -20,6 +20,9 @@ class mysql::server(
   $package_name = 'mysql-server'
 ) inherits mysql::params {
 
+  ## The mysql::ruby class is needed so the providers will work
+  include mysql::ruby
+
   # automatically create a class to deal with
   # configuration
   $hash = {

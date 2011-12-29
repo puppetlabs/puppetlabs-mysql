@@ -16,7 +16,7 @@
 class mysql::ruby(
   $ensure = installed,
   $package_name = $mysql::params::ruby_package_name,
-  $package_provider = 'gem'
+  $package_provider = $mysql::params::package_provider
 ) inherits mysql::params {
   # I am not making the mysql package a dep for this
   # the only dep is the package which yum will resolve for me.
