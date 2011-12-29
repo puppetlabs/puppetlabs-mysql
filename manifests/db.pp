@@ -52,7 +52,7 @@ define mysql::db (
     }
   }
 
-  database_user{"${user}@${host}":
+  database_user{"${user}@${host}/${name}":
     ensure        => present,
     password_hash => mysql_password($password),
     provider      => 'mysql',
