@@ -9,6 +9,8 @@ describe 'mysql::db', :type => :define do
     }
   }
 
+  let(:facts) { {:operatingsystem => 'Unknown'} }
+
   it 'should not notify the import sql exec if no sql script was provided' do
     should contain_database('test_db').without_notify
   end

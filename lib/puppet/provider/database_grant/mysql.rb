@@ -20,16 +20,12 @@ MYSQL_DB_PRIVS = [ :select_priv, :insert_priv, :update_priv, :delete_priv,
 
 Puppet::Type.type(:database_grant).provide(:mysql) do
 
+  require 'mysql'
+  require 'puppet/util/inifile'
+
 	desc "Uses mysql as database."
 
-        defaultfor :kernel => 'Linux'
-
-	optional_commands :mysql => 'mysql'
-	optional_commands :mysqladmin => 'mysqladmin'
-
-	def mysql_flush 
-		mysqladmin "flush-privileges"
-	end
+  defaultfor :kernel => 'Linux'
 
 	# this parses the
 	def split_name(string)
@@ -51,78 +47,46 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 		end
 	end
 
-	def create_row
-		unless @resource.should(:privileges).empty?
-			name = split_name(@resource[:name])
-			case name[:type]
-			when :user
-				mysql "mysql", "-e", "INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
-					name[:host], name[:user],
-				]
-			when :db
-				mysql "mysql", "-e", "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
-					name[:host], name[:user], name[:db],
-				]
-			end
-			mysql_flush
-		end
+  def create
+		if @resource[:privileges].nil? or @resource[:privileges].empty?
+      Puppet.warning "privileges property not given.  Defaulting to 'all'"
+      @resource[:privileges] = ['all']
+    end
+
+    dbh = Puppet::Type.type(:database_grant).provider(:mysql).connect
+    db = dbh.select_db('mysql')
+    name = split_name(@resource[:name])
+    case name[:type]
+    when :user
+      db.query("INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
+        name[:host], name[:user],
+      ] )
+    when :db
+      db.query("INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
+        name[:host], name[:user], name[:db],
+      ] )
+    end
+    dbh.reload
+    @property_hash[:ensure] = :present
+
+    self.privileges = @resource[:privileges]
 	end
 
 	def destroy
-		mysql "mysql", "-e", "REVOKE ALL ON '%s'.* FROM '%s@%s'" % [ @resource[:privileges], @resource[:database], @resource[:name], @resource[:host] ]
-	end
-	
-	def row_exists?
-		name = split_name(@resource[:name])
-		fields = [:user, :host]
-		if name[:type] == :db
-			fields << :db
-		end
-		not mysql( "mysql", "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s = '%s'" % [f, name[f]] end.join(' AND ')]).empty?
+		dbh = Puppet::Type.type(:database_grant).provider(:mysql).connect
+    dbh.select_db('mysql').query("REVOKE ALL ON %s.* FROM '%s'@'%s'" % [ @property_hash[:database], @property_hash[:user], @property_hash[:host] ])
+    @property_hash[:ensure] = :absent
 	end
 
-	def all_privs_set?
-		all_privs = case split_name(@resource[:name])[:type]
-			when :user
-				MYSQL_USER_PRIVS
-			when :db
-				MYSQL_DB_PRIVS
-		end
-		all_privs = all_privs.collect do |p| p.to_s end.sort.join("|")
-		privs = privileges.collect do |p| p.to_s end.sort.join("|")
-
-		all_privs == privs
-	end
+  def exists?
+    @property_hash[:ensure] == :present ? true : false
+  end
 
 	def privileges 
-		name = split_name(@resource[:name])
-		privs = ""
-
-		case name[:type]
-		when :user
-			privs = mysql "mysql", "-Be", 'select * from user where user="%s" and host="%s"' % [ name[:user], name[:host] ]
-		when :db
-			privs = mysql "mysql", "-Be", 'select * from db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
-		end
-
-		if privs.match(/^$/) 
-			privs = [] # no result, no privs
-		else
-			# returns a line with field names and a line with values, each tab-separated
-			privs = privs.split(/\n/).map! do |l| l.chomp.split(/\t/) end
-			# transpose the lines, so we have key/value pairs
-			privs = privs[0].zip(privs[1])
-			privs = privs.select do |p| p[0].match(/_priv$/) and p[1] == 'Y' end
-		end
-
-		privs.collect do |p| symbolize(p[0].downcase) end
+    @property_hash[:privileges]
 	end
 
-	def privileges=(privs) 
-		unless row_exists?
-			create_row
-		end
-
+	def privileges=(privs)
 		# puts "Setting privs: ", privs.join(", ")
 		name = split_name(@resource[:name])
 		stmt = ''
@@ -148,8 +112,73 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 		# puts "set:", set
 		stmt = stmt << set << where
 
-		mysql "mysql", "-Be", stmt
-		mysql_flush
+    dbh = Puppet::Type.type(:database_grant).provider(:mysql).connect
+    dbh.select_db('mysql').query stmt
+    dbh.reload
+    @property_hash[:privileges] = privs
 	end
-end
 
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if resource = resources[prov.name]
+        resource.provider = prov
+      end
+    end
+  end
+
+  def self.instances
+    dbh = self.connect
+
+    instances = Array.new
+
+    ## Get DB users
+    dbh.query('select * from mysql.db').each_hash do |result|
+      user = result['User']
+      host = result['Host']
+      db   = result['Db']
+
+      db_privs = Array.new
+      result.each do |property,value|
+        property = property.downcase.to_sym
+        if MYSQL_DB_PRIVS.include?(property) and value == 'Y'
+          db_privs << property
+        end
+      end
+      @property_hash = { :name => "#{user}@#{host}/#{db}", :privileges => db_privs, :ensure => :present, :host => host, :database => db, :user => user }
+      instances << new(@property_hash)
+    end
+
+    ## Get primary users
+    dbh.query('select * from mysql.user').each_hash do |result|
+      host = result['Host']
+      user = result['User']
+
+      db_privs = Array.new
+      result.each do |property,value| 
+        property = property.downcase.to_sym
+        if MYSQL_USER_PRIVS.include?(property) and value == 'Y'
+          db_privs << property
+        end
+      end
+      @property_hash = { :name => "#{user}@#{host}", :privileges => db_privs, :ensure => :present, :host => host, :user => user }
+      instances << new(@property_hash)
+    end
+
+    instances
+  end
+
+  def self.connect
+    if File.exists? '/root/.my.cnf'
+      config = Puppet::Util::IniConfig::File.new
+      config.read '/root/.my.cnf'
+      unless config['client'].nil?
+        config_host   = config['client']['host']
+        config_user   = config['client']['user']
+        config_passwd = config['client']['password']
+        Mysql.new host=config_host, user=config_user, passwd=config_passwd
+      end
+    else
+      Mysql.new
+    end
+  end
+end
