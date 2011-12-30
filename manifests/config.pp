@@ -25,18 +25,19 @@ class mysql::config(
     }
     file{'/root/.my.cnf':
       content => template('mysql/my.cnf.pass.erb'),
+      mode  => '0400',
     }
     if $etc_root_password {
        file{'/etc/my.cnf':
           content => template('mysql/my.cnf.pass.erb'),
           require => Exec['set_mysql_rootpw'],
+          mode  => '0400',
        }
     }
   }
   File {
     owner => 'root',
     group => 'root',
-    mode  => '0400',
     notify  => Exec['mysqld-restart'],
     require => Package['mysql-server']
   }
