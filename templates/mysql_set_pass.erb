@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require 'puppet'
+require 'puppet/util/inifile'
+require 'mysql'
+
+if File.exists? '/root/.my.cnf'
+  config = Puppet::Util::IniConfig::File.new
+  config.read '/root/.my.cnf'
+  unless config['client'].nil?
+    config_host   = config['client']['host']
+    config_user   = config['client']['user']
+    config_passwd = config['client']['password']
+    dbh = Mysql.new host=config_host, user=config_user, passwd=config_passwd
+  else
+    dbh = Mysql.new
+  end
+else
+  dbh = Mysql.new
+end
+
+dbh.query("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('<%= root_password %>')")
+dbh.reload
