@@ -26,7 +26,7 @@ class mysql::config(
     exec{ 'set_mysql_rootpw':
       command     => "/var/lib/mysql/mysql_set_pass",
       before      => File['/root/.my.cnf'],
-      require     => [Package['mysql-server'], Service['mysqld']],
+      require     => [Package['ruby-mysql','mysql-server'], Service['mysqld']],
       refreshonly => true,
       notify      => Exec['mysqld-restart'],
     }
