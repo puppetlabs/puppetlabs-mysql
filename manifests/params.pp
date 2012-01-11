@@ -22,10 +22,8 @@ class mysql::params{
       $service_name         = 'mysql'
       $client_package_name  = 'mysql-client'
     }
-    default: {
-      $python_package_name  = 'python-mysqldb'
-      $ruby_package_name    = 'ruby-mysql'
-      $client_package_name  = 'mysql'
-    }
   }
+  $python_package_name  = 'python-mysqldb'
+  $ruby_package_name    = 'ruby-mysql'
+  $client_package_name  = 'mysql'
 }
