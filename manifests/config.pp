@@ -6,6 +6,7 @@ class mysql::config(
   # rather or not to store the rootpw in /etc/my.cnf
   $etc_root_password = false
 ) {
+  include mysql::params
 
   # manage root password if it is set
   if !($root_password == 'UNSET') {
@@ -49,7 +50,7 @@ class mysql::config(
     mode    => '755',
   }
 
-  file { '/etc/mysql/my.cnf':
+  file { $mysql::params::config_file:
     content => template('mysql/my.cnf.erb'),
   }
 }
