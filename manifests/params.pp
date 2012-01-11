@@ -25,6 +25,9 @@ class mysql::params{
       $socket               = '/var/run/mysqld/mysqld.sock'
       $config_file          = '/etc/mysql/my.cnf'
     }
+    default: {
+      fail("Unsupported operating system: ${::operatingsystem}. ${module_name} supports debian, ubuntu, redhat, centos, and fedora.")
+    }
   }
   $python_package_name  = 'python-mysqldb'
   $ruby_package_name    = 'ruby-mysql'
