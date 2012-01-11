@@ -12,15 +12,18 @@
 # Sample Usage:
 #
 class mysql::params{
-  $socket                   = '/var/run/mysqld/mysqld.sock'
   case $::operatingsystem {
     'centos', 'redhat', 'fedora': {
       $service_name         = 'mysqld'
       $client_package_name  = 'mysql'
+      $socket               = '/var/lib/mysql/mysql.sock'
+      $config_file          = '/etc/my.cnf'
     }
     'ubuntu', 'debian': {
       $service_name         = 'mysql'
       $client_package_name  = 'mysql-client'
+      $socket               = '/var/run/mysqld/mysqld.sock'
+      $config_file          = '/etc/mysql/my.cnf'
     }
   }
   $python_package_name  = 'python-mysqldb'
