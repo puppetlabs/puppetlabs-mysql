@@ -28,5 +28,4 @@ class mysql::params{
   }
   $python_package_name  = 'python-mysqldb'
   $ruby_package_name    = 'ruby-mysql'
-  $client_package_name  = 'mysql'
 }
