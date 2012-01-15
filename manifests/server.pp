@@ -35,7 +35,7 @@ class mysql::server(
     notify => Service['mysqld'],
   }
   service { 'mysqld':
-    name => $service_name,
+    name   => $service_name,
     ensure => running,
     enable => true,
   }
@@ -45,7 +45,7 @@ class mysql::server(
   exec{ 'mysqld-restart':
     command     => "service ${service_name} restart",
     refreshonly => true,
-    path        => '/sbin/:/usr/sbin/',
+    path        => '/sbin/:/usr/sbin/:/bin:/usr/bin',
   }
   File{
     owner   => 'mysql',
