@@ -21,4 +21,8 @@ Puppet::Type.type(:database_user).provide(:default) do
   def password_hash=(string)
     return false
   end
+
+  def self.instances
+    Array.new
+  end
 end

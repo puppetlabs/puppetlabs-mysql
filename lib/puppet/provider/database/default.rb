@@ -22,6 +22,11 @@ Puppet::Type.type(:database).provide(:default) do
   def charset=(value)
     return false
   end
+
+  def self.instances
+    Array.new
+  end
   # retrieve the current set of mysql databases
+  #
 end
 
