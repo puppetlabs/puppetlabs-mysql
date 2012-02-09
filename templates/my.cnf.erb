@@ -1,12 +1,12 @@
 [client]
 port    = <%= port %>
-socket    = <%= scope.lookupvar('mysql::params::socket') %>
+socket    = <%= socket %>
 [mysqld_safe]
-socket    = <%= scope.lookupvar('mysql::params::socket') %>
+socket    = <%= socket %>
 nice    = 0
 [mysqld]
 user    = mysql
-socket    = <%= scope.lookupvar('mysql::params::socket') %>
+socket    = <%= socket %>
 port      = <%= port %>
 basedir   = /usr
 datadir   = /var/lib/mysql

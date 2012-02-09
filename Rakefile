@@ -1,14 +1,18 @@
+require 'rubygems'
 require 'rake'
+require 'rspec/core/rake_task'
 require 'fileutils'
 
-begin
-  require 'rspec/core/rake_task'
-  HAVE_RSPEC = true
-rescue LoadError
-  HAVE_RSPEC = false
+task :default do
+  system("rake -T")
 end
 
-task :default => [:build]
+desc "Run all rspec-puppet tests"
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.rspec_opts = ['--color']
+  # ignores fixtures directory.
+  t.pattern = 'spec/{classes,defines,unit}/**/*_spec.rb'
+end
 
 def update_module_version
   gitdesc = %x{git describe}.chomp
@@ -39,9 +43,9 @@ task :clean do
   FileUtils.rm_rf("pkg/")
 end
 
-if HAVE_RSPEC then
-  desc 'Run all module spec tests (Requires rspec-puppet gem)'
-  task :spec do
-    system 'rspec --format d spec/'
-  end
+desc "Check puppet manifests with puppet-lint"
+task :lint do
+  # This requires pull request: https://github.com/rodjek/puppet-lint/pull/81
+  system("puppet-lint manifests")
+  system("puppet-lint tests")
 end

@@ -1,20 +1,24 @@
 # Class: mysql
 #
-# this module installs mysql client software.
+#   This class installs mysql client software.
 #
 # Parameters:
 #   [*client_package_name*]  - The name of the mysql client package.
+#
 # Actions:
 #
 # Requires:
 #
 # Sample Usage:
 #
-class mysql(
-  $client_package_name = $mysql::params::client_package_name
+class mysql (
+  $package_name   = $mysql::params::client_package_name,
+  $package_ensure = 'present'
 ) inherits mysql::params {
-  package {"mysql-client":
-    name    => $client_package_name,
-    ensure  => installed,
+
+  package { 'mysql_client':
+    name    => $package_name,
+    ensure  => $package_ensure,
   }
+
 }
