@@ -51,5 +51,6 @@ class mysql::config(
 
   file { '/etc/mysql/my.cnf':
     content => template('mysql/my.cnf.erb'),
+    mode    => '0644'
   }
 }
