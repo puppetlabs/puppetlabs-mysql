@@ -17,7 +17,7 @@
 # Requires:
 #
 # Sample Usage:
-# 
+#
 #  mysql::db { 'mydb':
 #    user     => 'my_user',
 #    password => 'password',
@@ -67,13 +67,17 @@ define mysql::db (
   }
 
   if($sql) {
+
+    case $enforce_sql {
+        true:    {$refreshonly = false}
+        false:   {$refreshonly = true}
+        default: { err '$enforce_sql must be either true or false'}
+      }
+
     exec{"${name}-import-import":
       command     => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
       logoutput   => true,
-      refreshonly => $enforce_sql ? {
-        true  => false,
-        false => true,
-      },
+      refreshonly => $refreshonly,
     }
   }
 }
