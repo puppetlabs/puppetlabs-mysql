@@ -32,7 +32,7 @@ class mysql::config(
   $etc_root_password = $mysql::params::etc_root_password,
   $service_name      = $mysql::params::service_name,
   $config_file       = $mysql::params::config_file,
-  $socket            = $mysql::params::socket,
+  $socket            = $mysql::params::socket
 ) inherits mysql::params {
 
   Class['mysql::server'] -> Class['mysql::config']
