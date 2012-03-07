@@ -49,8 +49,9 @@ class mysql::config(
   # to the config file which can cause a refresh
   exec { 'mysqld-restart':
     command     => "service ${service_name} restart",
+    logoutput   => on_failure,
     refreshonly => true,
-    path        => '/sbin/:/usr/sbin/',
+    path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
   }
 
   # manage root password if it is set
