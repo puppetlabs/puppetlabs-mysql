@@ -22,7 +22,10 @@ class mysql::config(
       unless   => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin',
       require   => [Package['mysql-server'], Service['mysqld']],
-      before    => File['/root/.my.cnf'],
+      before    => $home_root_password ? {
+        true    => File['/root/.my.cnf'],
+        default => undef
+      },
       notify    => Exec['mysqld-restart'],
     }
 
