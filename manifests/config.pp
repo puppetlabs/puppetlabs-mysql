@@ -14,10 +14,10 @@ class mysql::config(
       default: {$old_pw="-p${old_root_password}"}
     }
     exec{ 'set_mysql_rootpw':
-      command   => "mysqladmin -u root ${old_pw} password ${root_password}",
+      command   => "mysqladmin -u root -p'${old_pw}' password '${root_password}'",
       #logoutput => on_failure,
       logoutput => true,
-      unless   => "mysqladmin -u root -p${root_password} status > /dev/null",
+      unless   => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin',
       require   => [Package['mysql-server'], Service['mysqld']],
       before    => File['/root/.my.cnf'],
