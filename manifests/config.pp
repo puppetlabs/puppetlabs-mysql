@@ -1,10 +1,12 @@
 class mysql::config(
-  $root_password = 'UNSET',
-  $old_root_password = '',
-  $bind_address = '127.0.0.1',
-  $port = 3306,
+  $root_password        = 'UNSET',
+  $old_root_password    = '',
+  $bind_address         = '127.0.0.1',
+  $port                 = 3306,
   # rather or not to store the rootpw in /etc/my.cnf
-  $etc_root_password = false
+  $etc_root_password    = false,
+  # rather or not to store the rootpw in ~/.my.cnf
+  $home_root_password   = true
 ) {
 
   # manage root password if it is set
@@ -14,22 +16,32 @@ class mysql::config(
       default: {$old_pw="-p${old_root_password}"}
     }
     exec{ 'set_mysql_rootpw':
-      command   => "mysqladmin -u root ${old_pw} password ${root_password}",
+      command   => "mysqladmin -u root -p'${old_pw}' password '${root_password}'",
       #logoutput => on_failure,
       logoutput => true,
-      unless   => "mysqladmin -u root -p${root_password} status > /dev/null",
+      unless   => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin',
       require   => [Package['mysql-server'], Service['mysqld']],
-      before    => File['/root/.my.cnf'],
+      before    => $home_root_password ? {
+        true    => File['/root/.my.cnf'],
+        default => undef
+      },
       notify    => Exec['mysqld-restart'],
     }
-    file{'/root/.my.cnf':
-      content => template('mysql/my.cnf.pass.erb'),
+
+    if $home_root_password {
+      file{'/root/.my.cnf':
+        content => template('mysql/my.cnf.pass.erb'),
+      }
     }
+
     if $etc_root_password {
-       file{'/etc/my.cnf':
+       file{'/etc/mysql/conf.d/credentials.cnf':
           content => template('mysql/my.cnf.pass.erb'),
-          require => Exec['set_mysql_rootpw'],
+          require => [
+            Exec['set_mysql_rootpw'],
+            File['/etc/mysql/conf.d']
+          ]
        }
     }
   }
