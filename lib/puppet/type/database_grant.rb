@@ -25,7 +25,7 @@ Puppet::Type.newtype(:database_grant) do
     reqs
   end
 
-  newparam(:name) do
+  newparam(:name, :namevar=>true) do
     desc "The primary key: either user@host for global privilges or user@host/database for database specific privileges"
   end
 
@@ -60,7 +60,7 @@ Puppet::Type.newtype(:database_grant) do
     # use the sorted outputs for comparison
     def insync?(is)
       if defined? @should and @should
-        case self.should_to_s 
+        case self.should_to_s
         when "all"
           self.provider.all_privs_set?
         when self.is_to_s(is)
@@ -72,7 +72,7 @@ Puppet::Type.newtype(:database_grant) do
         true
       end
     end
-
   end
+
 end
 

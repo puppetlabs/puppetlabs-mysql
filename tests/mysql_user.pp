@@ -1,23 +1,23 @@
-$mysql_root_pw='password'
+$mysql_root_pw = 'password'
+
 class { 'mysql::server':
   config_hash => {
     root_password => 'password',
   }
 }
-#database_user{['test1@localhost', 'test2@localhost', 'test3@localhost']:
-database_user{'redmine@localhost':
-#  ensure => absent,
-  ensure => present,
+
+database_user{ 'redmine@localhost':
+  ensure        => present,
   password_hash => mysql_password('redmine'),
-  require => Class['mysql::server'],
+  require       => Class['mysql::server'],
 }
 
-database_user{'dan@localhost':
-  ensure => present,
+database_user{ 'dan@localhost':
+  ensure        => present,
   password_hash => mysql_password('blah')
 }
 
-database_user{'dan@%':
-  ensure => present,
+database_user{ 'dan@%':
+  ensure        => present,
   password_hash => mysql_password('blah'),
 }

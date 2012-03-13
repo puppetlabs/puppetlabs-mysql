@@ -1,68 +1,83 @@
 # Mysql module for Puppet
 
+This module manages mysql on Linux (RedHat/Debian) distros. A native mysql provider implements database resource type to handle database, database user, and database permission.
 
 ## Description
-This module has evolved and is originally based on work by David Schmitt.
-If anyone else was involved in the development of this module
-and wants credit, let Puppetlabs know.
+
+This module is based on work by David Schmitt. The following contributor have contributed patches to this module (beyond Puppet Labs):
+
+* Christian G. Warden
+* Daniel Black
+* Justin Ellison
+* Lowe Schmidt
+* Matthias Pigulla
+* William Van Hevelingen
 
 ## Usage
 
 ### mysql
 Installs the mysql-client package.
-<pre>
-class { 'mysql': }
-</pre>
+
+    class { 'mysql': }
 
 ### mysql::python
 Installs mysql bindings for python.
-<pre>
-class { 'mysql::python': }
-</pre>
+
+    class { 'mysql::python': }
 
 ### mysql::ruby
 Installs mysql bindings for ruby.
-<pre>
-class { 'mysql::ruby': }
-</pre>
+
+    class { 'mysql::ruby': }
 
 ### mysql::server
-Installs mysql-server, starts service, sets `root_pw`, and sets root.
-<pre>
-class { 'mysql::server':
-  config_hash => { 'root_password' => 'foo' }
-}
-</pre>
+Installs mysql-server packages, configures my.cnf and starts mysqld service:
 
-Login information in `/etc/.my.cnf` and `/root/.my.cnf`.
+    class { 'mysql::server':
+      config_hash => { 'root_password' => 'foo' }
+    }
+
+Database login information stored in `/root/.my.cnf`.
 
 ### mysql::db
 Creates a database with a user and assign some privileges.
 
-<pre>
-mysql::db { 'mydb':
-  user     => 'myuser',
-  password => 'mypass',
-  host     => 'localhost',
-  grant    => ['all'],
-}
-</pre>
+    mysql::db { 'mydb':
+      user     => 'myuser',
+      password => 'mypass',
+      host     => 'localhost',
+      grant    => ['all'],
+    }
 
 ### Providers for database types:
-<pre>
-database { 'mydb':
-  charset => 'latin1',
-}
-</pre>
+MySQL provider supports puppet resources command:
 
-<pre>
-database_user { 'bob@localhost':
-  password_hash => mysql_password('foo')
-}
-</pre>
+    $ puppet resource database
+    database { 'information_schema':
+      ensure  => 'present',
+      charset => 'utf8',
+    }
+    database { 'mysql':
+      ensure  => 'present',
+      charset => 'latin1',
+    }
 
-<pre>
-database_grant { 'user@localhost/database':
-  privileges => ['all'] ,
-}
-</pre>
+The custom resources can be used in any other manifests:
+
+    database { 'mydb':
+      charset => 'latin1',
+    }
+
+    database_user { 'bob@localhost':
+      password_hash => mysql_password('foo')
+    }
+
+    database_grant { 'user@localhost/database':
+      privileges => ['all'] ,
+    }
+
+A resource default can be specified to handle dependency:
+
+    Database {
+      require => Class['mysql::server'],
+    }

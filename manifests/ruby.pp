@@ -13,22 +13,16 @@
 #
 # Sample Usage:
 #
-class mysql::ruby(
-  $ensure = installed,
-  $package_name = $mysql::params::ruby_package_name,
-  $package_provider = 'gem'
+class mysql::ruby (
+  $package_name     = $mysql::params::ruby_package_name,
+  $package_provider = $mysql::params::ruby_package_provider,
+  $package_ensure   = 'present'
 ) inherits mysql::params {
-  # I am not making the mysql package a dep for this
-  # the only dep is the package which yum will resolve for me.
-  #case $operatingsystem {
-  #  'debian', 'ubuntu' : {$ruby_mysql_name = 'libmysql-ruby'}
-  #  default: {$ruby_mysql_name = 'ruby-mysql'}
-  #}
 
-  package{'ruby-mysql':
-  #  name => $ruby_mysql_name,
-    name => $package_name, 
+  package{ 'ruby_mysql':
+    name     => $package_name,
+    ensure   => $package_ensure,
     provider => $package_provider,
-    ensure   => $ensure,
   }
+
 }
