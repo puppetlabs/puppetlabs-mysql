@@ -51,7 +51,6 @@ class mysql::config(
     command     => "service ${service_name} restart",
     refreshonly => true,
     path        => '/sbin/:/usr/sbin/',
-    subscribe   => Exec['set_mysql_rootpw']
   }
 
   # manage root password if it is set
@@ -66,6 +65,7 @@ class mysql::config(
       logoutput => true,
       unless    => "mysqladmin -u root -p${root_password} status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin',
+      notify    => Exec['mysqld-restart']
     }
 
     file { '/root/.my.cnf':
