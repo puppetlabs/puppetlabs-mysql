@@ -9,7 +9,7 @@ Puppet::Type.type(:database_user).provide(:mysql) do
 
   def self.instances
     users = mysql("mysql", '-BNe' "select concat(User, '@',Host) as User from mysql.user").split("\n")
-    users.select{ |user| user =~ /\.+@/ }.collect do |name|
+    users.select{ |user| user =~ /.+@/ }.collect do |name|
       new(:name => name)
     end
   end
