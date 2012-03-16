@@ -92,7 +92,7 @@ describe 'mysql::config' do
 
             it { should contain_exec('mysqld-restart').with(
               :refreshonly => true,
-              :path        => '/sbin/:/usr/sbin/',
+              :path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
               :command     => "service #{param_values[:service_name]} restart"
             )}
 
