@@ -2,11 +2,14 @@ require 'spec_helper'
 describe 'mysql::config' do
 
   let :constant_parameter_defaults do
-    {:root_password     => 'UNSET',
+    {
+     :root_password     => 'UNSET',
      :old_root_password => '',
      :bind_address      => '127.0.0.1',
      :port              => '3306',
-     :etc_root_password => false}
+     :etc_root_password => false,
+     :datadir           => '/var/lib/mysql'
+    }
   end
 
   describe 'with osfamily specific defaults' do
@@ -72,7 +75,8 @@ describe 'mysql::config' do
             :service_name => 'dans_mysql',
             :socket       => '/home/dan/mysql.sock',
             :bind_address => '0.0.0.0',
-            :port         => '3306'
+            :port         => '3306',
+            :datadir      => '/path/to/datadir'
           }
         ].each do |passed_params|
 
@@ -125,6 +129,7 @@ describe 'mysql::config' do
               expected_lines = [
                 "port    = #{param_values[:port]}",
                 "socket    = #{param_values[:socket]}",
+                "datadir   = #{param_values[:datadir]}",
                 "bind-address    = #{param_values[:bind_address]}"
               ]
               (content.split("\n") & expected_lines).should == expected_lines
