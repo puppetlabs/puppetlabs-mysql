@@ -80,7 +80,6 @@ class mysql::config(
     }
   }
 
-
   file { '/etc/mysql':
     ensure => directory,
     mode   => '0755',

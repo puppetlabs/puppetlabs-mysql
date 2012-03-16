@@ -17,6 +17,15 @@ class mysql::params {
   $server_package_name = 'mysql-server'
   $etc_root_password   = false
 
+  case $::operatingsystem {
+    "Ubuntu": {
+      $service_provider = upstart
+    }
+    default: {
+      $service_provider = undef
+    }
+  }
+
   case $::osfamily {
     'RedHat': {
       $service_name          = 'mysqld'

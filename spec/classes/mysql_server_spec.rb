@@ -8,20 +8,36 @@ describe 'mysql::server' do
     }
   end
 
+  describe 'when ubuntu use upstart' do
+    let :facts do
+      { :osfamily => 'Debian',
+        :operatingsystem => 'Ubuntu',
+      }
+    end
+
+    it { should contain_service('mysqld').with(
+      :name     => 'mysql',
+      :ensure   => 'running',
+      :enable   => 'true',
+      :provider => 'upstart',
+      :require  => 'Package[mysql-server]'
+    )}
+  end
+
   describe 'with osfamily specific defaults' do
     {
       'Debian' => {
-         :service_name => 'mysql'
+        :service_name => 'mysql'
       },
       'Redhat' => {
-         :service_name => 'mysqld'
+        :service_name => 'mysqld'
       }
     }.each do |osfamily, osparams|
 
       describe "when osfamily is #{osfamily}" do
 
         let :facts do
-          {:osfamily => osfamily}
+          { :osfamily => osfamily }
         end
 
         [
@@ -39,7 +55,6 @@ describe 'mysql::server' do
             let :parameter_defaults do
               constant_parameter_defaults.merge(osparams)
             end
-
 
             let :params do
               passed_params
@@ -60,6 +75,8 @@ describe 'mysql::server' do
               :enable  => 'true',
               :require => 'Package[mysql-server]'
             )}
+
+            it { should contain_service('mysqld').without_provider }
           end
         end
       end
