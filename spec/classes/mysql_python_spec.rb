@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe 'mysql' do
+describe 'mysql::python' do
 
   describe 'on a debian based os' do
     let :facts do
       { :osfamily => 'Debian'}
     end
-    it { should contain_package('mysql_client').with(
-      :name   => 'mysql-client',
+    it { should contain_package('python-mysqldb').with(
+      :name   => 'python-mysqldb',
       :ensure => 'present'
     )}
   end
@@ -16,16 +16,16 @@ describe 'mysql' do
     let :facts do
       {:osfamily => 'Redhat'}
     end
-    it { should contain_package('mysql_client').with(
-      :name   => 'mysql',
+    it { should contain_package('python-mysqldb').with(
+      :name   => 'MySQL-python',
       :ensure => 'present'
     )}
     describe 'when parameters are supplied' do
       let :params do
-        {:package_ensure => 'latest', :package_name => 'mysql_client'}
+        {:package_ensure => 'latest', :package_name => 'python-mysql'}
       end
-      it { should contain_package('mysql_client').with(
-        :name   => 'mysql_client',
+      it { should contain_package('python-mysqldb').with(
+        :name   => 'python-mysql',
         :ensure => 'latest'
       )}
     end
