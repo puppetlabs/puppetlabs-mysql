@@ -32,7 +32,7 @@ class mysql::config(
   $etc_root_password = $mysql::params::etc_root_password,
   $service_name      = $mysql::params::service_name,
   $config_file       = $mysql::params::config_file,
-  $socket            = $mysql::params::socket,
+  $socket            = $mysql::params::socket
 ) inherits mysql::params {
 
   Class['mysql::server'] -> Class['mysql::config']
@@ -49,8 +49,9 @@ class mysql::config(
   # to the config file which can cause a refresh
   exec { 'mysqld-restart':
     command     => "service ${service_name} restart",
+    logoutput   => on_failure,
     refreshonly => true,
-    path        => '/sbin/:/usr/sbin/',
+    path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
   }
 
   # manage root password if it is set
