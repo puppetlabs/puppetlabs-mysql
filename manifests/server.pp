@@ -21,6 +21,8 @@ class mysql::server (
   $config_hash    = {}
 ) inherits mysql::params {
 
+  Class['mysql::server'] -> Class['mysql::config']
+
   create_resources( 'class', {'mysql::config' => $config_hash} )
 
   package { 'mysql-server':

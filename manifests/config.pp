@@ -35,8 +35,6 @@ class mysql::config(
   $socket            = $mysql::params::socket
 ) inherits mysql::params {
 
-  Class['mysql::server'] -> Class['mysql::config']
-
   File {
     owner  => 'root',
     group  => 'root',
