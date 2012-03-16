@@ -15,10 +15,11 @@
 # Sample Usage:
 #
 class mysql::server (
-  $package_name   = $mysql::params::server_package_name,
-  $package_ensure = 'present',
-  $service_name   = $mysql::params::service_name,
-  $config_hash    = {}
+  $package_name     = $mysql::params::server_package_name,
+  $package_ensure   = 'present',
+  $service_name     = $mysql::params::service_name,
+  $service_provider = $mysql::params::service_provider,
+  $config_hash      = {}
 ) inherits mysql::params {
 
   Class['mysql::server'] -> Class['mysql::config']
@@ -31,10 +32,11 @@ class mysql::server (
   }
 
   service { 'mysqld':
-    name    => $service_name,
-    ensure  => running,
-    enable  => true,
-    require => Package['mysql-server'],
+    name     => $service_name,
+    ensure   => running,
+    enable   => true,
+    require  => Package['mysql-server'],
+    provider => $service_provider,
   }
 
 }
