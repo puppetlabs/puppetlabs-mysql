@@ -171,7 +171,7 @@ describe 'mysql::config' do
     it 'should fail' do
       expect do
         subject
-      end.should raise_error(Puppet::Error, /Duplicate declaration/)
+      end.should raise_error(Puppet::Error, /Duplicate (declaration|definition)/)
     end
 
   end
