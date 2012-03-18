@@ -4,7 +4,7 @@ rvm:
   - 1.9.2
   - ree
 before_script:
-  - "[ '2.6.12' = $PUPPET_VERSION ] && git clone git://github.com/puppetlabs/puppetlabs-create_resources.git spec/fixtures/modules/create_resources"
+  - "[ '2.6.12' = $PUPPET_VERSION ] && git clone git://github.com/puppetlabs/puppetlabs-create_resources.git spec/fixtures/modules/create_resources || true"
 after_script:
 script: "rake spec"
 branches:
