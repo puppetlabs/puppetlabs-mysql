@@ -26,6 +26,10 @@ This module uses the fact osfamily which is supported by Facter 1.6.1+. If you d
       }
     }
 
+This module depends on creates_resources function which is introduced in Puppet 2.7. Users on puppet 2.6 can use the following module which provides this functionality:
+
+[http://github.com/puppetlabs/puppetlabs-create_resources](http://github.com/puppetlabs/puppetlabs-create_resources)
+
 This module is based on work by David Schmitt. The following contributor have contributed patches to this module (beyond Puppet Labs):
 
 * Christian G. Warden
