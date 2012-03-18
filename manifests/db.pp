@@ -64,11 +64,13 @@ define mysql::db (
     require    => Database_user["${user}@${host}"],
   }
 
+  $refresh = ! $enforce_sql
+
   if $sql {
     exec{ "${name}-import":
       command     => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
       logoutput   => true,
-      refreshonly => ! $enforce_sql,
+      refreshonly => $refresh,
       require     => Database_grant["${user}@${host}/${name}"],
       subscribe   => Database[$name],
     }
