@@ -16,6 +16,7 @@ class mysql::params {
   $port                = 3306
   $server_package_name = 'mysql-server'
   $etc_root_password   = false
+  $datadir             = '/var/lib/mysql'
 
   case $::operatingsystem {
     "Ubuntu": {
