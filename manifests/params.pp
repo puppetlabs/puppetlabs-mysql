@@ -17,6 +17,10 @@ class mysql::params {
   $server_package_name = 'mysql-server'
   $etc_root_password   = false
   $datadir             = '/var/lib/mysql'
+  $ssl                 = false
+  $ssl_ca              = '/etc/mysql/cacert.pem'
+  $ssl_cert            = '/etc/mysql/server-cert.pem'
+  $ssl_key             = '/etc/mysql/server-key.pem'
 
   case $::operatingsystem {
     "Ubuntu": {

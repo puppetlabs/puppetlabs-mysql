@@ -11,6 +11,10 @@
 #   [*config_file*]       - my.cnf configuration file path.
 #   [*socket*]            - mysql socket.
 #   [*datadir*]           - path to datadir.
+#   [*ssl]                - enable ssl
+#   [*ssl_ca]             - path to ssl-ca
+#   [*ssl_cert]           - path to ssl-cert
+#   [*ssl_key]            - path to ssl-key
 #
 # Actions:
 #
@@ -34,7 +38,11 @@ class mysql::config(
   $service_name      = $mysql::params::service_name,
   $config_file       = $mysql::params::config_file,
   $socket            = $mysql::params::socket,
-  $datadir           = $mysql::params::datadir
+  $datadir           = $mysql::params::datadir,
+  $ssl               = $mysql::params::ssl,
+  $ssl_ca            = $mysql::params::ssl_ca,
+  $ssl_cert          = $mysql::params::ssl_cert,
+  $ssl_key           = $mysql::params::ssl_key
 ) inherits mysql::params {
 
   File {
