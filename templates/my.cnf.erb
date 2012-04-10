@@ -23,6 +23,13 @@ query_cache_size   = 16M
 log_error          = /var/log/mysql/error.log
 expire_logs_days   = 10
 max_binlog_size    = 100M
+
+<% if ssl == true %>
+ssl-ca    = <%= ssl_ca %>
+ssl-cert  = <%= ssl_cert %>
+ssl-key   = <%= ssl_key %>
+<% end %>
+
 [mysqldump]
 quick
 quote-names
