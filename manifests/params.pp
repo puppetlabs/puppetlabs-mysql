@@ -37,6 +37,7 @@ class mysql::params {
       $client_package_name   = 'mysql'
       $socket                = '/var/lib/mysql/mysql.sock'
       $config_file           = '/etc/my.cnf'
+      $log_error             = '/var/log/mysqld.log'
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
       $python_package_name   = 'MySQL-python'
@@ -47,6 +48,7 @@ class mysql::params {
       $client_package_name  = 'mysql-client'
       $socket               = '/var/run/mysqld/mysqld.sock'
       $config_file          = '/etc/mysql/my.cnf'
+      $log_error            = '/var/log/mysql/error.log'
       $ruby_package_name    = 'libmysql-ruby'
       $python_package_name  = 'python-mysqldb'
     }
