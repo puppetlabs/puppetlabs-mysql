@@ -1,7 +1,11 @@
 # Define: mysql::db
 #
 # This module creates database instances, a user, and grants that user
-# privileges to the database.
+# privileges to the database.  It can also import SQL from a file in order to,
+# for example, initialize a database schema.
+#
+# Since it requires class mysql::server, we assume to run all commands as the
+# root mysql user against the local mysql server.
 #
 # Parameters:
 #   [*title*]       - mysql database name.
@@ -68,7 +72,7 @@ define mysql::db (
 
   if $sql {
     exec { "${name}-import":
-      command     => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
+      command     => "/usr/bin/mysql ${name} < ${sql}",
       logoutput   => true,
       refreshonly => $refresh,
       require     => Database_grant["${user}@${host}/${name}"],
