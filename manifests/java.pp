@@ -15,7 +15,7 @@ class mysql::java (
   $package_name   = $mysql::params::java_package_name,
   $package_ensure = 'present'
 ) inherits mysql::params {
-	
+
   package { 'mysql-connector-java':
     ensure => $package_ensure,
     name   => $package_name,
