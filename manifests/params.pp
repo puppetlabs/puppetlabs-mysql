@@ -41,6 +41,7 @@ class mysql::params {
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
       $python_package_name   = 'MySQL-python'
+      $java_package_name     = 'mysql-connector-java'
     }
 
     'Debian': {
@@ -51,6 +52,7 @@ class mysql::params {
       $log_error            = '/var/log/mysql/error.log'
       $ruby_package_name    = 'libmysql-ruby'
       $python_package_name  = 'python-mysqldb'
+      $java_package_name    = 'libmysql-java'
     }
 
     default: {
