@@ -21,6 +21,9 @@ class mysql::params {
   $ssl_ca              = '/etc/mysql/cacert.pem'
   $ssl_cert            = '/etc/mysql/server-cert.pem'
   $ssl_key             = '/etc/mysql/server-key.pem'
+  $backupuser          = 'UNSET'
+  $backuppassword      = 'UNSET'
+  $backupdir           = 'UNSET'
 
   case $::operatingsystem {
     "Ubuntu": {

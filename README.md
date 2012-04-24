@@ -38,6 +38,7 @@ This module is based on work by David Schmitt. The following contributor have co
 * Lowe Schmidt
 * Matthias Pigulla
 * William Van Hevelingen
+* Michael Arnold
 
 ## Usage
 
@@ -73,6 +74,15 @@ Creates a database with a user and assign some privileges.
       password => 'mypass',
       host     => 'localhost',
       grant    => ['all'],
+    }
+
+### mysql::backup
+Installs a mysql backup script, cronjob, and priviledged backup user.
+
+    class { 'mysql::backup':
+      backupuser     => 'myuser',
+      backuppassword => 'mypassword',
+      backupdir      => '/tmp/backups',
     }
 
 ### Providers for database types:
