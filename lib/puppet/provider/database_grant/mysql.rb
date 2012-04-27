@@ -3,21 +3,6 @@
 #   user@host => global
 #   user@host/db => per-db
 
-MYSQL_USER_PRIVS = [ :select_priv, :insert_priv, :update_priv, :delete_priv,
-  :create_priv, :drop_priv, :reload_priv, :shutdown_priv, :process_priv,
-  :file_priv, :grant_priv, :references_priv, :index_priv, :alter_priv,
-  :show_db_priv, :super_priv, :create_tmp_table_priv, :lock_tables_priv,
-  :execute_priv, :repl_slave_priv, :repl_client_priv, :create_view_priv,
-  :show_view_priv, :create_routine_priv, :alter_routine_priv,
-  :create_user_priv, :event_priv, :trigger_priv
-]
-
-MYSQL_DB_PRIVS = [ :select_priv, :insert_priv, :update_priv, :delete_priv,
-  :create_priv, :drop_priv, :grant_priv, :references_priv, :index_priv,
-  :alter_priv, :create_tmp_table_priv, :lock_tables_priv, :create_view_priv,
-  :show_view_priv, :create_routine_priv, :alter_routine_priv, :execute_priv
-]
-
 Puppet::Type.type(:database_grant).provide(:mysql) do
 
   desc "Uses mysql as database."
@@ -26,6 +11,39 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 
   optional_commands :mysql      => 'mysql'
   optional_commands :mysqladmin => 'mysqladmin'
+
+  def self.prefetch(resources)
+    @user_privs = query_user_privs
+    @db_privs = query_db_privs
+  end
+
+  def self.user_privs
+    @user_privs || query_user_privs
+  end
+
+  def self.db_privs
+    @db_privs || query_db_privs
+  end
+
+  def user_privs
+    self.class.user_privs
+  end
+
+  def db_privs
+    self.class.db_privs
+  end
+
+  def self.query_user_privs
+    results = mysql("mysql", "-Be", "describe user")
+    column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
+    @user_privs = column_names.delete_if { |e| !( e =~/_priv$/) }.map! { |p| p.intern }
+  end
+
+  def self.query_db_privs
+    results = mysql("mysql", "-Be", "describe db")
+    column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
+    @db_privs = column_names.delete_if { |e| !(e =~/_priv$/) }.map! { |p| p.intern }
+  end
 
   def mysql_flush
     mysqladmin "flush-privileges"
@@ -84,9 +102,9 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   def all_privs_set?
     all_privs = case split_name(@resource[:name])[:type]
                 when :user
-                  MYSQL_USER_PRIVS
+                  user_privs
                 when :db
-                  MYSQL_DB_PRIVS
+                  db_privs
                 end
     all_privs = all_privs.collect do |p| p.to_s end.sort.join("|")
     privs = privileges.collect do |p| p.to_s end.sort.join("|")
@@ -115,7 +133,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       privs = privs.select do |p| p[0].match(/_priv$/) and p[1] == 'Y' end
     end
 
-    privs.collect do |p| symbolize(p[0].downcase) end
+    privs.collect do |p| symbolize(p[0]) end
   end
 
   def privileges=(privs)
@@ -132,11 +150,11 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     when :user
       stmt = 'update user set '
       where = ' where user="%s" and host="%s"' % [ name[:user], name[:host] ]
-      all_privs = MYSQL_USER_PRIVS
+      all_privs = user_privs
     when :db
       stmt = 'update db set '
       where = ' where user="%s" and host="%s"' % [ name[:user], name[:host] ]
-      all_privs = MYSQL_DB_PRIVS
+      all_privs = db_privs
     end
 
     if privs[0] == :all
