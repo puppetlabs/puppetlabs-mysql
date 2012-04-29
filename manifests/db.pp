@@ -1,7 +1,11 @@
 # Define: mysql::db
 #
 # This module creates database instances, a user, and grants that user
-# privileges to the database.
+# privileges to the database.  It can also import SQL from a file in order to,
+# for example, initialize a database schema.
+#
+# Since it requires class mysql::server, we assume to run all commands as the
+# root mysql user against the local mysql server.
 #
 # Parameters:
 #   [*title*]       - mysql database name.
@@ -39,12 +43,12 @@ define mysql::db (
 ) {
 
   if $grant == 'all' {
-    $safe_grant = [ 'alter_priv', 'alter_routine_priv', 'create_priv', 'create_routine_priv', 'create_tmp_table_priv', 'create_view_priv', 'delete_priv', 'drop_priv', 'event_priv', 'execute_priv', 'grant_priv', 'index_priv', 'insert_priv', 'lock_tables_priv', 'references_priv', 'select_priv', 'show_view_priv', 'trigger_priv', 'update_priv']
+    $safe_grant = [ 'alter_priv', 'alter_routine_priv', 'create_priv', 'create_routine_priv', 'create_tmp_table_priv', 'create_view_priv', 'delete_priv', 'drop_priv', 'event_priv', 'execute_priv', 'grant_priv', 'index_priv', 'insert_priv', 'lock_tables_priv', 'references_priv', 'select_priv', 'show_view_priv', 'trigger_priv', 'update_priv' ]
   } else {
     $safe_grant = $grant
   }
 
-  database { $name:
+  database { "$name":
     ensure   => present,
     charset  => $charset,
     provider => 'mysql',
@@ -55,7 +59,7 @@ define mysql::db (
     ensure        => present,
     password_hash => mysql_password($password),
     provider      => 'mysql',
-    require       => Database[$name],
+    require       => Database["$name"],
   }
 
   database_grant { "${user}@${host}/${name}":
@@ -67,12 +71,12 @@ define mysql::db (
   $refresh = ! $enforce_sql
 
   if $sql {
-    exec{ "${name}-import":
-      command     => "/usr/bin/mysql -u ${user} -p${password} -h ${host} ${name} < ${sql}",
+    exec { "${name}-import":
+      command     => "/usr/bin/mysql ${name} < ${sql}",
       logoutput   => true,
       refreshonly => $refresh,
       require     => Database_grant["${user}@${host}/${name}"],
-      subscribe   => Database[$name],
+      subscribe   => Database["$name"],
     }
   }
 
