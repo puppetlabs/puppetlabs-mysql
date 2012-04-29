@@ -75,7 +75,8 @@ class mysql::config(
       logoutput => true,
       unless    => "mysqladmin -u root -p${root_password} status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin',
-      notify    => Exec['mysqld-restart']
+      notify    => Exec['mysqld-restart'],
+      require   => File['/etc/mysql/conf.d'],
     }
 
     file { '/root/.my.cnf':
