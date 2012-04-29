@@ -27,6 +27,8 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   optional_commands :mysql      => 'mysql'
   optional_commands :mysqladmin => 'mysqladmin'
 
+  require 'puppet/util/package'
+
   def mysql_flush
     mysqladmin "flush-privileges"
   end
@@ -137,6 +139,13 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       stmt = 'update db set '
       where = ' where user="%s" and host="%s"' % [ name[:user], name[:host] ]
       all_privs = MYSQL_DB_PRIVS
+    end
+
+    server_version = mysql "-NBe", 'select @@version'
+    server_version.chomp!
+    if Puppet::Util::Package.versioncmp(server_version, '5.1.6') < 0
+      all_privs.delete(:event_priv)
+      all_privs.delete(:trigger_priv)
     end
 
     if privs[0] == :all
