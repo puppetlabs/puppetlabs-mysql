@@ -15,7 +15,8 @@ MYSQL_USER_PRIVS = [ :select_priv, :insert_priv, :update_priv, :delete_priv,
 MYSQL_DB_PRIVS = [ :select_priv, :insert_priv, :update_priv, :delete_priv,
   :create_priv, :drop_priv, :grant_priv, :references_priv, :index_priv,
   :alter_priv, :create_tmp_table_priv, :lock_tables_priv, :create_view_priv,
-  :show_view_priv, :create_routine_priv, :alter_routine_priv, :execute_priv
+  :show_view_priv, :create_routine_priv, :alter_routine_priv, :execute_priv,
+  :event_priv, :trigger_priv
 ]
 
 Puppet::Type.type(:database_grant).provide(:mysql) do
