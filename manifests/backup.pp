@@ -22,15 +22,11 @@
 #   }
 #
 class mysql::backup (
-  $ensure         = 'present',
-  $backupuser     = $mysql::params::backupuser,
-  $backuppassword = $mysql::params::backuppassword,
-  $backupdir      = $mysql::params::backupdir
+  $backupuser,
+  $backuppassword,
+  $backupdir,
+  $ensure = 'present'
 ) {
-
-  if $backupuser == 'UNSET' or $backupdir == 'UNSET' or $backuppassword == 'UNSET' {
-    fail('mysql::backup - You must specify a backup user, password, and target directory.')
-  }
 
   database_user { "${backupuser}@localhost":
     ensure        => $ensure,
