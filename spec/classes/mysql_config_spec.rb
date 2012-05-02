@@ -48,7 +48,7 @@ describe 'mysql::config' do
             'command'   => 'mysqladmin -u root  password foo',
             'logoutput' => true,
             'unless'    => "mysqladmin -u root -pfoo status > /dev/null",
-            'path'      => '/usr/local/sbin:/usr/bin'
+            'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
           )}
 
           it { should contain_file('/root/.my.cnf').with(
@@ -67,7 +67,7 @@ describe 'mysql::config' do
             'command'   => 'mysqladmin -u root -pbar password foo',
             'logoutput' => true,
             'unless'    => "mysqladmin -u root -pfoo status > /dev/null",
-            'path'      => '/usr/local/sbin:/usr/bin'
+            'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
           )}
 
         end
@@ -175,7 +175,7 @@ describe 'mysql::config' do
       'command'   => 'mysqladmin -u root -pbar password foo',
       'logoutput' => true,
       'unless'    => "mysqladmin -u root -pfoo status > /dev/null",
-      'path'      => '/usr/local/sbin:/usr/bin'
+      'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
     )}
 
     it { should contain_file('/root/.my.cnf').with(
