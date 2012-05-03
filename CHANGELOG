@@ -1,3 +1,9 @@
+2012-05-03 - Version 0.3.0
+* #14218 Query the database for available privileges
+* Add mysql::java class for java connector installation
+* Use correct error log location on different distros
+* Fix set_mysql_rootpw to properly depend on my.cnf
+
 2012-04-11 - Version 0.2.0
 
 2012-03-19 - William Van Hevelingen <blkperl@cat.pdx.edu>
