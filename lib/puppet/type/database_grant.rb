@@ -31,16 +31,13 @@ Puppet::Type.newtype(:database_grant) do
 
   newproperty(:privileges, :array_matching => :all) do
     desc "The privileges the user should have. The possible values are implementation dependent."
-    munge do |v|
-      symbolize(v)
-    end
 
     def should_to_s(newvalue = @should)
       if newvalue
         unless newvalue.is_a?(Array)
           newvalue = [ newvalue ]
         end
-        newvalue.collect do |v| v.to_s end.sort.join ", "
+        newvalue.collect do |v| v.downcase end.sort.join ", "
       else
         nil
       end
@@ -51,7 +48,7 @@ Puppet::Type.newtype(:database_grant) do
         unless currentvalue.is_a?(Array)
           currentvalue = [ currentvalue ]
         end
-        currentvalue.collect do |v| v.to_s end.sort.join ", "
+        currentvalue.collect do |v| v.downcase end.sort.join ", "
       else
         nil
       end

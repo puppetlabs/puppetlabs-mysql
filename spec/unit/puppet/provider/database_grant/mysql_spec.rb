@@ -7,7 +7,7 @@ provider_class = Puppet::Type.type(:database_grant).provider(:mysql)
 describe provider_class do
   before :each do
     @resource = Puppet::Type::Database_grant.new(
-      { :privileges => 'all"', :provider => 'mysql', :name => 'user@host'}
+      { :privileges => 'all', :provider => 'mysql', :name => 'user@host'}
     )
     @provider = provider_class.new(@resource)
   end
@@ -30,8 +30,8 @@ Select_priv	enum('N','Y')	NO		N
 Insert_priv	enum('N','Y')	NO		N	
 Update_priv	enum('N','Y')	NO		N
 EOT
-    provider_class.user_privs.should == [ :Select_priv, :Insert_priv, :Update_priv ]
-    provider_class.db_privs.should == [ :Select_priv, :Insert_priv, :Update_priv ]
+    provider_class.user_privs.should == [ 'Select_priv', 'Insert_priv', 'Update_priv' ]
+    provider_class.db_privs.should == [ 'Select_priv', 'Insert_priv', 'Update_priv' ]
   end
 
   it 'should query set priviliges' do
@@ -39,7 +39,7 @@ EOT
 Host	User	Password	Select_priv	Insert_priv	Update_priv
 host	user		Y	N	Y
 EOT
-    @provider.privileges.should == [ :Select_priv, :Update_priv ]
+    @provider.privileges.should == [ 'Select_priv', 'Update_priv' ]
   end
 
   it 'should recognize when all priviliges are set' do
@@ -62,13 +62,20 @@ EOT
     provider_class.expects(:mysql).with('mysql', '-NBe', 'SELECT "1" FROM user WHERE user = \'user\' AND host = \'host\'').returns "1\n"
     provider_class.expects(:mysql).with('mysql', '-Be', "update user set Select_priv = 'Y', Insert_priv = 'Y', Update_priv = 'Y' where user=\"user\" and host=\"host\"")
     provider_class.expects(:mysqladmin).with("flush-privileges")
-    @provider.privileges=([:all])
+    @provider.privileges=(['all'])
   end
 
   it 'should be able to set partial privileges' do
     provider_class.expects(:mysql).with('mysql', '-NBe', 'SELECT "1" FROM user WHERE user = \'user\' AND host = \'host\'').returns "1\n"
     provider_class.expects(:mysql).with('mysql', '-Be', "update user set Select_priv = 'Y', Insert_priv = 'N', Update_priv = 'Y' where user=\"user\" and host=\"host\"")
     provider_class.expects(:mysqladmin).with("flush-privileges")
-    @provider.privileges=([:Select_priv, :Update_priv])
+    @provider.privileges=(['Select_priv', 'Update_priv'])
+  end
+
+  it 'should be case insensitive' do
+    provider_class.expects(:mysql).with('mysql', '-NBe', 'SELECT "1" FROM user WHERE user = \'user\' AND host = \'host\'').returns "1\n"
+    provider_class.expects(:mysql).with('mysql', '-Be', "update user set Select_priv = 'Y', Insert_priv = 'Y', Update_priv = 'Y' where user=\"user\" and host=\"host\"")
+    provider_class.expects(:mysqladmin).with('flush-privileges')
+    @provider.privileges=(['SELECT_PRIV', 'insert_priv', 'UpDaTe_pRiV'])
   end
 end
