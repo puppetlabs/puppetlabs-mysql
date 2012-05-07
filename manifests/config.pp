@@ -6,7 +6,8 @@ class mysql::config(
   # rather or not to store the rootpw in /etc/my.cnf
   $etc_root_password    = false,
   # rather or not to store the rootpw in ~/.my.cnf
-  $home_root_password   = true
+  $home_root_password   = true,
+  $my_cnf_template      = 'mysql/my.cnf.erb'
 ) {
 
   # manage root password if it is set
@@ -62,6 +63,6 @@ class mysql::config(
   }
 
   file { '/etc/mysql/my.cnf':
-    content => template('mysql/my.cnf.erb'),
+    content => template($my_cnf_template),
   }
 }
