@@ -62,6 +62,11 @@ database_user { 'bob@localhost':
 </pre>
 
 <pre>
+# for global grants
+database_grant { 'user@localhost':
+  privileges => ['all'] ,
+}	
+# for db specific grants
 database_grant { 'user@localhost/database':
   privileges => ['all'] ,
 }
