@@ -23,7 +23,9 @@ query_cache_size   = 16M
 log_error          = <%= log_error %>
 expire_logs_days   = 10
 max_binlog_size    = 100M
-
+<% if default_engine != 'UNSET' %>
+default-storage-engine = <%= default_engine %>
+<% end %>
 <% if ssl == true %>
 ssl-ca    = <%= ssl_ca %>
 ssl-cert  = <%= ssl_cert %>
