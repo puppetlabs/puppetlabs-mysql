@@ -43,7 +43,8 @@ class mysql::config(
   $ssl_ca            = $mysql::params::ssl_ca,
   $ssl_cert          = $mysql::params::ssl_cert,
   $ssl_key           = $mysql::params::ssl_key,
-  $log_error         = $mysql::params::log_error
+  $log_error         = $mysql::params::log_error,
+  $default_engine    = 'UNSET'
 ) inherits mysql::params {
 
   File {
