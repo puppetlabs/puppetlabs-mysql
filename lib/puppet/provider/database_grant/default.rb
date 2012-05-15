@@ -19,6 +19,10 @@ Puppet::Type.type(:database_grant).provide(:default) do
     return false
   end
 
+  def privileges
+    return false
+  end
+  
   def exists?
     fail('Default provider for database_grant should never be used')
   end
