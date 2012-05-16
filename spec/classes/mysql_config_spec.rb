@@ -9,6 +9,7 @@ describe 'mysql::config' do
      :port              => '3306',
      :etc_root_password => false,
      :datadir           => '/var/lib/mysql',
+     :default_engine    => 'UNSET',
      :ssl               => false,
      :ssl_ca            => '/etc/mysql/cacert.pem',
      :ssl_cert          => '/etc/mysql/server-cert.pem',
@@ -74,17 +75,18 @@ describe 'mysql::config' do
         [
           {},
           {
-            :service_name => 'dans_service',
-            :config_file  => '/home/dan/mysql.conf',
-            :service_name => 'dans_mysql',
-            :socket       => '/home/dan/mysql.sock',
-            :bind_address => '0.0.0.0',
-            :port         => '3306',
-            :datadir      => '/path/to/datadir',
-            :ssl          => true,
-            :ssl_ca       => '/path/to/cacert.pem',
-            :ssl_cert     => '/path/to/server-cert.pem',
-            :ssl_key      => '/path/to/server-key.pem'
+            :service_name   => 'dans_service',
+            :config_file    => '/home/dan/mysql.conf',
+            :service_name   => 'dans_mysql',
+            :socket         => '/home/dan/mysql.sock',
+            :bind_address   => '0.0.0.0',
+            :port           => '3306',
+            :datadir        => '/path/to/datadir',
+            :default_engine => 'InnoDB',
+            :ssl            => true,
+            :ssl_ca         => '/path/to/cacert.pem',
+            :ssl_cert       => '/path/to/server-cert.pem',
+            :ssl_key        => '/path/to/server-key.pem'
           }
         ].each do |passed_params|
 
@@ -140,6 +142,9 @@ describe 'mysql::config' do
                 "datadir   = #{param_values[:datadir]}",
                 "bind-address    = #{param_values[:bind_address]}"
               ]
+              if param_values[:default_engine] != 'UNSET'
+                expected_lines = expected_lines | [ "default-storage-engine = #{param_values[:default_engine]}" ]
+              end
               if param_values[:ssl]
                 expected_lines = expected_lines |
                   [
