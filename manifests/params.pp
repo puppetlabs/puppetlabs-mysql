@@ -56,7 +56,20 @@ class mysql::params {
     }
 
     default: {
-      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
+      case $::operatingsystem {
+        'Amazon': {
+          $service_name          = 'mysqld'
+          $client_package_name   = 'mysql'
+          $socket                = '/var/lib/mysql/mysql.sock'
+          $config_file           = '/etc/my.cnf'
+          $ruby_package_name     = 'ruby-mysql'
+          $ruby_package_provider = 'gem'
+          $python_package_name   = 'MySQL-python'
+        }
+
+      default: {
+        fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian or operatingsystem Amazon")
+      }
     }
   }
 
