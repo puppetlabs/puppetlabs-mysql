@@ -4,7 +4,7 @@ rvm:
 before_script:
   - "[ '2.6.9' = $PUPPET_VERSION ] && git clone git://github.com/puppetlabs/puppetlabs-create_resources.git spec/fixtures/modules/create_resources || true"
 after_script:
-script: "rake spec"
+script: "rake spec_full"
 branches:
   only:
     - master
@@ -14,3 +14,4 @@ env:
   - PUPPET_VERSION=2.6.9
 notifications:
   email: false
+gemfile: .gemfile
