@@ -11,23 +11,37 @@ describe 'mysql::config' do
      :datadir           => '/var/lib/mysql',
      :default_engine    => 'UNSET',
      :ssl               => false,
-     :ssl_ca            => '/etc/mysql/cacert.pem',
-     :ssl_cert          => '/etc/mysql/server-cert.pem',
-     :ssl_key           => '/etc/mysql/server-key.pem'
     }
   end
 
   describe 'with osfamily specific defaults' do
     {
       'Debian' => {
+         :datadir      => '/var/lib/mysql',
          :service_name => 'mysql',
          :config_file  => '/etc/mysql/my.cnf',
-         :socket       => '/var/run/mysqld/mysqld.sock'
+         :socket       => '/var/run/mysqld/mysqld.sock',
+         :root_group   => 'root',
+         :ssl_ca       => '/etc/mysql/cacert.pem',
+         :ssl_cert     => '/etc/mysql/server-cert.pem',
+         :ssl_key      => '/etc/mysql/server-key.pem'
+      },
+      'FreeBSD' => {
+         :datadir      => '/var/db/mysql',
+         :service_name => 'mysql-server',
+         :config_file  => '/var/db/mysql/my.cnf',
+         :socket       => '/tmp/mysql.sock',
+         :root_group   => 'wheel',
       },
       'Redhat' => {
+         :datadir      => '/var/lib/mysql',
          :service_name => 'mysqld',
          :config_file  => '/etc/my.cnf',
-         :socket       => '/var/lib/mysql/mysql.sock'
+         :socket       => '/var/lib/mysql/mysql.sock',
+         :root_group   => 'root',
+         :ssl_ca       => '/etc/mysql/cacert.pem',
+         :ssl_cert     => '/etc/mysql/server-cert.pem',
+         :ssl_key      => '/etc/mysql/server-key.pem'
       }
     }.each do |osfamily, osparams|
 
@@ -48,7 +62,7 @@ describe 'mysql::config' do
             'command'   => 'mysqladmin -u root  password foo',
             'logoutput' => true,
             'unless'    => "mysqladmin -u root -pfoo status > /dev/null",
-            'path'      => '/usr/local/sbin:/usr/bin'
+            'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
           )}
 
           it { should contain_file('/root/.my.cnf').with(
@@ -67,7 +81,7 @@ describe 'mysql::config' do
             'command'   => 'mysqladmin -u root -pbar password foo',
             'logoutput' => true,
             'unless'    => "mysqladmin -u root -pfoo status > /dev/null",
-            'path'      => '/usr/local/sbin:/usr/bin'
+            'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
           )}
 
         end
@@ -116,21 +130,21 @@ describe 'mysql::config' do
 
             it { should contain_file('/etc/mysql').with(
               'owner'  => 'root',
-              'group'  => 'root',
+              'group'  => param_values[:root_group],
               'notify' => 'Exec[mysqld-restart]',
               'ensure' => 'directory',
               'mode'   => '0755'
             )}
             it { should contain_file('/etc/mysql/conf.d').with(
               'owner'  => 'root',
-              'group'  => 'root',
+              'group'  => param_values[:root_group],
               'notify' => 'Exec[mysqld-restart]',
               'ensure' => 'directory',
               'mode'   => '0755'
             )}
             it { should contain_file(param_values[:config_file]).with(
               'owner'  => 'root',
-              'group'  => 'root',
+              'group'  => param_values[:root_group],
               'notify' => 'Exec[mysqld-restart]',
               'mode'   => '0644'
             )}
@@ -175,7 +189,7 @@ describe 'mysql::config' do
       'command'   => 'mysqladmin -u root -pbar password foo',
       'logoutput' => true,
       'unless'    => "mysqladmin -u root -pfoo status > /dev/null",
-      'path'      => '/usr/local/sbin:/usr/bin'
+      'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
     )}
 
     it { should contain_file('/root/.my.cnf').with(
@@ -198,6 +212,23 @@ describe 'mysql::config' do
       expect do
         subject
       end.should raise_error(Puppet::Error, /Duplicate (declaration|definition)/)
+    end
+
+  end
+
+  describe 'unset ssl params should fail when ssl is true on freebsd' do
+    let :facts do
+      {:osfamily => 'FreeBSD'}
+    end
+
+    let :params do
+     { :ssl => true }
+    end
+
+    it 'should fail' do
+      expect do
+        subject
+      end.should raise_error(Puppet::Error, /required when ssl is true/)
     end
 
   end
