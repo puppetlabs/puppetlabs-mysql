@@ -4,7 +4,6 @@ describe 'mysql::server' do
   let :constant_parameter_defaults do
     {:config_hash    => {},
      :package_ensure => 'present',
-     :package_name   => 'mysql-server'
     }
   end
 
@@ -27,10 +26,16 @@ describe 'mysql::server' do
   describe 'with osfamily specific defaults' do
     {
       'Debian' => {
-        :service_name => 'mysql'
+        :service_name => 'mysql',
+        :package_name => 'mysql-server'
+      },
+      'FreeBSD' => {
+        :service_name => 'mysql-server',
+        :package_name => 'databases/mysql55-server'
       },
       'Redhat' => {
-        :service_name => 'mysqld'
+        :service_name => 'mysqld',
+        :package_name => 'mysql-server'
       }
     }.each do |osfamily, osparams|
 

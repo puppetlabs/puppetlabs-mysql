@@ -12,6 +12,16 @@ describe 'mysql' do
     )}
   end
 
+  describe 'on a freebsd based os' do
+    let :facts do
+      { :osfamily => 'FreeBSD'}
+    end
+    it { should contain_package('mysql_client').with(
+      :name   => 'databases/mysql55-client',
+      :ensure => 'present'
+    )}
+  end
+
   describe 'on a redhat based os' do
     let :facts do
       {:osfamily => 'Redhat'}
