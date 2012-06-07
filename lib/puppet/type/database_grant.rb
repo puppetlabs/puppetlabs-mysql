@@ -25,22 +25,19 @@ Puppet::Type.newtype(:database_grant) do
     reqs
   end
 
-  newparam(:name) do
+  newparam(:name, :namevar=>true) do
     desc "The primary key: either user@host for global privilges or user@host/database for database specific privileges"
   end
 
   newproperty(:privileges, :array_matching => :all) do
     desc "The privileges the user should have. The possible values are implementation dependent."
-    munge do |v|
-      symbolize(v)
-    end
 
     def should_to_s(newvalue = @should)
       if newvalue
         unless newvalue.is_a?(Array)
           newvalue = [ newvalue ]
         end
-        newvalue.collect do |v| v.to_s end.sort.join ", "
+        newvalue.collect do |v| v.downcase end.sort.join ", "
       else
         nil
       end
@@ -51,7 +48,7 @@ Puppet::Type.newtype(:database_grant) do
         unless currentvalue.is_a?(Array)
           currentvalue = [ currentvalue ]
         end
-        currentvalue.collect do |v| v.to_s end.sort.join ", "
+        currentvalue.collect do |v| v.downcase end.sort.join ", "
       else
         nil
       end
@@ -60,7 +57,7 @@ Puppet::Type.newtype(:database_grant) do
     # use the sorted outputs for comparison
     def insync?(is)
       if defined? @should and @should
-        case self.should_to_s 
+        case self.should_to_s
         when "all"
           self.provider.all_privs_set?
         when self.is_to_s(is)
@@ -72,7 +69,7 @@ Puppet::Type.newtype(:database_grant) do
         true
       end
     end
-
   end
+
 end
 

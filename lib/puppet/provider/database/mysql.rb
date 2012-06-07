@@ -1,19 +1,32 @@
 Puppet::Type.type(:database).provide(:mysql) do
 
-  desc "Create mysql database."
+  desc "Manages MySQL database."
 
   defaultfor :kernel => 'Linux'
 
-  optional_commands :mysqladmin => 'mysqladmin'
   optional_commands :mysql      => 'mysql'
-  optional_commands :mysqlshow  => 'mysqlshow'
-	
+  optional_commands :mysqladmin => 'mysqladmin'
+
+  def self.instances
+    mysql('-NBe', "show databases").split("\n").collect do |name|
+      new(:name => name)
+    end
+  end
+
   def create
-    mysql('-NBe', "CREATE DATABASE #{@resource[:name]} CHARACTER SET #{resource[:charset]}")
+    mysql('-NBe', "create database #{@resource[:name]} character set #{resource[:charset]}")
   end
 
   def destroy
     mysqladmin('-f', 'drop', @resource[:name])
+  end
+
+  def charset
+    mysql('-NBe', "show create database #{resource[:name]}").match(/.*?(\S+)\s\*\//)[1]
+  end
+
+  def charset=(value)
+    mysql('-NBe', "alter database #{resource[:name]} CHARACTER SET #{value}")
   end
 
   def exists?
@@ -24,14 +37,6 @@ Puppet::Type.type(:database).provide(:mysql) do
       return nil
     end
   end
- 
-  def charset
-    mysql('-NBe', "show create database #{resource[:name]}").match(/.*?(\S+)\s\*\//)[1]
-  end
 
-  def charset=(value)
-    mysql('-NBe', "alter database #{resource[:name]} CHARACTER SET #{value}")
-  end
-  # retrieve the current set of mysql databases
 end
 

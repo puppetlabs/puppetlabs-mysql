@@ -1,15 +1,15 @@
 [client]
 port    = <%= port %>
-socket    = /var/run/mysqld/mysqld.sock
+socket    = <%= socket %>
 [mysqld_safe]
-socket    = /var/run/mysqld/mysqld.sock
+socket    = <%= socket %>
 nice    = 0
 [mysqld]
 user    = mysql
-socket    = /var/run/mysqld/mysqld.sock
+socket    = <%= socket %>
 port      = <%= port %>
-basedir   = /usr
-datadir   = /var/lib/mysql
+basedir   = <%= basedir %>
+datadir   = <%= datadir %>
 tmpdir    = /tmp
 skip-external-locking
 bind-address    = <%= bind_address %>
@@ -20,9 +20,18 @@ thread_cache_size  = 8
 myisam-recover     = BACKUP
 query_cache_limit  = 1M
 query_cache_size   = 16M
-log_error          = /var/log/mysql/error.log
+log_error          = <%= log_error %>
 expire_logs_days   = 10
 max_binlog_size    = 100M
+<% if default_engine != 'UNSET' %>
+default-storage-engine = <%= default_engine %>
+<% end %>
+<% if ssl == true %>
+ssl-ca    = <%= ssl_ca %>
+ssl-cert  = <%= ssl_cert %>
+ssl-key   = <%= ssl_key %>
+<% end %>
+
 [mysqldump]
 quick
 quote-names
