@@ -4,6 +4,7 @@ describe 'mysql::server' do
   let :constant_parameter_defaults do
     {:config_hash    => {},
      :package_ensure => 'present',
+     :enabled        => true
     }
   end
 
@@ -51,7 +52,8 @@ describe 'mysql::server' do
             :package_name   => 'dans_package',
             :package_ensure => 'latest',
             :service_name   => 'dans_service',
-            :config_hash    => {'root_password' => 'foo'}
+            :config_hash    => {'root_password' => 'foo'},
+            :enabled        => false
           }
         ].each do |passed_params|
 
@@ -76,8 +78,8 @@ describe 'mysql::server' do
 
             it { should contain_service('mysqld').with(
               :name    => param_values[:service_name],
-              :ensure  => 'running',
-              :enable  => 'true',
+              :ensure  => param_values[:enabled] ? 'running' : 'stopped',
+              :enable  => param_values[:enabled],
               :require => 'Package[mysql-server]'
             )}
 
