@@ -153,7 +153,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       all_privs = user_privs
     when :db
       stmt = 'update db set '
-      where = ' where user="%s" and host="%s"' % [ name[:user], name[:host] ]
+      where = ' where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
       all_privs = db_privs
     end
 
