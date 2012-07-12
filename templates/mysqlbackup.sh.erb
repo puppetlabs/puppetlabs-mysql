@@ -17,7 +17,7 @@ DIR=<%= backupdir %>
 ##### STOP CONFIG ####################################################
 PATH=/usr/bin:/usr/sbin:/bin:/sbin
 
-find $DIR -mtime +30 -exec rm -f {} \;
-mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
- --all-databases | bzcat -zc > ${DIR}/mysql_backup_`date +%Y%m%d-%H%M%S`.sql.bz2
+nice -n 10 find $DIR -mtime +30 -exec rm -f {} \;
+nice -n 10 mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+ --all-databases | nice -n 10 bzcat -zc > ${DIR}/mysql_backup_`date +%Y%m%d-%H%M%S`.sql.bz2
 
