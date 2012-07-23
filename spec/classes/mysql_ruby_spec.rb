@@ -55,9 +55,7 @@ describe 'mysql::ruby' do
     end
 
     it 'should fail' do
-      expect do
-        subject
-      end.should raise_error(/Unsupported osfamily: foo/)
+      expect { subject }.to raise_error(/Unsupported osfamily: foo/)
     end
   end
 

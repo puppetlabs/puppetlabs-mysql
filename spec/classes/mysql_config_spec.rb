@@ -209,9 +209,7 @@ describe 'mysql::config' do
     end
 
     it 'should fail' do
-      expect do
-        subject
-      end.should raise_error(Puppet::Error, /Duplicate (declaration|definition)/)
+      expect { subject }.to raise_error(Puppet::Error, /Duplicate (declaration|definition)/)
     end
 
   end
@@ -226,9 +224,7 @@ describe 'mysql::config' do
     end
 
     it 'should fail' do
-      expect do
-        subject
-      end.should raise_error(Puppet::Error, /required when ssl is true/)
+      expect { subject }.to raise_error(Puppet::Error, /required when ssl is true/)
     end
 
   end
