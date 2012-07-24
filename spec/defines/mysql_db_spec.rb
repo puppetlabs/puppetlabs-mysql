@@ -27,4 +27,10 @@ describe 'mysql::db', :type => :define do
     params.merge!({'sql' => 'test_sql', 'enforce_sql' => true})
     should contain_exec('test_db-import').with_refreshonly(false)
   end
+  
+  it 'should not create database and database user' do
+    params.merge!({'db_ensure' => 'absent', 'host' => 'localhost'})
+    should contain_database('test_db').with_ensure('absent')
+    should contain_database_user('testuser@localhost').with_ensure('absent')
+  end
 end

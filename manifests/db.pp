@@ -16,6 +16,7 @@
 #   [*grant*]       - array of privileges to grant user.
 #   [*enforce_sql*] - whether to enforce or conditionally run sql on creation.
 #   [*sql*]         - sql statement to run.
+#   [*db_ensure*]   - specifies if a database is present or absent.
 #
 # Actions:
 #
@@ -39,39 +40,45 @@ define mysql::db (
   $host        = 'localhost',
   $grant       = 'all',
   $sql         = '',
-  $enforce_sql = false
+  $enforce_sql = false,
+  $db_ensure   = 'present'
 ) {
 
+  validate_re($db_ensure, [ '^present$', '^absent$' ],
+  "${db_ensure} is not supported for db_ensure.
+  Allowed values are 'present' and 'absent'.")
+
   database { $name:
-    ensure   => present,
+    ensure   => $db_ensure,
     charset  => $charset,
     provider => 'mysql',
     require  => Class['mysql::server'],
   }
 
   database_user { "${user}@${host}":
-    ensure        => present,
+    ensure        => $db_ensure,
     password_hash => mysql_password($password),
     provider      => 'mysql',
     require       => Database[$name],
   }
 
-  database_grant { "${user}@${host}/${name}":
-    privileges => $grant,
-    provider   => 'mysql',
-    require    => Database_user["${user}@${host}"],
-  }
+  if $db_ensure == 'present' {
+    database_grant { "${user}@${host}/${name}":
+      privileges => $grant,
+      provider   => 'mysql',
+      require    => Database_user["${user}@${host}"],
+    }
 
-  $refresh = ! $enforce_sql
+    $refresh = ! $enforce_sql
 
-  if $sql {
-    exec{ "${name}-import":
-      command     => "/usr/bin/mysql ${name} < ${sql}",
-      logoutput   => true,
-      refreshonly => $refresh,
-      require     => Database_grant["${user}@${host}/${name}"],
-      subscribe   => Database[$name],
+    if $sql {
+      exec{ "${name}-import":
+        command     => "/usr/bin/mysql ${name} < ${sql}",
+        logoutput   => true,
+        refreshonly => $refresh,
+        require     => Database_grant["${user}@${host}/${name}"],
+        subscribe   => Database[$name],
+      }
     }
   }
-
 }
