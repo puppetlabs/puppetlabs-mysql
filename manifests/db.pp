@@ -16,7 +16,7 @@
 #   [*grant*]       - array of privileges to grant user.
 #   [*enforce_sql*] - whether to enforce or conditionally run sql on creation.
 #   [*sql*]         - sql statement to run.
-#   [*db_ensure*]   - specifies if a database is present or absent.
+#   [*ensure*]      - specifies if a database is present or absent.
 #
 # Actions:
 #
@@ -41,28 +41,28 @@ define mysql::db (
   $grant       = 'all',
   $sql         = '',
   $enforce_sql = false,
-  $db_ensure   = 'present'
+  $ensure      = 'present'
 ) {
 
-  validate_re($db_ensure, [ '^present$', '^absent$' ],
-  "${db_ensure} is not supported for db_ensure.
+  validate_re($ensure, [ '^present$', '^absent$' ],
+  "${ensure} is not supported for ensure.
   Allowed values are 'present' and 'absent'.")
 
   database { $name:
-    ensure   => $db_ensure,
+    ensure   => $ensure,
     charset  => $charset,
     provider => 'mysql',
     require  => Class['mysql::server'],
   }
 
   database_user { "${user}@${host}":
-    ensure        => $db_ensure,
+    ensure        => $ensure,
     password_hash => mysql_password($password),
     provider      => 'mysql',
     require       => Database[$name],
   }
 
-  if $db_ensure == 'present' {
+  if $ensure == 'present' {
     database_grant { "${user}@${host}/${name}":
       privileges => $grant,
       provider   => 'mysql',

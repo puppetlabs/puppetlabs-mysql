@@ -29,7 +29,7 @@ describe 'mysql::db', :type => :define do
   end
   
   it 'should not create database and database user' do
-    params.merge!({'db_ensure' => 'absent', 'host' => 'localhost'})
+    params.merge!({'ensure' => 'absent', 'host' => 'localhost'})
     should contain_database('test_db').with_ensure('absent')
     should contain_database_user('testuser@localhost').with_ensure('absent')
   end
