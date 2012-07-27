@@ -45,8 +45,7 @@ define mysql::db (
 ) {
 
   validate_re($ensure, [ '^present$', '^absent$' ],
-  "${ensure} is not supported for ensure.
-  Allowed values are 'present' and 'absent'.")
+  "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
 
   database { $name:
     ensure   => $ensure,
