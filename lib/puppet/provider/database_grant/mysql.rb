@@ -171,7 +171,28 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     # puts "set:", set
     stmt = stmt << set << where
 
+    validate_privs privs, all_privs
     mysql "mysql", "-Be", stmt
     mysql_flush
   end
+
+  def validate_privs(set_privs, all_privs)
+    all_privs = all_privs.collect { |p| p.downcase }
+    set_privs = set_privs.collect { |p| p.downcase }
+    invalid_privs = Array.new
+    hints = Array.new
+    # Test each of the user provided privs to see if they exist in all_privs
+    set_privs.each do |priv|
+      invalid_privs << priv unless all_privs.include?(priv)
+      hints << "#{priv}_priv" if all_privs.include?("#{priv}_priv")
+    end
+    unless invalid_privs.empty?
+      # Print a decently helpful and gramatically correct error message
+      hints = "Did you mean '#{hints.join(',')}'?" unless hints.empty?
+      p = invalid_privs.size > 1 ? ['s', 'are not valid'] : ['', 'is not valid']
+      detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
+      fail [detail, hints].join(' ')
+    end
+  end
+
 end
