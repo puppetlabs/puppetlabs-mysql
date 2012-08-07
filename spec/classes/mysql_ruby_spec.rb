@@ -15,6 +15,17 @@ describe 'mysql::ruby' do
     )}
   end
 
+  describe 'on a freebsd based os' do
+    let :facts do
+      { :osfamily => 'FreeBSD'}
+    end
+    it { should contain_package('ruby_mysql').with(
+      :name     => 'ruby-mysql',
+      :ensure   => 'present',
+      :provider => 'gem'
+    )}
+  end
+
   describe 'on a redhat based os' do
     let :facts do
       {:osfamily => 'Redhat'}
@@ -44,9 +55,7 @@ describe 'mysql::ruby' do
     end
 
     it 'should fail' do
-      expect do
-        subject
-      end.should raise_error(/Unsupported osfamily: foo/)
+      expect { subject }.to raise_error(/Unsupported osfamily: foo/)
     end
   end
 

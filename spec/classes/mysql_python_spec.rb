@@ -12,6 +12,16 @@ describe 'mysql::python' do
     )}
   end
 
+  describe 'on a freebsd based os' do
+    let :facts do
+      { :osfamily => 'FreeBSD'}
+    end
+    it { should contain_package('python-mysqldb').with(
+      :name   => 'databases/py-MySQLdb',
+      :ensure => 'present'
+    )}
+  end
+
   describe 'on a redhat based os' do
     let :facts do
       {:osfamily => 'Redhat'}
@@ -37,9 +47,7 @@ describe 'mysql::python' do
     end
 
     it 'should fail' do
-      expect do
-        subject
-      end.should raise_error(/Unsupported osfamily: foo/)
+      expect { subject }.to raise_error(/Unsupported osfamily: foo/)
     end
   end
 

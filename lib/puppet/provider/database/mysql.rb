@@ -14,7 +14,7 @@ Puppet::Type.type(:database).provide(:mysql) do
   end
 
   def create
-    mysql('--defaults-file=~root/.my.cnf', '-NBe', "create database #{@resource[:name]} character set #{resource[:charset]}")
+    mysql('--defaults-file=~root/.my.cnf', '-NBe', "create database `#{@resource[:name]}` character set #{resource[:charset]}")
   end
 
   def destroy
@@ -22,11 +22,11 @@ Puppet::Type.type(:database).provide(:mysql) do
   end
 
   def charset
-    mysql('--defaults-file=~root/.my.cnf', '-NBe', "show create database #{resource[:name]}").match(/.*?(\S+)\s\*\//)[1]
+    mysql('--defaults-file=~root/.my.cnf', '-NBe', "show create database `#{resource[:name]}`").match(/.*?(\S+)\s\*\//)[1]
   end
 
   def charset=(value)
-    mysql('--defaults-file=~root/.my.cnf', '-NBe', "alter database #{resource[:name]} CHARACTER SET #{value}")
+    mysql('--defaults-file=~root/.my.cnf', '-NBe', "alter database `#{resource[:name]}` CHARACTER SET #{value}")
   end
 
   def exists?

@@ -36,13 +36,13 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   def self.query_user_privs
     results = mysql("mysql", "-Be", "describe user")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
-    @user_privs = column_names.delete_if { |e| !( e =~/_priv$/) }.map! { |p| p.intern }
+    @user_privs = column_names.delete_if { |e| !( e =~/_priv$/) }
   end
 
   def self.query_db_privs
     results = mysql("mysql", "-Be", "describe db")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
-    @db_privs = column_names.delete_if { |e| !(e =~/_priv$/) }.map! { |p| p.intern }
+    @db_privs = column_names.delete_if { |e| !(e =~/_priv$/) }
   end
 
   def mysql_flush
@@ -106,8 +106,8 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
                 when :db
                   db_privs
                 end
-    all_privs = all_privs.collect do |p| p.to_s end.sort.join("|")
-    privs = privileges.collect do |p| p.to_s end.sort.join("|")
+    all_privs = all_privs.collect do |p| p.downcase end.sort.join("|")
+    privs = privileges.collect do |p| p.downcase end.sort.join("|")
 
     all_privs == privs
   end
@@ -133,7 +133,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       privs = privs.select do |p| p[0].match(/_priv$/) and p[1] == 'Y' end
     end
 
-    privs.collect do |p| symbolize(p[0]) end
+    privs.collect do |p| p[0] end
   end
 
   def privileges=(privs)
@@ -153,16 +153,21 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       all_privs = user_privs
     when :db
       stmt = 'update db set '
-      where = ' where user="%s" and host="%s"' % [ name[:user], name[:host] ]
+      where = ' where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
       all_privs = db_privs
     end
 
-    if privs[0] == :all
+    if privs[0].downcase == 'all'
       privs = all_privs
     end
 
+    # Downcase the requested priviliges for case-insensitive selection
+    # we don't map! here because the all_privs object has to remain in
+    # the same case the DB gave it to us in
+    privs = privs.map { |p| p.downcase }
+
     # puts "stmt:", stmt
-    set = all_privs.collect do |p| "%s = '%s'" % [p, privs.include?(p) ? 'Y' : 'N'] end.join(', ')
+    set = all_privs.collect do |p| "%s = '%s'" % [p, privs.include?(p.downcase) ? 'Y' : 'N'] end.join(', ')
     # puts "set:", set
     stmt = stmt << set << where
 
