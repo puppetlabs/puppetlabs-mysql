@@ -34,19 +34,19 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   end
 
   def self.query_user_privs
-    results = mysql("--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "mysql", "-Be", "describe user")
+    results = mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "mysql", "-Be", "describe user")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
     @user_privs = column_names.delete_if { |e| !( e =~/_priv$/) }
   end
 
   def self.query_db_privs
-    results = mysql("--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "mysql", "-Be", "describe db")
+    results = mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "mysql", "-Be", "describe db")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
     @db_privs = column_names.delete_if { |e| !(e =~/_priv$/) }
   end
 
   def mysql_flush
-    mysqladmin "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "flush-privileges"
+    mysqladmin "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "flush-privileges"
   end
 
   # this parses the
@@ -74,11 +74,11 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       name = split_name(@resource[:name])
       case name[:type]
       when :user
-        mysql "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "-e", "INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
+        mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-e", "INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
           name[:host], name[:user],
         ]
       when :db
-        mysql "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "-e", "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
+        mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-e", "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
           name[:host], name[:user], name[:db],
         ]
       end
@@ -87,7 +87,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   end
 
   def destroy
-    mysql "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "-e", "REVOKE ALL ON '%s'.* FROM '%s@%s'" % [ @resource[:privileges], @resource[:database], @resource[:name], @resource[:host] ]
+    mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-e", "REVOKE ALL ON '%s'.* FROM '%s@%s'" % [ @resource[:privileges], @resource[:database], @resource[:name], @resource[:host] ]
   end
 
   def row_exists?
@@ -96,7 +96,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     if name[:type] == :db
       fields << :db
     end
-    not mysql( "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s = '%s'" % [f, name[f]] end.join(' AND ')]).empty?
+    not mysql( "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s = '%s'" % [f, name[f]] end.join(' AND ')]).empty?
   end
 
   def all_privs_set?
@@ -118,9 +118,9 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 
     case name[:type]
     when :user
-      privs = mysql "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "-Be", 'select * from mysql.user where user="%s" and host="%s"' % [ name[:user], name[:host] ]
+      privs = mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-Be", 'select * from mysql.user where user="%s" and host="%s"' % [ name[:user], name[:host] ]
     when :db
-      privs = mysql "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "-Be", 'select * from mysql.db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
+      privs = mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-Be", 'select * from mysql.db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
     end
 
     if privs.match(/^$/)
@@ -171,7 +171,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     # puts "set:", set
     stmt = stmt << set << where
 
-    mysql "--defaults-file=#{Facter.value(:roothome)}/.my.cnf", "-Be", stmt
+    mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-Be", stmt
     mysql_flush
   end
 end
