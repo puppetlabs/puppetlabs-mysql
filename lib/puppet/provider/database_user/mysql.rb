@@ -36,7 +36,7 @@ Puppet::Type.type(:database_user).provide(:mysql) do
 
   def flush
     @property_hash.clear
-    mysqladmin "flush-privileges"
+    mysqladmin '--defaults-file=~root/.my.cnf', "flush-privileges"
   end
 
 end

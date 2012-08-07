@@ -18,7 +18,7 @@ Puppet::Type.type(:database).provide(:mysql) do
   end
 
   def destroy
-    mysqladmin('-f', 'drop', @resource[:name])
+    mysqladmin('--defaults-file=~root/.my.cnf', '-f', 'drop', @resource[:name])
   end
 
   def charset

@@ -34,19 +34,19 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   end
 
   def self.query_user_privs
-    results = mysql("mysql", "-Be", "describe user")
+    results = mysql('--defaults-file=~root/.my.cnf', "mysql", "-Be", "describe user")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
     @user_privs = column_names.delete_if { |e| !( e =~/_priv$/) }
   end
 
   def self.query_db_privs
-    results = mysql("mysql", "-Be", "describe db")
+    results = mysql('--defaults-file=~root/.my.cnf', "mysql", "-Be", "describe db")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
     @db_privs = column_names.delete_if { |e| !(e =~/_priv$/) }
   end
 
   def mysql_flush
-    mysqladmin "flush-privileges"
+    mysqladmin '--defaults-file=~root/.my.cnf', "flush-privileges"
   end
 
   # this parses the
