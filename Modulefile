@@ -7,4 +7,4 @@ summary 'Mysql module'
 description 'Mysql module'
 project_page 'http://github.com/puppetlabs/puppetlabs-mysql'
 
-dependency 'mordred/apparmor', '>= 0.1.0'
+dependency 'openstackci/apparmor', '>= 0.0.1'
