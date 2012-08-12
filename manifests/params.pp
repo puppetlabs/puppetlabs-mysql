@@ -68,9 +68,11 @@ class mysql::params {
   case $::operatingsystem {
     "Ubuntu": {
       $service_provider = upstart
+      $apparmor_file = 'mysql/templates/apparmor.usr.sbin.mysqld.erb'
     }
     default: {
       $service_provider = undef
+      $apparmor_file = undef
     }
   }
 

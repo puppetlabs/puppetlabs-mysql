@@ -6,3 +6,5 @@ license 'Apache 2.0'
 summary 'Mysql module'
 description 'Mysql module'
 project_page 'http://github.com/puppetlabs/puppetlabs-mysql'
+
+dependency 'mordred/apparmor', '>= 0.1.0'
