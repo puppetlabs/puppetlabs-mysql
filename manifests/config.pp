@@ -15,6 +15,9 @@
 #   [*ssl_ca]             - path to ssl-ca
 #   [*ssl_cert]           - path to ssl-cert
 #   [*ssl_key]            - path to ssl-key
+#   [*log_error*]         - path to error log.
+#   [*slow_query]         - enable slow query logging.
+#   [*log_slowq*]         - path to slow query log.
 #
 # Actions:
 #
@@ -44,6 +47,9 @@ class mysql::config(
   $ssl_cert          = $mysql::params::ssl_cert,
   $ssl_key           = $mysql::params::ssl_key,
   $log_error         = $mysql::params::log_error,
+  $slow_query        = $mysql::params::slow_query,
+  $log_slowq         = $mysql::params::log_slowq,
+  $log_slowq_time    = $mysql::params::log_slowq_time,
   $default_engine    = 'UNSET',
   $root_group        = $mysql::params::root_group
 ) inherits mysql::params {
@@ -117,6 +123,19 @@ class mysql::config(
   file { $config_file:
     content => template('mysql/my.cnf.erb'),
     mode    => '0644',
+  }
+  if $slow_query == true {
+    file { '/etc/mysql/conf.d/slow_query.cnf':
+      content => template('mysql/slow_query.cnf.erb'),
+      mode    => '0644',
+    }
+    file { 'slowquery.log':
+      ensure => present,
+      owner  => 'mysql',
+      group  => 'mysql',
+      mode   => '0640',
+      path   => $log_slowq,
+    }
   }
 
 }

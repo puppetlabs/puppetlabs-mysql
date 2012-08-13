@@ -16,6 +16,8 @@ class mysql::params {
   $port                = 3306
   $etc_root_password   = false
   $ssl                 = false
+  $slow_query          = false
+  $log_slowq_time      = '10'
 
   case $::operatingsystem {
     "Ubuntu": {
@@ -36,6 +38,7 @@ class mysql::params {
       $socket                = '/var/lib/mysql/mysql.sock'
       $config_file           = '/etc/my.cnf'
       $log_error             = '/var/log/mysqld.log'
+      $log_slowq             = '/var/log/mysqld_slowquery.log'
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
       $python_package_name   = 'MySQL-python'
@@ -55,6 +58,7 @@ class mysql::params {
       $socket               = '/var/run/mysqld/mysqld.sock'
       $config_file          = '/etc/mysql/my.cnf'
       $log_error            = '/var/log/mysql/error.log'
+      $log_slowq            = '/var/log/mysql/slowquery.log'
       $ruby_package_name    = 'libmysql-ruby'
       $python_package_name  = 'python-mysqldb'
       $java_package_name    = 'libmysql-java'
@@ -73,6 +77,7 @@ class mysql::params {
       $socket                = '/tmp/mysql.sock'
       $config_file           = '/var/db/mysql/my.cnf'
       $log_error             = "/var/db/mysql/${::hostname}.err"
+      $log_slowq             = '/var/db/mysql/slowquery.log'
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
       $python_package_name   = 'databases/py-MySQLdb'
