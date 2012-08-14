@@ -103,6 +103,7 @@ class mysql::params {
           $ssl_cert              = '/etc/mysql/server-cert.pem'
           $ssl_key               = '/etc/mysql/server-key.pem'
         }
+      }
 
       default: {
         fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat, Debian, and FreeBSD, or operatingsystem Amazon")
