@@ -12,15 +12,6 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   optional_commands :mysql      => 'mysql'
   optional_commands :mysqladmin => 'mysqladmin'
 
-  def defaults_file
-    case Facter.value(:operatingsystem)
-    when "Debian", "Ubuntu"
-      return "--defaults-file=/etc/mysql/debian.cnf"
-    else
-      return ""
-    end
-  end
-
   def self.prefetch(resources)
     @user_privs = query_user_privs
     @db_privs = query_db_privs
@@ -43,19 +34,19 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   end
 
   def self.query_user_privs
-    results = mysql(defaults_file, "-Be", "describe user")
+    results = mysql("mysql", "-Be", "describe user")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
     @user_privs = column_names.delete_if { |e| !( e =~/_priv$/) }
   end
 
   def self.query_db_privs
-    results = mysql(defaults_file, "-Be", "describe db")
+    results = mysql("mysql", "-Be", "describe db")
     column_names = results.split(/\n/).map { |l| l.chomp.split(/\t/)[0] }
     @db_privs = column_names.delete_if { |e| !(e =~/_priv$/) }
   end
 
   def mysql_flush
-    mysqladmin defaults_file, "flush-privileges"
+    mysqladmin "flush-privileges"
   end
 
   # this parses the
@@ -83,11 +74,11 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       name = split_name(@resource[:name])
       case name[:type]
       when :user
-        mysql defaults_file, "-e", "INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
+        mysql "mysql", "-e", "INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
           name[:host], name[:user],
         ]
       when :db
-        mysql defaults_file, "-e", "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
+        mysql "mysql", "-e", "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
           name[:host], name[:user], name[:db],
         ]
       end
@@ -96,7 +87,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   end
 
   def destroy
-    mysql defaults_file, "-e", "REVOKE ALL ON '%s'.* FROM '%s@%s'" % [ @resource[:privileges], @resource[:database], @resource[:name], @resource[:host] ]
+    mysql "mysql", "-e", "REVOKE ALL ON '%s'.* FROM '%s@%s'" % [ @resource[:privileges], @resource[:database], @resource[:name], @resource[:host] ]
   end
 
   def row_exists?
@@ -105,7 +96,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     if name[:type] == :db
       fields << :db
     end
-    not mysql( defaults_file, "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s = '%s'" % [f, name[f]] end.join(' AND ')]).empty?
+    not mysql( "mysql", "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s = '%s'" % [f, name[f]] end.join(' AND ')]).empty?
   end
 
   def all_privs_set?
@@ -127,9 +118,9 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 
     case name[:type]
     when :user
-      privs = mysql defaults_file, "-Be", 'select * from user where user="%s" and host="%s"' % [ name[:user], name[:host] ]
+      privs = mysql "mysql", "-Be", 'select * from user where user="%s" and host="%s"' % [ name[:user], name[:host] ]
     when :db
-      privs = mysql defaults_file, "-Be", 'select * from db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
+      privs = mysql "mysql", "-Be", 'select * from db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
     end
 
     if privs.match(/^$/)
@@ -180,7 +171,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     # puts "set:", set
     stmt = stmt << set << where
 
-    mysql defaults_file, "-Be", stmt
+    mysql "mysql", "-Be", stmt
     mysql_flush
   end
 end
