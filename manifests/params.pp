@@ -35,7 +35,6 @@ class mysql::params {
   $thread_concurrency             = '10'
   $query_cache_size               = '16M'
   $query_cache_limit              = '1M'
-  $tmp_table_size                 = '16M'
   $read_rnd_buffer_size           = '256K'
   $key_buffer_size                = '16M'
   $myisam_sort_buffer_size        = '8M'
