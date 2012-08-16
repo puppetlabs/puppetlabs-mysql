@@ -19,8 +19,6 @@ class mysql::server (
   $package_ensure   = 'present',
   $service_name     = $mysql::params::service_name,
   $service_provider = $mysql::params::service_provider,
-  $use_apparmor     = false,
-  $apparmor_file    = $mysql::params::apparmor_file,
   $config_hash      = {},
   $enabled          = true
 ) inherits mysql::params {
@@ -51,16 +49,4 @@ class mysql::server (
     provider => $service_provider,
   }
 
-  if $use_apparmor {
-    include apparmor
-
-    file { "/etc/apparmor.d/usr.sbin.mysqld":
-      owner   => 'root',
-      group   => 'root',
-      mode    => 0644,
-      content => template($apparmor_file),
-      require => Package['mysql-server'],
-      notify  => Class['apparmor'],
-    }
-  }
 }
