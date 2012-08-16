@@ -16,6 +16,8 @@ class mysql::params {
   $port                = 3306
   $etc_root_password   = false
   $ssl                 = false
+  $my_cnf_template     = "mysql/my.cnf.erb"
+  $pass_template       = "mysql/my.cnf.pass.erb"
 
   case $::operatingsystem {
     "Ubuntu": {
