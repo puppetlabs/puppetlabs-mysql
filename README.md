@@ -115,6 +115,8 @@ The custom resources can be used in any other manifests:
 
     database_grant { 'user@localhost/database':
       privileges => ['all'] ,
+      # Or specify individual privileges with columns from the mysql.db table:
+      # privileges => ['Select_priv', 'Insert_priv', 'Update_priv', 'Delete_priv']
     }
 
 A resource default can be specified to handle dependency:
