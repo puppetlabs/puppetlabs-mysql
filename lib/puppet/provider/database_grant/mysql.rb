@@ -74,11 +74,11 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       name = split_name(@resource[:name])
       case name[:type]
       when :user
-        mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-e", "INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
+        mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", 'mysql', "-e", "INSERT INTO user (host, user) VALUES ('%s', '%s')" % [
           name[:host], name[:user],
         ]
       when :db
-        mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-e", "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
+        mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", 'mysql', "-e", "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
           name[:host], name[:user], name[:db],
         ]
       end
@@ -96,7 +96,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     if name[:type] == :db
       fields << :db
     end
-    not mysql( "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s=\"%s\"" % [f, name[f]] end.join(' AND ')]).empty?
+    not mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", 'mysql', '-NBe', 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s=\"%s\"" % [f, name[f]] end.join(' AND ')]).empty?
   end
 
   def all_privs_set?
@@ -171,7 +171,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     # puts "set:", set
     stmt = stmt << set << where
 
-    mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-Be", stmt
+    mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", 'mysql', "-Be", stmt
     mysql_flush
   end
 end
