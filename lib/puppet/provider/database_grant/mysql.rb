@@ -96,7 +96,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     if name[:type] == :db
       fields << :db
     end
-    not mysql( "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s = '%s'" % [f, name[f]] end.join(' AND ')]).empty?
+    not mysql( "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-NBe", 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s=\"%s\"" % [f, name[f]] end.join(' AND ')]).empty?
   end
 
   def all_privs_set?
