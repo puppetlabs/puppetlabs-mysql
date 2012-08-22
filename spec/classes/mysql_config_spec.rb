@@ -21,6 +21,7 @@ describe 'mysql::config' do
          :service_name => 'mysql',
          :config_file  => '/etc/mysql/my.cnf',
          :socket       => '/var/run/mysqld/mysqld.sock',
+         :pidfile      => '/var/run/mysqld/mysqld.pid',
          :root_group   => 'root',
          :ssl_ca       => '/etc/mysql/cacert.pem',
          :ssl_cert     => '/etc/mysql/server-cert.pem',
@@ -31,6 +32,7 @@ describe 'mysql::config' do
          :service_name => 'mysql-server',
          :config_file  => '/var/db/mysql/my.cnf',
          :socket       => '/tmp/mysql.sock',
+         :pidfile      => '/var/db/mysql/mysql.pid',
          :root_group   => 'wheel',
       },
       'Redhat' => {
@@ -38,6 +40,7 @@ describe 'mysql::config' do
          :service_name => 'mysqld',
          :config_file  => '/etc/my.cnf',
          :socket       => '/var/lib/mysql/mysql.sock',
+         :pidfile      => '/var/run/mysqld/mysqld.pid',
          :root_group   => 'root',
          :ssl_ca       => '/etc/mysql/cacert.pem',
          :ssl_cert     => '/etc/mysql/server-cert.pem',
@@ -92,6 +95,7 @@ describe 'mysql::config' do
             :service_name   => 'dans_service',
             :config_file    => '/home/dan/mysql.conf',
             :service_name   => 'dans_mysql',
+            :pidfile        => '/home/dan/mysql.pid',
             :socket         => '/home/dan/mysql.sock',
             :bind_address   => '0.0.0.0',
             :port           => '3306',
@@ -153,6 +157,7 @@ describe 'mysql::config' do
               expected_lines = [
                 "port    = #{param_values[:port]}",
                 "socket    = #{param_values[:socket]}",
+                "pid-file  = #{param_values[:pidfile]}",
                 "datadir   = #{param_values[:datadir]}",
                 "bind-address    = #{param_values[:bind_address]}"
               ]
