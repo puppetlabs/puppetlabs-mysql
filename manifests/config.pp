@@ -38,6 +38,7 @@ class mysql::config(
   $service_name      = $mysql::params::service_name,
   $config_file       = $mysql::params::config_file,
   $socket            = $mysql::params::socket,
+  $pidfile           = $mysql::params::pidfile,
   $datadir           = $mysql::params::datadir,
   $ssl               = $mysql::params::ssl,
   $ssl_ca            = $mysql::params::ssl_ca,

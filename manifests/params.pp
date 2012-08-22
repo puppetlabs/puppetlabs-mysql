@@ -34,6 +34,7 @@ class mysql::params {
       $client_package_name   = 'mysql'
       $server_package_name   = 'mysql-server'
       $socket                = '/var/lib/mysql/mysql.sock'
+      $pidfile               = '/var/run/mysqld/mysqld.pid'
       $config_file           = '/etc/my.cnf'
       $log_error             = '/var/log/mysqld.log'
       $ruby_package_name     = 'ruby-mysql'
@@ -53,6 +54,7 @@ class mysql::params {
       $client_package_name  = 'mysql-client'
       $server_package_name  = 'mysql-server'
       $socket               = '/var/run/mysqld/mysqld.sock'
+      $pidfile              = '/var/run/mysqld/mysqld.pid'
       $config_file          = '/etc/mysql/my.cnf'
       $log_error            = '/var/log/mysql/error.log'
       $ruby_package_name    = 'libmysql-ruby'
@@ -71,6 +73,7 @@ class mysql::params {
       $client_package_name   = 'databases/mysql55-client'
       $server_package_name   = 'databases/mysql55-server'
       $socket                = '/tmp/mysql.sock'
+      $pidfile               = '/var/db/mysql/mysql.pid'
       $config_file           = '/var/db/mysql/my.cnf'
       $log_error             = "/var/db/mysql/${::hostname}.err"
       $ruby_package_name     = 'ruby-mysql'
