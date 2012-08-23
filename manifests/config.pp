@@ -6,7 +6,7 @@
 #   [*old_root_password*] - previous root user password,
 #   [*bind_address*]      - address to bind service.
 #   [*port*]              - port to bind service.
-#   [*etc_root_password*] - whether to save /etc/.my.cnf.
+#   [*etc_root_password*] - whether to save /etc/my.cnf.
 #   [*service_name*]      - mysql service name.
 #   [*config_file*]       - my.cnf configuration file path.
 #   [*socket*]            - mysql socket.
@@ -99,7 +99,7 @@ class mysql::config(
     }
 
     if $etc_root_password {
-      file{ '/etc/.my.cnf':
+      file{ '/etc/my.cnf':
         content => template('mysql/my.cnf.pass.erb'),
         require => Exec['set_mysql_rootpw'],
       }
