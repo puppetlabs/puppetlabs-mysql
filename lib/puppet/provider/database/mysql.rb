@@ -8,30 +8,30 @@ Puppet::Type.type(:database).provide(:mysql) do
   optional_commands :mysqladmin => 'mysqladmin'
 
   def self.instances
-    mysql('-NBe', "show databases").split("\n").collect do |name|
+    mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-NBe', "show databases").split("\n").collect do |name|
       new(:name => name)
     end
   end
 
   def create
-    mysql('-NBe', "create database `#{@resource[:name]}` character set #{resource[:charset]}")
+    mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-NBe', "create database `#{@resource[:name]}` character set #{resource[:charset]}")
   end
 
   def destroy
-    mysqladmin('-f', 'drop', @resource[:name])
+    mysqladmin("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-f', 'drop', @resource[:name])
   end
 
   def charset
-    mysql('-NBe', "show create database `#{resource[:name]}`").match(/.*?(\S+)\s\*\//)[1]
+    mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-NBe', "show create database `#{resource[:name]}`").match(/.*?(\S+)\s\*\//)[1]
   end
 
   def charset=(value)
-    mysql('-NBe', "alter database `#{resource[:name]}` CHARACTER SET #{value}")
+    mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-NBe', "alter database `#{resource[:name]}` CHARACTER SET #{value}")
   end
 
   def exists?
     begin
-      mysql('-NBe', "show databases").match(/^#{@resource[:name]}$/)
+      mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-NBe', "show databases").match(/^#{@resource[:name]}$/)
     rescue => e
       debug(e.message)
       return nil
