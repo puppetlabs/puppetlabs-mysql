@@ -46,7 +46,8 @@ class mysql::config(
   $ssl_key           = $mysql::params::ssl_key,
   $log_error         = $mysql::params::log_error,
   $default_engine    = 'UNSET',
-  $root_group        = $mysql::params::root_group
+  $root_group        = $mysql::params::root_group,
+  $my_cnf_template   = 'mysql/my.cnf.erb'
 ) inherits mysql::params {
 
   File {
@@ -116,7 +117,7 @@ class mysql::config(
     mode   => '0755',
   }
   file { $config_file:
-    content => template('mysql/my.cnf.erb'),
+    content => template($my_cnf_template),
     mode    => '0644',
   }
 
