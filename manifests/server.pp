@@ -15,6 +15,7 @@
 # Sample Usage:
 #
 class mysql::server (
+  $custom_setup_class = undef,
   $package_name     = $mysql::params::server_package_name,
   $package_ensure   = 'present',
   $service_name     = $mysql::params::service_name,
@@ -22,31 +23,25 @@ class mysql::server (
   $config_hash      = {},
   $enabled          = true
 ) inherits mysql::params {
-
+  
   Class['mysql::server'] -> Class['mysql::config']
 
-  $config_class = {}
-  $config_class['mysql::config'] = $config_hash
+  create_resources( 'class', { 'mysql::config' => $config_hash } )
 
-  create_resources( 'class', $config_class )
-
-  package { 'mysql-server':
-    name   => $package_name,
-    ensure => $package_ensure,
-  }
-
-  if $enabled {
-    $service_ensure = 'running'
+  if ($custom_setup_class == undef) {
+    package { 'mysql-server':
+      name   => $package_name,
+      ensure => $package_ensure,
+    }
+ 
+    service { 'mysqld':
+      name     => $service_name,
+      ensure   => $enabled ? { true => 'running', default => 'stopped' },
+      enable   => $enabled,
+      require  => Package['mysql-server'],
+      provider => $service_provider,
+    }
   } else {
-    $service_ensure = 'stopped'
+    require($custom_setup_class)
   }
-
-  service { 'mysqld':
-    name     => $service_name,
-    ensure   => $service_ensure,
-    enable   => $enabled,
-    require  => Package['mysql-server'],
-    provider => $service_provider,
-  }
-
 }
