@@ -13,7 +13,11 @@ basedir   = <%= basedir %>
 datadir   = <%= datadir %>
 tmpdir    = /tmp
 skip-external-locking
+
+<% if bind_address != 'UNSET' %>
 bind-address    = <%= bind_address %>
+<% end %> 
+
 key_buffer         = 16M
 max_allowed_packet = 16M
 thread_stack       = 192K
