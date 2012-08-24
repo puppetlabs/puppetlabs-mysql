@@ -1,3 +1,12 @@
+2012-08-23 - Version 0.5.0
+* Add puppetlabs/stdlib as requirement
+* Add validation for mysql privs in provider
+* Add `pidfile` parameter to mysql::config
+* Add `ensure` parameter to mysql::db
+* Add Amazon linux support
+* Change `bind_address` parameter to be optional in my.cnf template
+* Fix quoting root passwords
+
 2012-07-24 - Version 0.4.0
 * Fix various bugs regarding database names
 * FreeBSD support
