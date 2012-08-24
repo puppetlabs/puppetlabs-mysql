@@ -8,7 +8,7 @@
 # == Parameters:
 #
 # - name: is the name of the file
-# - notify_service: wether to notify the mysql daemon or not (default: true)
+# - notify_service: whether to notify the mysql daemon or not (default: true)
 # - settings: either a string which should be the content of the file
 #     or a hash with the following structure
 #
