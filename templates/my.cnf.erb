@@ -14,7 +14,7 @@ datadir   = <%= datadir %>
 tmpdir    = /tmp
 skip-external-locking
 
-<% if bind_address != 'UNSET' %>
+<% if bind_address %>
 bind-address    = <%= bind_address %>
 <% end %> 
 
