@@ -8,6 +8,7 @@
 # == Parameters:
 #
 # - name: is the name of the file
+# - notify_service: wether to notify the mysql daemon or not (default: true)
 # - settings: either a string which should be the content of the file
 #     or a hash with the following structure
 #
@@ -35,7 +36,7 @@
 #   Easy one:
 #
 #   mysql::server::config { 'basic_config':
-#     setting => "[mysqld]\nskip-external-locking\n"
+#     settings => "[mysqld]\nskip-external-locking\n"
 #   }
 #
 #   This will create the file /etc/mysql/conf.d/10_basic_config.cnf with
@@ -48,7 +49,7 @@
 #   More complex example:
 #
 #   mysql::server::config { 'basic_config':
-#     setting  => {
+#     settings => {
 #       'mysqld' => {
 #         'query_cache_limit'     => '5M',
 #         'query_cache_size'      => '128M',
