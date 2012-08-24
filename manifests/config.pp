@@ -46,7 +46,9 @@ class mysql::config(
   $ssl_key           = $mysql::params::ssl_key,
   $log_error         = $mysql::params::log_error,
   $default_engine    = 'UNSET',
-  $root_group        = $mysql::params::root_group
+  $root_group        = $mysql::params::root_group,
+  $my_cnf_template   = $mysql::params::my_cnf_template,
+  $pass_template     = $mysql::params::pass_template
 ) inherits mysql::params {
 
   File {
@@ -95,13 +97,13 @@ class mysql::config(
     }
 
     file { '/root/.my.cnf':
-      content => template('mysql/my.cnf.pass.erb'),
+      content => template($pass_template),
       require => Exec['set_mysql_rootpw'],
     }
 
     if $etc_root_password {
       file{ '/etc/my.cnf':
-        content => template('mysql/my.cnf.pass.erb'),
+        content => template($pass_template),
         require => Exec['set_mysql_rootpw'],
       }
     }
@@ -116,7 +118,7 @@ class mysql::config(
     mode   => '0755',
   }
   file { $config_file:
-    content => template('mysql/my.cnf.erb'),
+    content => template($my_cnf_template),
     mode    => '0644',
   }
 
