@@ -6,18 +6,14 @@ RSpec.configure do |config|
 end
 provider_class = Puppet::Type.type(:database_grant).provider(:mysql)
 describe provider_class do
-  root_home = '/some/root/home'
-  #root_home = ''
-
-  let :facts do
-    { :root_home => root_home }
-  end
+  let(:root_home) { '/some/root/home' }
 
   before :each do
     @resource = Puppet::Type::Database_grant.new(
       { :privileges => 'all', :provider => 'mysql', :name => 'user@host'}
     )
     @provider = provider_class.new(@resource)
+    Facter.stubs(:value).with(:root_home).returns(root_home)
   end
 
   it 'should query privilegess from the database' do
