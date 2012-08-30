@@ -6,8 +6,8 @@ RSpec.configure do |config|
 end
 provider_class = Puppet::Type.type(:database_grant).provider(:mysql)
 describe provider_class do
-  #root_home = '/some/root/home'
-  root_home = ''
+  root_home = '/some/root/home'
+  #root_home = ''
 
   let :facts do
     { :root_home => root_home }
