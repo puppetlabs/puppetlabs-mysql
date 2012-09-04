@@ -87,8 +87,7 @@ define mysql::server::config (
 ) {
   include mysql::config
 
-  # XXX would be nicer to use the is_hash function from stdlib
-  if inline_template('<%= settings.is_a?(Hash) ? "true" : "false" %>') == 'true' {
+  if is_hash($settings) {
     $content = template('mysql/my.conf.cnf.erb')
   } else {
     $content = $settings

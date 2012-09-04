@@ -20,8 +20,8 @@ class mysql::ruby (
 ) inherits mysql::params {
 
   package{ 'ruby_mysql':
-    name     => $package_name,
     ensure   => $package_ensure,
+    name     => $package_name,
     provider => $package_provider,
   }
 

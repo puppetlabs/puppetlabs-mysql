@@ -18,7 +18,7 @@ class mysql::params {
   $ssl                 = false
 
   case $::operatingsystem {
-    "Ubuntu": {
+    'Ubuntu': {
       $service_provider = upstart
     }
     default: {
