@@ -17,6 +17,9 @@ describe 'mysql::server::account_security' do
   it 'should remove Database_User[root@127.0.0.1]' do
     should contain_database_user('root@127.0.0.1').with_ensure('absent')
   end
+  it 'should remove Database_User[root@::1]' do
+    should contain_database_user('root@::1').with_ensure('absent')
+  end
   it 'should remove Database_User[@myhost.mydomain]' do
     should contain_database_user('@myhost.mydomain').with_ensure('absent')
   end
