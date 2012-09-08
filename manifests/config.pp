@@ -15,6 +15,10 @@
 #   [*ssl_ca]             - path to ssl-ca
 #   [*ssl_cert]           - path to ssl-cert
 #   [*ssl_key]            - path to ssl-key
+#   [*log_error]          - path to mysql error log
+#   [*default_engine]     - configure a default table engine
+#   [*root_group]         - use specified group for root-owned files
+#   [*restart]            - whether to restart mysqld (true/false)
 #
 # Actions:
 #
