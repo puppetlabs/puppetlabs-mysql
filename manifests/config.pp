@@ -15,6 +15,10 @@
 #   [*ssl_ca]             - path to ssl-ca
 #   [*ssl_cert]           - path to ssl-cert
 #   [*ssl_key]            - path to ssl-key
+#   [*log_error]          - path to mysql error log
+#   [*default_engine]     - configure a default table engine
+#   [*root_group]         - use specified group for root-owned files
+#   [*restart]            - whether to restart mysqld (true/false)
 #
 # Actions:
 #
@@ -46,14 +50,18 @@ class mysql::config(
   $ssl_key           = $mysql::params::ssl_key,
   $log_error         = $mysql::params::log_error,
   $default_engine    = 'UNSET',
-  $root_group        = $mysql::params::root_group
+  $root_group        = $mysql::params::root_group,
+  $restart           = $mysql::params::restart
 ) inherits mysql::params {
 
   File {
     owner  => 'root',
     group  => $root_group,
     mode   => '0400',
-    notify => Exec['mysqld-restart'],
+    notify    => $restart ? {
+      true => Exec['mysqld-restart'],
+      false => undef,
+    },
   }
 
   if $ssl and $ssl_ca == undef {
@@ -90,7 +98,10 @@ class mysql::config(
       logoutput => true,
       unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
-      notify    => Exec['mysqld-restart'],
+      notify    => $restart ? {
+        true => Exec['mysqld-restart'],
+        false => undef,
+      },
       require   => File['/etc/mysql/conf.d'],
     }
 
