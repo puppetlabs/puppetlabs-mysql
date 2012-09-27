@@ -20,12 +20,13 @@ class mysql::server (
   $service_name     = $mysql::params::service_name,
   $service_provider = $mysql::params::service_provider,
   $config_hash      = {},
-  $enabled          = true
+  $enabled          = true,
+  $config_type      = $mysql::params::config_type
 ) inherits mysql::params {
 
-  Class['mysql::server'] -> Class['mysql::config']
+  Class['mysql::server'] -> Class[$config_type]
 
-  $config_class = { 'mysql::config' => $config_hash }
+  $config_class = { "$config_type" => $config_hash }
 
   create_resources( 'class', $config_class )
 
