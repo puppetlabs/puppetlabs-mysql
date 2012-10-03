@@ -19,7 +19,7 @@ class mysql::params {
   $restart             = true
 
   case $::operatingsystem {
-    'Ubuntu': {
+    "Ubuntu": {
       $service_provider = upstart
     }
     default: {
@@ -34,6 +34,9 @@ class mysql::params {
       $service_name          = 'mysqld'
       $client_package_name   = 'mysql'
       $server_package_name   = 'mysql-server'
+      $ius_client_packages   = ['mysql55','mysqlclient16','mysql55-libs']
+      $ius_client_package_excludes = ['mysql','mysql-libs','mysql-server','mysql-devel','mysql-test','mysql-embedded','mysql-embedded-devel']
+      $ius_server_packages   = ['mysql55-server',$ius_client_packages]
       $socket                = '/var/lib/mysql/mysql.sock'
       $pidfile               = '/var/run/mysqld/mysqld.pid'
       $config_file           = '/etc/my.cnf'
