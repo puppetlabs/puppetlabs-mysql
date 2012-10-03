@@ -39,7 +39,7 @@
 #     settings => "[mysqld]\nskip-external-locking\n"
 #   }
 #
-#   This will create the file /etc/mysql/conf.d/10_basic_config.cnf with
+#   This will create the file /etc/mysql/conf.d/basic_config.cnf with
 #   the following content:
 #
 #   [mysqld]
@@ -67,7 +67,7 @@
 #     }
 #   }
 #
-#   This will create the file /etc/mysql/conf.d/14_basic_config.cnf with
+#   This will create the file /etc/mysql/conf.d/basic_config.cnf with
 #   the following content:
 #
 #   [mysqld]
@@ -104,7 +104,7 @@ define mysql::server::config (
 
   if $notify_service {
     File["/etc/mysql/conf.d/${name}.cnf"] {
-      # XXX notifing the Service gives us a dependency circle but I don't understand why
+      # XXX notifying the Service gives us a dependency circle but I don't understand why
       notify => Exec['mysqld-restart']
     }
   }
