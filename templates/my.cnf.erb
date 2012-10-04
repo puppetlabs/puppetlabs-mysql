@@ -8,40 +8,125 @@ nice    = 0
 user    = mysql
 pid-file  = <%= pidfile %>
 socket    = <%= socket %>
-port      = <%= port %>
 basedir   = <%= basedir %>
 datadir   = <%= datadir %>
 tmpdir    = /tmp
 skip-external-locking
-
-<% if bind_address %>
-bind-address    = <%= bind_address %>
-<% end %> 
-
+max_allowed_packet = <%= max_allowed_packet %>
 key_buffer         = 16M
-max_allowed_packet = 16M
 thread_stack       = 192K
 thread_cache_size  = 8
 myisam-recover     = BACKUP
 query_cache_limit  = 1M
 query_cache_size   = 16M
-log_error          = <%= log_error %>
-expire_logs_days   = 10
-max_binlog_size    = 100M
-<% if default_engine != 'UNSET' %>
+<% if default_engine != 'UNSET' -%>
 default-storage-engine = <%= default_engine %>
-<% end %>
-<% if ssl == true %>
+<% end -%>
+
+# Fulltext searches to find words smaller than <%= ft_min_word_len %> characters
+ft_min_word_len = <%= ft_min_word_len %>
+
+<% # set read_only mode based on read_only variable -%>
+read_only = <%= read_only ? 1 : 0 %>
+
+##############
+# Networking #
+##############
+skip-name-resolve
+<% if bind_address -%>
+bind-address    = <%= bind_address %>
+<% end -%> 
+port            = <%= port %>
+<% if ssl == true -%>
 ssl-ca    = <%= ssl_ca %>
 ssl-cert  = <%= ssl_cert %>
 ssl-key   = <%= ssl_key %>
-<% end %>
+<% end -%>
+
+
+###########
+# Logging #
+###########
+log_error = <%= log_error %>
+<% if slow_query_log_file -%>
+slow_query_log = 1
+slow_query_log_file = <%= slow_query_log_file %>
+long_query_time = <%= long_query_time %>
+<% end -%>
+
+###################
+# InnoDB Settings #
+###################
+innodb_file_per_table = <%= innodb_file_per_table %>
+innodb_status_file = <%= innodb_status_file %>
+innodb_support_xa = <%= innodb_support_xa %>
+innodb_flush_log_at_trx_commit = <%= innodb_flush_log_at_trx_commit %>
+innodb_buffer_pool_size = <%= innodb_buffer_pool_size %>
+innodb_log_file_size = <%= innodb_log_file_size %>
+innodb_log_group_home_dir = <%= datadir %>
+<% if innodb_flush_method != '' -%>
+innodb_flush_method = <%= innodb_flush_method %>
+<% end -%>
+innodb_thread_concurrency = <%= innodb_thread_concurrency %>
+innodb_concurrency_tickets = <%= innodb_concurrency_tickets %>
+innodb_doublewrite = <%= innodb_doublewrite %>
+
+<% if replication_enabled -%>
+########################
+# Replication Settings #
+########################
+log_bin          = <%= datadir %>/<%= hostname %>-bin
+relay-log        = <%= datadir %>/<%= hostname %>-relay-bin
+relay-log-index  = <%= datadir %>/<%= hostname %>-relay-bin.index
+expire_logs_days = <%= expire_logs_days %>
+max_binlog_size  = <%= max_binlog_size %>
+auto-increment-increment = <%= auto_increment_increment %>
+auto-increment-offset = <%= auto_increment_offset %>
+
+# Log slave updates so that any machine may be a master
+log_slave_updates
+
+# report as <%= hostname + '.' + port %> to master
+report-host=<%= hostname + '.' + port %>
+
+<% #automatically generate a unique master server-id from IP -%>
+<% ia = ipaddress.split('.'); server_id = ia[0] + ia[2] + ia[3]; -%>
+server-id = <%= server_id %>
+
+<% replicate_ignore_db.each do |db| -%>
+replicate_ignore_db = <%= db %>
+<% end -%>
+<% replicate_ignore_table.each do |table| -%>
+replicate_ignore_table = <%= table %>
+<% end -%>
+<% replicate_do_db.each do |db| -%>
+replicate_do_db = <%= db %>
+<% end -%>
+<% replicate_do_table.each do |table| -%>
+replicate_do_table = <%= table %>
+<% end -%>
+
+<% end # if replication_enabled -%>
+
+
+##########
+# Extras #
+##########
+<% # render out any extra_configs as key = value pairs -%>
+<% extra_configs.each do |key, value| -%>
+<%= "#{key} = #{value}" %>
+<% end -%>
 
 [mysqldump]
 quick
 quote-names
-max_allowed_packet = 16M
+max_allowed_packet             = <%= max_allowed_packet %>
+
 [mysql]
 [isamchk]
 key_buffer    = 16M
+#
+# * IMPORTANT: Additional settings that can override those from this file!
+# The files must end with '.cnf', otherwise they'll be ignored.
+#
 !includedir /etc/mysql/conf.d/
