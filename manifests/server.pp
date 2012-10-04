@@ -31,10 +31,10 @@ class mysql::server (
   create_resources( 'class', $config_class )
 
   case $mysql::software_package {
-    ius: {
+    'ius': {
       $mysqlserver = 'mysql55-server'
     }
-    default,distro,vendor: {
+    default,'distro','vendor': {
       $mysqlserver = $package_name
     }
   }
