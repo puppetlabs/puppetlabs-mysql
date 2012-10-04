@@ -17,6 +17,7 @@ class mysql::params {
   $etc_root_password   = false
   $ssl                 = false
   $restart             = true
+  $config_type         = 'mysql::config'
 
   case $::operatingsystem {
     'Ubuntu': {
