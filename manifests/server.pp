@@ -20,7 +20,8 @@ class mysql::server (
   $service_name     = $mysql::params::service_name,
   $service_provider = $mysql::params::service_provider,
   $config_hash      = {},
-  $enabled          = true
+  $enabled          = true,
+  $manage_service   = true
 ) inherits mysql::params {
 
   Class['mysql::server'] -> Class['mysql::config']
@@ -40,12 +41,13 @@ class mysql::server (
     $service_ensure = 'stopped'
   }
 
-  service { 'mysqld':
-    ensure   => $service_ensure,
-    name     => $service_name,
-    enable   => $enabled,
-    require  => Package['mysql-server'],
-    provider => $service_provider,
+  if $manage_service {
+    service { 'mysqld':
+      ensure   => $service_ensure,
+      name     => $service_name,
+      enable   => $enabled,
+      require  => Package['mysql-server'],
+      provider => $service_provider,
+    }
   }
-
 }
