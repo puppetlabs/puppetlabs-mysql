@@ -87,7 +87,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   end
 
   def destroy
-    mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-e", "REVOKE ALL ON '%s'.* FROM '%s@%s'" % [ @resource[:privileges], @resource[:database], @resource[:name], @resource[:host] ]
+    mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "mysql", "-e", "REVOKE ALL ON '%s'.* FROM '%s@%s'" % [ @resource[:privileges], @resource[:database], @resource[:name], @resource[:host] ]
   end
 
   def row_exists?
@@ -96,7 +96,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     if name[:type] == :db
       fields << :db
     end
-    not mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", 'mysql', '-NBe', 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s=\"%s\"" % [f, name[f]] end.join(' AND ')]).empty?
+    not mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "mysql", '-NBe', 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s=\"%s\"" % [f, name[f]] end.join(' AND ')]).empty?
   end
 
   def all_privs_set?
@@ -118,9 +118,9 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 
     case name[:type]
     when :user
-      privs = mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-Be", 'select * from mysql.user where user="%s" and host="%s"' % [ name[:user], name[:host] ]
+      privs = mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "mysql", "-Be", 'select * from mysql.user where user="%s" and host="%s"' % [ name[:user], name[:host] ]
     when :db
-      privs = mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "-Be", 'select * from mysql.db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
+      privs = mysql "--defaults-file=#{Facter.value(:root_home)}/.my.cnf", "mysql", "-Be", 'select * from mysql.db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
     end
 
     if privs.match(/^$/)

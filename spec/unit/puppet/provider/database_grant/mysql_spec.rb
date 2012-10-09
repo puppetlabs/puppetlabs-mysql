@@ -40,7 +40,7 @@ EOT
   end
 
   it 'should query set priviliges' do
-    provider_class.expects(:mysql).with("--defaults-file=#{root_home}/.my.cnf", '-Be', 'select * from mysql.user where user="user" and host="host"').returns <<-EOT
+    provider_class.expects(:mysql).with("--defaults-file=#{root_home}/.my.cnf", 'mysql', '-Be', 'select * from mysql.user where user="user" and host="host"').returns <<-EOT
 Host	User	Password	Select_priv	Insert_priv	Update_priv
 host	user		Y	N	Y
 EOT
@@ -48,7 +48,7 @@ EOT
   end
 
   it 'should recognize when all priviliges are set' do
-    provider_class.expects(:mysql).with("--defaults-file=#{root_home}/.my.cnf", '-Be', 'select * from mysql.user where user="user" and host="host"').returns <<-EOT
+    provider_class.expects(:mysql).with("--defaults-file=#{root_home}/.my.cnf", 'mysql', '-Be', 'select * from mysql.user where user="user" and host="host"').returns <<-EOT
 Host	User	Password	Select_priv	Insert_priv	Update_priv
 host	user		Y	Y	Y
 EOT
@@ -56,7 +56,7 @@ EOT
   end
 
   it 'should recognize when all privileges are not set' do
-    provider_class.expects(:mysql).with("--defaults-file=#{root_home}/.my.cnf", '-Be', 'select * from mysql.user where user="user" and host="host"').returns <<-EOT
+    provider_class.expects(:mysql).with("--defaults-file=#{root_home}/.my.cnf", 'mysql', '-Be', 'select * from mysql.user where user="user" and host="host"').returns <<-EOT
 Host	User	Password	Select_priv	Insert_priv	Update_priv
 host	user		Y	N	Y
 EOT
