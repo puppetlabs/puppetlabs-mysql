@@ -116,6 +116,11 @@ class mysql::config(
         require => Exec['set_mysql_rootpw'],
       }
     }
+  } else {
+    file { '/root/.my.cnf':
+      ensure  => present,
+      require => Exec['set_mysql_rootpw'],
+    }
   }
 
   file { '/etc/mysql':
