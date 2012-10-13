@@ -130,7 +130,7 @@ describe 'mysql::config' do
 
             it { should_not contain_exec('set_mysql_rootpw') }
 
-            it { should_not contain_file('/root/.my.cnf')}
+            it { should contain_file('/root/.my.cnf')}
 
             it { should contain_file('/etc/mysql').with(
               'owner'  => 'root',
