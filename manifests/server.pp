@@ -23,16 +23,26 @@ class mysql::server (
   $enabled          = true,
   $manage_service   = true
 ) inherits mysql::params {
-
+  include mysql
+  include mysql::client
   Class['mysql::server'] -> Class['mysql::config']
 
   $config_class = { 'mysql::config' => $config_hash }
 
   create_resources( 'class', $config_class )
 
-  package { 'mysql-server':
-    ensure => $package_ensure,
-    name   => $package_name,
+  case $mysql::software_package {
+    'ius': {
+      $mysqlserver = 'mysql55-server'
+    }
+    default,'distro','vendor': {
+      $mysqlserver = $package_name
+    }
+  }
+  package { $mysqlserver:
+    ensure  => $package_ensure,
+    alias   => 'mysql-server',
+    require => Class['mysql::client']
   }
 
   if $enabled {

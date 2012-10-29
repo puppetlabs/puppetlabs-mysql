@@ -12,11 +12,35 @@
 #
 class mysql::params {
 
-  $bind_address        = '127.0.0.1'
-  $port                = 3306
-  $etc_root_password   = false
-  $ssl                 = false
-  $restart             = true
+  $bind_address                   = '127.0.0.1'
+  $port                           = 3306
+  $etc_root_password              = false
+  $ssl                            = false
+  $restart                        = true
+  $slow_query_log_file            = false
+  $long_query_time                = 10
+  $read_only                      = false
+  $replication_enabled            = false
+  $expire_logs_days               = '10'
+  $max_binlog_size                = '100M'
+  $max_allowed_packet             = '16M'
+  $auto_increment_increment       = '10'
+  $replicate_ignore_table         = []
+  $replicate_ignore_db            = []
+  $replicate_do_table             = []
+  $replicate_do_db                = []
+  $innodb_file_per_table          = '1'
+  $innodb_flush_log_at_trx_commit = '0'
+  $innodb_buffer_pool_size        = '512M'
+  $innodb_status_file             = '0'
+  $innodb_support_xa              = '1'
+  $innodb_log_file_size           = '5M'
+  $innodb_flush_method            = ''
+  $innodb_thread_concurrency      = '8'
+  $innodb_concurrency_tickets     = '500'
+  $innodb_doublewrite             = '1'
+  $ft_min_word_len                = '5'
+  $extra_configs                  = {}
 
   case $::operatingsystem {
     'Ubuntu': {
@@ -34,6 +58,9 @@ class mysql::params {
       $service_name          = 'mysqld'
       $client_package_name   = 'mysql'
       $server_package_name   = 'mysql-server'
+      $ius_client_packages   = ['mysql55','mysqlclient16','mysql55-libs']
+      $ius_client_package_excludes = ['mysql','mysql-libs','mysql-server','mysql-devel','mysql-test','mysql-embedded','mysql-embedded-devel']
+      $ius_server_packages   = ['mysql55-server',$ius_client_packages]
       $socket                = '/var/lib/mysql/mysql.sock'
       $pidfile               = '/var/run/mysqld/mysqld.pid'
       $config_file           = '/etc/my.cnf'
