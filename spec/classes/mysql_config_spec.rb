@@ -62,7 +62,7 @@ describe 'mysql::config' do
           end
 
           it { should contain_exec('set_mysql_rootpw').with(
-            'command'   => 'mysqladmin -u root  password \'foo\'',
+            'command'   => 'mysqladmin --defaults-file=/root/.my.cnf -u root  password \'foo\'',
             'logoutput' => true,
             'unless'    => "mysqladmin -u root -p\'foo\' status > /dev/null",
             'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
