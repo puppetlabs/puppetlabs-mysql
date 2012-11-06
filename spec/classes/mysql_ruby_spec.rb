@@ -28,7 +28,7 @@ describe 'mysql::ruby' do
 
   describe 'on a redhat based os' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'RedHat'}
     end
     it { should contain_package('ruby_mysql').with(
       :name   => 'ruby-mysql',
