@@ -22,7 +22,7 @@ Puppet::Type.type(:database).provide(:mysql) do
   end
 
   def charset
-    mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-NBe', "show create database `#{resource[:name]}`").match(/.*?(\S+)\s\*\//)[1]
+    mysql("--defaults-file=#{Facter.value(:root_home)}/.my.cnf", '-NBe', "show create database `#{resource[:name]}`").match(/.*?(\S+)\s(?:COLLATE.*)?\*\//)[1]
   end
 
   def charset=(value)
