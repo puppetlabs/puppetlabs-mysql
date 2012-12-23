@@ -1,0 +1,13 @@
+{
+    "name": "puppetlabs/mysql",
+    "description": "Puppet Labs MySQL module",
+    "homepage": "https://github.com/puppetlabs/puppetlabs-mysql",
+    "type": "library",
+    "license": "Apache License, Version 2.0",
+    "authors": [
+        {
+            "name": "PuppetLabs",
+            "homepage": "http://www.puppetlabs.com/"
+        }
+    ]
+}
