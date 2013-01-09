@@ -49,6 +49,40 @@ class mysql::params {
       $ssl_key               = '/etc/mysql/server-key.pem'
     }
 
+    'Suse': {
+      $basedir               = '/usr'
+      $datadir               = '/var/lib/mysql'
+      $service_name          = 'mysql'
+      $client_package_name   = $::operatingsystem ? {
+        /OpenSuSE/           => 'mysql-community-server-client',
+        /(SLES|SLED)/        => 'mysql-client',
+        }
+      $server_package_name   = $::operatingsystem ? {
+        /OpenSuSE/           => 'mysql-community-server',
+        /(SLES|SLED)/        => 'mysql',
+        }
+      $socket                = $::operatingsystem ? {
+        /OpenSuSE/           => '/var/run/mysql/mysql.sock',
+        /(SLES|SLED)/        => '/var/lib/mysql/mysql.sock',
+        }
+      $pidfile               = '/var/run/mysql/mysqld.pid'
+      $config_file           = '/etc/my.cnf'
+      $log_error             = $::operatingsystem ? {
+        /OpenSuSE/           => '/var/log/mysql/mysqld.log',
+        /(SLES|SLED)/        => '/var/log/mysqld.log',
+        }
+      $ruby_package_name     = $::operatingsystem ? {
+        /OpenSuSE/           => 'rubygem-mysql',
+        /(SLES|SLED)/        => 'ruby-mysql',
+        }
+      $python_package_name   = 'python-mysql'
+      $java_package_name     = 'mysql-connector-java'
+      $root_group            = 'root'
+      $ssl_ca                = '/etc/mysql/cacert.pem'
+      $ssl_cert              = '/etc/mysql/server-cert.pem'
+      $ssl_key               = '/etc/mysql/server-key.pem'
+    }
+
     'Debian': {
       $basedir              = '/usr'
       $datadir              = '/var/lib/mysql'
