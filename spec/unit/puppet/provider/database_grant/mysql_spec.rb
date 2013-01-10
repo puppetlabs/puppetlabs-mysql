@@ -84,4 +84,12 @@ EOT
     provider_class.expects(:mysqladmin).with(["--defaults-file=#{root_home}/.my.cnf", 'flush-privileges'])
     @provider.privileges=(['SELECT_PRIV', 'insert_priv', 'UpDaTe_pRiV'])
   end
+
+  it 'should not pass --defaults-file if $root_home/.my.cnf is absent' do
+    File.stubs(:file?).with("#{root_home}/.my.cnf").returns(false)
+    provider_class.expects(:mysql).with(['mysql', '-NBe', 'SELECT "1" FROM user WHERE user="user" AND host="host"']).returns "1\n"
+    provider_class.expects(:mysql).with(['mysql', '-Be', "update user set Select_priv = 'Y', Insert_priv = 'N', Update_priv = 'Y' where user=\"user\" and host=\"host\""])
+    provider_class.expects(:mysqladmin).with(["flush-privileges"])
+    @provider.privileges=(['Select_priv', 'Update_priv'])
+  end
 end
