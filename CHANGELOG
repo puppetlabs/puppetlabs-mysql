@@ -1,3 +1,6 @@
+2013-01-11 - Version 0.6.1
+* Fix providers when /root/.my.cnf is absent
+
 2013-01-09 - Version 0.6.0
 * Add `mysql::server::config` define for specific config directives
 * Add `mysql::php` class for php support
