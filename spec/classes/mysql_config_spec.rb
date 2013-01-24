@@ -62,7 +62,7 @@ describe 'mysql::config' do
           end
 
           it { should contain_exec('set_mysql_rootpw').with(
-            'command'   => 'mysqladmin -u root  password \'foo\'',
+            'command'   => "mysqladmin -u root -p\'bar\' password \'foo\' ; mysql -u root -e \"SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD(\'foo\' ); SET PASSWORD FOR 'root'@'::1' = PASSWORD(\'foo\');\"",
             'logoutput' => true,
             'unless'    => "mysqladmin -u root -p\'foo\' status > /dev/null",
             'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
@@ -81,7 +81,7 @@ describe 'mysql::config' do
           end
 
           it { should contain_exec('set_mysql_rootpw').with(
-            'command'   => 'mysqladmin -u root -p\'bar\' password \'foo\'',
+            'command'   => "mysqladmin -u root -p\'bar\' password \'foo\' ; mysql -u root -e \"SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD(\'foo\' ); SET PASSWORD FOR 'root'@'::1' = PASSWORD(\'foo\');\"",
             'logoutput' => true,
             'unless'    => "mysqladmin -u root -p\'foo\' status > /dev/null",
             'path'      => '/usr/local/sbin:/usr/bin:/usr/local/bin'
