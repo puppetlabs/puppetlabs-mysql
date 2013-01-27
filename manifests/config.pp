@@ -95,7 +95,7 @@ class mysql::config(
     }
 
     exec { 'set_mysql_rootpw':
-      command   => "mysqladmin -u root ${old_pw} password '${root_password}'",
+      command   => "mysqladmin -u root ${old_pw} password '${root_password}' ; mysql -u root -p${root_password} -e \"SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('${root_password}'); SET PASSWORD FOR 'root'@'::1' = PASSWORD('${root_password}');\"",
       logoutput => true,
       unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
