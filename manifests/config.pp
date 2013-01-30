@@ -52,7 +52,8 @@ class mysql::config(
   $default_engine    = 'UNSET',
   $root_group        = $mysql::params::root_group,
   $restart           = $mysql::params::restart,
-  $purge_conf_dir    = false
+  $purge_conf_dir    = false,
+  $template          = 'mysql/my.cnf.erb'
 ) inherits mysql::params {
 
   File {
@@ -134,7 +135,7 @@ class mysql::config(
     purge   => $purge_conf_dir,
   }
   file { $config_file:
-    content => template('mysql/my.cnf.erb'),
+    content => template($template),
     mode    => '0644',
   }
 
