@@ -1,6 +1,6 @@
 # This has to be a separate type to enable collecting
 Puppet::Type.newtype(:database_user) do
-  @doc = "Manage a database user. This includes management of users password as well as priveleges"
+  @doc = "Manage a database user. This includes management of users password as well as privileges"
 
   ensurable
 
