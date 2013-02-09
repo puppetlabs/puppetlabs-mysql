@@ -4,7 +4,8 @@ Puppet::Type.newtype(:database_user) do
 
   ensurable
 
-  newparam(:name, :namevar=>true) do
+  newparam(:name, :namevar=>true)
+  newparam(:user) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."
     validate do |value|
       # https://dev.mysql.com/doc/refman/5.1/en/account-names.html
