@@ -54,8 +54,9 @@ define mysql::db (
     require  => Class['mysql::server'],
   }
 
-  database_user { "${user}@${host}":
+  database_user { "${user}@${host}/${name}":
     ensure        => $ensure,
+    user          => "${user}@${host}",
     password_hash => mysql_password($password),
     provider      => 'mysql',
     require       => Database[$name],
@@ -65,7 +66,7 @@ define mysql::db (
     database_grant { "${user}@${host}/${name}":
       privileges => $grant,
       provider   => 'mysql',
-      require    => Database_user["${user}@${host}"],
+      require    => Database_user["${user}@${host}/${name}"],
     }
 
     $refresh = ! $enforce_sql
