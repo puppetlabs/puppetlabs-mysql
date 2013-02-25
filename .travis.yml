@@ -8,20 +8,21 @@ rvm:
   - 1.9.3
   - ruby-head
 env:
-  - PUPPET_GEM_VERSION="~> 2.6"
-  - PUPPET_GEM_VERSION="~> 2.7"
-  - PUPPET_GEM_VERSION="~> 3.0"
+  - PUPPET_GEM_VERSION="~> 2.6.0"
+  - PUPPET_GEM_VERSION="~> 2.7.0"
+  - PUPPET_GEM_VERSION="~> 3.0.0"
+  - PUPPET_GEM_VERSION="~> 3.1.0"
 matrix:
   allow_failures:
     - rvm: ruby-head
   exclude:
     - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION="~> 2.7"
+      env: PUPPET_GEM_VERSION="~> 2.7.0"
     - rvm: ruby-head
-      env: PUPPET_GEM_VERSION="~> 2.7"
+      env: PUPPET_GEM_VERSION="~> 2.7.0"
     - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION="~> 2.6"
+      env: PUPPET_GEM_VERSION="~> 2.6.0"
     - rvm: ruby-head
-      env: PUPPET_GEM_VERSION="~> 2.6"
+      env: PUPPET_GEM_VERSION="~> 2.6.0"
 notifications:
   email: false
