@@ -56,6 +56,11 @@ Installs the mysql-client package.
 Installs mysql bindings for java.
 
     class { 'mysql::java': }
+    
+### mysql::php
+Installs mysql bindings for php
+
+    class { 'mysql::php': }
 
 ### mysql::python
 Installs mysql bindings for python.
