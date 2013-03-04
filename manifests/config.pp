@@ -19,6 +19,7 @@
 #   [*default_engine]     - configure a default table engine
 #   [*root_group]         - use specified group for root-owned files
 #   [*restart]            - whether to restart mysqld (true/false)
+#   [*max_allowed_packet] - sets the max_allowed_packet size
 #
 # Actions:
 #
