@@ -17,6 +17,7 @@ class mysql::params {
   $etc_root_password   = false
   $ssl                 = false
   $restart             = true
+  $max_allowed_packet  = '16M'
 
   case $::operatingsystem {
     'Ubuntu': {

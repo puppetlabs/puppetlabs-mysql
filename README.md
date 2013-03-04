@@ -81,6 +81,8 @@ Installs mysql-server packages, configures my.cnf and starts mysqld service:
 
 Database login information stored in `/root/.my.cnf`.
 
+**Note:** The `config-hash` parameter is passed through to the `mysql::config` class as its parameters. Check the header comments in `manifests/config.pp` to see which MySQL settings can be set.
+
 ### mysql::db
 Creates a database with a user and assign some privileges.
 

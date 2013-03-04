@@ -19,6 +19,7 @@
 #   [*default_engine]     - configure a default table engine
 #   [*root_group]         - use specified group for root-owned files
 #   [*restart]            - whether to restart mysqld (true/false)
+#   [*max_allowed_packet] - sets the max_allowed_packet size
 #
 # Actions:
 #
@@ -34,25 +35,26 @@
 #   }
 #
 class mysql::config(
-  $root_password     = 'UNSET',
-  $old_root_password = '',
-  $bind_address      = $mysql::params::bind_address,
-  $port              = $mysql::params::port,
-  $etc_root_password = $mysql::params::etc_root_password,
-  $service_name      = $mysql::params::service_name,
-  $config_file       = $mysql::params::config_file,
-  $socket            = $mysql::params::socket,
-  $pidfile           = $mysql::params::pidfile,
-  $datadir           = $mysql::params::datadir,
-  $ssl               = $mysql::params::ssl,
-  $ssl_ca            = $mysql::params::ssl_ca,
-  $ssl_cert          = $mysql::params::ssl_cert,
-  $ssl_key           = $mysql::params::ssl_key,
-  $log_error         = $mysql::params::log_error,
-  $default_engine    = 'UNSET',
-  $root_group        = $mysql::params::root_group,
-  $restart           = $mysql::params::restart,
-  $purge_conf_dir    = false
+  $root_password      = 'UNSET',
+  $old_root_password  = '',
+  $bind_address       = $mysql::params::bind_address,
+  $port               = $mysql::params::port,
+  $etc_root_password  = $mysql::params::etc_root_password,
+  $service_name       = $mysql::params::service_name,
+  $config_file        = $mysql::params::config_file,
+  $socket             = $mysql::params::socket,
+  $pidfile            = $mysql::params::pidfile,
+  $datadir            = $mysql::params::datadir,
+  $ssl                = $mysql::params::ssl,
+  $ssl_ca             = $mysql::params::ssl_ca,
+  $ssl_cert           = $mysql::params::ssl_cert,
+  $ssl_key            = $mysql::params::ssl_key,
+  $log_error          = $mysql::params::log_error,
+  $default_engine     = 'UNSET',
+  $root_group         = $mysql::params::root_group,
+  $restart            = $mysql::params::restart,
+  $max_allowed_packet = $mysql::params::max_allowed_packet,
+  $purge_conf_dir     = false
 ) inherits mysql::params {
 
   File {
