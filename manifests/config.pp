@@ -109,6 +109,7 @@ class mysql::config(
     file { '/root/.my.cnf':
       content => template('mysql/my.cnf.pass.erb'),
       require => Exec['set_mysql_rootpw'],
+      notify  => undef,
     }
 
     if $etc_root_password {
