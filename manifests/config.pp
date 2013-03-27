@@ -52,7 +52,9 @@ class mysql::config(
   $default_engine    = 'UNSET',
   $root_group        = $mysql::params::root_group,
   $restart           = $mysql::params::restart,
-  $purge_conf_dir    = false
+  $purge_conf_dir    = false,
+  $server_id         = $mysql::params::server_id
+
 ) inherits mysql::params {
 
   File {
