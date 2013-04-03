@@ -70,7 +70,7 @@ describe 'mysql::config' do
           )}
 
           it { should contain_file('/root/.my.cnf').with(
-            'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\n",
+            'content' => "[client]\nuser=root\nhost=localhost\npassword='foo'\n",
             'require' => 'Exec[set_mysql_rootpw]'
           )}
 
@@ -203,7 +203,7 @@ describe 'mysql::config' do
     )}
 
     it { should contain_file('/root/.my.cnf').with(
-      'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\n",
+      'content' => "[client]\nuser=root\nhost=localhost\npassword='foo'\n",
       'require' => 'Exec[set_mysql_rootpw]'
     )}
 
