@@ -7,7 +7,11 @@ describe "the mysql_password function" do
   end
 
   before :each do
-    @scope = Puppet::Parser::Scope.new
+    @scope = if Puppet.version =~ /^3/
+               Puppet::Parser::Scope.new_for_test_harness('localhost')
+             else
+               Puppet::Parser::Scope.new
+             end
   end
 
   it "should exist" do

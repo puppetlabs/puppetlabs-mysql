@@ -1,3 +1,23 @@
+2013-01-11 - Version 0.6.1
+* Fix providers when /root/.my.cnf is absent
+
+2013-01-09 - Version 0.6.0
+* Add `mysql::server::config` define for specific config directives
+* Add `mysql::php` class for php support
+* Add `backupcompress` parameter to `mysql::backup`
+* Add `restart` parameter to `mysql::config`
+* Add `purge_conf_dir` parameter to `mysql::config`
+* Add `manage_service` parameter to `mysql::server`
+* Add syslog logging support via the `log_error` parameter
+* Add initial SuSE support
+* Fix remove non-localhost root user when fqdn != hostname
+* Fix dependency in `mysql::server::monitor`
+* Fix .my.cnf path for root user and root password
+* Fix ipv6 support for users
+* Fix / update various spec tests
+* Fix typos
+* Fix lint warnings
+
 2012-08-23 - Version 0.5.0
 * Add puppetlabs/stdlib as requirement
 * Add validation for mysql privs in provider

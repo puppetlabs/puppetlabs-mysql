@@ -51,7 +51,8 @@ class mysql::config(
   $log_error         = $mysql::params::log_error,
   $default_engine    = 'UNSET',
   $root_group        = $mysql::params::root_group,
-  $restart           = $mysql::params::restart
+  $restart           = $mysql::params::restart,
+  $purge_conf_dir    = false
 ) inherits mysql::params {
 
   File {
@@ -127,8 +128,10 @@ class mysql::config(
     mode   => '0755',
   }
   file { '/etc/mysql/conf.d':
-    ensure => directory,
-    mode   => '0755',
+    ensure  => directory,
+    mode    => '0755',
+    recurse => $purge_conf_dir,
+    purge   => $purge_conf_dir,
   }
   file { $config_file:
     content => template('mysql/my.cnf.erb'),
