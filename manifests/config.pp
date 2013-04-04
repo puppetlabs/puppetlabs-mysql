@@ -19,6 +19,8 @@
 #   [*default_engine]     - configure a default table engine
 #   [*root_group]         - use specified group for root-owned files
 #   [*restart]            - whether to restart mysqld (true/false)
+#   [*character-set]      - You can change the default server and
+#                           client character set
 #
 # Actions:
 #
@@ -52,15 +54,16 @@ class mysql::config(
   $default_engine    = 'UNSET',
   $root_group        = $mysql::params::root_group,
   $restart           = $mysql::params::restart,
-  $purge_conf_dir    = false
+  $purge_conf_dir    = false,
+  $character_set     = 'UNSET',
 ) inherits mysql::params {
 
   File {
     owner  => 'root',
     group  => $root_group,
     mode   => '0400',
-    notify    => $restart ? {
-      true => Exec['mysqld-restart'],
+    notify => $restart ? {
+      true  => Exec['mysqld-restart'],
       false => undef,
     },
   }
@@ -100,7 +103,7 @@ class mysql::config(
       unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
       notify    => $restart ? {
-        true => Exec['mysqld-restart'],
+        true  => Exec['mysqld-restart'],
         false => undef,
       },
       require   => File['/etc/mysql/conf.d'],

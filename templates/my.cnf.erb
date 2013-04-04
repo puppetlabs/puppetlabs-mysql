@@ -1,6 +1,9 @@
 [client]
-port    = <%= port %>
+port      = <%= port %>
 socket    = <%= socket %>
+<% if character_set != 'UNSET' %>
+default-character-set = <%= character_set %>
+<% end -%>
 [mysqld_safe]
 socket    = <%= socket %>
 nice    = 0
@@ -35,6 +38,9 @@ expire_logs_days   = 10
 max_binlog_size    = 100M
 <% if default_engine != 'UNSET' %>
 default-storage-engine = <%= default_engine %>
+<% end %>
+<% if character_set != 'UNSET' %>
+character-set-server = <%= character_set %>
 <% end %>
 <% if ssl == true %>
 ssl-ca    = <%= ssl_ca %>
