@@ -2,25 +2,50 @@
 #
 # Parameters:
 #
-#   [*root_password*]     - root user password.
-#   [*old_root_password*] - previous root user password,
-#   [*bind_address*]      - address to bind service.
-#   [*port*]              - port to bind service.
-#   [*etc_root_password*] - whether to save /etc/my.cnf.
-#   [*service_name*]      - mysql service name.
-#   [*config_file*]       - my.cnf configuration file path.
-#   [*socket*]            - mysql socket.
-#   [*datadir*]           - path to datadir.
-#   [*ssl]                - enable ssl
-#   [*ssl_ca]             - path to ssl-ca
-#   [*ssl_cert]           - path to ssl-cert
-#   [*ssl_key]            - path to ssl-key
-#   [*log_error]          - path to mysql error log
-#   [*default_engine]     - configure a default table engine
-#   [*root_group]         - use specified group for root-owned files
-#   [*restart]            - whether to restart mysqld (true/false)
-#   [*character-set]      - You can change the default server and
-#                           client character set
+#   [*root_password*]       - root user password.
+#   [*old_root_password*]   - previous root user password,
+#   [*bind_address*]        - address to bind service.
+#   [*port*]                - port to bind service.
+#   [*etc_root_password*]   - whether to save /etc/my.cnf.
+#   [*service_name*]        - mysql service name.
+#   [*config_file*]         - my.cnf configuration file path.
+#   [*socket*]              - mysql socket.
+#   [*datadir*]             - path to datadir.
+#   [*ssl]                  - enable ssl
+#   [*ssl_ca]               - path to ssl-ca
+#   [*ssl_cert]             - path to ssl-cert
+#   [*ssl_key]              - path to ssl-key
+#   [*log_error]            - path to mysql error log
+#   [*default_engine]       - configure a default table engine
+#   [*root_group]           - use specified group for root-owned files
+#   [*restart]              - whether to restart mysqld (true/false)
+#   [*character-set]        - You can change the default server and
+#                             client character set
+#   [*key_buffer]           - Index blocks for MyISAM tables are buffered and
+#                             are shared by all threads. key_buffer_size is the
+#                             size of the buffer used for index blocks. 
+#   [*max_allowed_packet]   - The maximum size of one packet or any 
+#                             generated/intermediate string, or any 
+#                             parameter sent by the mysql_stmt_send_long_data()
+#                             C API function.
+#   [*thread_stack]         - The stack size for each thread.
+#   [*thread_cache_size]    - How many threads server should cache for reuse.
+#   [*myisam-recover]       - Set the MyISAM storage engine recovery mode.
+#   [*query_cache_limit]    - Do not cache results that are larger than this
+#                             number of bytes.
+#   [*query_cache_size]     - The amount of memory allocated for caching query
+#                             results.
+#   [*max_connections]      - The maximum permitted number of simultaneous
+#                             client connections.
+#   [*tmp_table_size]       - The maximum size of internal in-memory temporary
+#                             tables.
+#   [*max_heap_table_size]  - This variable sets the maximum size to which
+#                             user-created MEMORY tables are permitted to grow.
+#   [*table_open_cache]     - The number of open tables for all threads.
+#   [*long_query_time]      - If a query takes longer than this many seconds,
+#                             the server increments the Slow_queries status
+#                             variable.
+#
 #
 # Actions:
 #
@@ -55,7 +80,22 @@ class mysql::config(
   $root_group        = $mysql::params::root_group,
   $restart           = $mysql::params::restart,
   $purge_conf_dir    = false,
-  $character_set     = 'UNSET',
+
+  $key_buffer           = $mysql::params::key_buffer,
+  $max_allowed_packet   = $mysql::params::max_allowed_packet,
+  $thread_stack         = $mysql::params::thread_stack,
+  $thread_cache_size    = $mysql::params::thread_cache_size,
+  $myisam_recover       = $mysql::params::myisam_recover,
+  $query_cache_limit    = $mysql::params::query_cache_limit,
+  $query_cache_size     = $mysql::params::query_cache_size,
+
+  $max_connections      = 'UNSET',
+  $tmp_table_size       = 'UNSET',
+  $max_heap_table_size  = 'UNSET',
+  $table_open_cache     = 'UNSET',
+  $long_query_time      = 'UNSET',
+  $character_set        = 'UNSET',
+
 ) inherits mysql::params {
 
   File {

@@ -17,6 +17,14 @@ class mysql::params {
   $etc_root_password   = false
   $ssl                 = false
   $restart             = true
+  $key_buffer          = '16M'
+  $max_allowed_packet  = '16M'
+  $thread_stack        = '256K'
+  $thread_cache_size   = 8
+  $myisam_recover      = 'BACKUP'
+  $query_cache_limit   = '1M'
+  $query_cache_size    = '16M'
+
 
   case $::operatingsystem {
     'Ubuntu': {
