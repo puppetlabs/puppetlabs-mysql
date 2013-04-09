@@ -32,7 +32,7 @@ describe 'mysql' do
     )}
     describe 'when parameters are supplied' do
       let :params do
-        {:package_ensure => 'latest', :package_name => 'mysql_client'}
+        {:package_ensure => 'latest', :client_package_name => 'mysql_client'}
       end
       it { should contain_package('mysql_client').with(
         :name   => 'mysql_client',
