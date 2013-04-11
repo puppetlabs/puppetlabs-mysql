@@ -43,5 +43,5 @@ define mysql::user (
       provider      => 'mysql',
       require       => Database[$database],
     }
-  } 
+  }
 }

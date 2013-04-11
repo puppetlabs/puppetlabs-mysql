@@ -43,5 +43,5 @@ define mysql::grant (
       provider   => 'mysql',
       require    => Database_user["${user}@${host}"],
     }
-  } 
+  }
 }

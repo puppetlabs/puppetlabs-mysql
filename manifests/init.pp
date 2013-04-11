@@ -66,7 +66,7 @@
 # [*ssl_ca*]                - The location of the SSL CA Cert
 #
 # [*ssl_cert*]              - The location of the SSL Certificate to use
-# 
+#
 # Actions:
 #
 # Requires:
