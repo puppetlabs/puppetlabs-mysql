@@ -7,6 +7,7 @@
 #   [*backuppassword*] - The password of the mysql backup user.
 #   [*backupdir*]      - The target directory of the mysqldump.
 #   [*backupcompress*] - Boolean to compress backup with bzip2.
+#   [*backuprotate*]   - Number of backups to keep. Default 30
 #
 # Actions:
 #   GRANT SELECT, RELOAD, LOCK TABLES ON *.* TO 'user'@'localhost'
@@ -28,6 +29,7 @@ class mysql::backup (
   $backuppassword,
   $backupdir,
   $backupcompress = true,
+  $backuprotate = 30,
   $ensure = 'present'
 ) {
 
