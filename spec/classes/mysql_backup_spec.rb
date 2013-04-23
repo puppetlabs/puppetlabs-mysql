@@ -34,7 +34,7 @@ describe 'mysql::backup' do
 
     it 'should have compression by default' do
       verify_contents(subject, 'mysqlbackup.sh', [
-        ' --all-databases | bzcat -zc > ${DIR}/mysql_backup_`date +%Y%m%d-%H%M%S`.sql.bz2',
+        ' --all-databases | bzcat -zc > ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql.bz2',
       ])
     end
   end
@@ -51,7 +51,7 @@ describe 'mysql::backup' do
 
     it 'should be able to disable compression' do
       verify_contents(subject, 'mysqlbackup.sh', [
-        ' --all-databases > ${DIR}/mysql_backup_`date +%Y%m%d-%H%M%S`.sql',
+        ' --all-databases > ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql',
       ])
     end
   end
