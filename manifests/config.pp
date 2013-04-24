@@ -52,7 +52,7 @@ class mysql::config(
   $ssl               = $mysql::ssl,
   $ssl_ca            = $mysql::ssl_ca,
   $ssl_cert          = $mysql::ssl_cert,
-  $ssl_key           = $mysql::ssl_key,
+  $ssl_key           = $mysql::ssl_key
 ) inherits mysql {
 
   File {
