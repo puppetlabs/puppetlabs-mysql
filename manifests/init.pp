@@ -28,6 +28,8 @@
 #
 # [*old_root_password*]     - Previous root user password,
 #
+# [*package_name*]          - legacy parameter used to specify the client package. Should not be used going forward
+#
 # [*package_ensure*]        - ensure value for packages.
 #
 # [*php_package_name*]      - The name of the phpmysql package to install
@@ -86,6 +88,7 @@ class mysql(
   $log_error             = $mysql::params::log_error,
   $manage_service        = $mysql::params::manage_service,
   $old_root_password     = $mysql::params::old_root_password,
+  $package_name          = undef,
   $package_ensure        = $mysql::params::package_ensure,
   $php_package_name      = $mysql::params::php_package_name,
   $pidfile               = $mysql::params::pidfile,
@@ -105,10 +108,15 @@ class mysql(
   $ssl_cert              = $mysql::params::ssl_cert,
   $ssl_key               = $mysql::params::ssl_key,
 ) inherits mysql::params{
-
+  if $package_name {
+    warning('Using $package_name has been deprecated in favor of $client_package_name and will be removed.')
+    $client_package_name_real = $package_name
+  } else {
+    $client_package_name_real = $client_package_name
+  }
   package { 'mysql_client':
     ensure => $package_ensure,
-    name   => $client_package_name,
+    name   => $client_package_name_real,
   }
 
 }
