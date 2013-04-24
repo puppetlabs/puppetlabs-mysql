@@ -14,7 +14,7 @@
 #
 class mysql::python(
   $package_ensure = 'present',
-  $package_name   = $mysql::python_package_name,
+  $package_name   = $mysql::python_package_name
 ) inherits mysql {
 
   package { 'python-mysqldb':

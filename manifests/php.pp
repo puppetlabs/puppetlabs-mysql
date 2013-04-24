@@ -8,7 +8,7 @@
 #
 class mysql::php(
   $package_ensure = 'present',
-  $package_name   = $mysql::php_package_name,
+  $package_name   = $mysql::php_package_name
 ) inherits mysql {
 
   package { 'php-mysql':

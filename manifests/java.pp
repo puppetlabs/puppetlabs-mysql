@@ -13,7 +13,7 @@
 #
 class mysql::java (
   $package_ensure = 'present',
-  $package_name   = $mysql::java_package_name,
+  $package_name   = $mysql::java_package_name
 ) inherits mysql {
 
   package { 'mysql-connector-java':

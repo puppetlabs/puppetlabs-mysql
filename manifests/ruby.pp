@@ -16,7 +16,7 @@
 class mysql::ruby (
   $package_ensure   = 'present',
   $package_name     = $mysql::ruby_package_name,
-  $package_provider = $mysql::ruby_package_provider,
+  $package_provider = $mysql::ruby_package_provider
 ) inherits mysql {
 
   package{ 'ruby_mysql':
