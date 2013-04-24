@@ -26,7 +26,7 @@ class mysql::server (
   $package_ensure   = $mysql::package_ensure,
   $package_name     = $mysql::server_package_name,
   $service_name     = $mysql::service_name,
-  $service_provider = $mysql::service_provider,
+  $service_provider = $mysql::service_provider
 ) inherits mysql {
 
   Class['mysql::server'] -> Class['mysql::config']
