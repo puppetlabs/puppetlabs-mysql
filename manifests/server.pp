@@ -4,9 +4,14 @@
 # my.cnf
 #
 # Parameters:
-#   [*package_name*] - name of package
-#   [*service_name*] - name of service
-#   [*config_hash*]  - hash of config parameters that need to be set.
+#  [*config_hash*]      - hash of config parameters that need to be set.
+#  [*enabled*]          - Defaults to true, boolean to set service ensure.
+#  [*manage_service*]   - Boolean dictating if mysql::server should manage the service
+#  [*package_ensure*]   - Ensure state for package. Can be specified as version.
+#  [*package_name*]     - The name of package
+#  [*service_name*]     - The name of service
+#  [*service_provider*] - What service provider to use.
+
 #
 # Actions:
 #
@@ -15,14 +20,14 @@
 # Sample Usage:
 #
 class mysql::server (
-  $package_name     = $mysql::params::server_package_name,
-  $package_ensure   = 'present',
-  $service_name     = $mysql::params::service_name,
-  $service_provider = $mysql::params::service_provider,
   $config_hash      = {},
   $enabled          = true,
-  $manage_service   = true
-) inherits mysql::params {
+  $manage_service   = true,
+  $package_ensure   = $mysql::package_ensure,
+  $package_name     = $mysql::server_package_name,
+  $service_name     = $mysql::service_name,
+  $service_provider = $mysql::service_provider
+) inherits mysql {
 
   Class['mysql::server'] -> Class['mysql::config']
 
