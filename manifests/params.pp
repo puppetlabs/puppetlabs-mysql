@@ -14,7 +14,7 @@ class mysql::params {
 
   $bind_address        = '127.0.0.1'
   $config_template     = 'mysql/my.cnf.erb'
-  $default_engine      = undef
+  $default_engine      = 'UNSET'
   $etc_root_password   = false
   $manage_service      = true
   $old_root_password   = ''

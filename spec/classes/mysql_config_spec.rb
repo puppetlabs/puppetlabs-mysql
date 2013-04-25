@@ -163,6 +163,8 @@ describe 'mysql::config' do
               ]
               if param_values[:default_engine] != 'UNSET'
                 expected_lines = expected_lines | [ "default-storage-engine = #{param_values[:default_engine]}" ]
+              else
+                content.should_not match(/^default-storage-engine = /)
               end
               if param_values[:ssl]
                 expected_lines = expected_lines |
