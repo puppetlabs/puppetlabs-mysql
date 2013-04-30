@@ -3,9 +3,8 @@
 # This class installs the python libs for mysql.
 #
 # Parameters:
-#   [*ensure*]       - ensure state for package.
-#                        can be specified as version.
-#   [*package_name*] - name of package
+#   [*package_ensure*] - Ensure state for package. Can be specified as version.
+#   [*package_name*]   - Name of package
 #
 # Actions:
 #
@@ -14,9 +13,9 @@
 # Sample Usage:
 #
 class mysql::python(
-  $package_name   = $mysql::params::python_package_name,
-  $package_ensure = 'present'
-) inherits mysql::params {
+  $package_ensure = 'present',
+  $package_name   = $mysql::python_package_name
+) inherits mysql {
 
   package { 'python-mysqldb':
     ensure => $package_ensure,

@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe 'mysql' do
+describe 'mysql::php' do
 
   describe 'on a debian based os' do
     let :facts do
       { :osfamily => 'Debian'}
     end
-    it { should contain_package('mysql_client').with(
-      :name   => 'mysql-client',
+    it { should contain_package('php-mysql').with(
+      :name   => 'php5-mysql',
       :ensure => 'present'
     )}
   end
@@ -16,8 +16,8 @@ describe 'mysql' do
     let :facts do
       { :osfamily => 'FreeBSD'}
     end
-    it { should contain_package('mysql_client').with(
-      :name   => 'databases/mysql55-client',
+    it { should contain_package('php-mysql').with(
+      :name   => 'php5-mysql',
       :ensure => 'present'
     )}
   end
@@ -26,16 +26,16 @@ describe 'mysql' do
     let :facts do
       {:osfamily => 'Redhat'}
     end
-    it { should contain_package('mysql_client').with(
-      :name   => 'mysql',
+    it { should contain_package('php-mysql').with(
+      :name   => 'php-mysql',
       :ensure => 'present'
     )}
     describe 'when parameters are supplied' do
       let :params do
-        {:package_ensure => 'latest', :client_package_name => 'mysql_client'}
+        {:package_ensure => 'latest', :package_name => 'php53-mysql'}
       end
-      it { should contain_package('mysql_client').with(
-        :name   => 'mysql_client',
+      it { should contain_package('php-mysql').with(
+        :name   => 'php53-mysql',
         :ensure => 'latest'
       )}
     end
@@ -47,7 +47,7 @@ describe 'mysql' do
     end
 
     it 'should fail' do
-      expect { subject }.to  raise_error(/Unsupported osfamily: foo/)
+      expect { subject }.to raise_error(/Unsupported osfamily: foo/)
     end
   end
 

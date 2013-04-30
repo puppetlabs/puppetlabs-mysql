@@ -1,3 +1,5 @@
+#This is a helper class to add a monitoring user to the database
+#
 class mysql::server::monitor (
   $mysql_monitor_username,
   $mysql_monitor_password,
@@ -13,7 +15,7 @@ class mysql::server::monitor (
 
   database_grant { "${mysql_monitor_username}@${mysql_monitor_hostname}":
     privileges => [ 'process_priv', 'super_priv' ],
-    require    => Mysql_user["${mysql_monitor_username}@${mysql_monitor_hostname}"],
+    require    => Database_user["${mysql_monitor_username}@${mysql_monitor_hostname}"],
   }
 
 }

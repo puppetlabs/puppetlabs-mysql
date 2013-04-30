@@ -4,6 +4,9 @@ socket    = <%= socket %>
 [mysqld_safe]
 socket    = <%= socket %>
 nice    = 0
+<% if log_error == 'syslog' -%>
+syslog
+<% end -%>
 [mysqld]
 user    = mysql
 pid-file  = <%= pidfile %>
@@ -25,7 +28,9 @@ thread_cache_size  = 8
 myisam-recover     = BACKUP
 query_cache_limit  = 1M
 query_cache_size   = 16M
+<% if log_error != 'syslog' -%>
 log_error          = <%= log_error %>
+<% end -%>
 expire_logs_days   = 10
 max_binlog_size    = 100M
 <% if default_engine != 'UNSET' %>
