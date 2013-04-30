@@ -96,7 +96,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     if name[:type] == :db
       fields << :db
     end
-    not mysql([defaults_file, "mysql", '-NBe', 'SELECT "1" FROM %s WHERE %s' % [ name[:type], fields.map do |f| "%s=\"%s\"" % [f, name[f]] end.join(' AND ')]].compact).empty?
+    not mysql([defaults_file, "mysql", '-NBe', "SELECT '1' FROM %s WHERE %s" % [ name[:type], fields.map do |f| "%s='%s'" % [f, name[f]] end.join(' AND ')]].compact).empty?
   end
 
   def all_privs_set?
@@ -118,9 +118,9 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
 
     case name[:type]
     when :user
-      privs = mysql([defaults_file, "mysql", "-Be", 'select * from mysql.user where user="%s" and host="%s"' % [ name[:user], name[:host] ]].compact)
+      privs = mysql([defaults_file, "mysql", "-Be", "select * from mysql.user where user='%s' and host='%s'" % [ name[:user], name[:host] ]].compact)
     when :db
-      privs = mysql([defaults_file, "mysql", "-Be", 'select * from mysql.db where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]].compact)
+      privs = mysql([defaults_file, "mysql", "-Be", "select * from mysql.db where user='%s' and host='%s' and db='%s'" % [ name[:user], name[:host], name[:db] ]].compact)
     end
 
     if privs.match(/^$/)
@@ -149,11 +149,11 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     case name[:type]
     when :user
       stmt = 'update user set '
-      where = ' where user="%s" and host="%s"' % [ name[:user], name[:host] ]
+      where = " where user='%s' and host='%s'" % [ name[:user], name[:host] ]
       all_privs = user_privs
     when :db
       stmt = 'update db set '
-      where = ' where user="%s" and host="%s" and db="%s"' % [ name[:user], name[:host], name[:db] ]
+      where = " where user='%s' and host='%s' and db='%s'" % [ name[:user], name[:host], name[:db] ]
       all_privs = db_privs
     end
 
