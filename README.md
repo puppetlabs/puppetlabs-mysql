@@ -56,7 +56,12 @@ Installs the mysql-client package.
 Installs mysql bindings for java.
 
     class { 'mysql::java': }
-    
+
+### mysql::perl
+Installs mysql bindings for perl
+
+    class { 'mysql::perl': }
+
 ### mysql::php
 Installs mysql bindings for php
 
