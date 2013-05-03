@@ -38,9 +38,9 @@
 #
 # [*port*]                  - The port mysql listens on
 #
-# [*python_package_name*]   - The name of the python mysql package to install
-#
 # [*purge_conf_dir*]        - Value fed to recurse and purge parameters of the /etc/mysql/conf.d resource
+#
+# [*python_package_name*]   - The name of the python mysql package to install
 #
 # [*restart*]               - Whether to restart mysqld (true/false)
 #
@@ -69,6 +69,8 @@
 #
 # [*ssl_cert*]              - The location of the SSL Certificate to use
 #
+# [*ssl_key*]               - The SSL key to use
+#
 # Actions:
 #
 # Requires:
@@ -94,6 +96,7 @@ class mysql(
   $pidfile               = $mysql::params::pidfile,
   $port                  = $mysql::params::port,
   $purge_conf_dir        = $mysql::params::purge_conf_dir,
+  $python_package_name   = $mysql::params::python_package_name,
   $restart               = $mysql::params::restart,
   $root_group            = $mysql::params::root_group,
   $root_password         = $mysql::params::root_password,
