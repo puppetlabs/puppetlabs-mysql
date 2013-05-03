@@ -4,6 +4,7 @@
 #   [*bind_address*]       - address to bind service.
 #   [*config_file*]        - my.cnf configuration file path.
 #   [*datadir*]            - path to datadir.
+#   [*tmpdir*]             - path to tmpdir.
 #   [*default_engine]      - configure a default table engine
 #   [*etc_root_password*]  - whether to save /etc/my.cnf.
 #   [*log_error]           - path to mysql error log
@@ -38,6 +39,7 @@ class mysql::config(
   $bind_address       = $mysql::bind_address,
   $config_file        = $mysql::config_file,
   $datadir            = $mysql::datadir,
+  $tmpdir             = $mysql::tmpdir,
   $default_engine     = $mysql::default_engine,
   $etc_root_password  = $mysql::etc_root_password,
   $max_allowed_packet = $mysql::max_allowed_packet,
