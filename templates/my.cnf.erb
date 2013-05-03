@@ -22,7 +22,7 @@ bind-address    = <%= bind_address %>
 <% end %> 
 
 key_buffer         = 16M
-max_allowed_packet = 16M
+max_allowed_packet = <%= max_allowed_packet %>
 thread_stack       = 192K
 thread_cache_size  = 8
 myisam-recover     = BACKUP

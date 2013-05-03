@@ -24,6 +24,7 @@ class mysql::params {
   $root_password       = 'UNSET'
   $restart             = true
   $ssl                 = false
+  $max_allowed_packet  = '16M'
 
   case $::operatingsystem {
     'Ubuntu': {

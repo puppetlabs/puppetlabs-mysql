@@ -18,6 +18,7 @@
 #   [*ssl_ca]             - path to ssl-ca
 #   [*ssl_cert]           - path to ssl-cert
 #   [*ssl_key]            - path to ssl-key
+#   [*max_allowed_packet] - sets the max_allowed_packet size
 #
 #
 # Actions:
@@ -34,25 +35,26 @@
 #   }
 #
 class mysql::config(
-  $bind_address      = $mysql::bind_address,
-  $config_file       = $mysql::config_file,
-  $datadir           = $mysql::datadir,
-  $default_engine    = $mysql::default_engine,
-  $etc_root_password = $mysql::etc_root_password,
-  $log_error         = $mysql::log_error,
-  $pidfile           = $mysql::pidfile,
-  $port              = $mysql::port,
-  $purge_conf_dir    = $mysql::purge_conf_dir,
-  $restart           = $mysql::restart,
-  $root_group        = $mysql::root_group,
-  $root_password     = $mysql::root_password,
-  $old_root_password = $mysql::old_root_password,
-  $service_name      = $mysql::service_name,
-  $socket            = $mysql::socket,
-  $ssl               = $mysql::ssl,
-  $ssl_ca            = $mysql::ssl_ca,
-  $ssl_cert          = $mysql::ssl_cert,
-  $ssl_key           = $mysql::ssl_key
+  $bind_address       = $mysql::bind_address,
+  $config_file        = $mysql::config_file,
+  $datadir            = $mysql::datadir,
+  $default_engine     = $mysql::default_engine,
+  $etc_root_password  = $mysql::etc_root_password,
+  $log_error          = $mysql::log_error,
+  $pidfile            = $mysql::pidfile,
+  $port               = $mysql::port,
+  $purge_conf_dir     = $mysql::purge_conf_dir,
+  $restart            = $mysql::restart,
+  $root_group         = $mysql::root_group,
+  $root_password      = $mysql::root_password,
+  $old_root_password  = $mysql::old_root_password,
+  $service_name       = $mysql::service_name,
+  $socket             = $mysql::socket,
+  $ssl                = $mysql::ssl,
+  $ssl_ca             = $mysql::ssl_ca,
+  $ssl_cert           = $mysql::ssl_cert,
+  $ssl_key            = $mysql::ssl_key,
+  $max_allowed_packet = $mysql::max_allowed_packet,
 ) inherits mysql {
 
   File {
