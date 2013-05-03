@@ -28,9 +28,9 @@
 #
 # [*old_root_password*]     - Previous root user password,
 #
-# [*package_name*]          - legacy parameter used to specify the client package. Should not be used going forward
-#
 # [*package_ensure*]        - ensure value for packages.
+#
+# [*package_name*]          - legacy parameter used to specify the client package. Should not be used going forward
 #
 # [*php_package_name*]      - The name of the phpmysql package to install
 #
@@ -90,8 +90,8 @@ class mysql(
   $log_error             = $mysql::params::log_error,
   $manage_service        = $mysql::params::manage_service,
   $old_root_password     = $mysql::params::old_root_password,
-  $package_name          = undef,
   $package_ensure        = $mysql::params::package_ensure,
+  $package_name          = undef,
   $php_package_name      = $mysql::params::php_package_name,
   $pidfile               = $mysql::params::pidfile,
   $port                  = $mysql::params::port,
