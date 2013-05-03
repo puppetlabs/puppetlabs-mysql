@@ -44,6 +44,7 @@ This module is based on work by David Schmitt. The following contributor have co
 * Matthias Pigulla
 * William Van Hevelingen
 * Michael Arnold
+* Chris Weyl
 
 ## Usage
 
