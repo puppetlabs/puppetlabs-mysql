@@ -32,6 +32,10 @@
 #
 # [*package_ensure*]        - ensure value for packages.
 #
+# [*perl_package_name*]     - The name of the perl mysql package to install
+#
+# [*perl_package_provider*] - The installation suite to use when installing the perl package.
+#
 # [*php_package_name*]      - The name of the phpmysql package to install
 #
 # [*pidfile*]               - The location mysql will expect the pidfile to be, and will put it when starting the service.
@@ -90,6 +94,8 @@ class mysql(
   $old_root_password     = $mysql::params::old_root_password,
   $package_name          = undef,
   $package_ensure        = $mysql::params::package_ensure,
+  $perl_package_name     = $mysql::params::perl_package_name,
+  $perl_package_provider = $mysql::params::perl_package_provider,
   $php_package_name      = $mysql::params::php_package_name,
   $pidfile               = $mysql::params::pidfile,
   $port                  = $mysql::params::port,

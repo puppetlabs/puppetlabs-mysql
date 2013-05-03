@@ -42,6 +42,7 @@ class mysql::params {
       $datadir               = '/var/lib/mysql'
       $java_package_name     = 'mysql-connector-java'
       $log_error             = '/var/log/mysqld.log'
+      $perl_package_name     = 'perl-DBD-MySQL'
       $php_package_name      = 'php-mysql'
       $pidfile               = '/var/run/mysqld/mysqld.pid'
       $python_package_name   = 'MySQL-python'
@@ -83,6 +84,7 @@ class mysql::params {
         /(SLES|SLED)/        => 'ruby-mysql',
         }
       $python_package_name   = 'python-mysql'
+      $perl_package_name     = 'perl-DBD-mysql'
       $java_package_name     = 'mysql-connector-java'
       $root_group            = 'root'
       $ssl_ca                = '/etc/mysql/cacert.pem'
@@ -100,6 +102,7 @@ class mysql::params {
       $pidfile              = '/var/run/mysqld/mysqld.pid'
       $config_file          = '/etc/mysql/my.cnf'
       $log_error            = '/var/log/mysql/error.log'
+      $perl_package_name    = 'libdbd-mysql-perl'
       $ruby_package_name    = 'libmysql-ruby'
       $python_package_name  = 'python-mysqldb'
       $php_package_name     = 'php5-mysql'
@@ -120,6 +123,7 @@ class mysql::params {
       $pidfile               = '/var/db/mysql/mysql.pid'
       $config_file           = '/var/db/mysql/my.cnf'
       $log_error             = "/var/db/mysql/${::hostname}.err"
+      $perl_package_name     = 'p5-DBD-mysql'
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
       $python_package_name   = 'databases/py-MySQLdb'
@@ -142,6 +146,8 @@ class mysql::params {
           $socket                = '/var/lib/mysql/mysql.sock'
           $config_file           = '/etc/my.cnf'
           $log_error             = '/var/log/mysqld.log'
+          # XXX validate...
+          $perl_package_name     = 'perl-DBD-MySQL'
           $ruby_package_name     = 'ruby-mysql'
           $ruby_package_provider = 'gem'
           $python_package_name   = 'MySQL-python'
