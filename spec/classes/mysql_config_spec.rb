@@ -3,14 +3,15 @@ describe 'mysql::config' do
 
   let :constant_parameter_defaults do
     {
-     :root_password     => 'UNSET',
-     :old_root_password => '',
-     :bind_address      => '127.0.0.1',
-     :port              => '3306',
-     :etc_root_password => false,
-     :datadir           => '/var/lib/mysql',
-     :default_engine    => 'UNSET',
-     :ssl               => false,
+     :root_password      => 'UNSET',
+     :old_root_password  => '',
+     :bind_address       => '127.0.0.1',
+     :port               => '3306',
+     :max_allowed_packet => '16M',
+     :etc_root_password  => false,
+     :datadir            => '/var/lib/mysql',
+     :default_engine     => 'UNSET',
+     :ssl                => false,
     }
   end
 
@@ -92,19 +93,20 @@ describe 'mysql::config' do
         [
           {},
           {
-            :service_name   => 'dans_service',
-            :config_file    => '/home/dan/mysql.conf',
-            :service_name   => 'dans_mysql',
-            :pidfile        => '/home/dan/mysql.pid',
-            :socket         => '/home/dan/mysql.sock',
-            :bind_address   => '0.0.0.0',
-            :port           => '3306',
-            :datadir        => '/path/to/datadir',
-            :default_engine => 'InnoDB',
-            :ssl            => true,
-            :ssl_ca         => '/path/to/cacert.pem',
-            :ssl_cert       => '/path/to/server-cert.pem',
-            :ssl_key        => '/path/to/server-key.pem'
+            :service_name       => 'dans_service',
+            :config_file        => '/home/dan/mysql.conf',
+            :service_name       => 'dans_mysql',
+            :pidfile            => '/home/dan/mysql.pid',
+            :socket             => '/home/dan/mysql.sock',
+            :bind_address       => '0.0.0.0',
+            :port               => '3306',
+            :max_allowed_packet => '32M',
+            :datadir            => '/path/to/datadir',
+            :default_engine     => 'InnoDB',
+            :ssl                => true,
+            :ssl_ca             => '/path/to/cacert.pem',
+            :ssl_cert           => '/path/to/server-cert.pem',
+            :ssl_key            => '/path/to/server-key.pem'
           }
         ].each do |passed_params|
 
@@ -159,7 +161,8 @@ describe 'mysql::config' do
                 "socket    = #{param_values[:socket]}",
                 "pid-file  = #{param_values[:pidfile]}",
                 "datadir   = #{param_values[:datadir]}",
-                "bind-address    = #{param_values[:bind_address]}"
+                "bind-address    = #{param_values[:bind_address]}",
+                "max_allowed_packet = #{param_values[:max_allowed_packet]}"
               ]
               if param_values[:default_engine] != 'UNSET'
                 expected_lines = expected_lines | [ "default-storage-engine = #{param_values[:default_engine]}" ]
