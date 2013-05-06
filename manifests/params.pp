@@ -21,6 +21,7 @@ class mysql::params {
   $package_ensure      = 'present'
   $purge_conf_dir      = false
   $port                = 3306
+  $max_allowed_packet  = '16M'
   $root_password       = 'UNSET'
   $restart             = true
   $ssl                 = false
