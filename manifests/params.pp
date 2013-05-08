@@ -40,6 +40,7 @@ class mysql::params {
       $client_package_name   = 'mysql'
       $config_file           = '/etc/my.cnf'
       $datadir               = '/var/lib/mysql'
+      $tmpdir                = '/tmp'
       $java_package_name     = 'mysql-connector-java'
       $log_error             = '/var/log/mysqld.log'
       $php_package_name      = 'php-mysql'
@@ -59,6 +60,7 @@ class mysql::params {
     'Suse': {
       $basedir               = '/usr'
       $datadir               = '/var/lib/mysql'
+      $tmpdir                = '/tmp'
       $service_name          = 'mysql'
       $client_package_name   = $::operatingsystem ? {
         /OpenSuSE/           => 'mysql-community-server-client',
@@ -93,6 +95,7 @@ class mysql::params {
     'Debian': {
       $basedir              = '/usr'
       $datadir              = '/var/lib/mysql'
+      $tmpdir                = '/tmp'
       $service_name         = 'mysql'
       $client_package_name  = 'mysql-client'
       $server_package_name  = 'mysql-server'
@@ -113,6 +116,7 @@ class mysql::params {
     'FreeBSD': {
       $basedir               = '/usr/local'
       $datadir               = '/var/db/mysql'
+      $tmpdir                = '/tmp'
       $service_name          = 'mysql-server'
       $client_package_name   = 'databases/mysql55-client'
       $server_package_name   = 'databases/mysql55-server'
@@ -136,6 +140,7 @@ class mysql::params {
         'Amazon': {
           $basedir               = '/usr'
           $datadir               = '/var/lib/mysql'
+          $tmpdir                = '/tmp'
           $service_name          = 'mysqld'
           $client_package_name   = 'mysql'
           $server_package_name   = 'mysql-server'
