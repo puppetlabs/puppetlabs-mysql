@@ -25,7 +25,7 @@ Puppet::Type.type(:database).provide(:mysql) do
   end
 
   def create
-    mysql([defaults_file, '-NBe', "create database `#{@resource[:name]}` character set #{resource[:charset]}"].compact)
+    mysql([defaults_file, '-NBe', "create database `#{@resource[:name]}` character set #{resource[:charset]} collate #{resource[:collate]}"].compact)
   end
 
   def destroy
@@ -38,6 +38,14 @@ Puppet::Type.type(:database).provide(:mysql) do
 
   def charset=(value)
     mysql([defaults_file, '-NBe', "alter database `#{resource[:name]}` CHARACTER SET #{value}"].compact)
+  end
+
+  def collate
+    mysql([defaults_file, '-NBe', "select default_collation_name from information_schema.schemata where schema_name='#{resource[:name]}'"].compact)
+  end
+
+  def collate=(value)
+    mysql([defaults_file, '-NBe', "alter database `#{resource[:name]}` collate #{value}"].compact)
   end
 
   def exists?

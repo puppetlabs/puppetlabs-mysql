@@ -12,6 +12,7 @@
 #   [*user*]        - username to create and grant access.
 #   [*password*]    - user's password.
 #   [*charset*]     - database charset.
+#   [*collate*]     - database collation.
 #   [*host*]        - host for assigning privileges to user.
 #   [*grant*]       - array of privileges to grant user.
 #   [*enforce_sql*] - whether to enforce or conditionally run sql on creation.
@@ -37,6 +38,7 @@ define mysql::db (
   $user,
   $password,
   $charset     = 'utf8',
+  $collate     = 'utf8_general_ci',
   $host        = 'localhost',
   $grant       = 'all',
   $sql         = '',
@@ -50,6 +52,7 @@ define mysql::db (
   database { $name:
     ensure   => $ensure,
     charset  => $charset,
+    collate  => $collate,
     provider => 'mysql',
     require  => Class['mysql::server'],
     before   => Database_user["${user}@${host}"],
