@@ -41,7 +41,7 @@ Puppet::Type.type(:database).provide(:mysql) do
   end
 
   def collate
-    mysql([defaults_file, '-NBe', "select default_collation_name from information_schema.schemata where schema_name='#{resource[:name]}'"].compact)
+    mysql([defaults_file, '-NBe', "select default_collation_name from information_schema.schemata where schema_name='#{resource[:name]}'"].compact).strip
   end
 
   def collate=(value)
