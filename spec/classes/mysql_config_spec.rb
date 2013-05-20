@@ -33,7 +33,7 @@ describe 'mysql::config' do
      :log_bin_trust_function_creators => 'UNSET',
      :replicate_ignore_table          => 'UNSET',
      :replicate_wild_do_table         => 'UNSET',
-     :replicate_wild_ignore_table     => 'UNSET',
+     :replicate_wild_ignore_table     => 'UNSET'
     }
   end
 
@@ -133,7 +133,7 @@ describe 'mysql::config' do
             :tmp_table_size       => '4096M',
             :max_heap_table_size  => '4096M',
             :table_open_cache     => 2048,
-            :long_query_time      => 0.5,
+            :long_query_time      => 0.5
           }
         ].each do |passed_params|
 
@@ -197,7 +197,7 @@ describe 'mysql::config' do
                 "query_cache_limit   = #{param_values[:query_cache_limit]}",
                 "query_cache_size    = #{param_values[:query_cache_size]}",
                 "expire_logs_days    = #{param_values[:expire_logs_days]}",
-                "max_binlog_size     = #{param_values[:max_binlog_size]}",
+                "max_binlog_size     = #{param_values[:max_binlog_size]}"
               ]
               if param_values[:max_connections] != 'UNSET'
                 expected_lines = expected_lines | [ "max_connections     = #{param_values[:max_connections]}" ]

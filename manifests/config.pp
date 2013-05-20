@@ -125,7 +125,7 @@ class mysql::config(
   $log_bin_trust_function_creators  = 'UNSET',
   $replicate_ignore_table           = 'UNSET',
   $replicate_wild_do_table          = 'UNSET',
-  $replicate_wild_ignore_table      = 'UNSET',
+  $replicate_wild_ignore_table      = 'UNSET'
 ) inherits mysql::params {
 
   File {
