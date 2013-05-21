@@ -26,6 +26,8 @@
 #
 # [*manage_service*]        - Boolean dictating if mysql::server should manage the service
 #
+# [*max_allowed_packet*]    - Maximum packet size permitted in mysql and mysqldump
+#
 # [*old_root_password*]     - Previous root user password,
 #
 # [*package_ensure*]        - ensure value for packages.
@@ -89,6 +91,7 @@ class mysql(
   $java_package_name     = $mysql::params::java_package_name,
   $log_error             = $mysql::params::log_error,
   $manage_service        = $mysql::params::manage_service,
+  $max_allowed_packet    = $mysql::params::max_allowed_packet,
   $old_root_password     = $mysql::params::old_root_password,
   $package_ensure        = $mysql::params::package_ensure,
   $package_name          = undef,
@@ -109,7 +112,7 @@ class mysql(
   $ssl                   = $mysql::params::ssl,
   $ssl_ca                = $mysql::params::ssl_ca,
   $ssl_cert              = $mysql::params::ssl_cert,
-  $ssl_key               = $mysql::params::ssl_key
+  $ssl_key               = $mysql::params::ssl_key,
 ) inherits mysql::params{
   if $package_name {
     warning('Using $package_name has been deprecated in favor of $client_package_name and will be removed.')
