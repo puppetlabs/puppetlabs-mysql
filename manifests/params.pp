@@ -17,6 +17,7 @@ class mysql::params {
   $default_engine      = 'UNSET'
   $etc_root_password   = false
   $manage_service      = true
+  $max_allowed_packet  = '16M'
   $old_root_password   = ''
   $package_ensure      = 'present'
   $purge_conf_dir      = false
