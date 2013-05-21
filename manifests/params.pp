@@ -13,10 +13,17 @@
 class mysql::params {
 
   $bind_address        = '127.0.0.1'
-  $port                = 3306
+  $config_template     = 'mysql/my.cnf.erb'
+  $default_engine      = 'UNSET'
   $etc_root_password   = false
-  $ssl                 = false
+  $manage_service      = true
+  $old_root_password   = ''
+  $package_ensure      = 'present'
+  $purge_conf_dir      = false
+  $port                = 3306
+  $root_password       = 'UNSET'
   $restart             = true
+  $ssl                 = false
   $key_buffer          = '16M'
   $max_allowed_packet  = '16M'
   $thread_stack        = '256K'
@@ -39,20 +46,20 @@ class mysql::params {
   case $::osfamily {
     'RedHat': {
       $basedir               = '/usr'
-      $datadir               = '/var/lib/mysql'
-      $service_name          = 'mysqld'
       $client_package_name   = 'mysql'
-      $server_package_name   = 'mysql-server'
-      $socket                = '/var/lib/mysql/mysql.sock'
-      $pidfile               = '/var/run/mysqld/mysqld.pid'
       $config_file           = '/etc/my.cnf'
+      $datadir               = '/var/lib/mysql'
+      $java_package_name     = 'mysql-connector-java'
       $log_error             = '/var/log/mysqld.log'
+      $php_package_name      = 'php-mysql'
+      $pidfile               = '/var/run/mysqld/mysqld.pid'
+      $python_package_name   = 'MySQL-python'
+      $root_group            = 'root'
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
-      $python_package_name   = 'MySQL-python'
-      $php_package_name      = 'php-mysql'
-      $java_package_name     = 'mysql-connector-java'
-      $root_group            = 'root'
+      $service_name          = 'mysqld'
+      $server_package_name   = 'mysql-server'
+      $socket                = '/var/lib/mysql/mysql.sock'
       $ssl_ca                = '/etc/mysql/cacert.pem'
       $ssl_cert              = '/etc/mysql/server-cert.pem'
       $ssl_key               = '/etc/mysql/server-key.pem'

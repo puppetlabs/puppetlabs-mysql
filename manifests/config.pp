@@ -83,8 +83,8 @@
 #   }
 #
 class mysql::config(
-  $root_password     = 'UNSET',
-  $old_root_password = '',
+  $root_password     = $mysql::params::root_password,
+  $old_root_password = $mysql::params::old_root_password,
   $bind_address      = $mysql::params::bind_address,
   $port              = $mysql::params::port,
   $etc_root_password = $mysql::params::etc_root_password,
@@ -98,10 +98,10 @@ class mysql::config(
   $ssl_cert          = $mysql::params::ssl_cert,
   $ssl_key           = $mysql::params::ssl_key,
   $log_error         = $mysql::params::log_error,
-  $default_engine    = 'UNSET',
+  $default_engine    = $mysql::params::default_engine,
   $root_group        = $mysql::params::root_group,
   $restart           = $mysql::params::restart,
-  $purge_conf_dir    = false,
+  $purge_conf_dir    = $mysql::params::purge_conf_dir,
 
   $key_buffer                       = $mysql::params::key_buffer,
   $max_allowed_packet               = $mysql::params::max_allowed_packet,
