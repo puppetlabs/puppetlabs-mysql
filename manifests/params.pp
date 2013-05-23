@@ -14,7 +14,7 @@ class mysql::params {
 
   $bind_address        = '127.0.0.1'
   $port                = 3306
-  $max_allowed_packet  = 16
+  $max_allowed_packet  = 16M
   $etc_root_password   = false
   $ssl                 = false
   $restart             = true
