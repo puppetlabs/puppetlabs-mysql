@@ -1,24 +1,24 @@
 [client]
-port    = <%= port %>
-socket    = <%= socket %>
+port    = <%= @port %>
+socket    = <%= @socket %>
 [mysqld_safe]
-socket    = <%= socket %>
+socket    = <%= @socket %>
 nice    = 0
-<% if log_error == 'syslog' -%>
+<% if @log_error == 'syslog' -%>
 syslog
 <% end -%>
 [mysqld]
 user    = mysql
-pid-file  = <%= pidfile %>
-socket    = <%= socket %>
-port      = <%= port %>
-basedir   = <%= basedir %>
-datadir   = <%= datadir %>
+pid-file  = <%= @pidfile %>
+socket    = <%= @socket %>
+port      = <%= @port %>
+basedir   = <%= @basedir %>
+datadir   = <%= @datadir %>
 tmpdir    = /tmp
 skip-external-locking
 
-<% if bind_address %>
-bind-address    = <%= bind_address %>
+<% if @bind_address %>
+bind-address    = <%= @bind_address %>
 <% end %> 
 
 key_buffer         = 16M
@@ -28,18 +28,18 @@ thread_cache_size  = 8
 myisam-recover     = BACKUP
 query_cache_limit  = 1M
 query_cache_size   = 16M
-<% if log_error != 'syslog' -%>
-log_error          = <%= log_error %>
+<% if @log_error != 'syslog' -%>
+log_error          = <%= @log_error %>
 <% end -%>
 expire_logs_days   = 10
 max_binlog_size    = 100M
 <% if default_engine != 'UNSET' %>
-default-storage-engine = <%= default_engine %>
+default-storage-engine = <%= @default_engine %>
 <% end %>
-<% if ssl == true %>
-ssl-ca    = <%= ssl_ca %>
-ssl-cert  = <%= ssl_cert %>
-ssl-key   = <%= ssl_key %>
+<% if @ssl == true %>
+ssl-ca    = <%= @ssl_ca %>
+ssl-cert  = <%= @ssl_cert %>
+ssl-key   = <%= @ssl_key %>
 <% end %>
 
 [mysqldump]
