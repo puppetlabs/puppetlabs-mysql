@@ -35,6 +35,9 @@ log_error          = <%= log_error %>
 server-id          = <%= server_id %>
 log_bin            = <%= log_bin %>
 <% end %> 
+<% if binlog_format != 'UNSET' %>
+binlog_format      = <%= binlog_format %>
+<% end %> 
 expire_logs_days   = <%= expire_logs_days %>
 max_binlog_size    = <%= max_binlog_size %>
 <% if default_engine != 'UNSET' %>

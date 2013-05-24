@@ -13,6 +13,7 @@
 class mysql::params {
 
   $bind_address        = '127.0.0.1'
+  $binlog_format       = 'UNSET'
   $config_template     = 'mysql/my.cnf.erb'
   $default_engine      = 'UNSET'
   $etc_root_password   = false

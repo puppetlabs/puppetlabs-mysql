@@ -2,6 +2,7 @@
 #
 # Parameters:
 #   [*bind_address*]      - address to bind service.
+#   [*binlog_format*]     - binary logging format
 #   [*config_file*]       - my.cnf configuration file path.
 #   [*datadir*]           - path to datadir.
 #   [*default_engine]     - configure a default table engine
@@ -39,6 +40,7 @@
 #
 class mysql::config(
   $bind_address      = $mysql::bind_address,
+  $binlog_format     = $mysql::binlog_format,
   $config_file       = $mysql::config_file,
   $datadir           = $mysql::datadir,
   $default_engine    = $mysql::default_engine,
