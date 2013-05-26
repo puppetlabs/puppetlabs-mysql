@@ -122,4 +122,6 @@ class mysql(
     name   => $client_package_name_real,
   }
 
+  Class['mysql::config'] -> Mysql::Db <| |>
+
 }
