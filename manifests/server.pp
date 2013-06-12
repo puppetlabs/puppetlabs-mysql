@@ -23,6 +23,9 @@ class mysql::server (
   $enabled          = true
 ) inherits mysql::params {
 
+  $config_hash['root_password'] = hiera('mysql_root_password', random_password(8))
+  $config_hash['bind_address'] = hiera('mysql_bind_address', '127.0.0.1')
+
   Class['mysql::server'] -> Class['mysql::config']
 
   $config_class = {}
