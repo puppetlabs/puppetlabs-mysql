@@ -31,13 +31,13 @@ query_cache_size   = 16M
 <% if log_error != 'syslog' -%>
 log_error          = <%= log_error %>
 <% end -%>
-<% if server_id != 'UNSET' %>
+<% if server_id != 'UNSET' -%>
 server-id          = <%= server_id %>
 log_bin            = <%= log_bin %>
-<% end %> 
-<% if binlog_format != 'UNSET' %>
+<% end -%>
+<% if binlog_format != 'UNSET' -%>
 binlog_format      = <%= binlog_format %>
-<% end %> 
+<% end -%>
 expire_logs_days   = <%= expire_logs_days %>
 max_binlog_size    = <%= max_binlog_size %>
 <% if default_engine != 'UNSET' %>
