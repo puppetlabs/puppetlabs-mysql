@@ -92,7 +92,7 @@ Creates a database with a user and assign some privileges.
     }
 
 ### mysql::backup
-Installs a mysql backup script, cronjob, and priviledged backup user.
+Installs a mysql backup script, cronjob, and privileged backup user.
 
     class { 'mysql::backup':
       backupuser     => 'myuser',
