@@ -56,7 +56,7 @@ describe 'mysql::config' do
          :config_file  => '/var/db/mysql/my.cnf',
          :socket       => '/tmp/mysql.sock',
          :pidfile      => '/var/db/mysql/mysql.pid',
-         :root_group   => 'wheel',
+         :root_group   => 'wheel'
       },
       'Redhat' => {
          :datadir      => '/var/lib/mysql',
@@ -128,6 +128,9 @@ describe 'mysql::config' do
             :ssl_ca               => '/path/to/cacert.pem',
             :ssl_cert             => '/path/to/server-cert.pem',
             :ssl_key              => '/path/to/server-key.pem',
+            :key_buffer           => '16M',
+            :thread_stack         => '256K',
+            :query_cache_size     => '16M',
             :character_set        => 'utf8',
             :max_connections      => 1000,
             :tmp_table_size       => '4096M',
