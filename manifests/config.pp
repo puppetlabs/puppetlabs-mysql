@@ -23,8 +23,8 @@
 #     client character set
 #   [*key_buffer]           - Index blocks for MyISAM tables are buffered and
 #     are shared by all threads. key_buffer_size is the size of the buffer used
-#     for index blocks. 
-#   [*max_allowed_packet]   - The maximum size of one packet or any 
+#     for index blocks.
+#   [*max_allowed_packet]   - The maximum size of one packet or any
 #     generated/intermediate string, or any parameter sent by the
 #     mysql_stmt_send_long_data() C API function.
 #   [*thread_stack]         - The stack size for each thread.
@@ -43,18 +43,18 @@
 #   [*table_open_cache]     - The number of open tables for all threads.
 #   [*long_query_time]      - If a query takes longer than this many seconds,
 #     the server increments the Slow_queries status variable.
-#   [*server_id]            - The server ID, used in replication to give each 
+#   [*server_id]            - The server ID, used in replication to give each
 #     master and slave a unique identity.
-#   [*sql_log_bin]          - This variable controls whether logging to the 
-#     binary log is done. The default value is 1. 
+#   [*sql_log_bin]          - This variable controls whether logging to the
+#     binary log is done. The default value is 1.
 #   [*log_bin]              - Enable binary logging. The server logs all
-#     statements that change data to the binary log, which is used for backup 
+#     statements that change data to the binary log, which is used for backup
 #     and replication.
 #   [*max_binlog_size]      - If a write to the binary log causes the current
-#     log file size to exceed the value of this variable, the server rotates 
+#     log file size to exceed the value of this variable, the server rotates
 #     the binary logs (closes the current file and opens the next one).
 #   [*binlog_do_db]         - This option affects binary logging in a manner
-#     similar to the way that --replicate-do-db affects replication. 
+#     similar to the way that --replicate-do-db affects replication.
 #   [*expire_logs_days]     - The number of days for automatic binary log file
 #     removal.
 #   [*log_bin_trust_function_creators]  - It controls whether stored function
