@@ -24,16 +24,22 @@ class mysql::server (
   $config_hash      = {},
   $enabled          = true,
   $manage_service   = true,
-  $package_ensure   = $mysql::package_ensure,
+  $package_ensure   = $mysql::params::package_ensure,
   $server_package_name
-                    = $mysql::server_package_name,
+                    = $mysql::params::server_package_name,
   $client_package_name
-                    = $mysql::client_package_name,
-  $service_name     = $mysql::service_name,
-  $service_provider = $mysql::service_provider,
-  $pidfile          = $mysql::pidfile
-) inherits mysql {
+                    = $mysql::params::client_package_name,
+  $service_name     = $mysql::params::service_name,
+  $service_provider = $mysql::params::service_provider,
+  $pidfile          = $mysql::params::pidfile
+) inherits mysql::params {
 
+  class {'mysql': 
+    client_package_name => $client_package_name  
+  }
+   
+  notice("client package set to $client_package_name")
+  
   Class['mysql::server'] -> Class['mysql::config']
 
   $config_class = { 'mysql::config' => $config_hash }
@@ -48,6 +54,9 @@ class mysql::server (
 
   file { $piddir:
     ensure => directory,
+    owner  => 'mysql',
+    group  => 'mysql',
+    mode   => '0755',
     require=> Package['mysql-server'],
   }
 

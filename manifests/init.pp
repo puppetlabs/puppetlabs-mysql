@@ -117,6 +117,7 @@ class mysql(
     warning('Using $package_name has been deprecated in favor of $client_package_name and will be removed.')
     $client_package_name = $package_name
   }
+  notice("using $client_package_name")
   package { 'mysql_client':
     ensure => $package_ensure,
     name   => $client_package_name,
