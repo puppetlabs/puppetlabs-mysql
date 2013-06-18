@@ -35,6 +35,10 @@ class mysql::server (
 
   create_resources( 'class', $config_class )
 
+  file { "dirname("${pidfile}):
+    ensure => directory,
+  }
+
   package { 'mysql-server':
     ensure => $package_ensure,
     name   => $package_name,
