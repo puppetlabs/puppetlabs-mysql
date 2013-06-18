@@ -103,6 +103,7 @@ class mysql(
   $ruby_package_name     = $mysql::params::ruby_package_name,
   $ruby_package_provider = $mysql::params::ruby_package_provider,
   $server_package_name   = $mysql::params::server_package_name,
+  $client_package_name   = $mysql::params::client_package_name,
   $service_name          = $mysql::params::service_name,
   $service_provider      = $mysql::params::service_provider,
   $socket                = $mysql::params::socket,
@@ -111,15 +112,14 @@ class mysql(
   $ssl_cert              = $mysql::params::ssl_cert,
   $ssl_key               = $mysql::params::ssl_key
 ) inherits mysql::params{
+  include stdlib
   if $package_name {
     warning('Using $package_name has been deprecated in favor of $client_package_name and will be removed.')
-    $client_package_name_real = $package_name
-  } else {
-    $client_package_name_real = $client_package_name
+    $client_package_name = $package_name
   }
   package { 'mysql_client':
     ensure => $package_ensure,
-    name   => $client_package_name_real,
+    name   => $client_package_name,
   }
 
 }
