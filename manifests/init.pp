@@ -103,6 +103,7 @@ class mysql(
   $port                  = $mysql::params::port,
   $purge_conf_dir        = $mysql::params::purge_conf_dir,
   $python_package_name   = $mysql::params::python_package_name,
+  $max_connections       = $mysql::params::max_connections,
   $restart               = $mysql::params::restart,
   $root_group            = $mysql::params::root_group,
   $root_password         = $mysql::params::root_password,
