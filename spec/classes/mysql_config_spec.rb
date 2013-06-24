@@ -35,7 +35,7 @@ describe 'mysql::config' do
          :pidfile      => '/var/db/mysql/mysql.pid',
          :root_group   => 'wheel',
       },
-      'Redhat' => {
+      'RedHat' => {
          :datadir      => '/var/lib/mysql',
          :service_name => 'mysqld',
          :config_file  => '/etc/my.cnf',
@@ -208,7 +208,7 @@ describe 'mysql::config' do
 
   describe 'setting etc_root_password should fail on redhat' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'RedHat'}
     end
 
     let :params do
