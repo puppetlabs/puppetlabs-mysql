@@ -24,7 +24,7 @@ describe 'mysql::java' do
 
   describe 'on a redhat based os' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'RedHat'}
     end
     it { should contain_package('mysql-connector-java').with(
       :name   => 'mysql-connector-java',

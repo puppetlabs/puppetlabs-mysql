@@ -24,7 +24,7 @@ describe 'mysql' do
 
   describe 'on a redhat based os' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'RedHat'}
     end
     it { should contain_package('mysql_client').with(
       :name   => 'mysql',
