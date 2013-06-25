@@ -18,34 +18,37 @@ describe 'mysql::config' do
   describe 'with osfamily specific defaults' do
     {
       'Debian' => {
-         :datadir      => '/var/lib/mysql',
-         :service_name => 'mysql',
-         :config_file  => '/etc/mysql/my.cnf',
-         :socket       => '/var/run/mysqld/mysqld.sock',
-         :pidfile      => '/var/run/mysqld/mysqld.pid',
-         :root_group   => 'root',
-         :ssl_ca       => '/etc/mysql/cacert.pem',
-         :ssl_cert     => '/etc/mysql/server-cert.pem',
-         :ssl_key      => '/etc/mysql/server-key.pem'
+         :datadir         => '/var/lib/mysql',
+         :service_name    => 'mysql',
+         :config_file     => '/etc/mysql/my.cnf',
+         :socket          => '/var/run/mysqld/mysqld.sock',
+         :pidfile         => '/var/run/mysqld/mysqld.pid',
+         :root_group      => 'root',
+         :max_connections => 1000,
+         :ssl_ca          => '/etc/mysql/cacert.pem',
+         :ssl_cert        => '/etc/mysql/server-cert.pem',
+         :ssl_key         => '/etc/mysql/server-key.pem'
       },
       'FreeBSD' => {
-         :datadir      => '/var/db/mysql',
-         :service_name => 'mysql-server',
-         :config_file  => '/var/db/mysql/my.cnf',
-         :socket       => '/tmp/mysql.sock',
-         :pidfile      => '/var/db/mysql/mysql.pid',
-         :root_group   => 'wheel',
+         :datadir         => '/var/db/mysql',
+         :service_name    => 'mysql-server',
+         :config_file     => '/var/db/mysql/my.cnf',
+         :socket          => '/tmp/mysql.sock',
+         :pidfile         => '/var/db/mysql/mysql.pid',
+         :root_group      => 'wheel',
+         :max_connections => 1000,
       },
       'RedHat' => {
-         :datadir      => '/var/lib/mysql',
-         :service_name => 'mysqld',
-         :config_file  => '/etc/my.cnf',
-         :socket       => '/var/lib/mysql/mysql.sock',
-         :pidfile      => '/var/run/mysqld/mysqld.pid',
-         :root_group   => 'root',
-         :ssl_ca       => '/etc/mysql/cacert.pem',
-         :ssl_cert     => '/etc/mysql/server-cert.pem',
-         :ssl_key      => '/etc/mysql/server-key.pem'
+         :datadir         => '/var/lib/mysql',
+         :service_name    => 'mysqld',
+         :config_file     => '/etc/my.cnf',
+         :socket          => '/var/lib/mysql/mysql.sock',
+         :pidfile         => '/var/run/mysqld/mysqld.pid',
+         :root_group      => 'root',
+         :max_connections => 1000,
+         :ssl_ca          => '/etc/mysql/cacert.pem',
+         :ssl_cert        => '/etc/mysql/server-cert.pem',
+         :ssl_key         => '/etc/mysql/server-key.pem'
       }
     }.each do |osfamily, osparams|
 
@@ -162,7 +165,8 @@ describe 'mysql::config' do
                 "pid-file  = #{param_values[:pidfile]}",
                 "datadir   = #{param_values[:datadir]}",
                 "bind-address    = #{param_values[:bind_address]}",
-                "max_allowed_packet = #{param_values[:max_allowed_packet]}"
+                "max_allowed_packet = #{param_values[:max_allowed_packet]}",
+                "max_connections = #{param_values[:max_connections]}"
               ]
               if param_values[:default_engine] != 'UNSET'
                 expected_lines = expected_lines | [ "default-storage-engine = #{param_values[:default_engine]}" ]
