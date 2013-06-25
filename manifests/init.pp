@@ -71,6 +71,8 @@
 #
 # [*ssl_key*]               - The SSL key to use
 #
+# [*mysqld_misc_settings]   - Add misc settings to mysqld in my.cnf
+#
 # Actions:
 #
 # Requires:
@@ -109,7 +111,8 @@ class mysql(
   $ssl                   = $mysql::params::ssl,
   $ssl_ca                = $mysql::params::ssl_ca,
   $ssl_cert              = $mysql::params::ssl_cert,
-  $ssl_key               = $mysql::params::ssl_key
+  $ssl_key               = $mysql::params::ssl_key,
+  $mysqld_misc_settings  = $mysql::params::mysqld_misc_settings
 ) inherits mysql::params{
   if $package_name {
     warning('Using $package_name has been deprecated in favor of $client_package_name and will be removed.')

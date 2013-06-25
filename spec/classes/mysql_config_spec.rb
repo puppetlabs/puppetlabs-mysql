@@ -92,19 +92,20 @@ describe 'mysql::config' do
         [
           {},
           {
-            :service_name   => 'dans_service',
-            :config_file    => '/home/dan/mysql.conf',
-            :service_name   => 'dans_mysql',
-            :pidfile        => '/home/dan/mysql.pid',
-            :socket         => '/home/dan/mysql.sock',
-            :bind_address   => '0.0.0.0',
-            :port           => '3306',
-            :datadir        => '/path/to/datadir',
-            :default_engine => 'InnoDB',
-            :ssl            => true,
-            :ssl_ca         => '/path/to/cacert.pem',
-            :ssl_cert       => '/path/to/server-cert.pem',
-            :ssl_key        => '/path/to/server-key.pem'
+            :service_name         => 'dans_service',
+            :config_file          => '/home/dan/mysql.conf',
+            :service_name         => 'dans_mysql',
+            :pidfile              => '/home/dan/mysql.pid',
+            :socket               => '/home/dan/mysql.sock',
+            :bind_address         => '0.0.0.0',
+            :port                 => '3306',
+            :datadir              => '/path/to/datadir',
+            :default_engine       => 'InnoDB',
+            :ssl                  => true,
+            :ssl_ca               => '/path/to/cacert.pem',
+            :ssl_cert             => '/path/to/server-cert.pem',
+            :ssl_key              => '/path/to/server-key.pem',
+            :mysqld_misc_settings => { 'collation-server' => 'utf8_bin' }
           }
         ].each do |passed_params|
 
@@ -172,6 +173,12 @@ describe 'mysql::config' do
                     "ssl-ca    = #{param_values[:ssl_ca]}",
                     "ssl-cert  = #{param_values[:ssl_cert]}",
                     "ssl-key   = #{param_values[:ssl_key]}"
+                  ]
+              end
+              if param_values[:mysqld_misc_setttings]
+                expected_lines = expected_lines |
+                  [
+                    "collation-server = utf8_bin"
                   ]
               end
               (content.split("\n") & expected_lines).should == expected_lines
