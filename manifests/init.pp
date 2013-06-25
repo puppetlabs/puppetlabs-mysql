@@ -16,6 +16,8 @@
 #
 # [*datadir*]               - The directory MySQL's datafiles are stored
 #
+# [*tmpdir*]                - The directory MySQL's tmpfiles are stored
+#
 # [*default_engine*]        - The default engine to use for tables
 #
 # [*etc_root_password*]     - Whether or not to add the mysql root password to /etc/my.cnf
@@ -86,6 +88,7 @@ class mysql(
   $config_file           = $mysql::params::config_file,
   $config_template       = $mysql::params::config_template,
   $datadir               = $mysql::params::datadir,
+  $tmpdir                = $mysql::params::tmpdir,
   $default_engine        = $mysql::params::default_engine,
   $etc_root_password     = $mysql::params::etc_root_password,
   $java_package_name     = $mysql::params::java_package_name,

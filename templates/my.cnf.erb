@@ -14,7 +14,7 @@ socket    = <%= @socket %>
 port      = <%= @port %>
 basedir   = <%= @basedir %>
 datadir   = <%= @datadir %>
-tmpdir    = /tmp
+tmpdir    = <%= @tmpdir %>
 skip-external-locking
 
 <% if @bind_address %>
