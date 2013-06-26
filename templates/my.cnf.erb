@@ -1,6 +1,9 @@
 [client]
 port    = <%= @port %>
 socket    = <%= @socket %>
+<%- if @etc_root_password -%>
+password  = '<%= @root_password %>'
+<%- end -%>
 [mysqld_safe]
 socket    = <%= @socket %>
 nice    = 0

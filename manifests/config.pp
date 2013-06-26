@@ -58,6 +58,7 @@ class mysql::config(
   $ssl_cert           = $mysql::ssl_cert,
   $ssl_key            = $mysql::ssl_key
 ) inherits mysql {
+  validate_bool($etc_root_password)
 
   File {
     owner  => 'root',
@@ -108,18 +109,12 @@ class mysql::config(
         false => undef,
       },
       require   => File['/etc/mysql/conf.d'],
+      before    => File[$config_file],
     }
 
     file { '/root/.my.cnf':
       content => template('mysql/my.cnf.pass.erb'),
       require => Exec['set_mysql_rootpw'],
-    }
-
-    if $etc_root_password {
-      file{ '/etc/my.cnf':
-        content => template('mysql/my.cnf.pass.erb'),
-        require => Exec['set_mysql_rootpw'],
-      }
     }
   } else {
     file { '/root/.my.cnf':
