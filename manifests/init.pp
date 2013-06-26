@@ -16,6 +16,8 @@
 #
 # [*datadir*]               - The directory MySQL's datafiles are stored
 #
+# [*tmpdir*]                - The directory MySQL's tmpfiles are stored
+#
 # [*default_engine*]        - The default engine to use for tables
 #
 # [*etc_root_password*]     - Whether or not to add the mysql root password to /etc/my.cnf
@@ -25,6 +27,8 @@
 # [*log_error*]             - Where to log errors
 #
 # [*manage_service*]        - Boolean dictating if mysql::server should manage the service
+#
+# [*max_allowed_packet*]    - Maximum network packet size mysqld will accept
 #
 # [*old_root_password*]     - Previous root user password,
 #
@@ -84,11 +88,13 @@ class mysql(
   $config_file           = $mysql::params::config_file,
   $config_template       = $mysql::params::config_template,
   $datadir               = $mysql::params::datadir,
+  $tmpdir                = $mysql::params::tmpdir,
   $default_engine        = $mysql::params::default_engine,
   $etc_root_password     = $mysql::params::etc_root_password,
   $java_package_name     = $mysql::params::java_package_name,
   $log_error             = $mysql::params::log_error,
   $manage_service        = $mysql::params::manage_service,
+  $max_allowed_packet    = $mysql::params::max_allowed_packet,
   $old_root_password     = $mysql::params::old_root_password,
   $package_ensure        = $mysql::params::package_ensure,
   $package_name          = undef,

@@ -58,7 +58,7 @@ describe 'mysql::config' do
          :pidfile      => '/var/db/mysql/mysql.pid',
          :root_group   => 'wheel'
       },
-      'Redhat' => {
+      'RedHat' => {
          :datadir      => '/var/lib/mysql',
          :service_name => 'mysqld',
          :config_file  => '/etc/my.cnf',
@@ -129,6 +129,7 @@ describe 'mysql::config' do
             :ssl_cert             => '/path/to/server-cert.pem',
             :ssl_key              => '/path/to/server-key.pem',
             :key_buffer           => '16M',
+            :max_allowed_packet   => '32M',
             :thread_stack         => '256K',
             :query_cache_size     => '16M',
             :character_set        => 'utf8',
@@ -288,7 +289,7 @@ describe 'mysql::config' do
 
   describe 'setting etc_root_password should fail on redhat' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'RedHat'}
     end
 
     let :params do

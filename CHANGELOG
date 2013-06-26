@@ -1,3 +1,53 @@
+2013-06-25 - Version 0.7.0
+This is a maintenance release for community bugfixes and exposing
+configuration variables.
+
+* Add new `mysql` class parameters:
+ -  `basedir`: The base directory mysql uses
+ -  `bind_address`: The IP mysql binds to
+ -  `client_package_name`: The name of the mysql client package
+ -  `config_file`: The location of the server config file
+ -  `config_template`: The template to use to generate my.cnf
+ -  `datadir`: The directory MySQL's datafiles are stored
+ -  `default_engine`: The default engine to use for tables
+ -  `etc_root_password`: Whether or not to add the mysql root password to
+ /etc/my.cnf
+ -  `java_package_name`: The name of the java package containing the java
+ connector
+ -  `log_error`: Where to log errors
+ -  `manage_service`: Boolean dictating if mysql::server should manage the
+ service
+ -  `max_allowed_packet`: Maximum network packet size mysqld will accept
+ -  `old_root_password`: Previous root user password
+ -  `php_package_name`: The name of the phpmysql package to install
+ -  `pidfile`: The location mysql will expect the pidfile to be
+ -  `port`: The port mysql listens on
+ -  `purge_conf_dir`: Value fed to recurse and purge parameters of the
+ /etc/mysql/conf.d resource
+ -  `python_package_name`: The name of the python mysql package to install
+ -  `restart`: Whether to restart mysqld
+ -  `root_group`: Use specified group for root-owned files
+ -  `root_password`: The root MySQL password to use
+ -  `ruby_package_name`: The name of the ruby mysql package to install
+ -  `ruby_package_provider`: The installation suite to use when installing the
+ ruby package
+ -  `server_package_name`: The name of the server package to install
+ -  `service_name`: The name of the service to start
+ -  `service_provider`: The name of the service provider
+ -  `socket`: The location of the MySQL server socket file
+ -  `ssl_ca`: The location of the SSL CA Cert
+ -  `ssl_cert`: The location of the SSL Certificate to use
+ -  `ssl_key`: The SSL key to use
+ -  `ssl`: Whether or not to enable ssl
+ -  `tmpdir`: The directory MySQL's tmpfiles are stored
+* Deprecate `mysql::package_name` parameter in favor of
+`mysql::client_package_name`
+* Fix local variable template deprecation
+* Fix dependency ordering in `mysql::db`
+* Fix ANSI quoting in queries
+* Fix travis support (but still messy)
+* Fix typos
+
 2013-01-11 - Version 0.6.1
 * Fix providers when /root/.my.cnf is absent
 

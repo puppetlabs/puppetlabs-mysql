@@ -35,7 +35,7 @@ describe 'mysql::server' do
         :service_name => 'mysql-server',
         :package_name => 'databases/mysql55-server'
       },
-      'Redhat' => {
+      'RedHat' => {
         :service_name => 'mysqld',
         :package_name => 'mysql-server'
       }
