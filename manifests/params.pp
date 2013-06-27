@@ -20,7 +20,7 @@ class mysql::params {
   $old_root_password   = ''
   $package_ensure      = 'present'
   $purge_conf_dir      = false
-  $max_connections     = 1000
+  $max_connections     = 151
   $port                = 3306
   $max_allowed_packet  = '16M'
   $root_password       = 'UNSET'
