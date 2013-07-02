@@ -112,9 +112,10 @@ class mysql::config(
       require   => File['/etc/mysql/conf.d'],
     }
 
-    file { '/root/.my.cnf':
+    file { "${root_home}/.my.cnf":
       content => template('mysql/my.cnf.pass.erb'),
       require => Exec['set_mysql_rootpw'],
+      mode => '0600',
     }
 
     if $etc_root_password {
@@ -124,8 +125,9 @@ class mysql::config(
       }
     }
   } else {
-    file { '/root/.my.cnf':
+    file { "${root_home}/.my.cnf":
       ensure  => present,
+      mode => '0600',
     }
   }
 
