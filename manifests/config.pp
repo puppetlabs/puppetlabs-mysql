@@ -112,7 +112,7 @@ class mysql::config(
   $query_cache_size                 = $mysql::query_cache_size,
   $max_binlog_size                  = $mysql::max_binlog_size,
   $expire_logs_days                 = $mysql::expire_logs_days,
-  $max_connections                  = 'UNSET',
+  $max_connections                  = $mysql::max_connections,
   $tmp_table_size                   = 'UNSET',
   $max_heap_table_size              = 'UNSET',
   $table_open_cache                 = 'UNSET',
