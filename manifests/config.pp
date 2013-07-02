@@ -49,6 +49,7 @@ class mysql::config(
   $pidfile            = $mysql::pidfile,
   $port               = $mysql::port,
   $purge_conf_dir     = $mysql::purge_conf_dir,
+  $max_connections    = $mysql::max_connections,
   $restart            = $mysql::restart,
   $root_group         = $mysql::root_group,
   $root_password      = $mysql::root_password,
