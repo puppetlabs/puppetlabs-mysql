@@ -78,6 +78,22 @@ describe 'mysql::config' do
           {:osfamily => osfamily}
         end
 
+        describe 'when config file should be managed' do
+          let :params do
+            {:manage_config_file => true}
+          end
+
+          it { should contain_file(osparams[:config_file]) }
+        end
+
+        describe 'when config file should not be managed' do
+          let :params do
+            {:manage_config_file => false}
+          end
+
+          it { should_not contain_file(osparams[:config_file]) }
+        end
+
         describe 'when root password is set' do
 
           let :params do
@@ -92,7 +108,7 @@ describe 'mysql::config' do
           )}
 
           it { should contain_file('/root/.my.cnf').with(
-            'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\n",
+            'content' => "[client]\nuser=root\nhost=localhost\npassword='foo'\n",
             'require' => 'Exec[set_mysql_rootpw]'
           )}
 
@@ -281,7 +297,7 @@ describe 'mysql::config' do
     )}
 
     it { should contain_file('/root/.my.cnf').with(
-      'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\n",
+      'content' => "[client]\nuser=root\nhost=localhost\npassword='foo'\n",
       'require' => 'Exec[set_mysql_rootpw]'
     )}
 

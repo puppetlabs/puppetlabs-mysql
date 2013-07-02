@@ -83,26 +83,26 @@
 #   }
 #
 class mysql::config(
-  $root_password     = $mysql::root_password,
-  $old_root_password = $mysql::old_root_password,
-  $bind_address      = $mysql::bind_address,
-  $port              = $mysql::port,
-  $etc_root_password = $mysql::etc_root_password,
-  $service_name      = $mysql::service_name,
-  $config_file       = $mysql::config_file,
-  $socket            = $mysql::socket,
-  $pidfile           = $mysql::pidfile,
-  $datadir           = $mysql::datadir,
-  $ssl               = $mysql::ssl,
-  $ssl_ca            = $mysql::ssl_ca,
-  $ssl_cert          = $mysql::ssl_cert,
-  $ssl_key           = $mysql::ssl_key,
-  $log_error         = $mysql::log_error,
-  $default_engine    = $mysql::default_engine,
-  $root_group        = $mysql::root_group,
-  $restart           = $mysql::restart,
-  $purge_conf_dir    = $mysql::purge_conf_dir,
-
+  $root_password                    = $mysql::root_password,
+  $old_root_password                = $mysql::old_root_password,
+  $bind_address                     = $mysql::bind_address,
+  $port                             = $mysql::port,
+  $etc_root_password                = $mysql::etc_root_password,
+  $manage_config_file               = $mysql::manage_config_file,
+  $service_name                     = $mysql::service_name,
+  $config_file                      = $mysql::config_file,
+  $socket                           = $mysql::socket,
+  $pidfile                          = $mysql::pidfile,
+  $datadir                          = $mysql::datadir,
+  $ssl                              = $mysql::ssl,
+  $ssl_ca                           = $mysql::ssl_ca,
+  $ssl_cert                         = $mysql::ssl_cert,
+  $ssl_key                          = $mysql::ssl_key,
+  $log_error                        = $mysql::log_error,
+  $default_engine                   = $mysql::default_engine,
+  $root_group                       = $mysql::root_group,
+  $restart                          = $mysql::restart,
+  $purge_conf_dir                   = $mysql::purge_conf_dir,
   $key_buffer                       = $mysql::key_buffer,
   $max_allowed_packet               = $mysql::max_allowed_packet,
   $thread_stack                     = $mysql::thread_stack,
@@ -182,6 +182,7 @@ class mysql::config(
     file { '/root/.my.cnf':
       content => template('mysql/my.cnf.pass.erb'),
       require => Exec['set_mysql_rootpw'],
+      notify  => undef,
     }
 
     if $etc_root_password {
@@ -200,15 +201,18 @@ class mysql::config(
     ensure => directory,
     mode   => '0755',
   }
+
   file { '/etc/mysql/conf.d':
     ensure  => directory,
     mode    => '0755',
     recurse => $purge_conf_dir,
     purge   => $purge_conf_dir,
   }
-  file { $config_file:
-    content => template('mysql/my.cnf.erb'),
-    mode    => '0644',
-  }
 
+  if $manage_config_file  {
+    file { $config_file:
+      content => template('mysql/my.cnf.erb'),
+      mode    => '0644',
+    }
+  }
 }
