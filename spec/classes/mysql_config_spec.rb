@@ -3,16 +3,37 @@ describe 'mysql::config' do
 
   let :constant_parameter_defaults do
     {
-     :root_password      => 'UNSET',
-     :old_root_password  => '',
-     :max_connections    => '151',
-     :bind_address       => '127.0.0.1',
-     :port               => '3306',
-     :max_allowed_packet => '16M',
-     :etc_root_password  => false,
-     :datadir            => '/var/lib/mysql',
-     :default_engine     => 'UNSET',
-     :ssl                => false,
+     :root_password                   => 'UNSET',
+     :old_root_password               => '',
+     :max_connections                 => '151',
+     :bind_address                    => '127.0.0.1',
+     :port                            => '3306',
+     :etc_root_password               => false,
+     :datadir                         => '/var/lib/mysql',
+     :default_engine                  => 'UNSET',
+     :ssl                             => false,
+     :key_buffer                      => '16M',
+     :max_allowed_packet              => '16M',
+     :thread_stack                    => '256K',
+     :thread_cache_size               => 8,
+     :myisam_recover                  => 'BACKUP',
+     :query_cache_limit               => '1M',
+     :query_cache_size                => '16M',
+     :max_binlog_size                 => '100M',
+     :expire_logs_days                => 10,
+     :character_set                   => 'UNSET',
+     :tmp_table_size                  => 'UNSET',
+     :max_heap_table_size             => 'UNSET',
+     :table_open_cache                => 'UNSET',
+     :long_query_time                 => 'UNSET',
+     :server_id                       => 'UNSET',
+     :sql_log_bin                     => 'UNSET',
+     :log_bin                         => 'UNSET',
+     :binlog_do_db                    => 'UNSET',
+     :log_bin_trust_function_creators => 'UNSET',
+     :replicate_ignore_table          => 'UNSET',
+     :replicate_wild_do_table         => 'UNSET',
+     :replicate_wild_ignore_table     => 'UNSET'
     }
   end
 
@@ -110,20 +131,29 @@ describe 'mysql::config' do
         [
           {},
           {
-            :service_name       => 'dans_service',
-            :config_file        => '/home/dan/mysql.conf',
-            :service_name       => 'dans_mysql',
-            :pidfile            => '/home/dan/mysql.pid',
-            :socket             => '/home/dan/mysql.sock',
-            :bind_address       => '0.0.0.0',
-            :port               => '3306',
-            :max_allowed_packet => '32M',
-            :datadir            => '/path/to/datadir',
-            :default_engine     => 'InnoDB',
-            :ssl                => true,
-            :ssl_ca             => '/path/to/cacert.pem',
-            :ssl_cert           => '/path/to/server-cert.pem',
-            :ssl_key            => '/path/to/server-key.pem'
+            :service_name         => 'dans_service',
+            :config_file          => '/home/dan/mysql.conf',
+            :service_name         => 'dans_mysql',
+            :pidfile              => '/home/dan/mysql.pid',
+            :socket               => '/home/dan/mysql.sock',
+            :bind_address         => '0.0.0.0',
+            :port                 => '3306',
+            :datadir              => '/path/to/datadir',
+            :default_engine       => 'InnoDB',
+            :ssl                  => true,
+            :ssl_ca               => '/path/to/cacert.pem',
+            :ssl_cert             => '/path/to/server-cert.pem',
+            :ssl_key              => '/path/to/server-key.pem',
+            :key_buffer           => '16M',
+            :max_allowed_packet   => '32M',
+            :thread_stack         => '256K',
+            :query_cache_size     => '16M',
+            :character_set        => 'utf8',
+            :max_connections      => 1000,
+            :tmp_table_size       => '4096M',
+            :max_heap_table_size  => '4096M',
+            :table_open_cache     => 2048,
+            :long_query_time      => 0.5
           }
         ].each do |passed_params|
 
@@ -174,18 +204,62 @@ describe 'mysql::config' do
             it 'should have a template with the correct contents' do
               content = param_value(subject, 'file', param_values[:config_file], 'content')
               expected_lines = [
-                "port    = #{param_values[:port]}",
+                "port      = #{param_values[:port]}",
                 "socket    = #{param_values[:socket]}",
                 "pid-file  = #{param_values[:pidfile]}",
                 "datadir   = #{param_values[:datadir]}",
                 "max_connections = #{param_values[:max_connections]}",
-                "bind-address    = #{param_values[:bind_address]}",
-                "max_allowed_packet = #{param_values[:max_allowed_packet]}"
+                "bind-address        = #{param_values[:bind_address]}",
+                "key_buffer          = #{param_values[:key_buffer]}",
+                "max_allowed_packet  = #{param_values[:max_allowed_packet]}",
+                "thread_stack        = #{param_values[:thread_stack]}",
+                "thread_cache_size   = #{param_values[:thread_cache_size]}",
+                "myisam-recover      = #{param_values[:myisam_recover]}",
+                "query_cache_limit   = #{param_values[:query_cache_limit]}",
+                "query_cache_size    = #{param_values[:query_cache_size]}",
+                "expire_logs_days    = #{param_values[:expire_logs_days]}",
+                "max_binlog_size     = #{param_values[:max_binlog_size]}"
               ]
+              if param_values[:tmp_table_size] != 'UNSET'
+                expected_lines = expected_lines | [ "tmp_table_size      = #{param_values[:tmp_table_size]}" ]
+              end
+              if param_values[:max_heap_table_size] != 'UNSET'
+                expected_lines = expected_lines | [ "max_heap_table_size = #{param_values[:max_heap_table_size]}" ]
+              end
+              if param_values[:table_open_cache] != 'UNSET'
+                expected_lines = expected_lines | [ "table_open_cache    = #{param_values[:table_open_cache]}" ]
+              end
+              if param_values[:long_query_time] != 'UNSET'
+                expected_lines = expected_lines | [ "long_query_time     = #{param_values[:long_query_time]}" ]
+              end
               if param_values[:default_engine] != 'UNSET'
                 expected_lines = expected_lines | [ "default-storage-engine = #{param_values[:default_engine]}" ]
               else
                 content.should_not match(/^default-storage-engine = /)
+              end
+              if param_values[:character_set] != 'UNSET'
+                expected_lines = expected_lines | [ "character-set-server   = #{param_values[:character_set]}" ]
+              end
+              if param_values[:sql_log_bin] != 'UNSET'
+                expected_lines = expected_lines | [ "sql_log_bin         = #{param_values[:sql_log_bin]}" ]
+              end
+              if param_values[:log_bin] != 'UNSET'
+                expected_lines = expected_lines | [ "log-bin             = #{param_values[:log_bin]}" ]
+              end
+              if param_values[:binlog_do_db] != 'UNSET'
+                expected_lines = expected_lines | [ "binlog-do-db        = #{param_values[:binlog_do_db]}" ]
+              end
+              if param_values[:log_bin_trust_function_creators] != 'UNSET'
+                expected_lines = expected_lines | [ "log_bin_trust_function_creators = #{param_values[:log_bin_trust_function_creators]}" ]
+              end
+              if param_values[:replicate_ignore_table] != 'UNSET'
+                expected_lines = expected_lines | [ "replicate-ignore-table          = #{param_values[:replicate_ignore_table]}" ]
+              end
+              if param_values[:replicate_wild_do_table] != 'UNSET'
+                expected_lines = expected_lines | [ "replicate-wild-do-table         = #{param_values[:replicate_wild_do_table]}" ]
+              end
+              if param_values[:replicate_wild_ignore_table] != 'UNSET'
+                expected_lines = expected_lines | [ "replicate-wild-ignore-table     = #{param_values[:replicate_wild_ignore_table]}" ]
               end
               if param_values[:ssl]
                 expected_lines = expected_lines |
