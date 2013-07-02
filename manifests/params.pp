@@ -26,6 +26,14 @@ class mysql::params {
   $root_password       = 'UNSET'
   $restart             = true
   $ssl                 = false
+  $key_buffer          = '16M'
+  $thread_stack        = '256K'
+  $thread_cache_size   = 8
+  $myisam_recover      = 'BACKUP'
+  $query_cache_limit   = '1M'
+  $query_cache_size    = '16M'
+  $expire_logs_days    = 10
+  $max_binlog_size     = 100M
 
   case $::operatingsystem {
     'Ubuntu': {
