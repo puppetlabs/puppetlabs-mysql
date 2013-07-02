@@ -8,6 +8,7 @@
 #   [*default_engine]      - configure a default table engine
 #   [*etc_root_password*]  - whether to save /etc/my.cnf.
 #   [*log_error]           - path to mysql error log
+#   [*manage_config_file*] - if the config file should be managed (default: true)
 #   [*max_allowed_packet*] - Maximum network packet size mysqld will accept
 #   [*old_root_password*]  - previous root user password,
 #   [*port*]               - port to bind service.
@@ -42,6 +43,7 @@ class mysql::config(
   $tmpdir             = $mysql::tmpdir,
   $default_engine     = $mysql::default_engine,
   $etc_root_password  = $mysql::etc_root_password,
+  $manage_config_file = $mysql::manage_config_file,
   $max_allowed_packet = $mysql::max_allowed_packet,
   $log_error          = $mysql::log_error,
   $pidfile            = $mysql::pidfile,
@@ -131,15 +133,18 @@ class mysql::config(
     ensure => directory,
     mode   => '0755',
   }
+
   file { '/etc/mysql/conf.d':
     ensure  => directory,
     mode    => '0755',
     recurse => $purge_conf_dir,
     purge   => $purge_conf_dir,
   }
-  file { $config_file:
-    content => template('mysql/my.cnf.erb'),
-    mode    => '0644',
-  }
 
+  if $manage_config_file  {
+    file { $config_file:
+      content => template('mysql/my.cnf.erb'),
+      mode    => '0644',
+    }
+  }
 }

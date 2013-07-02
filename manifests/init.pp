@@ -26,6 +26,8 @@
 #
 # [*log_error*]             - Where to log errors
 #
+# [*manage_config_file*]    - if the config file should be managed (default: true)
+#
 # [*manage_service*]        - Boolean dictating if mysql::server should manage the service
 #
 # [*max_allowed_packet*]    - Maximum network packet size mysqld will accept
@@ -93,6 +95,7 @@ class mysql(
   $etc_root_password     = $mysql::params::etc_root_password,
   $java_package_name     = $mysql::params::java_package_name,
   $log_error             = $mysql::params::log_error,
+  $manage_config_file    = true,
   $manage_service        = $mysql::params::manage_service,
   $max_allowed_packet    = $mysql::params::max_allowed_packet,
   $old_root_password     = $mysql::params::old_root_password,
