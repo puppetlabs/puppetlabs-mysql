@@ -17,7 +17,7 @@ describe provider_class do
     File.stubs(:file?).with("#{root_home}/.my.cnf").returns(true)
   end
 
-  it 'should query privilegess from the database' do
+  it 'should query privileges from the database' do
     provider_class.expects(:mysql) .with(["--defaults-file=#{root_home}/.my.cnf", 'mysql', '-Be', 'describe user']).returns <<-EOT
 Field	Type	Null	Key	Default	Extra
 Host	char(60)	NO	PRI		
@@ -40,7 +40,7 @@ EOT
     provider_class.db_privs.should == [ 'Select_priv', 'Insert_priv', 'Update_priv' ]
   end
 
-  it 'should query set priviliges' do
+  it 'should query set privileges' do
     provider_class.expects(:mysql).with(["--defaults-file=#{root_home}/.my.cnf", 'mysql', '-Be', "select * from mysql.user where user='user' and host='host'"]).returns <<-EOT
 Host	User	Password	Select_priv	Insert_priv	Update_priv
 host	user		Y	N	Y
@@ -48,7 +48,7 @@ EOT
     @provider.privileges.should == [ 'Select_priv', 'Update_priv' ]
   end
 
-  it 'should recognize when all priviliges are set' do
+  it 'should recognize when all privileges are set' do
     provider_class.expects(:mysql).with(["--defaults-file=#{root_home}/.my.cnf", 'mysql', '-Be', "select * from mysql.user where user='user' and host='host'"]).returns <<-EOT
 Host	User	Password	Select_priv	Insert_priv	Update_priv
 host	user		Y	Y	Y
