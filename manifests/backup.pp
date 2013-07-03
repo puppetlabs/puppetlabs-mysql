@@ -8,6 +8,7 @@
 #   [*backupdir*]      - The target directory of the mysqldump.
 #   [*backupcompress*] - Boolean to compress backup with bzip2.
 #   [*backuprotate*]   - Number of backups to keep. Default 30
+#   [*delete_before_dump*] - Clean existing backups before creating new
 #
 # Actions:
 #   GRANT SELECT, RELOAD, LOCK TABLES ON *.* TO 'user'@'localhost'
@@ -30,6 +31,7 @@ class mysql::backup (
   $backupdir,
   $backupcompress = true,
   $backuprotate = 30,
+  $delete_before_dump = false,
   $ensure = 'present'
 ) {
 

@@ -22,10 +22,21 @@ PATH=/usr/bin:/usr/sbin:/bin:/sbin
 
 set -o pipefail
 
+cleanup()
+{
+    find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+}
+
+<% if @delete_before_dump -%>
+cleanup
+
+<% end -%>
 mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
  --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 
+<% if not @delete_before_dump -%>
 if [ $? -eq 0 ] ; then
-    find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+    cleanup
 fi
+<% end -%>
 
