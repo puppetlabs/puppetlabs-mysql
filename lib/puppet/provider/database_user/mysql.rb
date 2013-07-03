@@ -4,8 +4,8 @@ Puppet::Type.type(:database_user).provide(:mysql) do
 
   defaultfor :kernel => 'Linux'
 
-  optional_commands :mysql      => 'mysql'
-  optional_commands :mysqladmin => 'mysqladmin'
+  commands :mysql      => 'mysql'
+  commands :mysqladmin => 'mysqladmin'
 
   def self.instances
     users = mysql([defaults_file, "mysql", '-BNe' "select concat(User, '@',Host) as User from mysql.user"].compact).split("\n")
@@ -15,19 +15,28 @@ Puppet::Type.type(:database_user).provide(:mysql) do
   end
 
   def create
-    mysql([defaults_file, "mysql", "-e", "create user '%s' identified by PASSWORD '%s'" % [ @resource[:name].sub("@", "'@'"), @resource.value(:password_hash) ]].compact)
+    merged_name   = @resource[:name].sub("@", "'@'")
+    password_hash = @resource.value(:password_hash)
+    mysql([defaults_file, "mysql", "-e", "create user '#{merged_name}' identified by PASSWORD '#{password_hash}'"].compact)
+
+    exists? ? (return true) : (return false)
   end
 
   def destroy
-    mysql([defaults_file, "mysql", "-e", "drop user '%s'" % @resource.value(:name).sub("@", "'@'") ].compact)
+    merged_name   = @resource[:name].sub("@", "'@'")
+    mysql([defaults_file, "mysql", "-e", "drop user '#{merged_name}'"].compact)
+
+    exists? ? (return false) : (return true)
   end
 
   def password_hash
-    mysql([defaults_file, "mysql", "-NBe", "select password from mysql.user where CONCAT(user, '@', host) = '%s'" % @resource.value(:name)].compact).chomp
+    mysql([defaults_file, "mysql", "-NBe", "select password from mysql.user where CONCAT(user, '@', host) = '#{@resource[:name]}'"].compact).chomp
   end
 
   def password_hash=(string)
     mysql([defaults_file, "mysql", "-e", "SET PASSWORD FOR '%s' = '%s'" % [ @resource[:name].sub("@", "'@'"), string ] ].compact)
+
+    password_hash == string ? (return true) : (return false)
   end
 
   def exists?

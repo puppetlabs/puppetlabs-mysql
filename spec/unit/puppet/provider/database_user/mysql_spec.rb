@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'pry'
 
 provider_class = Puppet::Type.type(:database_user).provider(:mysql)
 
@@ -48,27 +47,31 @@ usvn_user@localhost
   describe 'create' do
     it 'makes a user' do
       subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "create user 'joe'@'localhost' identified by PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'"])
-      @provider.create
+      @provider.expects(:exists?).returns(true)
+      @provider.create.should be_true
     end
   end
 
   describe 'destroy' do
     it 'removes a user if present' do
       subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "drop user 'joe'@'localhost'"])
-      @provider.destroy
+      @provider.expects(:exists?).returns(false)
+      @provider.destroy.should be_true
     end
   end
 
   describe 'password_hash' do
     it 'returns a hash' do
       subject.expects(:mysql).with([defaults_file, 'mysql', '-NBe', "select password from mysql.user where CONCAT(user, '@', host) = 'joe@localhost'"]).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4')
-      @provider.password_hash
+      @provider.password_hash.should == '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'
     end
   end
 
   describe 'password_hash=' do
     it 'changes the hash' do
-      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"])
+      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"]).returns('0')
+
+      @provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       @provider.password_hash=('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
     end
   end
