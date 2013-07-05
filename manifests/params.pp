@@ -46,8 +46,14 @@ class mysql::params {
 
   case $::osfamily {
     'RedHat': {
+      if $::operatingsystem == 'Fedora' and $::operatinsystemrelease >= 19 {
+        $client_package_name = 'mariadb'
+        $server_package_name = 'mariadb-server'
+      } else {
+        $client_package_name = 'mysql'
+        $server_package_name = 'mysql-server'
+      }
       $basedir               = '/usr'
-      $client_package_name   = 'mysql'
       $config_file           = '/etc/my.cnf'
       $datadir               = '/var/lib/mysql'
       $tmpdir                = '/tmp'
@@ -61,7 +67,6 @@ class mysql::params {
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
       $service_name          = 'mysqld'
-      $server_package_name   = 'mysql-server'
       $socket                = '/var/lib/mysql/mysql.sock'
       $ssl_ca                = '/etc/mysql/cacert.pem'
       $ssl_cert              = '/etc/mysql/server-cert.pem'
