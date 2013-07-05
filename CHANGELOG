@@ -1,4 +1,43 @@
-2013-07-26 - Version 0.7.1
+2013-07-01 - Version 0.8.0
+Features:
+ - mysql::perl class to install perl-DBD-mysql.
+ - minor improvements to the providers to improve reliability
+ - Install the MariaDB packages on Fedora 19 instead of MySQL.
+ - Add new `mysql` class parameters:
+  -  `max_connections`: The maximum number of allowed connections.
+  -  `manage_config_file`: Opt out of puppetized control of my.cnf.
+  -  `ft_min_word_len`: Fine tune the full text search.
+  -  `ft_max_word_len`: Fine tune the full text search.
+ - Add new `mysql` class performance tuning parameters:
+  -  `key_buffer`
+  -  `thread_stack`
+  -  `thread_cache_size`
+  -  `myisam-recover`
+  -  `query_cache_limit`
+  -  `query_cache_size`
+  -  `max_connections`
+  -  `tmp_table_size`
+  -  `table_open_cache`
+  -  `long_query_time`
+ - Add new `mysql` class replication parameters:
+  -  `server_id`
+  -  `sql_log_bin`
+  -  `log_bin`
+  -  `max_binlog_size`
+  -  `binlog_do_db`
+  -  `expire_logs_days`
+  -  `log_bin_trust_function_creators`
+  -  `replicate_ignore_table`
+  -  `replicate_wild_do_table`
+  -  `replicate_wild_ignore_table`
+  -  `expire_logs_days`
+  -  `max_binlog_size`
+
+Bugfixes:
+ - No longer restart MySQL when /root/.my.cnf changes.
+ - Ensure mysql::config runs before any mysql::db defines.
+
+2013-06-26 - Version 0.7.1
 Bugfixes:
 - Single-quote password for special characters
 - Update travis testing for puppet 3.2.x and missing Bundler gems
