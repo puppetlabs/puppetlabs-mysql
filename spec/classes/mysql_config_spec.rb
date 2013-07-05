@@ -33,7 +33,9 @@ describe 'mysql::config' do
      :log_bin_trust_function_creators => 'UNSET',
      :replicate_ignore_table          => 'UNSET',
      :replicate_wild_do_table         => 'UNSET',
-     :replicate_wild_ignore_table     => 'UNSET'
+     :replicate_wild_ignore_table     => 'UNSET',
+     :ft_min_word_len                 => 'UNSET',
+     :ft_max_word_len                 => 'UNSET'
     }
   end
 
@@ -153,7 +155,9 @@ describe 'mysql::config' do
             :tmp_table_size       => '4096M',
             :max_heap_table_size  => '4096M',
             :table_open_cache     => 2048,
-            :long_query_time      => 0.5
+            :long_query_time      => 0.5,
+            :ft_min_word_len      => 3,
+            :ft_max_word_len      => 10
           }
         ].each do |passed_params|
 
@@ -231,6 +235,12 @@ describe 'mysql::config' do
               end
               if param_values[:long_query_time] != 'UNSET'
                 expected_lines = expected_lines | [ "long_query_time     = #{param_values[:long_query_time]}" ]
+              end
+              if param_values[:ft_min_word_len] != 'UNSET'
+                expected_lines = expected_lines | [ "ft_min_word_len = #{param_values[:ft_min_word_len]}" ]
+              end
+              if param_values[:ft_max_word_len] != 'UNSET'
+                expected_lines = expected_lines | [ "ft_max_word_len = #{param_values[:ft_max_word_len]}" ]
               end
               if param_values[:default_engine] != 'UNSET'
                 expected_lines = expected_lines | [ "default-storage-engine = #{param_values[:default_engine]}" ]
