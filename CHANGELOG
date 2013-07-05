@@ -1,3 +1,7 @@
+2013-07-05 - Version 0.8.1
+Bugfixes:
+ - Fix a typo in the Fedora 19 support.
+
 2013-07-01 - Version 0.8.0
 Features:
  - mysql::perl class to install perl-DBD-mysql.
