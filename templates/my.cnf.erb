@@ -74,6 +74,12 @@ replicate-wild-do-table         = <%= @replicate_wild_do_table %>
 <% if @replicate_wild_ignore_table != 'UNSET' -%>
 replicate-wild-ignore-table     = <%= @replicate_wild_ignore_table %>
 <% end -%>
+<% if @ft_min_word_len != 'UNSET' -%>
+ft_min_word_len = <%= @ft_min_word_len %>
+<% end -%>
+<% if @ft_max_word_len != 'UNSET' -%>
+ft_max_word_len = <%= @ft_max_word_len %>
+<% end -%>
 
 <% if @log_error != 'syslog' -%>
 log_error           = <%= @log_error %>
