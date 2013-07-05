@@ -68,6 +68,8 @@
 #     specified database and table name patterns.
 #   [*replicate_wild_ignore_table]      - Tells the slave thread not to
 #     replicate a statement where any table matches the given wildcard pattern.
+#   [*ft_min_word_len*]     - minimum length of words to be indexed by mysql
+#   [*ft_max_word_len*]     - maximum length of words to be indexed by mysql
 #
 # Actions:
 #
@@ -125,7 +127,9 @@ class mysql::config(
   $log_bin_trust_function_creators  = 'UNSET',
   $replicate_ignore_table           = 'UNSET',
   $replicate_wild_do_table          = 'UNSET',
-  $replicate_wild_ignore_table      = 'UNSET'
+  $replicate_wild_ignore_table      = 'UNSET',
+  $ft_min_word_len                  = 'UNSET',
+  $ft_max_word_len                  = 'UNSET'
 ) inherits mysql {
 
   File {
