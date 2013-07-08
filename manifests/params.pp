@@ -90,7 +90,10 @@ class mysql::params {
         /OpenSuSE/           => '/var/run/mysql/mysql.sock',
         /(SLES|SLED)/        => '/var/lib/mysql/mysql.sock',
         }
-      $pidfile               = '/var/run/mysql/mysqld.pid'
+      $pidfile               = $::operatingsystem ? {
+        /OpenSuSE/           => '/var/run/mysql/mysqld.pid',
+        /(SLES|SLED)/        => '/var/lib/mysql/mysqld.pid',
+        }
       $config_file           = '/etc/my.cnf'
       $log_error             = $::operatingsystem ? {
         /OpenSuSE/           => '/var/log/mysql/mysqld.log',
