@@ -76,6 +76,21 @@ usvn_user@localhost
     end
   end
 
+  describe 'max_user_connections' do
+    it 'returns max user connections' do
+      subject.expects(:mysql).with([defaults_file, 'mysql', '-NBe', "select max_user_connections from mysql.user where CONCAT(user, '@', host) = 'joe@localhost'"]).returns('10')
+      @provider.max_user_connections.should == '10'
+    end
+  end
+
+  describe 'max_user_connections=' do
+    it 'changes max user connections' do
+      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "grant usage on *.* to 'joe'@'localhost' with max_user_connections 42"]).returns('0')
+      @provider.expects(:max_user_connections).returns('42')
+      @provider.max_user_connections=('42')
+    end
+  end
+
   describe 'exists?' do
     it 'checks if user exists' do
       subject.expects(:mysql).with([defaults_file, 'mysql', '-NBe', "select '1' from mysql.user where CONCAT(user, '@', host) = 'joe@localhost'"]).returns('1')
