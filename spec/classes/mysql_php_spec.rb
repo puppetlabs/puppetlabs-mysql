@@ -4,7 +4,7 @@ describe 'mysql::php' do
 
   describe 'on a debian based os' do
     let :facts do
-      { :osfamily => 'Debian'}
+      { :osfamily => 'Debian', :root_home => '/root'}
     end
     it { should contain_package('php-mysql').with(
       :name   => 'php5-mysql',
@@ -14,7 +14,7 @@ describe 'mysql::php' do
 
   describe 'on a freebsd based os' do
     let :facts do
-      { :osfamily => 'FreeBSD'}
+      { :osfamily => 'FreeBSD', :root_home => '/root'}
     end
     it { should contain_package('php-mysql').with(
       :name   => 'php5-mysql',
@@ -24,7 +24,7 @@ describe 'mysql::php' do
 
   describe 'on a redhat based os' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'Redhat', :root_home => '/root'}
     end
     it { should contain_package('php-mysql').with(
       :name   => 'php-mysql',
@@ -43,7 +43,7 @@ describe 'mysql::php' do
 
   describe 'on any other os' do
     let :facts do
-      {:osfamily => 'foo'}
+      {:osfamily => 'foo', :root_home => '/root'}
     end
 
     it 'should fail' do

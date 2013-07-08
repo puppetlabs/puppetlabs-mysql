@@ -4,7 +4,7 @@ describe 'mysql::perl' do
 
   describe 'on a debian based os' do
     let :facts do
-      { :osfamily => 'Debian'}
+      { :osfamily => 'Debian', :root_home => '/root'}
     end
     it { should contain_package('perl_mysql').with(
       :name     => 'libdbd-mysql-perl',
@@ -17,7 +17,7 @@ describe 'mysql::perl' do
 
   describe 'on a freebsd based os' do
     let :facts do
-      { :osfamily => 'FreeBSD'}
+      { :osfamily => 'FreeBSD', :root_home => '/root'}
     end
     it { should contain_package('perl_mysql').with(
       :name     => 'p5-DBD-mysql',
@@ -28,7 +28,7 @@ describe 'mysql::perl' do
 
   describe 'on a redhat based os' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'Redhat', :root_home => '/root'}
     end
     it { should contain_package('perl_mysql').with(
       :name   => 'perl-DBD-MySQL',
@@ -51,7 +51,7 @@ describe 'mysql::perl' do
 
   describe 'on any other os' do
     let :facts do
-      {:osfamily => 'foo'}
+      {:osfamily => 'foo', :root_home => '/root'}
     end
 
     it 'should fail' do
