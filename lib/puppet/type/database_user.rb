@@ -22,4 +22,9 @@ Puppet::Type.newtype(:database_user) do
     newvalue(/\w+/)
   end
 
+  newproperty(:max_user_connections) do
+    desc "Max concurrent connections for the user. 0 means no (or global) limit."
+    newvalue(/\d+/)
+  end
+
 end

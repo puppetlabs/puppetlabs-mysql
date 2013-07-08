@@ -39,6 +39,16 @@ Puppet::Type.type(:database_user).provide(:mysql) do
     password_hash == string ? (return true) : (return false)
   end
 
+  def max_user_connections
+    mysql([defaults_file, "mysql", "-NBe", "select max_user_connections from mysql.user where CONCAT(user, '@', host) = '#{@resource[:name]}'"].compact).chomp
+  end
+
+  def max_user_connections=(int)
+    mysql([defaults_file, "mysql", "-e", "grant usage on *.* to '%s' with max_user_connections #{int}" % [ @resource[:name].sub("@", "'@'")] ].compact).chomp
+
+    max_user_connections == int ? (return true) : (return false)
+  end
+
   def exists?
     not mysql([defaults_file, "mysql", "-NBe", "select '1' from mysql.user where CONCAT(user, '@', host) = '%s'" % @resource.value(:name)].compact).empty?
   end
