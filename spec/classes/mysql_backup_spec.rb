@@ -3,9 +3,11 @@ require 'spec_helper'
 describe 'mysql::backup' do
 
   let(:default_params) {
-    { 'backupuser'     => 'testuser',
-      'backuppassword' => 'testpass',
-      'backupdir'      => '/tmp',
+    { 'backupuser'         => 'testuser',
+      'backuppassword'     => 'testpass',
+      'backupdir'          => '/tmp',
+      'backuprotate'       => '25',
+      'delete_before_dump' => true,
     }
   }
   context "standard conditions" do
@@ -34,8 +36,13 @@ describe 'mysql::backup' do
 
     it 'should have compression by default' do
       verify_contents(subject, 'mysqlbackup.sh', [
-        ' --all-databases | bzcat -zc > ${DIR}/mysql_backup_`date +%Y%m%d-%H%M%S`.sql.bz2',
+        ' --all-databases | bzcat -zc > ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql.bz2',
       ])
+    end
+
+    it 'should have 25 days of rotation' do
+      # MySQL counts from 0 I guess.
+      should contain_file('mysqlbackup.sh').with_content(/.*ROTATE=24.*/)
     end
   end
 
@@ -51,7 +58,7 @@ describe 'mysql::backup' do
 
     it 'should be able to disable compression' do
       verify_contents(subject, 'mysqlbackup.sh', [
-        ' --all-databases > ${DIR}/mysql_backup_`date +%Y%m%d-%H%M%S`.sql',
+        ' --all-databases > ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql',
       ])
     end
   end
