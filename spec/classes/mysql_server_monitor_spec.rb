@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe 'mysql::server::monitor' do
   let :facts do
-    { :osfamily => 'Debian' }
+    { :osfamily => 'Debian', :root_home => '/root' }
   end
   let :pre_condition do
     "include 'mysql::server'"

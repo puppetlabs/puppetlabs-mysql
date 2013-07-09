@@ -4,7 +4,8 @@ describe 'mysql::server::account_security' do
 
   let :facts do {
     :fqdn     => 'myhost.mydomain',
-    :hostname => 'myhost'
+    :hostname => 'myhost',
+    :root_home => '/root'
   }
   end
 

@@ -77,7 +77,7 @@ describe 'mysql::config' do
       describe "when osfamily is #{osfamily}" do
 
         let :facts do
-          {:osfamily => osfamily}
+          {:osfamily => osfamily, :root_home => '/root'}
         end
 
         describe 'when config file should be managed' do
@@ -290,7 +290,7 @@ describe 'mysql::config' do
   describe 'when etc_root_password is set with password' do
 
     let :facts do
-      {:osfamily => 'Debian'}
+      {:osfamily => 'Debian', :root_home => '/root'}
     end
 
     let :params do
@@ -313,7 +313,7 @@ describe 'mysql::config' do
 
   describe 'setting etc_root_password should fail on redhat' do
     let :facts do
-      {:osfamily => 'RedHat'}
+      {:osfamily => 'RedHat', :root_home => '/root'}
     end
 
     let :params do
@@ -328,7 +328,7 @@ describe 'mysql::config' do
 
   describe 'unset ssl params should fail when ssl is true on freebsd' do
     let :facts do
-     {:osfamily => 'FreeBSD'}
+     {:osfamily => 'FreeBSD', :root_home => '/root'}
     end
 
     let :params do
