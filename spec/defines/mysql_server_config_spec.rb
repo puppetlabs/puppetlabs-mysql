@@ -4,7 +4,7 @@ describe 'mysql::server::config', :type => :define do
   filename = '/etc/mysql/conf.d/test_config.cnf'
 
   let :facts do
-    { :osfamily => 'Debian'}
+    { :osfamily => 'Debian', :root_home => '/root'}
   end
 
   let(:title) { File.basename(filename, '.cnf') }

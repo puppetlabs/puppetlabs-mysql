@@ -4,7 +4,7 @@ describe 'mysql' do
 
   describe 'on a debian based os' do
     let :facts do
-      { :osfamily => 'Debian'}
+      { :osfamily => 'Debian', :root_home => '/root'}
     end
     it { should contain_package('mysql_client').with(
       :name   => 'mysql-client',
@@ -14,7 +14,7 @@ describe 'mysql' do
 
   describe 'on a freebsd based os' do
     let :facts do
-      { :osfamily => 'FreeBSD'}
+      { :osfamily => 'FreeBSD', :root_home => '/root'}
     end
     it { should contain_package('mysql_client').with(
       :name   => 'databases/mysql55-client',
@@ -24,7 +24,7 @@ describe 'mysql' do
 
   describe 'on a redhat based os' do
     let :facts do
-      {:osfamily => 'RedHat'}
+      {:osfamily => 'RedHat', :root_home => '/root'}
     end
     it { should contain_package('mysql_client').with(
       :name   => 'mysql',
@@ -43,7 +43,7 @@ describe 'mysql' do
 
   describe 'on any other os' do
     let :facts do
-      {:osfamily => 'foo'}
+      {:osfamily => 'foo', :root_home => '/root'}
     end
 
     it 'should fail' do
