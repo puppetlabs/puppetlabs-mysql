@@ -34,7 +34,7 @@ cleanup
 mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
  --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 
-<% if not @delete_before_dump -%>
+<% unless @delete_before_dump -%>
 if [ $? -eq 0 ] ; then
     cleanup
 fi

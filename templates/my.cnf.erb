@@ -92,7 +92,7 @@ default-storage-engine = <%= @default_engine %>
 <% if @character_set != 'UNSET' -%>
 character-set-server   = <%= @character_set %>
 <% end -%>
-<% if @ssl == true %>
+<% if @ssl %>
 ssl-ca    = <%= @ssl_ca %>
 ssl-cert  = <%= @ssl_cert %>
 ssl-key   = <%= @ssl_key %>
