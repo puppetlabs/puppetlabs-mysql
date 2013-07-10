@@ -26,7 +26,10 @@ usvn_user@localhost
   before :each do
     # password hash = mypass
     @resource = Puppet::Type::Database_user.new(
-      { :password_hash => '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4', :name => 'joe@localhost' }
+      { :password_hash => '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4',
+        :name => 'joe@localhost',
+        :max_user_connections => '10'
+      }
     )
     @provider = provider_class.new(@resource)
     Facter.stubs(:value).with(:root_home).returns(root_home)
@@ -46,7 +49,8 @@ usvn_user@localhost
 
   describe 'create' do
     it 'makes a user' do
-      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "create user 'joe'@'localhost' identified by PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'"])
+      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "grant usage on *.* to 'joe'@'localhost' identified by PASSWORD
+      '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' with max_user_connections 10"])
       @provider.expects(:exists?).returns(true)
       @provider.create.should be_true
     end
