@@ -14,5 +14,5 @@ describe 'mysql::server::monitor' do
     }
   end
 
-  it { should contain_database_user("monitoruser@monitorhost")}
+  it { should contain_database_user('monitoruser@monitorhost')}
 end

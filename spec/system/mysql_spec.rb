@@ -21,7 +21,7 @@ describe 'mysql class' do
     it { should be_installed }
   end
 
-  describe service('mysqld') do
+  describe service('mysql') do
     it { should_not be_running }
     it { should_not be_enabled }
   end
