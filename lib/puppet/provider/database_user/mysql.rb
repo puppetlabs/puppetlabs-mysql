@@ -15,9 +15,12 @@ Puppet::Type.type(:database_user).provide(:mysql) do
   end
 
   def create
-    merged_name   = @resource[:name].sub("@", "'@'")
-    password_hash = @resource.value(:password_hash)
-    mysql([defaults_file, "mysql", "-e", "create user '#{merged_name}' identified by PASSWORD '#{password_hash}'"].compact)
+    merged_name          = @resource[:name].sub("@", "'@'")
+    password_hash        = @resource.value(:password_hash)
+    max_user_connections = @resource.value(:max_user_connections) || 0
+
+    mysql([defaults_file, "mysql", "-e", "grant usage on *.* to '#{merged_name}' identified by PASSWORD
+      '#{password_hash}' with max_user_connections #{max_user_connections}"].compact)
 
     exists? ? (return true) : (return false)
   end
