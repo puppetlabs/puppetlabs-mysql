@@ -135,7 +135,6 @@ describe 'mysql::config' do
           {
             :service_name         => 'dans_service',
             :config_file          => '/home/dan/mysql.conf',
-            :service_name         => 'dans_mysql',
             :pidfile              => '/home/dan/mysql.pid',
             :socket               => '/home/dan/mysql.sock',
             :bind_address         => '0.0.0.0',

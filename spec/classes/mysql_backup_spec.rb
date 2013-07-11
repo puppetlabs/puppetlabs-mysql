@@ -10,13 +10,13 @@ describe 'mysql::backup' do
       'delete_before_dump' => true,
     }
   }
-  context "standard conditions" do
+  context 'standard conditions' do
     let(:params) { default_params }
 
     it { should contain_database_user('testuser@localhost')}
 
     it { should contain_database_grant('testuser@localhost').with(
-      :privileges => [ 'Select_priv', 'Reload_priv', 'Lock_tables_priv', 'Show_view_priv' ]
+      :privileges => %w(Select_priv Reload_priv Lock_tables_priv Show_view_priv)
     )}
 
     it { should contain_cron('mysql-backup').with(
@@ -46,7 +46,7 @@ describe 'mysql::backup' do
     end
   end
 
-  context "with compression disabled" do
+  context 'with compression disabled' do
     let(:params) do
       { :backupcompress => false }.merge(default_params)
     end

@@ -33,7 +33,7 @@ class mysql::params {
   $query_cache_limit   = '1M'
   $query_cache_size    = '16M'
   $expire_logs_days    = 10
-  $max_binlog_size     = 100M
+  $max_binlog_size     = '100M'
 
   case $::operatingsystem {
     'Ubuntu': {
