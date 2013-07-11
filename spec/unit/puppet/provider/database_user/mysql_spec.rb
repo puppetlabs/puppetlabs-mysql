@@ -21,7 +21,7 @@ usvn_user@localhost
     SQL_OUTPUT
   end
 
-  let(:parsed_users) { ['root@127.0.0.1', 'root@::1', 'debian-sys-maint@localhost', 'root@localhost', 'usvn_user@localhost'] }
+  let(:parsed_users) { %w(root@127.0.0.1 root@::1 debian-sys-maint@localhost root@localhost usvn_user@localhost) }
 
   before :each do
     # password hash = mypass
@@ -33,8 +33,8 @@ usvn_user@localhost
     )
     @provider = provider_class.new(@resource)
     Facter.stubs(:value).with(:root_home).returns(root_home)
-    Puppet::Util.stubs(:which).with("mysql").returns("/usr/bin/mysql")
-    subject.stubs(:which).with("mysql").returns("/usr/bin/mysql")
+    Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
+    subject.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     subject.stubs(:defaults_file).returns('--defaults-file=/root/.my.cnf')
   end
 
