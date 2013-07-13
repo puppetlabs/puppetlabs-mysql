@@ -2,6 +2,6 @@
 user=root
 host=localhost
 <% unless root_password == 'UNSET' -%>
-password=<%= root_password %>
+password=<%= @root_password %>
 <% end -%>
-socket=<%= socket %>
+socket=<%= @socket -%>

@@ -69,7 +69,7 @@ describe 'mysql::config' do
           )}
 
           it { should contain_file('/root/.my.cnf').with(
-            'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\n",
+            'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\nsocket=#{osparams[:socket]}",
             'require' => 'Exec[set_mysql_rootpw]'
           )}
 
@@ -189,7 +189,12 @@ describe 'mysql::config' do
     end
 
     let :params do
-     {:root_password => 'foo', :old_root_password => 'bar', :etc_root_password => true}
+     {
+       :root_password => 'foo',
+       :old_root_password => 'bar',
+       :etc_root_password => true,
+       :socket => '/tmp/mysql.sock',
+    }
     end
 
     it { should contain_exec('set_mysql_rootpw').with(
@@ -200,7 +205,7 @@ describe 'mysql::config' do
     )}
 
     it { should contain_file('/root/.my.cnf').with(
-      'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\n",
+      'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\nsocket=#{params[:socket]}",
       'require' => 'Exec[set_mysql_rootpw]'
     )}
 
