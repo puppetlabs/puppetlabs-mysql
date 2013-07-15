@@ -1,3 +1,16 @@
+2013-07-15 - Version 0.9.0
+Features:
+- Add `mysql::backup::backuprotate` parameter
+- Add `mysql::backup::delete_before_dump` parameter
+- Add `max_user_connections` attribute to `database_user` type
+
+Bugfixes:
+- Add client package dependency for `mysql::db`
+- Remove duplicate `expire_logs_days` and `max_binlog_size` settings
+- Make root's `.my.cnf` file path dynamic
+- Update pidfile path for Suse variants
+- Fixes for lint
+
 2013-07-05 - Version 0.8.1
 Bugfixes:
  - Fix a typo in the Fedora 19 support.
