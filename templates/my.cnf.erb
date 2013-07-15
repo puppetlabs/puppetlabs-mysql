@@ -32,8 +32,6 @@ thread_cache_size   = <%= @thread_cache_size %>
 myisam-recover      = <%= @myisam_recover %>
 query_cache_limit   = <%= @query_cache_limit %>
 query_cache_size    = <%= @query_cache_size %>
-expire_logs_days    = <%= @expire_logs_days %>
-max_binlog_size     = <%= @max_binlog_size %>
 
 <% if @max_connections != 'UNSET' -%>
 max_connections     = <%= @max_connections %>
@@ -84,8 +82,8 @@ ft_max_word_len = <%= @ft_max_word_len %>
 <% if @log_error != 'syslog' -%>
 log_error           = <%= @log_error %>
 <% end -%>
-expire_logs_days    = 10
-max_binlog_size     = 100M
+expire_logs_days    = <%= @expire_logs_days %>
+max_binlog_size     = <%= @max_binlog_size %>
 <% if @default_engine != 'UNSET' %>
 default-storage-engine = <%= @default_engine %>
 <% end -%>
