@@ -1,7 +1,12 @@
 [client]
 user=root
 host=localhost
+<<<<<<< HEAD
 <% unless @root_password == 'UNSET' -%>
 password='<%= @root_password %>'
+=======
+<% unless root_password == 'UNSET' -%>
+password=<%= @root_password %>
+>>>>>>> fbfd304a769e679d71f97f6e733d7f0765b2f73f
 <% end -%>
 socket=<%= @socket -%>
