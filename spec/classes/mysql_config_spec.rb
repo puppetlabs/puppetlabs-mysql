@@ -309,11 +309,7 @@ describe 'mysql::config' do
     )}
 
     it { should contain_file('/root/.my.cnf').with(
-<<<<<<< HEAD
       'content' => "[client]\nuser=root\nhost=localhost\npassword='foo'\nsocket=#{params[:socket]}",
-=======
-      'content' => "[client]\nuser=root\nhost=localhost\npassword=foo\nsocket=#{params[:socket]}",
->>>>>>> fbfd304a769e679d71f97f6e733d7f0765b2f73f
       'require' => 'Exec[set_mysql_rootpw]'
     )}
 
