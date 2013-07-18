@@ -211,7 +211,6 @@ describe 'mysql::config' do
                 "socket    = #{param_values[:socket]}",
                 "pid-file  = #{param_values[:pidfile]}",
                 "datadir   = #{param_values[:datadir]}",
-                "max_connections = #{param_values[:max_connections]}",
                 "bind-address        = #{param_values[:bind_address]}",
                 "key_buffer          = #{param_values[:key_buffer]}",
                 "max_allowed_packet  = #{param_values[:max_allowed_packet]}",
@@ -223,6 +222,9 @@ describe 'mysql::config' do
                 "expire_logs_days    = #{param_values[:expire_logs_days]}",
                 "max_binlog_size     = #{param_values[:max_binlog_size]}"
               ]
+              if param_values[:max_connections] != 'UNSET'
+                expected_lines = expected_lines | [ "max_connections     = #{param_values[:max_connections]}" ]
+              end
               if param_values[:tmp_table_size] != 'UNSET'
                 expected_lines = expected_lines | [ "tmp_table_size      = #{param_values[:tmp_table_size]}" ]
               end
