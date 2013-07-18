@@ -43,6 +43,8 @@
 #   [*table_open_cache]     - The number of open tables for all threads.
 #   [*long_query_time]      - If a query takes longer than this many seconds,
 #     the server increments the Slow_queries status variable.
+#   [*slow_query_log]
+#   [*slow_query_log_file]
 #   [*server_id]            - The server ID, used in replication to give each
 #     master and slave a unique identity.
 #   [*sql_log_bin]          - This variable controls whether logging to the
@@ -119,6 +121,8 @@ class mysql::config(
   $max_heap_table_size              = 'UNSET',
   $table_open_cache                 = 'UNSET',
   $long_query_time                  = 'UNSET',
+  $slow_query_log                   = 'UNSET',
+  $slow_query_log_file              = 'UNSET',
   $character_set                    = 'UNSET',
   $server_id                        = 'UNSET',
   $sql_log_bin                      = 'UNSET',
