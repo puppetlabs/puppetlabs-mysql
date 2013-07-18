@@ -19,25 +19,25 @@ Puppet::Type.newtype(:database_grant) do
     reqs = []
     matches = self[:name].match(/^([^@]+)@([^\/]+).*$/)
     unless matches.nil?
-      reqs << "%s@%s" % [ matches[1], matches[2] ]
+      reqs << '%s@%s' % [ matches[1], matches[2] ]
     end
     # puts "Autoreq: '%s'" % reqs.join(" ")
     reqs
   end
 
   newparam(:name, :namevar=>true) do
-    desc "The primary key: either user@host for global privilges or user@host/database for database specific privileges"
+    desc 'The primary key: either user@host for global privilges or user@host/database for database specific privileges'
   end
 
   newproperty(:privileges, :array_matching => :all) do
-    desc "The privileges the user should have. The possible values are implementation dependent."
+    desc 'The privileges the user should have. The possible values are implementation dependent.'
 
     def should_to_s(newvalue = @should)
       if newvalue
         unless newvalue.is_a?(Array)
           newvalue = [ newvalue ]
         end
-        newvalue.collect do |v| v.downcase end.sort.join ", "
+        newvalue.collect do |v| v.downcase end.sort.join ', '
       else
         nil
       end
@@ -48,7 +48,7 @@ Puppet::Type.newtype(:database_grant) do
         unless currentvalue.is_a?(Array)
           currentvalue = [ currentvalue ]
         end
-        currentvalue.collect do |v| v.downcase end.sort.join ", "
+        currentvalue.collect do |v| v.downcase end.sort.join ', '
       else
         nil
       end
@@ -58,7 +58,7 @@ Puppet::Type.newtype(:database_grant) do
     def insync?(is)
       if defined? @should and @should
         case self.should_to_s
-        when "all"
+        when 'all'
           self.provider.all_privs_set?
         when self.is_to_s(is)
           true

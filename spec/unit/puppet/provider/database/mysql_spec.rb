@@ -18,7 +18,7 @@ test
     SQL_OUTPUT
   end
 
-  let(:parsed_databases) { ['information_schema', 'mydb', 'mysql', 'performance_schema', 'test'] }
+  let(:parsed_databases) { %w(information_schema mydb mysql performance_schema test) }
 
   before :each do
     @resource = Puppet::Type::Database.new(
@@ -26,14 +26,14 @@ test
     )
     @provider = provider_class.new(@resource)
     Facter.stubs(:value).with(:root_home).returns(root_home)
-    Puppet::Util.stubs(:which).with("mysql").returns("/usr/bin/mysql")
-    subject.stubs(:which).with("mysql").returns("/usr/bin/mysql")
+    Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
+    subject.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     subject.stubs(:defaults_file).returns('--defaults-file=/root/.my.cnf')
   end
 
   describe 'self.instances' do
     it 'returns an array of databases' do
-      subject.stubs(:mysql).with([defaults_file, "-NBe", "show databases"]).returns(raw_databases)
+      subject.stubs(:mysql).with([defaults_file, '-NBe', 'show databases']).returns(raw_databases)
 
       databases = subject.instances.collect {|x| x.name }
       parsed_databases.should match_array(databases)
@@ -71,7 +71,7 @@ test
 
   describe 'exists?' do
     it 'checks if user exists' do
-      subject.expects(:mysql).with([defaults_file, '-NBe', "show databases"]).returns('information_schema\nmydb\nmysql\nperformance_schema\ntest')
+      subject.expects(:mysql).with([defaults_file, '-NBe', 'show databases']).returns('information_schema\nmydb\nmysql\nperformance_schema\ntest')
       @provider.exists?
     end
   end

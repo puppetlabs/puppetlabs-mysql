@@ -43,7 +43,7 @@ define mysql::db (
   $enforce_sql = false,
   $ensure      = 'present'
 ) {
-
+  #input validation
   validate_re($ensure, '^(present|absent)$',
   "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
 
@@ -51,7 +51,7 @@ define mysql::db (
     ensure   => $ensure,
     charset  => $charset,
     provider => 'mysql',
-    require  => Class['mysql::server'],
+    require  => [Class['mysql::server'],Package['mysql_client']],
     before   => Database_user["${user}@${host}"],
   }
 

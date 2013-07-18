@@ -21,17 +21,20 @@ usvn_user@localhost
     SQL_OUTPUT
   end
 
-  let(:parsed_users) { ['root@127.0.0.1', 'root@::1', 'debian-sys-maint@localhost', 'root@localhost', 'usvn_user@localhost'] }
+  let(:parsed_users) { %w(root@127.0.0.1 root@::1 debian-sys-maint@localhost root@localhost usvn_user@localhost) }
 
   before :each do
     # password hash = mypass
     @resource = Puppet::Type::Database_user.new(
-      { :password_hash => '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4', :name => 'joe@localhost' }
+      { :password_hash => '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4',
+        :name => 'joe@localhost',
+        :max_user_connections => '10'
+      }
     )
     @provider = provider_class.new(@resource)
     Facter.stubs(:value).with(:root_home).returns(root_home)
-    Puppet::Util.stubs(:which).with("mysql").returns("/usr/bin/mysql")
-    subject.stubs(:which).with("mysql").returns("/usr/bin/mysql")
+    Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
+    subject.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     subject.stubs(:defaults_file).returns('--defaults-file=/root/.my.cnf')
   end
 
@@ -46,7 +49,8 @@ usvn_user@localhost
 
   describe 'create' do
     it 'makes a user' do
-      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "create user 'joe'@'localhost' identified by PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'"])
+      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "grant usage on *.* to 'joe'@'localhost' identified by PASSWORD
+      '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' with max_user_connections 10"])
       @provider.expects(:exists?).returns(true)
       @provider.create.should be_true
     end
@@ -73,6 +77,21 @@ usvn_user@localhost
 
       @provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       @provider.password_hash=('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+    end
+  end
+
+  describe 'max_user_connections' do
+    it 'returns max user connections' do
+      subject.expects(:mysql).with([defaults_file, 'mysql', '-NBe', "select max_user_connections from mysql.user where CONCAT(user, '@', host) = 'joe@localhost'"]).returns('10')
+      @provider.max_user_connections.should == '10'
+    end
+  end
+
+  describe 'max_user_connections=' do
+    it 'changes max user connections' do
+      subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "grant usage on *.* to 'joe'@'localhost' with max_user_connections 42"]).returns('0')
+      @provider.expects(:max_user_connections).returns('42')
+      @provider.max_user_connections=('42')
     end
   end
 
