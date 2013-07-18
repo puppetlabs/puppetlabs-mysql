@@ -50,6 +50,12 @@ table_open_cache    = <%= @table_open_cache %>
 <% if @long_query_time != 'UNSET' -%>
 long_query_time     = <%= @long_query_time %>
 <% end -%>
+<% if @slow_query_log != 'UNSET' -%>
+slow_query_log      = <%= @slow_query_log %>
+<% end -%>
+<% if @slow_query_log_file != 'UNSET' -%>
+slow_query_log_file = <%= @slow_query_log_file %>
+<% end -%>
 <% if @server_id != 'UNSET' -%>
 server-id           = <%= @server_id %>
 <% end -%>

@@ -26,6 +26,8 @@ describe 'mysql::config' do
      :max_heap_table_size             => 'UNSET',
      :table_open_cache                => 'UNSET',
      :long_query_time                 => 'UNSET',
+     :slow_query_log                  => 'UNSET',
+     :slow_query_log_file             => 'UNSET',
      :server_id                       => 'UNSET',
      :sql_log_bin                     => 'UNSET',
      :log_bin                         => 'UNSET',
@@ -155,6 +157,8 @@ describe 'mysql::config' do
             :max_heap_table_size  => '4096M',
             :table_open_cache     => 2048,
             :long_query_time      => 0.5,
+            :slow_query_log       => 1,
+            :slow_query_log_file  => '/tmp/slow.log',
             :ft_min_word_len      => 3,
             :ft_max_word_len      => 10
           }
@@ -234,6 +238,12 @@ describe 'mysql::config' do
               end
               if param_values[:long_query_time] != 'UNSET'
                 expected_lines = expected_lines | [ "long_query_time     = #{param_values[:long_query_time]}" ]
+              end
+              if param_values[:slow_query_log] != 'UNSET'
+                expected_lines = expected_lines | [ "slow_query_log      = #{param_values[:slow_query_log]}" ]
+              end
+              if param_values[:slow_query_log_file] != 'UNSET'
+                expected_lines = expected_lines | [ "slow_query_log_file = #{param_values[:slow_query_log_file]}" ]
               end
               if param_values[:ft_min_word_len] != 'UNSET'
                 expected_lines = expected_lines | [ "ft_min_word_len = #{param_values[:ft_min_word_len]}" ]
