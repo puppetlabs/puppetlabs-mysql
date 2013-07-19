@@ -1,4 +1,4 @@
-# Class: mysql::java
+# Class: mysql::bindings::java
 #
 # This class installs the mysql-java-connector.
 #
@@ -11,9 +11,9 @@
 #
 # Sample Usage:
 #
-class mysql::java (
-  $package_ensure = 'present',
-  $package_name   = $mysql::java_package_name
+class mysql::bindings::java (
+  $package_ensure = $mysql::bindings::java_package_ensure,
+  $package_name   = $mysql::bindings::java_package_name
 ) inherits mysql {
 
   package { 'mysql-connector-java':

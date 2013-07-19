@@ -1,4 +1,4 @@
-# Class: mysql::python
+# Class: mysql::bindings::python
 #
 # This class installs the python libs for mysql.
 #
@@ -12,9 +12,9 @@
 #
 # Sample Usage:
 #
-class mysql::python(
-  $package_ensure = 'present',
-  $package_name   = $mysql::python_package_name
+class mysql::bindings::python(
+  $package_ensure = $mysql::bindings::python_package_ensure,
+  $package_name   = $mysql::bindings::python_package_name
 ) inherits mysql {
 
   package { 'python-mysqldb':

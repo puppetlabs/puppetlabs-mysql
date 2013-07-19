@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'mysql::java' do
+describe 'mysql::bindings::java' do
 
   describe 'on a debian based os' do
     let :facts do
