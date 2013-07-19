@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'mysql::python' do
+describe 'mysql::bindings::python' do
 
   describe 'on a debian based os' do
     let :facts do
