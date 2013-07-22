@@ -1,6 +1,4 @@
-require 'spec_helper_system'
-
-describe 'mysql class' do
+describe 'mysql::server class' do
   before :all do
     pp = <<-EOS
       class { 'mysql': package_ensure => absent, }
@@ -13,6 +11,7 @@ describe 'mysql class' do
     it 'should work with no errors' do
       pp = <<-EOS
         class { 'mysql': }
+        class { 'mysql::server': }
       EOS
 
       # Run it twice and test for idempotency
@@ -24,12 +23,12 @@ describe 'mysql class' do
     end
   end
 
-  describe package('mysql') do
+  describe package('mysql-server') do
     it { should be_installed }
   end
 
   describe service('mysqld') do
-    it { should_not be_running }
-    it { should_not be_enabled }
+    it { should be_running }
+    it { should be_enabled }
   end
 end
