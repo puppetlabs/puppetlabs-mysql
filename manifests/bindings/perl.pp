@@ -1,4 +1,4 @@
-# Class: mysql::perl
+# Class: mysql::bindings::perl
 #
 # installs the perl bindings for mysql
 #
@@ -13,10 +13,10 @@
 #
 # Sample Usage:
 #
-class mysql::perl (
-  $package_ensure   = 'present',
-  $package_name     = $mysql::perl_package_name,
-  $package_provider = $mysql::perl_package_provider
+class mysql::bindings::perl (
+  $package_ensure   = $mysql::bindings::perl_package_ensure,
+  $package_name     = $mysql::bindings::perl_package_name,
+  $package_provider = $mysql::bindings::perl_package_provider
 ) inherits mysql {
 
   package{ 'perl_mysql':

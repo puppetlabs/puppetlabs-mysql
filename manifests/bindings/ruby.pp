@@ -1,4 +1,4 @@
-# Class: mysql::ruby
+# Class: mysql::bindings::ruby
 #
 # installs the ruby bindings for mysql
 #
@@ -13,10 +13,10 @@
 #
 # Sample Usage:
 #
-class mysql::ruby (
-  $package_ensure   = 'present',
-  $package_name     = $mysql::ruby_package_name,
-  $package_provider = $mysql::ruby_package_provider
+class mysql::bindings::ruby (
+  $package_ensure   = $mysql::bindings::ruby_package_ensure,
+  $package_name     = $mysql::bindings::ruby_package_name,
+  $package_provider = $mysql::bindings::ruby_package_provider
 ) inherits mysql {
 
   package{ 'ruby_mysql':

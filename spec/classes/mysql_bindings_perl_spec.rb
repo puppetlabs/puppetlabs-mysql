@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'mysql::perl' do
+describe 'mysql::bindings::perl' do
 
   describe 'on a debian based os' do
     let :facts do
@@ -9,8 +9,6 @@ describe 'mysql::perl' do
     it { should contain_package('perl_mysql').with(
       :name     => 'libdbd-mysql-perl',
       :ensure   => 'present',
-      # TODO is this what we want? does this actually work
-      # if the provider is blank
       :provider => ''
     )}
   end

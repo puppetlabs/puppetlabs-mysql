@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'mysql::ruby' do
+describe 'mysql::bindings::ruby' do
 
   describe 'on a debian based os' do
     let :facts do
@@ -9,8 +9,6 @@ describe 'mysql::ruby' do
     it { should contain_package('ruby_mysql').with(
       :name     => 'libmysql-ruby',
       :ensure   => 'present',
-      # TODO is this what we want? does this actually work
-      # if the provider is blank
       :provider => ''
     )}
   end
