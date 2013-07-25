@@ -48,7 +48,7 @@ class mysql::bindings (
   $python_package_name   = $mysql::params::python_package_name,
   $ruby_package_ensure   = $mysql::params::ruby_package_ensure,
   $ruby_package_name     = $mysql::params::ruby_package_name,
-  $ruby_package_provider = $mysql::params::ruby_package_provider,
+  $ruby_package_provider = $mysql::params::ruby_package_provider
 ) inherits mysql::params {
 
   if $java_enable   { include '::mysql::bindings::java' }
