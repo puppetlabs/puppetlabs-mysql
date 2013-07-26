@@ -1,4 +1,4 @@
-2013-07-26 - Version 0.10.0
+Date pending - Next Version
 Features:
 - Add `mysql::bindings` class and refactor all other bindings to be
 contained underneath mysql::bindings:: namespace.
