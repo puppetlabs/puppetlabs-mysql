@@ -1,3 +1,11 @@
+2013-07-26 - Version 0.10.0
+Features:
+- Add `mysql::bindings` class and refactor all other bindings to be
+contained underneath mysql::bindings:: namespace.
+
+Bugfixes:
+- Update my.cnf.pass.erb to allow custom socket support
+
 2013-07-15 - Version 0.9.0
 Features:
 - Add `mysql::backup::backuprotate` parameter
