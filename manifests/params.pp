@@ -142,6 +142,7 @@ class mysql::params {
       $perl_package_name    = 'libdbd-mysql-perl'
       $python_package_name  = 'python-mysqldb'
       $ruby_package_name    = 'libmysql-ruby'
+      $myslqclient_dev_package = 'libmysqlclient-dev'
     }
 
     'FreeBSD': {

@@ -97,6 +97,16 @@ Creates a database with a user and assign some privileges.
       grant    => ['all'],
     }
 
+### mysql::dev
+Installes mysql development libraries, each library is represented by a parameter which is passed a valid `ensure` statement, i.e. `present`,`absent`, or a version string.
+
+    class { 'mysql::dev':
+      mysqlclient   => present,
+    }
+
+#### Current development librarires supported:
+* `mysqlclient` with the Debian OS family
+
 ### mysql::backup
 Installs a mysql backup script, cronjob, and privileged backup user.
 
