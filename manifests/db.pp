@@ -51,7 +51,7 @@ define mysql::db (
     ensure   => $ensure,
     charset  => $charset,
     provider => 'mysql',
-    require  => [Class['mysql::server'],Package['mysql_client']],
+    require  => [Class['mysql::config'],Package['mysql_client']],
     before   => Database_user["${user}@${host}"],
   }
 
