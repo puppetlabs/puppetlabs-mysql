@@ -31,8 +31,15 @@ cleanup()
 cleanup
 
 <% end -%>
+<% if @backupdatabases -%>
+<% @backupdatabases.each do |db| -%>
+mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+ <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+<% end -%>
+<% else -%>
 mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
  --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+<% end -%>
 
 <% unless @delete_before_dump -%>
 if [ $? -eq 0 ] ; then
