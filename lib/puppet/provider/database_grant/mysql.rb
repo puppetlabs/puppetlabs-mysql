@@ -150,7 +150,6 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   def privileges
     name = split_name(@resource[:name])
     privs = ''
-    puts privs
     case name[:type]
     when :user
       privs = mysql([defaults_file, 'mysql', '-Be', "select * from mysql.user where user='%s' and host='%s'" % [ name[:user], name[:host] ]].compact)
