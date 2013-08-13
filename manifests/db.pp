@@ -75,6 +75,7 @@ define mysql::db (
       exec{ "${name}-import":
         command     => "/usr/bin/mysql ${name} < ${sql}",
         logoutput   => true,
+        environment => "HOME=${root_home}",
         refreshonly => $refresh,
         require     => Database_grant["${user}@${host}/${name}"],
         subscribe   => Database[$name],
