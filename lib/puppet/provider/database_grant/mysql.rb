@@ -15,6 +15,7 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
   def self.prefetch(resources)
     @user_privs = query_user_privs
     @db_privs = query_db_privs
+    @table_privs = query_table_privs
   end
 
   def self.user_privs
@@ -25,12 +26,20 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     @db_privs || query_db_privs
   end
 
+  def self.table_privs
+    @table_privs || query_table_privs
+  end
+
   def user_privs
     self.class.user_privs
   end
 
   def db_privs
     self.class.db_privs
+  end
+
+  def table_privs
+    self.class.table_privs
   end
 
   def self.query_user_privs
@@ -45,13 +54,18 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     @db_privs = column_names.delete_if { |e| !(e =~/_priv$/) }
   end
 
+  def self.query_table_privs
+    results = mysql([defaults_file, 'mysql', '-BNe', 'show columns from tables_priv where field="Table_priv"'].compact)
+    @table_privs = results.gsub(/.*\(|\).*|\n|\'/, '').gsub(/\'/,'').split(',')
+  end
+
   def mysql_flush
     mysqladmin([defaults_file, 'flush-privileges'].compact)
   end
 
   # this parses the
   def split_name(string)
-    matches = /^([^@]*)@([^\/]*)(\/(.*))?$/.match(string).captures.compact
+    matches = /^([^@]*)@([^\/]*)(\/([^\.]*))?\.?(.+$)?/.match(string).captures.compact
     case matches.length
     when 2
       {
@@ -65,6 +79,14 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
         :user => matches[0],
         :host => matches[1],
         :db => matches[3]
+      }
+    when 5
+      {
+        :type => :table,
+        :user => matches[0],
+        :host => matches[1],
+        :db => matches[3],
+	:table_name => matches[4]
       }
     end
   end
@@ -81,6 +103,10 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
         mysql([defaults_file, 'mysql', '-e', "INSERT INTO db (host, user, db) VALUES ('%s', '%s', '%s')" % [
           name[:host], name[:user], name[:db],
         ]].compact)
+      when :table
+        mysql([defaults_file, 'mysql', '-e', "INSERT INTO tables_priv  (host, user, db, table_name, grantor ) VALUES ('%s', '%s', '%s', '%s', 'puppet')" % [
+          name[:host], name[:user], name[:db], name[:table_name]
+        ]].compact)
       end
       mysql_flush
     end
@@ -96,7 +122,15 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     if name[:type] == :db
       fields << :db
     end
-    not mysql([defaults_file, 'mysql', '-NBe', "SELECT '1' FROM %s WHERE %s" % [ name[:type], fields.map do |f| "%s='%s'" % [f, name[f]] end.join(' AND ')]].compact).empty?
+    if name[:type] == :table
+      fields << :table_name
+    end
+    case name[:type]
+    when :table
+      not mysql([defaults_file, 'mysql', '-NBe', "SELECT '1' FROM %s WHERE %s" % [ 'tables_priv', fields.map do |f| "%s='%s'" % [f, name[f]] end.join(' AND ')]].compact).empty?
+    else
+      not mysql([defaults_file, 'mysql', '-NBe', "SELECT '1' FROM %s WHERE %s" % [ name[:type], fields.map do |f| "%s='%s'" % [f, name[f]] end.join(' AND ')]].compact).empty?
+    end
   end
 
   def all_privs_set?
@@ -105,35 +139,47 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
                   user_privs
                 when :db
                   db_privs
+                when :table
+                  table_privs
                 end
     all_privs = all_privs.collect do |p| p.downcase end.sort.join('|')
     privs = privileges.collect do |p| p.downcase end.sort.join('|')
-
     all_privs == privs
   end
 
   def privileges
     name = split_name(@resource[:name])
     privs = ''
-
+    puts privs
     case name[:type]
     when :user
       privs = mysql([defaults_file, 'mysql', '-Be', "select * from mysql.user where user='%s' and host='%s'" % [ name[:user], name[:host] ]].compact)
     when :db
       privs = mysql([defaults_file, 'mysql', '-Be', "select * from mysql.db where user='%s' and host='%s' and db='%s'" % [ name[:user], name[:host], name[:db] ]].compact)
+    when :table
+      privs = mysql([defaults_file, 'mysql', '-BNe', "select Table_priv from mysql.tables_priv where user='%s' and host='%s' and db='%s' and table_name='%s'" % [ name[:user], name[:host], name[:db], name[:table_name] ]].compact)
     end
-
     if privs.match(/^$/)
       privs = [] # no result, no privs
     else
-      # returns a line with field names and a line with values, each tab-separated
-      privs = privs.split(/\n/).map! do |l| l.chomp.split(/\t/) end
-      # transpose the lines, so we have key/value pairs
-      privs = privs[0].zip(privs[1])
-      privs = privs.select do |p| p[0].match(/_priv$/) and p[1] == 'Y' end
+      case name[:type]
+      when :table
+        privs = privs.gsub(/\n/,'').split(',').sort
+      else
+        # returns a line with field names and a line with values, each tab-separated
+        privs = privs.split(/\n/).map! do |l| l.chomp.split(/\t/) end
+        # transpose the lines, so we have key/value pairs
+        privs = privs[0].zip(privs[1])
+        privs = privs.select do |p| p[0].match(/_priv$/) and p[1] == 'Y' end
+      end
     end
 
-    privs.collect do |p| p[0] end
+    case name[:type]
+      when :table
+        privs.collect do |p| p end
+      else
+        privs.collect do |p| p[0] end
+      end
   end
 
   def privileges=(privs)
@@ -155,6 +201,10 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       stmt = 'update db set '
       where = " where user='%s' and host='%s' and db='%s'" % [ name[:user], name[:host], name[:db] ]
       all_privs = db_privs
+    when :table
+      stmt = 'update tables_priv set '
+      where = " where user='%s' and host='%s' and db='%s' and table_name='%s'" % [ name[:user], name[:host], name[:db], name[:table_name] ]
+      all_privs = table_privs
     end
 
     if privs[0].downcase == 'all'
@@ -164,17 +214,21 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     # Downcase the requested priviliges for case-insensitive selection
     # we don't map! here because the all_privs object has to remain in
     # the same case the DB gave it to us in
-    privs = privs.map { |p| p.downcase }
-
-    # puts "stmt:", stmt
-    set = all_privs.collect do |p| "%s = '%s'" % [p, privs.include?(p.downcase) ? 'Y' : 'N'] end.join(', ')
-    # puts "set:", set
-    stmt = stmt << set << where
-
-    validate_privs privs, all_privs
-    mysql([defaults_file, 'mysql', '-Be', stmt].compact)
-    mysql_flush
-  end
+    privs = privs.map { |p| p.downcase }.sort
+    case name[:type]
+    when :table
+      set = "Table_priv = " + "'" + all_privs.collect do |p| p if privs.include?(p.downcase) end.compact.join(',') + "'"
+    else
+      # puts "stmt:", stmt
+      set = all_privs.collect do |p| "%s = '%s'" % [p, privs.include?(p.downcase) ? 'Y' : 'N'] end.join(', ')
+      # puts "set:", set
+    end
+      stmt = stmt << set << where
+      validate_privs privs, all_privs
+      mysql([defaults_file, 'mysql', '-Be', stmt].compact)
+      mysql_flush
+    
+   end
 
   def validate_privs(set_privs, all_privs)
     all_privs = all_privs.collect { |p| p.downcase }
@@ -182,16 +236,31 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     invalid_privs = Array.new
     hints = Array.new
     # Test each of the user provided privs to see if they exist in all_privs
-    set_privs.each do |priv|
-      invalid_privs << priv unless all_privs.include?(priv)
-      hints << "#{priv}_priv" if all_privs.include?("#{priv}_priv")
-    end
-    unless invalid_privs.empty?
-      # Print a decently helpful and gramatically correct error message
-      hints = "Did you mean '#{hints.join(',')}'?" unless hints.empty?
-      p = invalid_privs.size > 1 ? ['s', 'are not valid'] : ['', 'is not valid']
-      detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
-      fail [detail, hints].join(' ')
+    case name[:type]
+    when :table
+      set_privs.each do |priv|
+        invalid_privs << priv unless all_privs.include?(priv)
+        hints << "#{priv}" if all_privs.include?("#{priv}")
+      end
+      unless invalid_privs.empty?
+        # Print a decently helpful and gramatically correct error message
+        hints = "Did you mean '#{hints.join(',')}'?" unless hints.empty?
+        p = invalid_privs.size > 1 ? ['s', 'are not valid'] : ['', 'is not valid']
+        detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
+        fail [detail, hints].join(' ')
+      end
+    else
+      set_privs.each do |priv|
+        invalid_privs << priv unless all_privs.include?(priv)
+        hints << "#{priv}_priv" if all_privs.include?("#{priv}_priv")
+      end
+      unless invalid_privs.empty?
+        # Print a decently helpful and gramatically correct error message
+        hints = "Did you mean '#{hints.join(',')}'?" unless hints.empty?
+        p = invalid_privs.size > 1 ? ['s', 'are not valid'] : ['', 'is not valid']
+        detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
+        fail [detail, hints].join(' ')
+      end
     end
   end
 
