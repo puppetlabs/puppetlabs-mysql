@@ -1,7 +1,8 @@
-# A grant is either global or per-db. This can be distinguished by the syntax
+# A grant is either global, per-db or per table. This can be distinguished by the syntax
 # of the name:
 #   user@host => global
 #   user@host/db => per-db
+#   user@host/db.table => per-table
 
 Puppet::Type.type(:database_grant).provide(:mysql) do
 
