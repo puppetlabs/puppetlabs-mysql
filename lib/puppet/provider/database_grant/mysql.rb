@@ -237,31 +237,23 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
     # Test each of the user provided privs to see if they exist in all_privs
     case name[:type]
     when :table
-      set_privs.each do |priv|
-        invalid_privs << priv unless all_privs.include?(priv)
-        hints << "#{priv}" if all_privs.include?("#{priv}")
-      end
-      unless invalid_privs.empty?
-        # Print a decently helpful and gramatically correct error message
-        hints = "Did you mean '#{hints.join(',')}'?" unless hints.empty?
-        p = invalid_privs.size > 1 ? ['s', 'are not valid'] : ['', 'is not valid']
-        detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
-        fail [detail, hints].join(' ')
-      end
+      _priv=''
     else
-      set_privs.each do |priv|
-        invalid_privs << priv unless all_privs.include?(priv)
-        hints << "#{priv}_priv" if all_privs.include?("#{priv}_priv")
-      end
-      unless invalid_privs.empty?
-        # Print a decently helpful and gramatically correct error message
-        hints = "Did you mean '#{hints.join(',')}'?" unless hints.empty?
-        p = invalid_privs.size > 1 ? ['s', 'are not valid'] : ['', 'is not valid']
-        detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
-        fail [detail, hints].join(' ')
-      end
+      _priv='_priv'
+    end
+    set_privs.each do |priv|
+    invalid_privs << priv unless all_privs.include?(priv)
+    hints << "#{priv}#{_priv}" if all_privs.include?("#{priv}#{_priv}")
+    end
+    unless invalid_privs.empty?
+      # Print a decently helpful and gramatically correct error message
+      hints = "Did you mean '#{hints.join(',')}'?" unless hints.empty?
+      p = invalid_privs.size > 1 ? ['s', 'are not valid'] : ['', 'is not valid']
+      detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
+      fail [detail, hints].join(' ')
     end
   end
+
 
   # Optional defaults file
   def self.defaults_file
