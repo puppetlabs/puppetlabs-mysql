@@ -172,11 +172,12 @@ class mysql::config(
     }
 
     exec { 'set_mysql_rootpw':
-      command   => "mysqladmin -u root ${old_pw} password '${root_password}'",
-      logoutput => true,
-      unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
-      path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
-      notify    => $restart ? {
+      command     => "mysqladmin -u root ${old_pw} password '${root_password}'",
+      logoutput   => true,
+      environment => "HOME=${root_home}",
+      unless      => "mysqladmin -u root -p'${root_password}' status > /dev/null",
+      path        => '/usr/local/sbin:/usr/bin:/usr/local/bin',
+      notify      => $restart ? {
         true  => Exec['mysqld-restart'],
         false => undef,
       },
