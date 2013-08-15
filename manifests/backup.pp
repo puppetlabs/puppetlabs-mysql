@@ -33,7 +33,7 @@ class mysql::backup (
   $backupcompress = true,
   $backuprotate = 30,
   $delete_before_dump = false,
-  $backupdatabases = false,
+  $backupdatabases = [],
   $ensure = 'present'
 ) {
 
