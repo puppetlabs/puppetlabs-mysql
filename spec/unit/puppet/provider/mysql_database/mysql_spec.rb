@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-provider_class = Puppet::Type.type(:database).provider(:mysql)
+provider_class = Puppet::Type.type(:mysql_database).provider(:mysql)
 
 describe provider_class do
   subject { provider_class }
@@ -21,7 +21,7 @@ test
   let(:parsed_databases) { %w(information_schema mydb mysql performance_schema test) }
 
   before :each do
-    @resource = Puppet::Type::Database.new(
+    @resource = Puppet::Type::Mysql_database.new(
       { :charset => 'utf8', :name => 'new_database' }
     )
     @provider = provider_class.new(@resource)
@@ -34,7 +34,9 @@ test
   describe 'self.instances' do
     it 'returns an array of databases' do
       subject.stubs(:mysql).with([defaults_file, '-NBe', 'show databases']).returns(raw_databases)
-
+      raw_databases.each_line do |db|
+        subject.stubs(:mysql).with([defaults_file, '-NBe', 'show variables like "%_database"', db.chomp]).returns("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF")
+      end
       databases = subject.instances.collect {|x| x.name }
       parsed_databases.should match_array(databases)
     end
@@ -49,14 +51,14 @@ test
 
   describe 'destroy' do
     it 'removes a user if present' do
-      subject.expects(:mysqladmin).with([defaults_file, '-f', 'drop', "#{@resource[:name]}"])
+      subject.expects(:mysql).with([defaults_file, '-NBe', "drop database `#{@resource[:name]}`"])
       @provider.destroy
     end
   end
 
   describe 'charset' do
     it 'returns a charset' do
-      subject.expects(:mysql).with([defaults_file, '-NBe', "show create database `#{@resource[:name]}`"]).returns('mydbCREATE DATABASE `mydb` /*!40100 DEFAULT CHARACTER SET utf8 */')
+      subject.expects(:mysql).with([defaults_file, '-NBe', 'show variables like "%_database"', @resource[:name]]).returns("character_set_database utf8\ncollation_database  utf8_general_ci\nskip_show_database  OFF")
       @provider.charset.should == 'utf8'
     end
   end

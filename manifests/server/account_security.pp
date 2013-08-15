@@ -17,7 +17,7 @@ class mysql::server::account_security {
       require => Class['mysql::config'],
     }
   }
-  database { 'test':
+  mysql_database { 'test':
     ensure  => 'absent',
     require => Class['mysql::config'],
   }
