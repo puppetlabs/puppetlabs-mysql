@@ -35,7 +35,7 @@ describe 'mysql::server::account_security' do
   end
 
   it 'should remove Database[test]' do
-    should contain_database('test').with_ensure('absent')
+    should contain_mysql_database('test').with_ensure('absent')
   end
 
 end
