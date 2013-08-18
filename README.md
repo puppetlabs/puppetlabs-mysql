@@ -110,22 +110,24 @@ Installs a mysql backup script, cronjob, and privileged backup user.
 MySQL provider supports puppet resources command:
 
     $ puppet resource database
-    database { 'information_schema':
+    mysql_database { 'information_schema':
       ensure  => 'present',
       charset => 'utf8',
+      collate => 'utf8_swedish_ci',
     }
-    database { 'mysql':
+    mysql_database { 'mysql':
       ensure  => 'present',
       charset => 'latin1',
+      collate => 'latin1_swedish_ci',
     }
 
 The custom resources can be used in any other manifests:
 
-    database { 'mydb':
+    mysql_database { 'mydb':
       charset => 'latin1',
     }
 
-    database_user { 'bob@localhost':
+    mysql_user { 'bob@localhost':
       password_hash => mysql_password('foo')
     }
 
@@ -137,6 +139,6 @@ The custom resources can be used in any other manifests:
 
 A resource default can be specified to handle dependency:
 
-    Database {
+    Mysql_database {
       require => Class['mysql::server'],
     }

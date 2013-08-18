@@ -39,7 +39,7 @@ class mysql::backup (
   $ensure = 'present'
 ) {
 
-  database_user { "${backupuser}@localhost":
+  mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
     provider      => 'mysql',

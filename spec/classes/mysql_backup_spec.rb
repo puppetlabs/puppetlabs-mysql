@@ -13,7 +13,7 @@ describe 'mysql::backup' do
   context 'standard conditions' do
     let(:params) { default_params }
 
-    it { should contain_database_user('testuser@localhost')}
+    it { should contain_mysql_user('testuser@localhost')}
 
     it { should contain_database_grant('testuser@localhost').with(
       :privileges => %w(Select_priv Reload_priv Lock_tables_priv Show_view_priv)
