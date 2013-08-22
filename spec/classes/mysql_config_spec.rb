@@ -80,22 +80,6 @@ describe 'mysql::config' do
           {:osfamily => osfamily, :root_home => '/root'}
         end
 
-        describe 'when config file should be managed' do
-          let :params do
-            {:manage_config_file => true}
-          end
-
-          it { should contain_file(osparams[:config_file]) }
-        end
-
-        describe 'when config file should not be managed' do
-          let :params do
-            {:manage_config_file => false}
-          end
-
-          it { should_not contain_file(osparams[:config_file]) }
-        end
-
         describe 'when root password is set' do
 
           let :params do
@@ -183,103 +167,6 @@ describe 'mysql::config' do
             it { should_not contain_exec('set_mysql_rootpw') }
 
             it { should contain_file('/root/.my.cnf')}
-
-            it { should contain_file('/etc/mysql').with(
-              'owner'  => 'root',
-              'group'  => param_values[:root_group],
-              'notify' => 'Exec[mysqld-restart]',
-              'ensure' => 'directory',
-              'mode'   => '0755'
-            )}
-            it { should contain_file('/etc/mysql/conf.d').with(
-              'owner'  => 'root',
-              'group'  => param_values[:root_group],
-              'notify' => 'Exec[mysqld-restart]',
-              'ensure' => 'directory',
-              'mode'   => '0755'
-            )}
-            it { should contain_file(param_values[:config_file]).with(
-              'owner'  => 'root',
-              'group'  => param_values[:root_group],
-              'notify' => 'Exec[mysqld-restart]',
-              'mode'   => '0644'
-            )}
-            it 'should have a template with the correct contents' do
-              content = param_value(subject, 'file', param_values[:config_file], 'content')
-              expected_lines = [
-                "port      = #{param_values[:port]}",
-                "socket    = #{param_values[:socket]}",
-                "pid-file  = #{param_values[:pidfile]}",
-                "datadir   = #{param_values[:datadir]}",
-                "max_connections = #{param_values[:max_connections]}",
-                "bind-address        = #{param_values[:bind_address]}",
-                "key_buffer          = #{param_values[:key_buffer]}",
-                "max_allowed_packet  = #{param_values[:max_allowed_packet]}",
-                "thread_stack        = #{param_values[:thread_stack]}",
-                "thread_cache_size   = #{param_values[:thread_cache_size]}",
-                "myisam-recover      = #{param_values[:myisam_recover]}",
-                "query_cache_limit   = #{param_values[:query_cache_limit]}",
-                "query_cache_size    = #{param_values[:query_cache_size]}",
-                "expire_logs_days    = #{param_values[:expire_logs_days]}",
-                "max_binlog_size     = #{param_values[:max_binlog_size]}"
-              ]
-              if param_values[:tmp_table_size] != 'UNSET'
-                expected_lines = expected_lines | [ "tmp_table_size      = #{param_values[:tmp_table_size]}" ]
-              end
-              if param_values[:max_heap_table_size] != 'UNSET'
-                expected_lines = expected_lines | [ "max_heap_table_size = #{param_values[:max_heap_table_size]}" ]
-              end
-              if param_values[:table_open_cache] != 'UNSET'
-                expected_lines = expected_lines | [ "table_open_cache    = #{param_values[:table_open_cache]}" ]
-              end
-              if param_values[:long_query_time] != 'UNSET'
-                expected_lines = expected_lines | [ "long_query_time     = #{param_values[:long_query_time]}" ]
-              end
-              if param_values[:ft_min_word_len] != 'UNSET'
-                expected_lines = expected_lines | [ "ft_min_word_len = #{param_values[:ft_min_word_len]}" ]
-              end
-              if param_values[:ft_max_word_len] != 'UNSET'
-                expected_lines = expected_lines | [ "ft_max_word_len = #{param_values[:ft_max_word_len]}" ]
-              end
-              if param_values[:default_engine] != 'UNSET'
-                expected_lines = expected_lines | [ "default-storage-engine = #{param_values[:default_engine]}" ]
-              else
-                content.should_not match(/^default-storage-engine = /)
-              end
-              if param_values[:character_set] != 'UNSET'
-                expected_lines = expected_lines | [ "character-set-server   = #{param_values[:character_set]}" ]
-              end
-              if param_values[:sql_log_bin] != 'UNSET'
-                expected_lines = expected_lines | [ "sql_log_bin         = #{param_values[:sql_log_bin]}" ]
-              end
-              if param_values[:log_bin] != 'UNSET'
-                expected_lines = expected_lines | [ "log-bin             = #{param_values[:log_bin]}" ]
-              end
-              if param_values[:binlog_do_db] != 'UNSET'
-                expected_lines = expected_lines | [ "binlog-do-db        = #{param_values[:binlog_do_db]}" ]
-              end
-              if param_values[:log_bin_trust_function_creators] != 'UNSET'
-                expected_lines = expected_lines | [ "log_bin_trust_function_creators = #{param_values[:log_bin_trust_function_creators]}" ]
-              end
-              if param_values[:replicate_ignore_table] != 'UNSET'
-                expected_lines = expected_lines | [ "replicate-ignore-table          = #{param_values[:replicate_ignore_table]}" ]
-              end
-              if param_values[:replicate_wild_do_table] != 'UNSET'
-                expected_lines = expected_lines | [ "replicate-wild-do-table         = #{param_values[:replicate_wild_do_table]}" ]
-              end
-              if param_values[:replicate_wild_ignore_table] != 'UNSET'
-                expected_lines = expected_lines | [ "replicate-wild-ignore-table     = #{param_values[:replicate_wild_ignore_table]}" ]
-              end
-              if param_values[:ssl]
-                expected_lines = expected_lines |
-                  [
-                    "ssl-ca    = #{param_values[:ssl_ca]}",
-                    "ssl-cert  = #{param_values[:ssl_cert]}",
-                    "ssl-key   = #{param_values[:ssl_key]}"
-                  ]
-              end
-              (content.split("\n") & expected_lines).should == expected_lines
-            end
           end
         end
       end
@@ -312,36 +199,6 @@ describe 'mysql::config' do
       'content' => "[client]\nuser=root\nhost=localhost\npassword='foo'\nsocket=#{params[:socket]}",
       'require' => 'Exec[set_mysql_rootpw]'
     )}
-
-  end
-
-  describe 'setting etc_root_password should fail on redhat' do
-    let :facts do
-      {:osfamily => 'RedHat', :root_home => '/root'}
-    end
-
-    let :params do
-     {:root_password => 'foo', :old_root_password => 'bar', :etc_root_password => true}
-    end
-
-    it 'should fail' do
-      expect { subject }.to raise_error(Puppet::Error, /Duplicate (declaration|definition)/)
-    end
-
-  end
-
-  describe 'unset ssl params should fail when ssl is true on freebsd' do
-    let :facts do
-     {:osfamily => 'FreeBSD', :root_home => '/root'}
-    end
-
-    let :params do
-     { :ssl => true }
-    end
-
-    it 'should fail' do
-      expect { subject }.to raise_error(Puppet::Error, /required when ssl is true/)
-    end
 
   end
 

@@ -1,21 +1,28 @@
-class mysql::server::service {
-  if $mysql::server::enabled {
+class mysql::server::service(
+  $enabled = $mysql::server::enabled,
+  $manage_service = $mysql::server::manage_service,
+  $service_name = $mysql::server::service_name,
+  $manage_config_file = $mysql::manage_config_file,
+  $config_file = $mysql::config_file,
+  $service_provider = $mysql::service_provider
+) {
+  if $enabled {
     $service_ensure = 'running'
   } else {
     $service_ensure = 'stopped'
   }
 
-  if $mysql::server::manage_service {
+  if $manage_service {
     service { 'mysqld':
       ensure   => $service_ensure,
-      name     => $mysql::server::service_name,
-      enable   => $mysql::server::enabled,
+      name     => $service_name,
+      enable   => $enabled,
       require  => Package['mysql-server'],
-      subscribe => $mysql::manage_config_file ? {
-        true => File[$mysql::config_file],
+      subscribe => $manage_config_file ? {
+        true => File[$config_file],
         false => undef,
       },
-      provider => $mysql::server::service_provider,
+      provider => $service_provider,
     }
   }
 }
