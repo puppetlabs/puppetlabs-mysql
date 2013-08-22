@@ -115,5 +115,8 @@ class mysql(
   include '::mysql::bindings'
 
   Class['mysql::config'] -> Mysql::Db <| |>
+  Class['mysql::config'] -> Database_User <| |>
+  Class['mysql::config'] -> Database_Grant <| |>
+  Class['mysql::config'] -> Database <| |>
 
 }
