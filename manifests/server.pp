@@ -29,7 +29,7 @@ class mysql::server (
   $service_provider = $mysql::service_provider
 ) inherits mysql {
 
-  Class['mysql::server'] -> Class['mysql::config::files'] -> Class['mysql::server::service'] -> Class['mysql::config']
+  Class['mysql::config::files'] -> Class['mysql::server'] -> Class['mysql::server::service'] -> Class['mysql::config']
 
   $config_files_class = { 'mysql::config::files' => $config_hash }
   $config_class = { 'mysql::config' => $config_hash }
