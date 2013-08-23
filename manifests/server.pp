@@ -29,30 +29,19 @@ class mysql::server (
   $service_provider = $mysql::service_provider
 ) inherits mysql {
 
-  Class['mysql::server'] -> Class['mysql::config']
+  Class['mysql::config::files'] -> Class['mysql::server'] -> Class['mysql::server::service'] -> Class['mysql::config']
 
+  $config_files_class = { 'mysql::config::files' => $config_hash }
   $config_class = { 'mysql::config' => $config_hash }
 
+  create_resources( 'class', $config_files_class )
   create_resources( 'class', $config_class )
+
+  class { 'mysql::server::service': }
 
   package { 'mysql-server':
     ensure => $package_ensure,
     name   => $package_name,
   }
 
-  if $enabled {
-    $service_ensure = 'running'
-  } else {
-    $service_ensure = 'stopped'
-  }
-
-  if $manage_service {
-    service { 'mysqld':
-      ensure   => $service_ensure,
-      name     => $service_name,
-      enable   => $enabled,
-      require  => Package['mysql-server'],
-      provider => $service_provider,
-    }
-  }
 }

@@ -26,6 +26,21 @@ describe 'mysql::server' do
     )}
   end
 
+  describe 'setting etc_root_password should fail on redhat' do
+    let :facts do
+      {:osfamily => 'RedHat', :root_home => '/root'}
+    end
+
+    let :params do
+     {:config_hash => { 'root_password' => 'foo', 'old_root_password' => 'bar', 'etc_root_password' => true}}
+    end
+
+    it 'should fail' do
+      expect { subject }.to raise_error(Puppet::Error, /Duplicate (declaration|definition)/)
+    end
+
+  end
+
   describe 'with osfamily specific defaults' do
     {
       'Debian' => {
