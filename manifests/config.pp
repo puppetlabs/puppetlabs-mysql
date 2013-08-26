@@ -34,6 +34,8 @@
 #                             number of bytes.
 #   [*query_cache_size]     - The amount of memory allocated for caching query
 #                             results.
+#   [*skip-name-resolve]    - This option will disable name resolving done on
+#                             incoming connecting clients.
 #   [*max_connections]      - The maximum permitted number of simultaneous
 #                             client connections.
 #   [*tmp_table_size]       - The maximum size of internal in-memory temporary
@@ -115,6 +117,7 @@ class mysql::config(
   $max_binlog_size                  = $mysql::max_binlog_size,
   $expire_logs_days                 = $mysql::expire_logs_days,
   $max_connections                  = $mysql::max_connections,
+  $skip_name_resolve                = $mysql::skip_name_resolve,
   $tmp_table_size                   = 'UNSET',
   $max_heap_table_size              = 'UNSET',
   $table_open_cache                 = 'UNSET',
