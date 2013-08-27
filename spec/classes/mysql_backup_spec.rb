@@ -62,4 +62,23 @@ describe 'mysql::backup' do
       ])
     end
   end
+
+  context 'with database list specified' do
+    let(:params) do
+      { :backupdatabases => ['mysql'] }.merge(default_params)
+    end
+
+    it { should contain_file('mysqlbackup.sh').with(
+      :path   => '/usr/local/sbin/mysqlbackup.sh',
+      :ensure => 'present'
+    ) }
+
+    it 'should have a backup file for each database' do
+      content = catalogue.resource('file','mysqlbackup.sh').send(:parameters)[:content]
+      content.should match(' mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date')
+#      verify_contents(subject, 'mysqlbackup.sh', [
+#        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',
+#      ])
+    end 
+  end
 end
