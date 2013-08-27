@@ -184,6 +184,7 @@ class mysql::config(
       require   => File['/etc/mysql/conf.d'],
     }
 
+    $root_home = pick(($::root_home, '/root')
     file { "${root_home}/.my.cnf":
       content => template('mysql/my.cnf.pass.erb'),
       require => Exec['set_mysql_rootpw'],
