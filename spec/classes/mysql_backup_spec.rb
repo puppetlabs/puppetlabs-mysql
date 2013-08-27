@@ -81,4 +81,32 @@ describe 'mysql::backup' do
 #      ])
     end 
   end
+  
+  context 'with file per database' do
+    let(:params) do
+      default_params.merge({ :file_per_database => true })
+    end
+    
+    it 'should loop through backup all databases' do
+      verify_contents(subject, 'mysqlbackup.sh', [
+        'mysql -s -r -N -e \'SHOW DATABASES\' | while read dbname',
+        'do',
+        '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
+        '    ${dbname} | bzcat -zc > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql.bz2',
+        'done',
+      ])
+    end
+    
+    context 'with compression disabled' do
+      let(:params) do
+        default_params.merge({ :file_per_database => true, :backupcompress => false })
+      end
+      
+      it 'should loop through backup all databases without compression' do
+        verify_contents(subject, 'mysqlbackup.sh', [
+          '    ${dbname} > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql',
+        ])
+      end
+    end
+  end
 end
