@@ -62,4 +62,51 @@ describe 'mysql::backup' do
       ])
     end
   end
+
+  context 'with database list specified' do
+    let(:params) do
+      { :backupdatabases => ['mysql'] }.merge(default_params)
+    end
+
+    it { should contain_file('mysqlbackup.sh').with(
+      :path   => '/usr/local/sbin/mysqlbackup.sh',
+      :ensure => 'present'
+    ) }
+
+    it 'should have a backup file for each database' do
+      content = catalogue.resource('file','mysqlbackup.sh').send(:parameters)[:content]
+      content.should match(' mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date')
+#      verify_contents(subject, 'mysqlbackup.sh', [
+#        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',
+#      ])
+    end 
+  end
+  
+  context 'with file per database' do
+    let(:params) do
+      default_params.merge({ :file_per_database => true })
+    end
+    
+    it 'should loop through backup all databases' do
+      verify_contents(subject, 'mysqlbackup.sh', [
+        'mysql -s -r -N -e \'SHOW DATABASES\' | while read dbname',
+        'do',
+        '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
+        '    ${dbname} | bzcat -zc > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql.bz2',
+        'done',
+      ])
+    end
+    
+    context 'with compression disabled' do
+      let(:params) do
+        default_params.merge({ :file_per_database => true, :backupcompress => false })
+      end
+      
+      it 'should loop through backup all databases without compression' do
+        verify_contents(subject, 'mysqlbackup.sh', [
+          '    ${dbname} > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql',
+        ])
+      end
+    end
+  end
 end

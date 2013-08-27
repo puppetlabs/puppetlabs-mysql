@@ -3,11 +3,13 @@
 # This module handles ...
 #
 # Parameters:
-#   [*backupuser*]     - The name of the mysql backup user.
-#   [*backuppassword*] - The password of the mysql backup user.
-#   [*backupdir*]      - The target directory of the mysqldump.
-#   [*backupcompress*] - Boolean to compress backup with bzip2.
-#   [*backuprotate*]   - Number of backups to keep. Default 30
+#   [*backupuser*]         - The name of the mysql backup user.
+#   [*backuppassword*]     - The password of the mysql backup user.
+#   [*backupdir*]          - The target directory of the mysqldump.
+#   [*backupcompress*]     - Boolean to compress backup with bzip2.
+#   [*backuprotate*]       - Number of backups to keep. Default 30
+#   [*backupdatabases*]    - Specify databases to back up as array (default all)
+#   [*file_per_database*]  - Boolean to dump each database to its own file.
 #   [*delete_before_dump*] - Clean existing backups before creating new
 #
 # Actions:
@@ -32,6 +34,8 @@ class mysql::backup (
   $backupcompress = true,
   $backuprotate = 30,
   $delete_before_dump = false,
+  $backupdatabases = [],
+  $file_per_database = false,
   $ensure = 'present'
 ) {
 
@@ -72,4 +76,5 @@ class mysql::backup (
     owner  => 'root',
     group  => 'root',
   }
+
 }
