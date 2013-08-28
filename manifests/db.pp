@@ -40,7 +40,7 @@ define mysql::db (
   $charset     = 'utf8',
   $collate     = 'utf8_general_ci',
   $host        = 'localhost',
-  $grant       = 'all',
+  $grant       = 'ALL',
   $sql         = '',
   $enforce_sql = false,
   $ensure      = 'present'
@@ -48,6 +48,7 @@ define mysql::db (
   #input validation
   validate_re($ensure, '^(present|absent)$',
   "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  $table = "${name}.*"
 
   mysql_database { $name:
     ensure   => $ensure,
@@ -66,9 +67,11 @@ define mysql::db (
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
   if $ensure == 'present' {
-    database_grant { "${user}@${host}/${name}":
+    mysql_grant { "${user}@${host}/${table}":
       privileges => $grant,
       provider   => 'mysql',
+      user       => "${user}@${host}",
+      table      => $table,
       require    => Mysql_user["${user}@${host}"],
     }
 
@@ -78,9 +81,9 @@ define mysql::db (
       exec{ "${name}-import":
         command     => "/usr/bin/mysql ${name} < ${sql}",
         logoutput   => true,
-        environment => "HOME=${root_home}",
+        environment => "HOME=${::root_home}",
         refreshonly => $refresh,
-        require     => Database_grant["${user}@${host}/${name}"],
+        require     => Mysql_grant["${user}@${host}/${table}"],
         subscribe   => Mysql_database[$name],
       }
     }

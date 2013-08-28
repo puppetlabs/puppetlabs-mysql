@@ -13,9 +13,12 @@ class mysql::server::monitor (
     password_hash => mysql_password($mysql_monitor_password),
   }
 
-  database_grant { "${mysql_monitor_username}@${mysql_monitor_hostname}":
-    privileges => [ 'process_priv', 'super_priv' ],
-    require    => Database_user["${mysql_monitor_username}@${mysql_monitor_hostname}"],
+  mysql_grant { "${mysql_monitor_username}@${mysql_monitor_hostname}":
+    ensure     => present,
+    user       => "${mysql_monitor_username}@${mysql_monitor_hostname}",
+    table      => '*.*',
+    privileges => [ 'PROCESS_PRIV', 'SUPER_PRIV' ],
+    require    => Mysql_user["${mysql_monitor_username}@${mysql_monitor_hostname}"],
   }
 
 }

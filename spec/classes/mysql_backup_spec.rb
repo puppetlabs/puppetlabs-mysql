@@ -15,8 +15,8 @@ describe 'mysql::backup' do
 
     it { should contain_mysql_user('testuser@localhost')}
 
-    it { should contain_database_grant('testuser@localhost').with(
-      :privileges => %w(Select_priv Reload_priv Lock_tables_priv Show_view_priv)
+    it { should contain_mysql_grant('testuser@localhost/*.*').with(
+      :privileges => ["SELECT", "RELOAD", "LOCK TABLES", "SHOW VIEW"]
     )}
 
     it { should contain_cron('mysql-backup').with(
