@@ -27,6 +27,10 @@ Puppet::Type.newtype(:database_grant) do
 
   newparam(:name, :namevar=>true) do
     desc 'The primary key: either user@host for global privilges or user@host/database for database specific privileges'
+    validate do |value|
+      Puppet.warning("database_grant has been deprecated in favor of mysql_grant.")
+      true
+    end
   end
 
   newproperty(:privileges, :array_matching => :all) do
