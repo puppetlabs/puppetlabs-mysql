@@ -22,6 +22,7 @@ describe 'mysql::config' do
      :max_binlog_size                 => '100M',
      :expire_logs_days                => 10,
      :character_set                   => 'UNSET',
+     :innodb_buffer_pool_size         => 'UNSET',
      :tmp_table_size                  => 'UNSET',
      :max_heap_table_size             => 'UNSET',
      :table_open_cache                => 'UNSET',
@@ -133,30 +134,31 @@ describe 'mysql::config' do
         [
           {},
           {
-            :service_name         => 'dans_service',
-            :config_file          => '/home/dan/mysql.conf',
-            :pidfile              => '/home/dan/mysql.pid',
-            :socket               => '/home/dan/mysql.sock',
-            :bind_address         => '0.0.0.0',
-            :port                 => '3306',
-            :datadir              => '/path/to/datadir',
-            :default_engine       => 'InnoDB',
-            :ssl                  => true,
-            :ssl_ca               => '/path/to/cacert.pem',
-            :ssl_cert             => '/path/to/server-cert.pem',
-            :ssl_key              => '/path/to/server-key.pem',
-            :key_buffer           => '16M',
-            :max_allowed_packet   => '32M',
-            :thread_stack         => '256K',
-            :query_cache_size     => '16M',
-            :character_set        => 'utf8',
-            :max_connections      => 1000,
-            :tmp_table_size       => '4096M',
-            :max_heap_table_size  => '4096M',
-            :table_open_cache     => 2048,
-            :long_query_time      => 0.5,
-            :ft_min_word_len      => 3,
-            :ft_max_word_len      => 10
+            :service_name             => 'dans_service',
+            :config_file              => '/home/dan/mysql.conf',
+            :pidfile                  => '/home/dan/mysql.pid',
+            :socket                   => '/home/dan/mysql.sock',
+            :bind_address             => '0.0.0.0',
+            :port                     => '3306',
+            :datadir                  => '/path/to/datadir',
+            :default_engine           => 'InnoDB',
+            :ssl                      => true,
+            :ssl_ca                   => '/path/to/cacert.pem',
+            :ssl_cert                 => '/path/to/server-cert.pem',
+            :ssl_key                  => '/path/to/server-key.pem',
+            :key_buffer               => '16M',
+            :max_allowed_packet       => '32M',
+            :thread_stack             => '256K',
+            :query_cache_size         => '16M',
+            :character_set            => 'utf8',
+            :max_connections          => 1000,
+            :innodb_buffer_pool_size  => '8M',
+            :tmp_table_size           => '4096M',
+            :max_heap_table_size      => '4096M',
+            :table_open_cache         => 2048,
+            :long_query_time          => 0.5,
+            :ft_min_word_len          => 3,
+            :ft_max_word_len          => 10
           }
         ].each do |passed_params|
 
@@ -223,6 +225,9 @@ describe 'mysql::config' do
                 "expire_logs_days    = #{param_values[:expire_logs_days]}",
                 "max_binlog_size     = #{param_values[:max_binlog_size]}"
               ]
+              if param_values[:innodb_buffer_pool_size] != 'UNSET'
+                expected_lines = expected_lines | [ "innodb_buffer_pool_size      = #{param_values[:innodb_buffer_pool_size]}" ]
+              end
               if param_values[:tmp_table_size] != 'UNSET'
                 expected_lines = expected_lines | [ "tmp_table_size      = #{param_values[:tmp_table_size]}" ]
               end
