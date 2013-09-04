@@ -38,6 +38,9 @@ max_binlog_size     = <%= @max_binlog_size %>
 <% if @max_connections != 'UNSET' -%>
 max_connections     = <%= @max_connections %>
 <% end -%>
+<% if @innodb_buffer_pool_size != 'UNSET' -%>
+innodb_buffer_pool_size  = <%= @innodb_buffer_pool_size %>
+<% end -%>
 <% if @tmp_table_size != 'UNSET' -%>
 tmp_table_size      = <%= @tmp_table_size %>
 <% end -%>
