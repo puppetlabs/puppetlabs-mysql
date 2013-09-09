@@ -5,7 +5,7 @@ describe 'mysql::db define' do
     # Using puppet_apply as a helper
     it 'should work with no errors' do
       pp = <<-EOS
-        class { 'mysql': root_password => 'password', }
+        class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
         class { 'mysql::server': }
         mysql::db { 'spec1':
           user     => 'root',
@@ -32,7 +32,7 @@ describe 'mysql::db define' do
     # Using puppet_apply as a helper
     it 'should work with no errors' do
       pp = <<-EOS
-        class { 'mysql': root_password => 'password', }
+        class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
         class { 'mysql::server': }
         file { '/tmp/spec.sql':
           ensure  => file,

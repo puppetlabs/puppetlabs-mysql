@@ -3,7 +3,8 @@ require 'spec_helper_system'
 describe 'mysql::backup class' do
   context 'should work with no errors' do
     pp = <<-EOS
-      class { 'mysql::server': config_hash => { 'root_password' => 'foo' } }
+      class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
+      class { 'mysql::server': }
       mysql::db { 'backup1':
         user     => 'backup',
         password => 'secret',
@@ -30,7 +31,7 @@ describe 'mysql::backup class' do
         its(:exit_code) { should be_zero }
       end
     end
-  
+
     context 'should dump all databases to single file' do
       describe command('ls /tmp/backups/ | grep -c "mysql_backup_[0-9][0-9]*-[0-9][0-9]*.sql.bz2"') do
         it { should return_stdout /1/ }
@@ -42,7 +43,8 @@ describe 'mysql::backup class' do
 
   context 'should create one file per database' do
     pp = <<-EOS
-      class { 'mysql::server': config_hash => { 'root_password' => 'foo' } }
+      class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
+      class { 'mysql::server': }
       mysql::db { 'backup1':
         user     => 'backup',
         password => 'secret',
@@ -68,7 +70,7 @@ describe 'mysql::backup class' do
     context shell("/usr/local/sbin/mysqlbackup.sh") do
       its(:exit_code) { should be_zero }
     end
-    
+
     describe command('ls /tmp/backups/ | grep -c "mysql_backup_backup1_[0-9][0-9]*-[0-9][0-9]*.sql.bz2"') do
       it { should return_stdout /1/ }
       it { should return_exit_status 0 }

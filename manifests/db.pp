@@ -50,19 +50,22 @@ define mysql::db (
   "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
   $table = "${name}.*"
 
+  include '::mysql::client'
+
   mysql_database { $name:
     ensure   => $ensure,
     charset  => $charset,
     collate  => $collate,
     provider => 'mysql',
-    require  => [Class['mysql::server'],Package['mysql_client']],
+    require  => [ Class['mysql::server'], Class['mysql::client'] ],
     before   => Mysql_user["${user}@${host}"],
   }
 
   $user_resource = {
     ensure        => $ensure,
     password_hash => mysql_password($password),
-    provider      => 'mysql'
+    provider      => 'mysql',
+    require       => Class['mysql::server'],
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
@@ -72,7 +75,7 @@ define mysql::db (
       provider   => 'mysql',
       user       => "${user}@${host}",
       table      => $table,
-      require    => Mysql_user["${user}@${host}"],
+      require    => [ Mysql_user["${user}@${host}"], Class['mysql::server'] ],
     }
 
     $refresh = ! $enforce_sql

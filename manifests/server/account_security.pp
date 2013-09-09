@@ -9,16 +9,16 @@ class mysql::server::account_security {
       '@localhost',
       '@%']:
     ensure  => 'absent',
-    require => Class['mysql::config'],
+    require => Class['mysql::server::config'],
   }
   if ($::fqdn != $::hostname) {
     mysql_user { ["root@${::hostname}", "@${::hostname}"]:
       ensure  => 'absent',
-      require => Class['mysql::config'],
+      require => Class['mysql::server::config'],
     }
   }
   mysql_database { 'test':
     ensure  => 'absent',
-    require => Class['mysql::config'],
+    require => Class['mysql::server::config'],
   }
 }

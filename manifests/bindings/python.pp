@@ -15,7 +15,7 @@
 class mysql::bindings::python(
   $package_ensure = $mysql::bindings::python_package_ensure,
   $package_name   = $mysql::bindings::python_package_name
-) inherits mysql {
+) inherits mysql::globals {
 
   package { 'python-mysqldb':
     ensure => $package_ensure,

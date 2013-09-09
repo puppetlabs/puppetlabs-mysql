@@ -17,7 +17,7 @@ class mysql::bindings::ruby (
   $package_ensure   = $mysql::bindings::ruby_package_ensure,
   $package_name     = $mysql::bindings::ruby_package_name,
   $package_provider = $mysql::bindings::ruby_package_provider
-) inherits mysql {
+) inherits mysql::globals {
 
   package{ 'ruby_mysql':
     ensure   => $package_ensure,

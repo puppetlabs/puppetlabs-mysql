@@ -17,7 +17,7 @@ class mysql::bindings::perl (
   $package_ensure   = $mysql::bindings::perl_package_ensure,
   $package_name     = $mysql::bindings::perl_package_name,
   $package_provider = $mysql::bindings::perl_package_provider
-) inherits mysql {
+) inherits mysql::globals {
 
   package{ 'perl_mysql':
     ensure   => $package_ensure,

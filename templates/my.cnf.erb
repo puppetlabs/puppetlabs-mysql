@@ -1,105 +1,105 @@
 [client]
-port      = <%= @port %>
-socket    = <%= @socket %>
-<% if @character_set != 'UNSET' -%>
-default-character-set = <%= @character_set %>
+port      = <%= @options['port'] %>
+socket    = <%= @options['socket'] %>
+<% if @options['character_set'] != 'UNSET' -%>
+default-character-set = <%= @options['character_set'] %>
 <% end -%>
 
 [mysqld_safe]
-socket    = <%= @socket %>
+socket    = <%= @options['socket'] %>
 nice    = 0
-<% if @log_error == 'syslog' -%>
+<% if @options['log_error'] == 'syslog' -%>
 syslog
 <% end -%>
 [mysqld]
 user    = mysql
-pid-file  = <%= @pidfile %>
-socket    = <%= @socket %>
-port      = <%= @port %>
-basedir   = <%= @basedir %>
-datadir   = <%= @datadir %>
-tmpdir    = <%= @tmpdir %>
-max_connections = <%= @max_connections %>
+pid-file  = <%= @options['pidfile'] %>
+socket    = <%= @options['socket'] %>
+port      = <%= @options['port'] %>
+basedir   = <%= @options['basedir'] %>
+datadir   = <%= @options['datadir'] %>
+tmpdir    = <%= @options['tmpdir'] %>
+max_connections = <%= @options['max_connections'] %>
 skip-external-locking
 
-<% if @bind_address -%>
-bind-address        = <%= @bind_address %>
+<% if @options['bind_address'] -%>
+bind-address        = <%= @options['bind_address'] %>
 <% end -%> 
-key_buffer          = <%= @key_buffer %>
-max_allowed_packet  = <%= @max_allowed_packet %>
-thread_stack        = <%= @thread_stack %>
-thread_cache_size   = <%= @thread_cache_size %>
-myisam-recover      = <%= @myisam_recover %>
-query_cache_limit   = <%= @query_cache_limit %>
-query_cache_size    = <%= @query_cache_size %>
-expire_logs_days    = <%= @expire_logs_days %>
-max_binlog_size     = <%= @max_binlog_size %>
+key_buffer          = <%= @options['key_buffer'] %>
+max_allowed_packet  = <%= @options['max_allowed_packet'] %>
+thread_stack        = <%= @options['thread_stack'] %>
+thread_cache_size   = <%= @options['thread_cache_size'] %>
+myisam-recover      = <%= @options['myisam_recover'] %>
+query_cache_limit   = <%= @options['query_cache_limit'] %>
+query_cache_size    = <%= @options['query_cache_size'] %>
+expire_logs_days    = <%= @options['expire_logs_days'] %>
+max_binlog_size     = <%= @options['max_binlog_size'] %>
 
-<% if @max_connections != 'UNSET' -%>
-max_connections     = <%= @max_connections %>
+<% if @options['max_connections'] != 'UNSET' -%>
+max_connections     = <%= @options['max_connections'] %>
 <% end -%>
-<% if @tmp_table_size != 'UNSET' -%>
-tmp_table_size      = <%= @tmp_table_size %>
+<% if @options['tmp_table_size'] != 'UNSET' -%>
+tmp_table_size      = <%= @options['tmp_table_size'] %>
 <% end -%>
-<% if @max_heap_table_size != 'UNSET' -%>
-max_heap_table_size = <%= @max_heap_table_size %>
+<% if @options['max_heap_table_size'] != 'UNSET' -%>
+max_heap_table_size = <%= @options['max_heap_table_size'] %>
 <% end -%>
-<% if @table_open_cache != 'UNSET' -%>
-table_open_cache    = <%= @table_open_cache %>
+<% if @options['table_open_cache'] != 'UNSET' -%>
+table_open_cache    = <%= @options['table_open_cache'] %>
 <% end -%>
-<% if @long_query_time != 'UNSET' -%>
-long_query_time     = <%= @long_query_time %>
+<% if @options['long_query_time'] != 'UNSET' -%>
+long_query_time     = <%= @options['long_query_time'] %>
 <% end -%>
-<% if @server_id != 'UNSET' -%>
-server-id           = <%= @server_id %>
+<% if @options['server_id'] != 'UNSET' -%>
+server-id           = <%= @options['server_id'] %>
 <% end -%>
-<% if @sql_log_bin != 'UNSET' -%>
-sql_log_bin         = <%= @sql_log_bin %>
+<% if @options['sql_log_bin'] != 'UNSET' -%>
+sql_log_bin         = <%= @options['sql_log_bin'] %>
 <% end -%>
-<% if @log_bin != 'UNSET' -%>
-log-bin             = <%= @log_bin %>
+<% if @options['log_bin'] != 'UNSET' -%>
+log-bin             = <%= @options['log_bin'] %>
 <% end -%>
-<% if @binlog_do_db != 'UNSET' -%>
-binlog-do-db        = <%= @binlog_do_db %>
+<% if @options['binlog_do_db'] != 'UNSET' -%>
+binlog-do-db        = <%= @options['binlog_do_db'] %>
 <% end -%>
-<% if @log_bin_trust_function_creators != 'UNSET' -%>
-log_bin_trust_function_creators = <%= @log_bin_trust_function_creators %>
+<% if @options['log_bin_trust_function_creators'] != 'UNSET' -%>
+log_bin_trust_function_creators = <%= @options['log_bin_trust_function_creators'] %>
 <% end -%>
-<% if @replicate_ignore_table != 'UNSET' -%>
-replicate-ignore-table          = <%= @replicate_ignore_table %>
+<% if @options['replicate_ignore_table'] != 'UNSET' -%>
+replicate-ignore-table          = <%= @options['replicate_ignore_table'] %>
 <% end -%>
-<% if @replicate_wild_do_table != 'UNSET' -%>
-replicate-wild-do-table         = <%= @replicate_wild_do_table %>
+<% if @options['replicate_wild_do_table'] != 'UNSET' -%>
+replicate-wild-do-table         = <%= @options['replicate_wild_do_table'] %>
 <% end -%>
-<% if @replicate_wild_ignore_table != 'UNSET' -%>
-replicate-wild-ignore-table     = <%= @replicate_wild_ignore_table %>
+<% if @options['replicate_wild_ignore_table'] != 'UNSET' -%>
+replicate-wild-ignore-table     = <%= @options['replicate_wild_ignore_table'] %>
 <% end -%>
-<% if @ft_min_word_len != 'UNSET' -%>
-ft_min_word_len = <%= @ft_min_word_len %>
+<% if @options['ft_min_word_len'] != 'UNSET' -%>
+ft_min_word_len = <%= @options['ft_min_word_len'] %>
 <% end -%>
-<% if @ft_max_word_len != 'UNSET' -%>
-ft_max_word_len = <%= @ft_max_word_len %>
+<% if @options['ft_max_word_len'] != 'UNSET' -%>
+ft_max_word_len = <%= @options['ft_max_word_len'] %>
 <% end -%>
 
-<% if @log_error != 'syslog' -%>
-log_error           = <%= @log_error %>
+<% if @options['log_error'] != 'syslog' -%>
+log_error           = <%= @options['log_error'] %>
 <% end -%>
-<% if @default_engine != 'UNSET' %>
-default-storage-engine = <%= @default_engine %>
+<% if @options['default_engine'] != 'UNSET' %>
+default-storage-engine = <%= @options['default_engine'] %>
 <% end -%>
-<% if @character_set != 'UNSET' -%>
-character-set-server   = <%= @character_set %>
+<% if @options['character_set'] != 'UNSET' -%>
+character-set-server   = <%= @options['character_set'] %>
 <% end -%>
-<% if @ssl %>
-ssl-ca    = <%= @ssl_ca %>
-ssl-cert  = <%= @ssl_cert %>
-ssl-key   = <%= @ssl_key %>
+<% if @options['ssl'] %>
+ssl-ca    = <%= @options['ssl_ca'] %>
+ssl-cert  = <%= @options['ssl_cert'] %>
+ssl-key   = <%= @options['ssl_key'] %>
 <% end -%>
 
 [mysqldump]
 quick
 quote-names
-max_allowed_packet = <%= @max_allowed_packet %>
+max_allowed_packet = <%= @options['max_allowed_packet'] %>
 [mysql]
 [isamchk]
 key_buffer    = 16M

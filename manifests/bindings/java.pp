@@ -14,7 +14,7 @@
 class mysql::bindings::java (
   $package_ensure = $mysql::bindings::java_package_ensure,
   $package_name   = $mysql::bindings::java_package_name
-) inherits mysql {
+) inherits mysql::globals {
 
   package { 'mysql-connector-java':
     ensure => $package_ensure,
