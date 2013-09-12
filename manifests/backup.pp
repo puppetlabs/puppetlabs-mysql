@@ -9,7 +9,7 @@
 #   [*backupcompress*]     - Boolean to compress backup with bzip2.
 #   [*backuprotate*]       - Number of backups to keep. Default 30
 #   [*backupday*]          - Cron weekdays. Default *
-#   [*backuphour*]         - Cron hout. Default 23
+#   [*backuphour*]         - Cron hour. Default 23
 #   [*backupmin*]          - Cron minute. Default 5
 #   [*backupdatabases*]    - Specify databases to back up as array (default all)
 #   [*file_per_database*]  - Boolean to dump each database to its own file.
