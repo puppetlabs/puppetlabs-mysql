@@ -8,6 +8,9 @@
 #   [*backupdir*]          - The target directory of the mysqldump.
 #   [*backupcompress*]     - Boolean to compress backup with bzip2.
 #   [*backuprotate*]       - Number of backups to keep. Default 30
+#   [*backupday*]          - Cron weekdays. Default *
+#   [*backuphour*]         - Cron hour. Default 23
+#   [*backupmin*]          - Cron minute. Default 5
 #   [*backupdatabases*]    - Specify databases to back up as array (default all)
 #   [*file_per_database*]  - Boolean to dump each database to its own file.
 #   [*delete_before_dump*] - Clean existing backups before creating new
@@ -33,6 +36,9 @@ class mysql::backup (
   $backupdir,
   $backupcompress = true,
   $backuprotate = 30,
+  $backuday = '*',
+  $backuphour = 23,
+  $backupmin = 5,
   $delete_before_dump = false,
   $backupdatabases = [],
   $file_per_database = false,
@@ -58,8 +64,9 @@ class mysql::backup (
     ensure  => $ensure,
     command => '/usr/local/sbin/mysqlbackup.sh',
     user    => 'root',
-    hour    => 23,
-    minute  => 5,
+    weekday	=> $backupday,
+    hour    => $backuphour,
+    minute  => $backupmin,
     require => File['mysqlbackup.sh'],
   }
 
