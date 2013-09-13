@@ -1,42 +1,406 @@
-# Mysql module for Puppet
+#MySQL
 
-[![Build Status](https://travis-ci.org/puppetlabs/puppetlabs-mysql.png?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-mysql)
+####Table of Contents
 
-This module manages mysql on Linux (RedHat/Debian) distros. A native mysql provider implements database resource type to handle database, database user, and database permission.
+1. [Overview](#overview)
+2. [Module Description - What the module does and why it is useful](#module-description)
+3. [Setup - The basics of getting started with mysql](#setup)
+    * [What mysql affects](#what-mysql-affects)
+    * [Setup requirements](#setup-requirements)
+    * [Beginning with mysql](#beginning-with-mysql)
+4. [Usage - Configuration options and additional functionality](#usage)
+5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Development - Guide for contributing to the module](#development)
 
-Pluginsync needs to be enabled for this module to function properly.
-Read more about pluginsync in our [docs](http://docs.puppetlabs.com/guides/plugins_in_modules.html#enabling-pluginsync)
+##Overview
 
-## Description
+The MySQL module installs, configures, and manages the MySQL service.
 
-This module uses the fact osfamily which is supported by Facter 1.6.1+. If you do not have facter 1.6.1 in your environment, the following manifests will provide the same functionality in site.pp (before declaring any node):
+##Module Description
 
-    if ! $::osfamily {
-      case $::operatingsystem {
-        'RedHat', 'Fedora', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL': {
-          $osfamily = 'RedHat'
-        }
-        'ubuntu', 'debian': {
-          $osfamily = 'Debian'
-        }
-        'SLES', 'SLED', 'OpenSuSE', 'SuSE': {
-          $osfamily = 'Suse'
-        }
-        'Solaris', 'Nexenta': {
-          $osfamily = 'Solaris'
-        }
-        default: {
-          $osfamily = $::operatingsystem
-        }
-      }
+The MySQL module manages both the installation and configuration of MySQL as
+well as extends Pupppet to allow management of MySQL resources, such as
+databases, users, and grants.
+
+##Setup
+
+###What MySQL affects
+
+* MySQL package.
+* MySQL configuration files.
+* MySQL service.
+
+###Beginning with MySQL
+
+If you just want a server installing with the default options you can run
+include '::mysql::server'.  If you need to customize options, such as the root
+password or /etc/my.cnf settings then you can also include mysql::globals and
+pass in an override hash as seen below:
+
+```puppet
+class { '::mysql::globals':
+  override_options => { 'mysqld' => { 'max_connections' => '1024' } }
+}
+```
+
+##Usage
+
+The interactions with this module are split between mysql::globals and several
+other classes, mysql::server, mysql::client, and mysql::bindings.
+
+###mysql::globals
+
+This class exists as a way to easily share values between the other mysql
+classes.  You can pass an override_options into this class to replace elements
+of the existing default hash.  
+
+The hash structure for overrides is as follows:
+
+```puppet
+override_options = {
+  'section' => {
+    'item'             => 'thing',
+  }
+}
+```
+
+For items that you would traditionally represent as:
+
+[section]
+thing
+
+You can just make an entry like thing => true in the hash.  MySQL doesn't
+care if thing is alone or set to a value, it'll happily accept both.
+
+##Reference
+
+###Classes
+
+####Public classes
+* mysql::globals: Settings and customizations for MySQL.
+* mysql::server: Installs and configures MySQL.
+* mysql::server::account_security: Deletes default MySQL accounts.
+* mysql::server::monitor: Sets up a monitoring user.
+* mysql::server::mysqltuner: Installs MySQL tuner script.
+* mysql::server::backup: Sets up MySQL backups via cron.
+* mysql::bindings: Installs various MySQL language bindings.
+* mysql::client: Installs MySQL client (for non-servers).
+
+####Private classes
+* mysql::server::install: Installs packages.
+* mysql::server::config: Configures MYSQL.
+* mysql::server::service: Manages service.
+* mysql::server::root_password: Sets MySQL root password.
+* mysql::bindings::java: Installs Java bindings.
+* mysql::bindings::perl: Installs Perl bindings.
+* mysql::bindings::python: Installs Python bindings.
+* mysql::bindings::ruby: Installs Ruby bindings.
+* mysql::client::install:  Installs MySQL client.
+
+###Parameters
+
+####mysql::globals
+
+#####`override_options`
+
+This is the hash of override options to pass into MySQL.  It can be visualized
+like a hash of the my.cnf file, so that entries look like:
+
+override_options => { 'section' => { 'key' => 'value' } }
+
+For items that you would traditionally represent as:
+
+[section]
+thing
+
+You can just make an entry like thing => true in the hash.  MySQL doesn't
+care if thing is alone or set to a value, it'll happily accept both.
+
+#####`config_file`
+
+The location of the MySQL configuration file.
+
+#####`manage_config_file`
+
+Should we manage the MySQL configuration file.
+
+#####`purge_conf_dir`
+
+Should we purge the conf.d directory?
+
+#####`restart`
+
+Should the service be restarted when things change?
+
+#####`root_group`
+
+What is the group used for root?
+
+####mysql::server
+
+#####`root_password`
+
+What is the MySQL root password.  Puppet will attempt to set it to this and update /root/.my.cnf.
+
+#####`old_root_password`
+
+What was the previous root password (REQUIRED if you wish to change the root password via Puppet.)
+
+#####`package_ensure`
+
+What to set the package to.  Can be present, absent, or version.
+
+#####`package_name`
+
+What is the name of the mysql server package to install.
+
+#####`remove_default_accounts`
+
+Boolean to decide if we should automatically include
+mysql::server::account_security.
+
+#####`service_enabled`
+
+Boolean to decide if the service should be enabled.
+
+#####`service_manage`
+
+Boolean to decide if the service should be managed.
+
+#####`service_name`
+
+What is the name of the mysql server service.
+
+#####`service_provider`
+
+Which provider to use to manage the service.
+
+####mysql::server::backup
+
+#####`backupuser`
+
+MySQL user to create for backing up.
+
+#####`backuppassword`
+
+MySQL user password for backups.
+
+#####`backupdir`
+
+Directory to backup into.
+
+#####`backupcompress`
+
+Boolean to determine if backups should be compressed.
+
+#####`backuprotate`
+
+How many days to keep backups for.
+
+#####`delete_before_dump`
+
+Boolean to determine if you should cleanup before backing up or after.
+
+#####`backupdatabases`
+
+Array of databases to specifically backup.
+
+#####`file_per_database`
+
+Should a seperate file be used per database.
+
+#####`ensure`
+
+Present or absent, allows you to remove the backup scripts.
+
+#####`time`
+
+An array of two elements to set the time to backup.  Allows ['23', '5'] or ['3', '45'] for HH:MM times.
+
+####mysql::server::monitor
+
+#####`mysql_monitor_username`
+
+The username to create for MySQL monitoring.
+
+#####`mysql_monitor_password`
+
+The password to create for MySQL monitoring.
+
+#####`mysql_monitor_hostname`
+
+The hostname to allow to access the MySQL monitoring user.
+
+####mysql::bindings
+
+#####`java_enable`
+
+Boolean to decide if the Java bindings should be installed.
+
+#####`perl_enable`
+
+Boolean to decide if the Perl bindings should be installed.
+
+#####`php_enable`
+
+Boolean to decide if the PHP bindings should be installed.
+
+#####`python_enable`
+
+Boolean to decide if the Python bindings should be installed.
+
+#####`ruby_enable`
+
+Boolean to decide if the Ruby bindings should be installed.
+
+#####`java_package_ensure`
+
+What to set the package to.  Can be present, absent, or version.
+
+#####`java_package_name`
+
+The name of the package to install.
+
+#####`java_package_provider`
+
+What provider should be used to install the package.
+
+#####`perl_package_ensure`
+
+What to set the package to.  Can be present, absent, or version.
+
+#####`perl_package_name`
+
+The name of the package to install.
+
+#####`perl_package_provider`
+
+What provider should be used to install the package.
+
+#####`python_package_ensure`
+
+What to set the package to.  Can be present, absent, or version.
+
+#####`python_package_name`
+
+The name of the package to install.
+
+#####`python_package_provider`
+
+What provider should be used to install the package.
+
+#####`ruby_package_ensure`
+
+What to set the package to.  Can be present, absent, or version.
+
+#####`ruby_package_name`
+
+The name of the package to install.
+
+#####`ruby_package_provider`
+
+What provider should be used to install the package.
+
+####mysql::client
+
+#####`bindings_enable`
+
+Boolean to automatically install all bindings.
+
+###Defines
+
+####mysql::db
+
+Creates a database with a user and assign some privileges.
+
+```puppet
+    mysql::db { 'mydb':
+      user     => 'myuser',
+      password => 'mypass',
+      host     => 'localhost',
+      grant    => ['SELECT', 'UPDATE'],
     }
+```
 
-This module depends on the `creates_resources` function which is introduced in Puppet 2.7. Users on puppet 2.6 can use the following module which provides this functionality:
+###Providers
 
-[http://github.com/puppetlabs/puppetlabs-create_resources](http://github.com/puppetlabs/puppetlabs-create_resources)
+####mysql_database
+
+mysql_database can be used to create and manage databases within MySQL:
+
+```puppet
+mysql_database { 'information_schema':
+  ensure  => 'present',
+  charset => 'utf8',
+  collate => 'utf8_swedish_ci',
+}
+mysql_database { 'mysql':
+  ensure  => 'present',
+  charset => 'latin1',
+  collate => 'latin1_swedish_ci',
+}
+```
+
+####mysql_user
+
+mysql_user can be used to create and manage user grants within MySQL:
+
+```puppet
+mysql_user { 'root@127.0.0.1':
+  ensure                   => 'present',
+  max_connections_per_hour => '0',
+  max_queries_per_hour     => '0',
+  max_updates_per_hour     => '0',
+  max_user_connections     => '0',
+}
+```
+
+####mysql_grant
+
+mysql_grant can be used to create grant permissions to access databases within
+MySQL.  To use it you must create the title of the resource as shown below,
+following the pattern of `username@hostname/database.table`:
+
+```puppet
+mysql_grant { 'root@localhost/*.*':
+  ensure     => 'present',
+  options    => ['GRANT'],
+  privileges => ['ALL'],
+  table      => '*.*',
+  user       => 'root@localhost',
+}
+```
+
+##Limitations
+
+This module has been tested on:
+
+* RedHat Enterprise Linux 5/6
+* Debian 6/7
+* CentOS 5/6
+* Ubuntu 12.04
+
+Testing on other platforms has been light and cannot be guaranteed.
+
+#Development
+
+Puppet Labs modules on the Puppet Forge are open projects, and community
+contributions are essential for keeping them great. We can’t access the
+huge number of platforms and myriad of hardware, software, and deployment
+configurations that Puppet is intended to serve.
+
+We want to keep it as easy as possible to contribute changes so that our
+modules work in your environment. There are a few guidelines that we need
+contributors to follow so that we can have a chance of keeping on top of things.
+
+You can read the complete module contribution guide [on the Puppet Labs wiki.](http://projects.puppetlabs.com/projects/module-site/wiki/Module_contributing)
+
+### Authors
 
 This module is based on work by David Schmitt. The following contributor have contributed patches to this module (beyond Puppet Labs):
 
+* Larry Ludwig
 * Christian G. Warden
 * Daniel Black
 * Justin Ellison
@@ -46,99 +410,3 @@ This module is based on work by David Schmitt. The following contributor have co
 * Michael Arnold
 * Chris Weyl
 
-## Usage
-
-### mysql
-Installs the mysql-client package.
-
-    class { 'mysql': }
-
-### mysql::java
-Installs mysql bindings for java.
-
-    class { 'mysql::java': }
-
-### mysql::perl
-Installs mysql bindings for perl
-
-    class { 'mysql::perl': }
-
-### mysql::php
-Installs mysql bindings for php
-
-    class { 'mysql::php': }
-
-### mysql::python
-Installs mysql bindings for python.
-
-    class { 'mysql::python': }
-
-### mysql::ruby
-Installs mysql bindings for ruby.
-
-    class { 'mysql::ruby': }
-
-### mysql::server
-Installs mysql-server packages, configures my.cnf and starts mysqld service:
-
-    class { 'mysql::server':
-      config_hash => { 'root_password' => 'foo' }
-    }
-
-Database login information stored in `/root/.my.cnf`.
-
-### mysql::db
-Creates a database with a user and assign some privileges.
-
-    mysql::db { 'mydb':
-      user     => 'myuser',
-      password => 'mypass',
-      host     => 'localhost',
-      grant    => ['all'],
-    }
-
-### mysql::backup
-Installs a mysql backup script, cronjob, and privileged backup user.
-
-    class { 'mysql::backup':
-      backupuser     => 'myuser',
-      backuppassword => 'mypassword',
-      backupdir      => '/tmp/backups',
-    }
-
-### Providers for database types:
-MySQL provider supports puppet resources command:
-
-    $ puppet resource database
-    mysql_database { 'information_schema':
-      ensure  => 'present',
-      charset => 'utf8',
-      collate => 'utf8_swedish_ci',
-    }
-    mysql_database { 'mysql':
-      ensure  => 'present',
-      charset => 'latin1',
-      collate => 'latin1_swedish_ci',
-    }
-
-The custom resources can be used in any other manifests:
-
-    mysql_database { 'mydb':
-      charset => 'latin1',
-    }
-
-    mysql_user { 'bob@localhost':
-      password_hash => mysql_password('foo')
-    }
-
-    database_grant { 'user@localhost/database':
-      privileges => ['all'] ,
-      # Or specify individual privileges with columns from the mysql.db table:
-      # privileges => ['Select_priv', 'Insert_priv', 'Update_priv', 'Delete_priv']
-    }
-
-A resource default can be specified to handle dependency:
-
-    Mysql_database {
-      require => Class['mysql::server'],
-    }
