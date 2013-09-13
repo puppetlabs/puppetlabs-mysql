@@ -8,7 +8,7 @@ describe 'mysql::db define' do
         class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
         class { 'mysql::server': }
         mysql::db { 'spec1':
-          user     => 'root',
+          user     => 'root1',
           password => 'password',
         }
       EOS
@@ -40,7 +40,7 @@ describe 'mysql::db define' do
           before  => Mysql::Db['spec2'],
         }
         mysql::db { 'spec2':
-          user     => 'root',
+          user     => 'root1',
           password => 'password',
           sql      => '/tmp/spec.sql',
         }

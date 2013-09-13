@@ -1,6 +1,6 @@
 require 'spec_helper_system'
 
-describe 'mysql::backup class' do
+describe 'mysql::server::backup class' do
   context 'should work with no errors' do
     pp = <<-EOS
       class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
@@ -10,7 +10,7 @@ describe 'mysql::backup class' do
         password => 'secret',
       }
       
-      class { 'mysql::backup':
+      class { 'mysql::server::backup':
         backupuser     => 'myuser',
         backuppassword => 'mypassword',
         backupdir      => '/tmp/backups',
@@ -50,7 +50,7 @@ describe 'mysql::backup class' do
         password => 'secret',
       }
       
-      class { 'mysql::backup':
+      class { 'mysql::server::backup':
         backupuser        => 'myuser',
         backuppassword    => 'mypassword',
         backupdir         => '/tmp/backups',

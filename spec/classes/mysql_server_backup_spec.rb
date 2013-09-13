@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'mysql::backup' do
+describe 'mysql::server::backup' do
 
   let(:default_params) {
     { 'backupuser'         => 'testuser',
