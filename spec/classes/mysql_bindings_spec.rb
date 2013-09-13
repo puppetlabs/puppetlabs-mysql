@@ -19,7 +19,7 @@ describe 'mysql::bindings' do
     )}
     it { should contain_package('perl_mysql').with(
       :name     => perl_name,
-      :ensure   => 'present',
+      :ensure   => 'present'
     )}
     it { should contain_package('python-mysqldb').with(
       :name   => python_name,
@@ -27,7 +27,7 @@ describe 'mysql::bindings' do
     )}
     it { should contain_package('ruby_mysql').with(
       :name     => ruby_name,
-      :ensure   => 'present',
+      :ensure   => 'present'
     )}
   end
 
