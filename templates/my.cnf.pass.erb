@@ -4,4 +4,4 @@ host=localhost
 <% unless @options['root_password'] == 'UNSET' -%>
 password='<%= @options['root_password'] %>'
 <% end -%>
-socket=<%= @options['socket'] -%>
+socket=<%= @options['client']['socket'] -%>
