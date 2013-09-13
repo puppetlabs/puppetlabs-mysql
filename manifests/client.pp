@@ -6,7 +6,13 @@ class mysql::client (
   include '::mysql::client::install'
 
   if $bindings_enable {
-    include '::mysql::bindings'
+    class { 'mysql::bindings':
+      java_enable   => true,
+      perl_enable   => true,
+      php_enable    => true,
+      python_enable => true,
+      ruby_enable   => true,
+    }
   }
 
 }

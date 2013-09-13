@@ -81,11 +81,6 @@ Puppet::Type.type(:mysql_user).provide(:mysql) do
     @property_hash[:ensure] == :present || false
   end
 
-  def flush
-    @property_hash.clear
-    mysql([defaults_file, '-NBe', 'FLUSH PRIVILEGES'].compact)
-  end
-
   ##
   ## MySQL user properties
   ##
