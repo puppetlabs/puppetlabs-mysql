@@ -115,6 +115,7 @@ class mysql::config(
   $max_binlog_size                  = $mysql::max_binlog_size,
   $expire_logs_days                 = $mysql::expire_logs_days,
   $max_connections                  = $mysql::max_connections,
+  $config_template                  = $mysql::config_template,
   $tmp_table_size                   = 'UNSET',
   $max_heap_table_size              = 'UNSET',
   $table_open_cache                 = 'UNSET',
@@ -216,7 +217,7 @@ class mysql::config(
 
   if $manage_config_file  {
     file { $config_file:
-      content => template('mysql/my.cnf.erb'),
+      content => template($config_template),
       mode    => '0644',
     }
   }
