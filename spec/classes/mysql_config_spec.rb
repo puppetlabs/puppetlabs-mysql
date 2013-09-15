@@ -12,6 +12,8 @@ describe 'mysql::config' do
      :datadir                         => '/var/lib/mysql',
      :default_engine                  => 'UNSET',
      :ssl                             => false,
+     :slow_query                      => false,
+     :log_slowq_time                  => '10',
      :key_buffer                      => '16M',
      :max_allowed_packet              => '16M',
      :thread_stack                    => '256K',
@@ -47,6 +49,7 @@ describe 'mysql::config' do
          :config_file     => '/etc/mysql/my.cnf',
          :socket          => '/var/run/mysqld/mysqld.sock',
          :pidfile         => '/var/run/mysqld/mysqld.pid',
+         :log_slowq       => '/var/log/mysql/slowquery.log',
          :root_group      => 'root',
          :ssl_ca          => '/etc/mysql/cacert.pem',
          :ssl_cert        => '/etc/mysql/server-cert.pem',
@@ -58,6 +61,7 @@ describe 'mysql::config' do
          :config_file     => '/var/db/mysql/my.cnf',
          :socket          => '/tmp/mysql.sock',
          :pidfile         => '/var/db/mysql/mysql.pid',
+         :log_slowq       => '/var/db/mysql/slowquery.log',
          :root_group      => 'wheel'
       },
       'RedHat' => {
@@ -66,6 +70,7 @@ describe 'mysql::config' do
          :config_file     => '/etc/my.cnf',
          :socket          => '/var/lib/mysql/mysql.sock',
          :pidfile         => '/var/run/mysqld/mysqld.pid',
+         :log_slowq       => '/var/log/mysqld_slowquery.log',
          :root_group      => 'root',
          :ssl_ca          => '/etc/mysql/cacert.pem',
          :ssl_cert        => '/etc/mysql/server-cert.pem',
@@ -145,6 +150,9 @@ describe 'mysql::config' do
             :ssl_ca               => '/path/to/cacert.pem',
             :ssl_cert             => '/path/to/server-cert.pem',
             :ssl_key              => '/path/to/server-key.pem',
+            :slow_query           => true,
+            :log_slowq            => '/path/to/slow_query.log',
+            :log_slowq_time       => '35'
             :key_buffer           => '16M',
             :max_allowed_packet   => '32M',
             :thread_stack         => '256K',
@@ -280,6 +288,23 @@ describe 'mysql::config' do
               end
               (content.split("\n") & expected_lines).should == expected_lines
             end
+              if param_values[:slow_query]
+                it { should contain_file('/etc/mysql/conf.d/slow_query.cnf').with(
+                  'owner'  => 'root',
+                  'group'  => param_values[:root_group],
+                  'notify' => 'Exec[mysqld-restart]',
+                  'ensure' => 'present',
+                  'mode'   => '0644'
+                )}
+                it 'should have a slow query template with the correct contents' do
+                  content2 = param_value(subject, 'file', '/etc/mysql/conf.d/slow_query.cnf', 'content2')
+                  expected_lines2 = [
+                    "log-slow-queries = #{param_values[:log_slowq]}",
+                    "long_query_time = #{param_values[:log_slowq_time]}",
+                  ]
+                end
+              end
+              (content2.split("\n") & expected_lines2).should == expected_lines2
           end
         end
       end

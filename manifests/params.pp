@@ -33,6 +33,8 @@ class mysql::params {
   $restart               = true
   $root_password         = 'UNSET'
   $ssl                   = false
+  $slow_query            = false
+  $log_slowq_time        = '10'
   $thread_cache_size     = 8
   $thread_stack          = '256K'
 
@@ -64,6 +66,7 @@ class mysql::params {
       $config_file           = '/etc/my.cnf'
       $datadir               = '/var/lib/mysql'
       $log_error             = '/var/log/mysqld.log'
+      $log_slowq             = '/var/log/mysqld_slowquery.log'
       $php_package_name      = 'php-mysql'
       $pidfile               = '/var/run/mysqld/mysqld.pid'
       $root_group            = 'root'
@@ -92,6 +95,10 @@ class mysql::params {
       $log_error             = $::operatingsystem ? {
         /OpenSuSE/           => '/var/log/mysql/mysqld.log',
         /(SLES|SLED)/        => '/var/log/mysqld.log',
+      }
+      $log_slowq             = $::operatingsystem ? {
+        /OpenSuSE/           => '/var/log/mysql/mysqld_slowquery.log',
+        /(SLES|SLED)/        => '/var/log/mysqld_slowquery.log',
       }
       $pidfile               = $::operatingsystem ? {
         /OpenSuSE/           => '/var/run/mysql/mysqld.pid',
@@ -127,6 +134,7 @@ class mysql::params {
       $config_file          = '/etc/mysql/my.cnf'
       $datadir              = '/var/lib/mysql'
       $log_error            = '/var/log/mysql/error.log'
+      $log_slowq            = '/var/log/mysql/slowquery.log'
       $php_package_name     = 'php5-mysql'
       $pidfile              = '/var/run/mysqld/mysqld.pid'
       $root_group           = 'root'
@@ -155,6 +163,7 @@ class mysql::params {
       $pidfile               = '/var/db/mysql/mysql.pid'
       $config_file           = '/var/db/mysql/my.cnf'
       $log_error             = "/var/db/mysql/${::hostname}.err"
+      $log_slowq             = '/var/db/mysql/slowquery.log'
       $php_package_name      = 'php5-mysql'
       $root_group            = 'wheel'
       $ssl_ca                = undef
@@ -176,6 +185,7 @@ class mysql::params {
           $config_file           = '/etc/my.cnf'
           $datadir               = '/var/lib/mysql'
           $log_error             = '/var/log/mysqld.log'
+          $log_slowq             = '/var/log/mysqld_slowquery.log'
           $php_package_name      = 'php-mysql'
           $root_group            = 'root'
           $server_package_name   = 'mysql-server'

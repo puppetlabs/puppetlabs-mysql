@@ -16,6 +16,9 @@
 #   [*ssl_cert]             - path to ssl-cert
 #   [*ssl_key]              - path to ssl-key
 #   [*log_error]            - path to mysql error log
+#   [*slow_query*]          - enable slow query logging.
+#   [*log_slowq*]           - path to slow query log.
+#   [*log_slowq_time*}      - slow query timeout.
 #   [*default_engine]       - configure a default table engine
 #   [*root_group]           - use specified group for root-owned files
 #   [*restart]              - whether to restart mysqld (true/false)
@@ -101,6 +104,9 @@ class mysql::config(
   $ssl_cert                         = $mysql::ssl_cert,
   $ssl_key                          = $mysql::ssl_key,
   $log_error                        = $mysql::log_error,
+  $slow_query                       = $mysql::params::slow_query,
+  $log_slowq                        = $mysql::params::log_slowq,
+  $log_slowq_time                   = $mysql::params::log_slowq_time,
   $default_engine                   = $mysql::default_engine,
   $root_group                       = $mysql::root_group,
   $restart                          = $mysql::restart,
@@ -212,6 +218,19 @@ class mysql::config(
     mode    => '0755',
     recurse => $purge_conf_dir,
     purge   => $purge_conf_dir,
+  }
+  if $slow_query == true {
+    file { '/etc/mysql/conf.d/slow_query.cnf':
+      content => template('mysql/slow_query.cnf.erb'),
+      mode    => '0644',
+    }
+    file { 'slowquery.log':
+      ensure => present,
+      owner  => 'mysql',
+      group  => 'mysql',
+      mode   => '0640',
+      path   => $log_slowq,
+    }
   }
 
   if $manage_config_file  {

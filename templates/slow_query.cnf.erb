@@ -1,0 +1,9 @@
+###
+### File managed by Puppet
+###
+
+<% if slow_query == true -%>
+[mysqld]
+log-slow-queries = <%= log_slowq %>
+long_query_time = <%= log_slowq_time %>
+<% end -%>
