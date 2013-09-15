@@ -1,26 +1,14 @@
-# Class: mysql::python
-#
-# This class installs the python libs for mysql.
-#
-# Parameters:
-#   [*ensure*]       - ensure state for package.
-#                        can be specified as version.
-#   [*package_name*] - name of package
-#
-# Actions:
-#
-# Requires:
-#
-# Sample Usage:
-#
 class mysql::python(
+  $package_ensure = $mysql::params::python_package_ensure,
   $package_name   = $mysql::params::python_package_name,
-  $package_ensure = 'present'
 ) inherits mysql::params {
 
-  package { 'python-mysqldb':
-    name   => $package_name,
-    ensure => $package_ensure,
+  notify { "mysql::python has been renamed to mysql::bindings::python and this
+  backwards compatibility shim will be removed on 01/01/2014.": }
+
+  class { 'mysql::bindings::python':
+    package_ensure => $package_ensure,
+    package_name   => $package_name,
   }
 
 }

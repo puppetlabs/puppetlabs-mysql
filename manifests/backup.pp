@@ -3,9 +3,14 @@
 # This module handles ...
 #
 # Parameters:
-#   [*backupuser*]     - The name of the mysql backup user.
-#   [*backuppassword*] - The password of the mysql backup user.
-#   [*backupdir*]      - The target directory of the mysqldump.
+#   [*backupuser*]         - The name of the mysql backup user.
+#   [*backuppassword*]     - The password of the mysql backup user.
+#   [*backupdir*]          - The target directory of the mysqldump.
+#   [*backupcompress*]     - Boolean to compress backup with bzip2.
+#   [*backuprotate*]       - Number of backups to keep. Default 30
+#   [*backupdatabases*]    - Specify databases to back up as array (default all)
+#   [*file_per_database*]  - Boolean to dump each database to its own file.
+#   [*delete_before_dump*] - Clean existing backups before creating new
 #
 # Actions:
 #   GRANT SELECT, RELOAD, LOCK TABLES ON *.* TO 'user'@'localhost'
@@ -19,25 +24,34 @@
 #     backupuser     => 'myuser',
 #     backuppassword => 'mypassword',
 #     backupdir      => '/tmp/backups',
+#     backupcompress => true,
 #   }
 #
 class mysql::backup (
   $backupuser,
   $backuppassword,
   $backupdir,
+  $backupcompress = true,
+  $backuprotate = 30,
+  $delete_before_dump = false,
+  $backupdatabases = [],
+  $file_per_database = false,
   $ensure = 'present'
 ) {
 
-  database_user { "${backupuser}@localhost":
+  mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
     provider      => 'mysql',
     require       => Class['mysql::config'],
   }
 
-  database_grant { "${backupuser}@localhost":
-    privileges => [ 'Select_priv', 'Reload_priv', 'Lock_tables_priv' ],
-    require    => Database_user["${backupuser}@localhost"],
+  mysql_grant { "${backupuser}@localhost/*.*":
+    ensure     => present,
+    user       => "${backupuser}@localhost",
+    table      => '*.*',
+    privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW' ],
+    require    => Mysql_user["${backupuser}@localhost"],
   }
 
   cron { 'mysql-backup':
@@ -65,4 +79,5 @@ class mysql::backup (
     owner  => 'root',
     group  => 'root',
   }
+
 }

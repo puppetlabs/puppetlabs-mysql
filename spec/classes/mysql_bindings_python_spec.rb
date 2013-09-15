@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe 'mysql::python' do
+describe 'mysql::bindings::python' do
 
   describe 'on a debian based os' do
     let :facts do
-      { :osfamily => 'Debian'}
+      { :osfamily => 'Debian', :root_home => '/root'}
     end
     it { should contain_package('python-mysqldb').with(
       :name   => 'python-mysqldb',
@@ -14,7 +14,7 @@ describe 'mysql::python' do
 
   describe 'on a freebsd based os' do
     let :facts do
-      { :osfamily => 'FreeBSD'}
+      { :osfamily => 'FreeBSD', :root_home => '/root'}
     end
     it { should contain_package('python-mysqldb').with(
       :name   => 'databases/py-MySQLdb',
@@ -24,7 +24,7 @@ describe 'mysql::python' do
 
   describe 'on a redhat based os' do
     let :facts do
-      {:osfamily => 'Redhat'}
+      {:osfamily => 'RedHat', :root_home => '/root'}
     end
     it { should contain_package('python-mysqldb').with(
       :name   => 'MySQL-python',
@@ -43,7 +43,7 @@ describe 'mysql::python' do
 
   describe 'on any other os' do
     let :facts do
-      {:osfamily => 'foo'}
+      {:osfamily => 'foo', :root_home => '/root'}
     end
 
     it 'should fail' do

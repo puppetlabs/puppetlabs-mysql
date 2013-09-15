@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe 'mysql::server::monitor' do
   let :facts do
-    { :osfamily => 'Debian' }
+    { :osfamily => 'Debian', :root_home => '/root' }
   end
   let :pre_condition do
     "include 'mysql::server'"
@@ -14,5 +14,5 @@ describe 'mysql::server::monitor' do
     }
   end
 
-  it { should contain_database_user("monitoruser@monitorhost")}
+  it { should contain_mysql_user('monitoruser@monitorhost')}
 end
