@@ -23,6 +23,20 @@ The MySQL module manages both the installation and configuration of MySQL as
 well as extends Pupppet to allow management of MySQL resources, such as
 databases, users, and grants.
 
+##Backwards Compatibility
+
+This module has just undergone a very large rewrite.  As a result it will no
+longer work with the previous classes and configuration as before.  We've
+attempted to handle backwards compatibility automatically by adding a
+`attempt_compatibility_mode` parameter to the main mysql class.  If you set
+this to true it will attempt to map your previous parameters into the new
+mysql::globals class.
+
+###WARNING
+
+This may fail.  It may eat your MySQL server.  PLEASE test it before running it
+live.  Even if it's just a no-op and a manual comparision.  Please be careful!
+
 ##Setup
 
 ###What MySQL affects
@@ -72,6 +86,13 @@ thing
 
 You can just make an entry like thing => true in the hash.  MySQL doesn't
 care if thing is alone or set to a value, it'll happily accept both.
+
+###Custom configuration
+
+To add custom mysql configuration you can drop additional files into
+/etc/mysql/conf.d/ in order to override settings or add additional ones (if you
+choose not to use override_options in mysql::globals).  This location is
+hardcoded into the my.cnf template file.
 
 ##Reference
 
