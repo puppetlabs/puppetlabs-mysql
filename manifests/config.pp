@@ -129,7 +129,8 @@ class mysql::config(
   $replicate_wild_do_table          = 'UNSET',
   $replicate_wild_ignore_table      = 'UNSET',
   $ft_min_word_len                  = 'UNSET',
-  $ft_max_word_len                  = 'UNSET'
+  $ft_max_word_len                  = 'UNSET',
+  $innodb_file_per_table            = 'UNSET'
 ) inherits mysql {
 
   File {
@@ -172,12 +173,11 @@ class mysql::config(
     }
 
     exec { 'set_mysql_rootpw':
-      command     => "mysqladmin -u root ${old_pw} password '${root_password}'",
-      logoutput   => true,
-      environment => "HOME=${root_home}",
-      unless      => "mysqladmin -u root -p'${root_password}' status > /dev/null",
-      path        => '/usr/local/sbin:/usr/bin:/usr/local/bin',
-      notify      => $restart ? {
+      command   => "mysqladmin -u root ${old_pw} password '${root_password}'",
+      logoutput => true,
+      unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
+      path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
+      notify    => $restart ? {
         true  => Exec['mysqld-restart'],
         false => undef,
       },

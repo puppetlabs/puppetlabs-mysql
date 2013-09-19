@@ -96,6 +96,10 @@ ssl-cert  = <%= @ssl_cert %>
 ssl-key   = <%= @ssl_key %>
 <% end -%>
 
+<%if @innodb_file_per_table != 'UNSET' %>
+innodb_file_per_table = <%= @innodb_file_per_table %>
+<% end -%>
+
 [mysqldump]
 quick
 quote-names
