@@ -36,7 +36,8 @@
 #                             results.
 #   [*max_connections]      - The maximum permitted number of simultaneous
 #                             client connections.
-#   [*tmpdir]      - Temporary directory that is not /tmp.
+#   [*tmpdir]               - Temporary directory that is not /tmp.
+#   [*skip_name_resolve]    - Just in case you want to disable DNS lookups.
 #   [*tmp_table_size]       - The maximum size of internal in-memory temporary
 #                             tables.
 #   [*max_heap_table_size]  - This variable sets the maximum size to which
@@ -117,6 +118,7 @@ class mysql::config(
   $expire_logs_days                 = $mysql::expire_logs_days,
   $max_connections                  = $mysql::max_connections,
   $tmpdir                           = $mysql::tmpdir,
+  $skip_name_resolve                = $mysql::skip_name_resolve,
   $tmp_table_size                   = 'UNSET',
   $max_heap_table_size              = 'UNSET',
   $table_open_cache                 = 'UNSET',
