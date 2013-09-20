@@ -21,6 +21,9 @@ datadir   = <%= @datadir %>
 tmpdir    = <%= @tmpdir %>
 max_connections = <%= @max_connections %>
 skip-external-locking
+<% if @skip_name_resolve != 'UNSET' -%>
+<%= @skip_name_resolve %>
+<% end -%>
 
 <% if @bind_address -%>
 bind-address        = <%= @bind_address %>
