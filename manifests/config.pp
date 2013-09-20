@@ -36,7 +36,7 @@
 #                             results.
 #   [*max_connections]      - The maximum permitted number of simultaneous
 #                             client connections.
-#   [*tmpdir         ]      - Temporary directory that is not /tmp.
+#   [*tmpdir]      - Temporary directory that is not /tmp.
 #   [*tmp_table_size]       - The maximum size of internal in-memory temporary
 #                             tables.
 #   [*max_heap_table_size]  - This variable sets the maximum size to which
