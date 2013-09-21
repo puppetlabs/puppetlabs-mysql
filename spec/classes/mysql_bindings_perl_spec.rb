@@ -9,7 +9,7 @@ describe 'mysql::bindings::perl' do
     it { should contain_package('perl_mysql').with(
       :name     => 'libdbd-mysql-perl',
       :ensure   => 'present',
-      :provider => ''
+      :provider => 'apt'
     )}
   end
 
@@ -20,7 +20,7 @@ describe 'mysql::bindings::perl' do
     it { should contain_package('perl_mysql').with(
       :name     => 'p5-DBD-mysql',
       :ensure   => 'present',
-      :provider => ''
+      :provider => 'ports'
     )}
   end
 
@@ -31,7 +31,7 @@ describe 'mysql::bindings::perl' do
     it { should contain_package('perl_mysql').with(
       :name   => 'perl-DBD-MySQL',
       :ensure => 'present',
-      :provider => ''
+      :provider => 'yum'
     )}
     describe 'when parameters are supplied' do
       let :params do
