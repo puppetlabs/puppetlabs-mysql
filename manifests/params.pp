@@ -19,7 +19,7 @@ class mysql::params {
 
   case $::osfamily {
     'RedHat': {
-      if $::operatingsystem == 'Fedora' and $::operatingsystemrelease >= 19 {
+      if $::operatingsystem == 'Fedora' and (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 19 or $::operatingsystemrelease == "Rawhide") {
         $client_package_name = 'mariadb'
         $server_package_name = 'mariadb-server'
       } else {
