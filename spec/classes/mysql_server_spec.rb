@@ -1,99 +1,78 @@
 require 'spec_helper'
 describe 'mysql::server' do
+  let(:facts) {{:osfamily => 'RedHat', :root_home => '/root'}}
 
-  let :constant_parameter_defaults do
-    {:config_hash    => {},
-     :package_ensure => 'present',
-     :enabled        => true,
-     :manage_service => true
-    }
+  context 'with defaults' do
+    it { should contain_class('mysql::server::install') }
+    it { should contain_class('mysql::server::config') }
+    it { should contain_class('mysql::server::service') }
+    it { should contain_class('mysql::server::root_password') }
   end
 
-  describe 'when ubuntu use upstart' do
-    let :facts do
-      { :osfamily => 'Debian',
-        :operatingsystem => 'Ubuntu',
-        :root_home => '/root'
-      }
+  context 'with remove_default_accounts set' do
+    let (:params) {{ :remove_default_accounts => true }}
+    it { should contain_class('mysql::server::account_security') }
+  end
+
+  context 'mysql::server::install' do
+    let(:params) {{ :package_ensure => 'present', :name => 'mysql-server' }}
+    it do
+      should contain_package('mysql-server').with({
+      :ensure => :present,
+      :name   => 'mysql-server',
+    })
+    end
+  end
+
+  context 'mysql::server::config' do
+    it do
+      should contain_file('/etc/mysql').with({
+        :ensure => :directory,
+        :mode   => '0755',
+      })
     end
 
-    it { should contain_service('mysqld').with(
-      :name     => 'mysql',
-      :ensure   => 'running',
-      :enable   => 'true',
-      :provider => 'upstart',
-      :require  => 'Package[mysql-server]'
-    )}
+    it do
+      should contain_file('/etc/mysql/conf.d').with({
+        :ensure => :directory,
+        :mode   => '0755',
+      })
+    end
+
+    it do
+      should contain_file('/etc/my.cnf').with({
+        :mode => '0644',
+      })
+    end
   end
 
-  describe 'with osfamily specific defaults' do
-    {
-      'Debian' => {
-        :service_name => 'mysql',
-        :package_name => 'mysql-server'
-      },
-      'FreeBSD' => {
-        :service_name => 'mysql-server',
-        :package_name => 'databases/mysql55-server'
-      },
-      'RedHat' => {
-        :service_name => 'mysqld',
-        :package_name => 'mysql-server'
-      }
-    }.each do |osfamily, osparams|
+  context 'mysql::server::service' do
+    context 'with defaults' do
+      it { should contain_service('mysqld') }
+    end
 
-      describe "when osfamily is #{osfamily}" do
+    context 'service_enabled set to false' do
+      let(:params) {{ :service_enabled => false }}
 
-        let :facts do
-          { :osfamily => osfamily, :root_home => '/root' }
-        end
-
-        [
-          {},
-          {
-            :package_name   => 'dans_package',
-            :package_ensure => 'latest',
-            :service_name   => 'dans_service',
-            :config_hash    => {'root_password' => 'foo'},
-            :enabled        => false,
-            :manage_service => false
-          }
-        ].each do |passed_params|
-
-          describe "with #{passed_params == {} ? 'default' : 'specified'} parameters" do
-
-            let :parameter_defaults do
-              constant_parameter_defaults.merge(osparams)
-            end
-
-            let :params do
-              passed_params
-            end
-
-            let :param_values do
-              parameter_defaults.merge(params)
-            end
-
-            it { should contain_package('mysql-server').with(
-              :name   => param_values[:package_name],
-              :ensure => param_values[:package_ensure]
-            )}
-
-            it {
-              if param_values[:manage_service]
-                should contain_service('mysqld').with(
-                  :name    => param_values[:service_name],
-                  :ensure  => param_values[:enabled] ? 'running' : 'stopped',
-                  :enable  => param_values[:enabled],
-                  :require => 'Package[mysql-server]'
-                ).without_provider
-              else
-                should_not contain_service('mysqld')
-              end
-            }
-          end
-        end
+      it do
+        should contain_service('mysqld').with({
+          :ensure => :stopped
+        })
       end
     end
   end
+
+  context 'mysql::server::root_password' do
+    describe 'when defaults' do
+      it { should_not contain_mysql_user('root@localhost') }
+      it { should_not contain_file('/root/.my.cnf') }
+    end
+    describe 'when set' do
+      let(:params) {{:root_password => 'SET' }}
+      it { should contain_mysql_user('root@localhost') }
+      it { should contain_file('/root/.my.cnf') }
+    end
+
+  end
+
 end

@@ -1,19 +1,14 @@
-# Class: mysql::php
-#
-# This class installs the php libs for mysql.
-#
-# Parameters:
-#   [*package_ensure*]   - Ensure state for package. Can be specified as version.
-#   [*package_name*]     - The name of package
-#
 class mysql::php(
-  $package_ensure = 'present',
-  $package_name   = $mysql::php_package_name
-) inherits mysql {
+  $package_ensure = $mysql::params::php_package_name,
+  $package_name   = $mysql::params::php_package_name,
+) inherits mysql::params {
 
-  package { 'php-mysql':
-    ensure => $package_ensure,
-    name   => $package_name,
+  notify { "mysql::php has been renamed to mysql::bindings::php and this
+  backwards compatibility shim will be removed on 01/01/2014.": }
+
+  class { 'mysql::bindings::php':
+    package_ensure => $package_ensure,
+    package_name   => $package_name,
   }
 
 }

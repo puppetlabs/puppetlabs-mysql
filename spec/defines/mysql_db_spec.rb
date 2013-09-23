@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'mysql::db', :type => :define do
+  let(:facts) {{ :osfamily => 'RedHat' }}
   let(:title) { 'test_db' }
 
   let(:params) {
@@ -11,7 +12,7 @@ describe 'mysql::db', :type => :define do
 
   it 'should report an error when ensure is not present or absent' do
     params.merge!({'ensure' => 'invalid_val'})
-    expect { subject }.to raise_error(Puppet::Error, 
+    expect { subject }.to raise_error(Puppet::Error,
       /invalid_val is not supported for ensure\. Allowed values are 'present' and 'absent'\./)
   end
 
