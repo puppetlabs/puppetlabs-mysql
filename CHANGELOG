@@ -1,10 +1,26 @@
-Date pending - Next Version
+2013-09-23 - Version 1.0.0
+
+Summary:
+
+This release introduces a number of new type/providers, to eventually
+replace the database_ ones.  The module has been converted to call the
+new providers rather than the previous ones as they have a number of
+fixes, additional options, and work with puppet resource.
+
+This 1.0.0 release precedes a large refactoring that will be released
+almost immediately after as 2.0.0.
+
 Features:
-- Add `mysql::bindings` class and refactor all other bindings to be
-contained underneath mysql::bindings:: namespace.
+- Added mysql_grant, mysql_database, and mysql_user.
+- Add `mysql::bindings` class and refactor all other bindings to be contained underneath mysql::bindings:: namespace.
+- Added support to back up specified databases only with 'mysqlbackup' parameter.
+- Add option to mysql::backup to set the backup script to perform a mysqldump on each database to its own file
 
 Bugfixes:
 - Update my.cnf.pass.erb to allow custom socket support
+- Add environment variable for .my.cnf in mysql::db.
+- Add HOME environment variable for .my.cnf to mysqladmin command when
+(re)setting root password
 
 2013-07-15 - Version 0.9.0
 Features:
