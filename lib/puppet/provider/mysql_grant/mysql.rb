@@ -6,7 +6,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
   def self.instances
     instances = []
     users.select{ |user| user =~ /.+@/ }.collect do |user|
-      query = "SHOW GRANTS FOR #{user};"
+      user_string  = "'#{user.sub('@', "'@'")}'"
+      query = "SHOW GRANTS FOR #{user_string};"
       grants = mysql([defaults_file, "-NBe", query].compact)
       # Once we have the list of grants generate entries for each.
       grants.each_line do |grant|
