@@ -1,119 +1,100 @@
-# Class: mysql
-#
-#   This class installs mysql client software.
-#
-# Parameters:
-#
-# [*basedir*]               - The base directory mysql uses
-#
-# [*bind_address*]          - The IP mysql binds to.
-#
-# [*client_package_name*]   - The name of the mysql client package.
-#
-# [*client_package_ensure*] - State of the client package.
-#
-# [*config_file*]           - The location of the server config file
-#
-# [*config_template*]       - The template to use to generate my.cnf.
-#
-# [*datadir*]               - The directory MySQL's datafiles are stored
-#
-# [*tmpdir*]                - The directory MySQL's tmpfiles are stored
-#
-# [*default_engine*]        - The default engine to use for tables
-#
-# [*etc_root_password*]     - Whether or not to add the mysql root password to /etc/my.cnf
-#
-# [*log_error*]             - Where to log errors
-#
-# [*manage_config_file*]    - if the config file should be managed (default: true)
-#
-# [*manage_service*]        - Boolean dictating if mysql::server should manage the service
-#
-# [*max_allowed_packet*]    - Maximum network packet size mysqld will accept
-#
-# [*old_root_password*]     - Previous root user password,
-#
-# [*package_ensure*]        - ensure value for packages.
-#
-# [*package_name*]          - legacy parameter used to specify the client package. Should not be used going forward
-#
-# [*php_package_name*]      - The name of the phpmysql package to install
-#
-# [*pidfile*]               - The location mysql will expect the pidfile to be, and will put it when starting the service.
-#
-# [*port*]                  - The port mysql listens on
-#
-# [*purge_conf_dir*]        - Value fed to recurse and purge parameters of the /etc/mysql/conf.d resource
-#
-# [*restart*]               - Whether to restart mysqld (true/false)
-#
-# [*root_group*]            - Use specified group for root-owned files
-#
-# [*root_password*]         - The root MySQL password to use
-#
-# [*server_package_ensure*] - ensure value for server packages.
-#
-# [*server_package_name*]   - The name of the server package to install
-#
-# [*service_provider*]      - Sets the service provider to upstart on Ubuntu systems for mysql::server.
-#
-# [*service_name*]          - The name of the service to start
-#
-# [*socket*]                - The location of the MySQL server socket file
-#
-# [*ssl*]                   - Whether or not to enable ssl
-#
-# [*ssl_ca*]                - The location of the SSL CA Cert
-#
-# [*ssl_cert*]              - The location of the SSL Certificate to use
-#
-# [*ssl_key*]               - The SSL key to use
-#
-# Actions:
-#
-# Requires:
-#
-# Sample Usage:
 #
 class mysql(
-  $basedir               = $mysql::params::basedir,
-  $bind_address          = $mysql::params::bind_address,
-  $client_package_name   = $mysql::params::client_package_name,
-  $client_package_ensure = $mysql::params::client_package_ensure,
-  $config_file           = $mysql::params::config_file,
-  $config_template       = $mysql::params::config_template,
-  $datadir               = $mysql::params::datadir,
-  $tmpdir                = $mysql::params::tmpdir,
-  $default_engine        = $mysql::params::default_engine,
-  $etc_root_password     = $mysql::params::etc_root_password,
-  $log_error             = $mysql::params::log_error,
-  $manage_config_file    = true,
-  $manage_service        = $mysql::params::manage_service,
-  $max_allowed_packet    = $mysql::params::max_allowed_packet,
-  $old_root_password     = $mysql::params::old_root_password,
-  $package_ensure        = $mysql::params::package_ensure,
-  $php_package_name      = $mysql::params::php_package_name,
-  $pidfile               = $mysql::params::pidfile,
-  $port                  = $mysql::params::port,
-  $purge_conf_dir        = $mysql::params::purge_conf_dir,
-  $max_connections       = $mysql::params::max_connections,
-  $restart               = $mysql::params::restart,
-  $root_group            = $mysql::params::root_group,
-  $root_password         = $mysql::params::root_password,
-  $server_package_name   = $mysql::params::server_package_name,
-  $service_name          = $mysql::params::service_name,
-  $service_provider      = $mysql::params::service_provider,
-  $socket                = $mysql::params::socket,
-  $ssl                   = $mysql::params::ssl,
-  $ssl_ca                = $mysql::params::ssl_ca,
-  $ssl_cert              = $mysql::params::ssl_cert,
-  $ssl_key               = $mysql::params::ssl_key
-) inherits mysql::params{
+  $basedir               = '',
+  $bind_address          = '',
+  $client_package_ensure = '',
+  $client_package_name   = '',
+  $config_file           = '',
+  $config_template       = '',
+  $datadir               = '',
+  $default_engine        = '',
+  $etc_root_password     = '',
+  $log_error             = '',
+  $manage_config_file    = '',
+  $manage_service        = '',
+  $max_allowed_packet    = '',
+  $max_connections       = '',
+  $old_root_password     = '',
+  $package_ensure        = '',
+  $php_package_name      = '',
+  $pidfile               = '',
+  $port                  = '',
+  $purge_conf_dir        = '',
+  $restart               = '',
+  $root_group            = '',
+  $root_password         = '',
+  $server_package_name   = '',
+  $service_name          = '',
+  $service_provider      = '',
+  $socket                = '',
+  $ssl                   = '',
+  $ssl_ca                = '',
+  $ssl_cert              = '',
+  $ssl_key               = '',
+  $tmpdir                = '',
+  $attempt_compatibility_mode = false,
+) {
 
-  include '::mysql::client::install'
-  include '::mysql::bindings'
+  if $attempt_compatibility_mode {
+    notify { "An attempt has been made below to automatically apply your custom
+    settings to mysql::globals. Please verify this works in a safe test
+    environment.": }
 
-  Class['mysql::config'] -> Mysql::Db <| |>
+    $override_options = {
+      'client'                 => {
+        'port'                 => $port,
+        'socket'               => $socket
+      },
+      'mysqld_safe'            => {
+        'log_error'            => $log_error,
+        'socket'               => $socket,
+      },
+      'mysqld'               => {
+        'basedir'            => $basedir,
+        'bind_address'       => $bind_address,
+        'datadir'            => $datadir,
+        'log_error'          => $log_error,
+        'max_allowed_packet' => $max_allowed_packet,
+        'max_connections'    => $max_connections,
+        'pid_file'           => $pidfile,
+        'port'               => $port,
+        'socket'             => $socket,
+        'ssl-ca'             => $ssl_ca,
+        'ssl-cert'           => $ssl_cert,
+        'ssl-key'            => $ssl_key,
+        'tmpdir'             => $tmpdir,
+      },
+      'mysqldump'              => {
+        'max_allowed_packets'  => $max_allowed_packet,
+      },
+      'config_file'          => $config_file,
+      'etc_root_password'    => $etc_root_password,
+      'manage_config_file'   => $manage_config_file,
+      'old_root_password'    => $old_root_password,
+      'purge_conf_dir'       => $purge_conf_dir,
+      'restart'              => $restart,
+      'root_group'           => $root_group,
+      'root_password'        => $root_password,
+      'service_name'         => $service_name,
+      'ssl'                  => $ssl
+    }
+    $filtered_options = mysql_strip_hash($override_options)
+    validate_hash($filtered_options)
+    notify { $filtered_options: }
+    class { 'mysql::globals':
+      override_options => $filtered_options,
+    }
+
+  } else {
+    fail("ERROR:  This class has been deprecated and the functionality moved
+    into mysql::globals.  If you run mysql::server without correctly calling
+    mysql:: globals with the new override_options hash syntax you will revert
+    your MySQL to the stock settings.  Do not proceed without removing this
+    class and using mysql::globals correctly.
+
+    If you are brave you may set attempt_compatibility_mode in this class which
+    attempts to automap the previous settings to appropriate calls to
+    mysql::globals")
+  }
 
 }

@@ -83,13 +83,6 @@ usvn_user@localhost
     end
   end
 
-  describe 'flush' do
-    it 'removes cached privileges' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', 'FLUSH PRIVILEGES'])
-      provider.flush
-    end
-  end
-
   describe 'self.defaults_file' do
     it 'sets --defaults-file' do
       File.stubs(:file?).with('/root/.my.cnf').returns(true)
