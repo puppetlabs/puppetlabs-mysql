@@ -37,7 +37,7 @@ class mysql(
 
   if $attempt_compatibility_mode {
     notify { "An attempt has been made below to automatically apply your custom
-    settings to mysql::globals. Please verify this works in a safe test
+    settings to mysql::server. Please verify this works in a safe test
     environment.": }
 
     $override_options = {
@@ -81,20 +81,20 @@ class mysql(
     $filtered_options = mysql_strip_hash($override_options)
     validate_hash($filtered_options)
     notify { $filtered_options: }
-    class { 'mysql::globals':
+    class { 'mysql::server':
       override_options => $filtered_options,
     }
 
   } else {
     fail("ERROR:  This class has been deprecated and the functionality moved
-    into mysql::globals.  If you run mysql::server without correctly calling
-    mysql:: globals with the new override_options hash syntax you will revert
+    into mysql::server.  If you run mysql::server without correctly calling
+    mysql:: server with the new override_options hash syntax you will revert
     your MySQL to the stock settings.  Do not proceed without removing this
-    class and using mysql::globals correctly.
+    class and using mysql::server correctly.
 
     If you are brave you may set attempt_compatibility_mode in this class which
     attempts to automap the previous settings to appropriate calls to
-    mysql::globals")
+    mysql::server")
   }
 
 }
