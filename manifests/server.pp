@@ -4,16 +4,23 @@ class mysql::server (
   $enabled                 = undef,
   $manage_service          = undef,
   #
+  $config_file             = $mysql::params::config_file,
+  $manage_config_file      = $mysql::params::manage_config_file,
   $old_root_password       = $mysql::params::old_root_password,
+  $old_root_password       = $mysql::params::old_root_password,
+  $override_options        = {},
   $package_ensure          = $mysql::params::server_package_ensure,
   $package_name            = $mysql::params::server_package_name,
+  $purge_conf_dir          = $mysql::params::purge_conf_dir,
   $remove_default_accounts = false,
+  $restart                 = $mysql::params::restart,
+  $root_group              = $mysql::params::root_group,
   $root_password           = $mysql::params::root_password,
   $service_enabled         = $mysql::params::server_service_enabled,
   $service_manage          = $mysql::params::server_service_manage,
   $service_name            = $mysql::params::server_service_name,
   $service_provider        = $mysql::params::server_service_provider
-) inherits mysql::globals {
+) inherits mysql::params {
 
   # Deprecated parameters.
   if $enabled {
@@ -28,6 +35,9 @@ class mysql::server (
   } else {
     $real_service_manage = $service_manage
   }
+
+  # Create a merged together set of options.  Rightmost hashes win over left.
+  $options = merge($mysql::params::default_options, $override_options)
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 

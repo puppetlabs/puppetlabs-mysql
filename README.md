@@ -30,7 +30,7 @@ longer work with the previous classes and configuration as before.  We've
 attempted to handle backwards compatibility automatically by adding a
 `attempt_compatibility_mode` parameter to the main mysql class.  If you set
 this to true it will attempt to map your previous parameters into the new
-mysql::globals class.
+mysql::server class.
 
 ###WARNING
 
@@ -49,27 +49,24 @@ live.  Even if it's just a no-op and a manual comparision.  Please be careful!
 
 If you just want a server installing with the default options you can run
 include '::mysql::server'.  If you need to customize options, such as the root
-password or /etc/my.cnf settings then you can also include mysql::globals and
+password or /etc/my.cnf settings then you can also include mysql::server and
 pass in an override hash as seen below:
 
 ```puppet
-class { '::mysql::globals':
+class { '::mysql::server':
   override_options => { 'mysqld' => { 'max_connections' => '1024' } }
 }
 ```
 
 ##Usage
 
-The interactions with this module are split between mysql::globals and several
-other classes, mysql::server, mysql::client, and mysql::bindings.
+All interaction for the server is done via mysql::server.  To install the
+client you use mysql::client, and to install bindings you can use
+mysql::bindings.
 
-###mysql::globals
+###Overrides
 
-This class exists as a way to easily share values between the other mysql
-classes.  You can pass an override_options into this class to replace elements
-of the existing default hash.  
-
-The hash structure for overrides is as follows:
+The hash structure for overrides in mysql::server is as follows:
 
 ```puppet
 override_options = {
@@ -91,7 +88,7 @@ care if thing is alone or set to a value, it'll happily accept both.
 
 To add custom mysql configuration you can drop additional files into
 /etc/mysql/conf.d/ in order to override settings or add additional ones (if you
-choose not to use override_options in mysql::globals).  This location is
+choose not to use override_options in mysql::server).  This location is
 hardcoded into the my.cnf template file.
 
 ##Reference
@@ -99,7 +96,6 @@ hardcoded into the my.cnf template file.
 ###Classes
 
 ####Public classes
-* mysql::globals: Settings and customizations for MySQL.
 * mysql::server: Installs and configures MySQL.
 * mysql::server::account_security: Deletes default MySQL accounts.
 * mysql::server::monitor: Sets up a monitoring user.
@@ -121,7 +117,15 @@ hardcoded into the my.cnf template file.
 
 ###Parameters
 
-####mysql::globals
+####mysql::server
+
+#####`root_password`
+
+What is the MySQL root password.  Puppet will attempt to set it to this and update /root/.my.cnf.
+
+#####`old_root_password`
+
+What was the previous root password (REQUIRED if you wish to change the root password via Puppet.)
 
 #####`override_options`
 
@@ -157,16 +161,6 @@ Should the service be restarted when things change?
 #####`root_group`
 
 What is the group used for root?
-
-####mysql::server
-
-#####`root_password`
-
-What is the MySQL root password.  Puppet will attempt to set it to this and update /root/.my.cnf.
-
-#####`old_root_password`
-
-What was the previous root password (REQUIRED if you wish to change the root password via Puppet.)
 
 #####`package_ensure`
 
