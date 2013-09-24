@@ -1,5 +1,5 @@
 class mysql::php(
-  $package_ensure = $mysql::params::php_package_name,
+  $package_ensure = $mysql::params::php_package_ensure,
   $package_name   = $mysql::params::php_package_name,
 ) inherits mysql::params {
 
