@@ -15,10 +15,10 @@ describe 'mysql_grant' do
   describe 'missing privileges for user' do
     it 'should fail' do
       pp = <<-EOS
-        mysql_grant { 'test@tester/test.*':
+        mysql_grant { 'test1@tester/test.*':
           ensure => 'present',
           table  => 'test.*',
-          user   => 'test@tester',
+          user   => 'test1@tester',
         }
       EOS
 
@@ -28,8 +28,8 @@ describe 'mysql_grant' do
     end
 
     it 'should not find the user' do
-      shell("mysql -NBe \"SHOW GRANTS FOR test@tester\"") do |r|
-        r.stderr.should =~ /There is no such grant defined for user 'test' on host 'tester'/
+      shell("mysql -NBe \"SHOW GRANTS FOR test1@tester\"") do |r|
+        r.stderr.should =~ /There is no such grant defined for user 'test1' on host 'tester'/
         r.exit_code.should eq 1
       end
     end
@@ -46,7 +46,7 @@ describe 'mysql_grant' do
       EOS
 
       puppet_apply(pp) do |r|
-        r.exit_code.should eq 4
+        r.exit_code.should eq 1
       end
     end
 
@@ -61,10 +61,10 @@ describe 'mysql_grant' do
   describe 'adding privileges' do
     it 'should work without errors' do
       pp = <<-EOS
-        mysql_grant { 'test@tester/test.*':
+        mysql_grant { 'test2@tester/test.*':
           ensure     => 'present',
           table      => 'test.*',
-          user       => 'test@tester',
+          user       => 'test2@tester',
           privileges => ['SELECT', 'UPDATE'],
         }
       EOS
@@ -73,8 +73,8 @@ describe 'mysql_grant' do
     end
 
     it 'should find the user' do
-      shell("mysql -NBe \"SHOW GRANTS FOR test@tester\"") do |r|
-        r.stdout.should =~ /GRANT SELECT, UPDATE.*TO 'test'@'tester'/
+      shell("mysql -NBe \"SHOW GRANTS FOR test2@tester\"") do |r|
+        r.stdout.should =~ /GRANT SELECT, UPDATE.*TO 'test2'@'tester'/
         r.stderr.should be_empty
         r.exit_code.should be_zero
       end
@@ -84,10 +84,10 @@ describe 'mysql_grant' do
   describe 'adding option' do
     it 'should work without errors' do
       pp = <<-EOS
-        mysql_grant { 'test@tester/test.*':
+        mysql_grant { 'test3@tester/test.*':
           ensure  => 'present',
           table   => 'test.*',
-          user    => 'test@tester',
+          user    => 'test3@tester',
           options => ['GRANT'],
           privileges => ['SELECT', 'UPDATE'],
         }
@@ -97,22 +97,40 @@ describe 'mysql_grant' do
     end
 
     it 'should find the user' do
-      shell("mysql -NBe \"SHOW GRANTS FOR test@tester\"") do |r|
-        r.stdout.should =~ /GRANT SELECT, UPDATE ON `test`.* TO 'test'@'tester' WITH GRANT OPTION$/
+      shell("mysql -NBe \"SHOW GRANTS FOR test3@tester\"") do |r|
+        r.stdout.should =~ /GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$/
         r.stderr.should be_empty
         r.exit_code.should be_zero
       end
     end
   end
 
+  describe 'adding all privileges without table' do
+    it 'should fail' do
+      pp = <<-EOS
+        mysql_grant { 'test4@tester/test.*':
+          ensure     => 'present',
+          user       => 'test4@tester',
+          options    => ['GRANT'],
+          privileges => ['SELECT', 'UPDATE', 'ALL'],
+        }
+      EOS
+
+      puppet_apply(pp) do |r|
+        r.stderr.should =~ /table parameter is required./
+      end
+    end
+
+  end
+
 
   describe 'adding all privileges' do
     it 'should only try to apply ALL' do
       pp = <<-EOS
-        mysql_grant { 'test@tester/test.*':
+        mysql_grant { 'test4@tester/test.*':
           ensure     => 'present',
           table      => 'test.*',
-          user       => 'test@tester',
+          user       => 'test4@tester',
           options    => ['GRANT'],
           privileges => ['SELECT', 'UPDATE', 'ALL'],
         }
@@ -122,8 +140,8 @@ describe 'mysql_grant' do
     end
 
     it 'should find the user' do
-      shell("mysql -NBe \"SHOW GRANTS FOR test@tester\"") do |r|
-        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'tester' WITH GRANT OPTION/
+      shell("mysql -NBe \"SHOW GRANTS FOR test4@tester\"") do |r|
+        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test4'@'tester' WITH GRANT OPTION/
         r.stderr.should be_empty
         r.exit_code.should be_zero
       end
