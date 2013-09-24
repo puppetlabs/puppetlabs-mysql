@@ -1,7 +1,7 @@
 #
 class mysql::client (
   $bindings_enable = false,
-) inherits mysql::globals {
+) inherits mysql::params {
 
   include '::mysql::client::install'
 

@@ -3,8 +3,7 @@ require 'spec_helper_system'
 describe 'mysql::server::backup class' do
   context 'should work with no errors' do
     pp = <<-EOS
-      class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
-      class { 'mysql::server': }
+      class { 'mysql::server': override_options => { 'root_password' => 'password' } }
       mysql::db { 'backup1':
         user     => 'backup',
         password => 'secret',
@@ -43,8 +42,7 @@ describe 'mysql::server::backup class' do
 
   context 'should create one file per database' do
     pp = <<-EOS
-      class { 'mysql::globals': override_options => { 'root_password' => 'password' } }
-      class { 'mysql::server': }
+      class { 'mysql::server': override_options => { 'root_password' => 'password' } }
       mysql::db { 'backup1':
         user     => 'backup',
         password => 'secret',

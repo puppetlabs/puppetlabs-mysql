@@ -1,9 +1,11 @@
 # See README.me for options.
 class mysql::server::config {
 
+  $options = $mysql::server::options
+
   File {
     owner  => 'root',
-    group  => $mysql::globals::root_group,
+    group  => $mysql::server::root_group,
     mode   => '0400',
     notify => Class['mysql::server::service'],
   }
@@ -16,12 +18,12 @@ class mysql::server::config {
   file { '/etc/mysql/conf.d':
     ensure  => directory,
     mode    => '0755',
-    recurse => $mysql::globals::purge_conf_dir,
-    purge   => $mysql::globals::purge_conf_dir,
+    recurse => $mysql::server::purge_conf_dir,
+    purge   => $mysql::server::purge_conf_dir,
   }
 
-  if $mysql::globals::manage_config_file  {
-    file { $mysql::globals::config_file:
+  if $mysql::server::manage_config_file  {
+    file { $mysql::server::config_file:
       content => template('mysql/my.cnf.erb'),
       mode    => '0644',
     }

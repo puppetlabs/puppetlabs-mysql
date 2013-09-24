@@ -1,7 +1,7 @@
 #
 class mysql::server::root_password {
 
-  $options = $mysql::globals::options
+  $options = $mysql::server::options
 
   # manage root password if it is set
   if $mysql::server::root_password != 'UNSET' {
