@@ -9,6 +9,16 @@ describe 'mysql::server' do
     it { should contain_class('mysql::server::root_password') }
   end
 
+  # make sure that overriding the mysqld settings keeps the defaults for everything else
+  context 'with overrides' do
+    let(:params) {{ :override_options => { 'mysqld' => { 'socket' => '/var/lib/mysql/mysql.sock' } } }}
+    it do
+      should contain_file('/etc/my.cnf').with({
+        :mode => '0644',
+      }).with_content(/basedir/)
+    end
+  end
+
   context 'with remove_default_accounts set' do
     let (:params) {{ :remove_default_accounts => true }}
     it { should contain_class('mysql::server::account_security') }
