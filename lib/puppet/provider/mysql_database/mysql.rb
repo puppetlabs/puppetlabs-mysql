@@ -42,7 +42,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql) do
   end
 
   def create
-    mysql([defaults_file, '-NBe', "create database `#{@resource[:name]}` character set #{@resource[:charset]}"].compact)
+    mysql([defaults_file, '-NBe', "create database `#{@resource[:name]}` character set #{@resource[:charset]} collate #{@resource[:collate]}"].compact)
 
     @property_hash[:ensure]  = :present
     @property_hash[:charset] = @resource[:charset]
