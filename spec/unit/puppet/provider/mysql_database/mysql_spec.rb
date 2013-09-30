@@ -55,15 +55,15 @@ test
   end
 
   describe 'create' do
-    it 'makes a user' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', "create database `#{resource[:name]}` character set #{resource[:charset]}"])
+    it 'makes a database' do
+      provider.expects(:mysql).with([defaults_file, '-NBe', "create database `#{resource[:name]}` character set #{resource[:charset]} collate #{resource[:collate]}"])
       provider.expects(:exists?).returns(true)
       provider.create.should be_true
     end
   end
 
   describe 'destroy' do
-    it 'removes a user if present' do
+    it 'removes a database if present' do
       provider.expects(:mysql).with([defaults_file, '-NBe', "drop database `#{resource[:name]}`"])
       provider.expects(:exists?).returns(false)
       provider.destroy.should be_true
@@ -71,7 +71,7 @@ test
   end
 
   describe 'exists?' do
-    it 'checks if user exists' do
+    it 'checks if database exists' do
       instance.exists?.should be_true
     end
   end
