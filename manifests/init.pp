@@ -65,7 +65,7 @@ class mysql(
         'tmpdir'             => $tmpdir,
       },
       'mysqldump'              => {
-        'max_allowed_packets'  => $max_allowed_packet,
+        'max_allowed_packet'  => $max_allowed_packet,
       },
       'config_file'          => $config_file,
       'etc_root_password'    => $etc_root_password,
