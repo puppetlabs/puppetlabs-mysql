@@ -213,7 +213,7 @@ class mysql::params {
       'user'                  => 'mysql',
     },
     'mysqldump'             => {
-      'max_allowed_packets' => '16M',
+      'max_allowed_packet'  => '16M',
       'quick'               => true,
       'quote-names'         => true,
     },
