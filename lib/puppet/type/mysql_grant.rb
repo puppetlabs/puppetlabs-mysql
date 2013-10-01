@@ -20,6 +20,8 @@ Puppet::Type.newtype(:mysql_grant) do
 
   validate do
     fail('privileges parameter is required.') if self[:ensure] == :present and self[:privileges].nil?
+    fail('table parameter is required.') if self[:ensure] == :present and self[:table].nil?
+    fail('user parameter is required.') if self[:ensure] == :present and self[:user].nil?
   end
 
   newparam(:name, :namevar => true) do
@@ -40,10 +42,21 @@ Puppet::Type.newtype(:mysql_grant) do
     munge do |value|
       value.delete("`")
     end
+
+    newvalues(/.*\..*/)
   end
 
   newproperty(:user) do
     desc 'User to operate on.'
+    validate do |value|
+      # https://dev.mysql.com/doc/refman/5.1/en/account-names.html
+      # Regex should problably be more like this: /^[`'"]?[^`'"]*[`'"]?@[`'"]?[\w%\.]+[`'"]?$/
+      raise(ArgumentError, "Invalid user #{value}") unless value =~ /[\w-]*@[\w%\.:]+/
+      username = value.split('@')[0]
+      if username.size > 16
+        raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
+      end
+    end
   end
 
   newproperty(:options, :array_matching => :all) do
