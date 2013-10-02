@@ -6,7 +6,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
   def self.instances
     instances = []
     users.select{ |user| user =~ /.+@/ }.collect do |user|
-      user_string  = "'#{user.sub('@', "'@'")}'"
+      user_string = self.cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
       grants = mysql([defaults_file, "-NBe", query].compact)
       # Once we have the list of grants generate entries for each.
@@ -50,12 +50,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
   def grant(user, table, privileges, options)
     user_string = self.class.cmd_user(user)
     priv_string = self.class.cmd_privs(privileges)
-    # Table is optional.
-    if table
-      table_string = self.class.cmd_table(table)
-    end
+    table_string = self.class.cmd_table(table)
     query = "GRANT #{priv_string}"
-    query << " ON #{table_string}" if table
+    query << " ON #{table_string}"
     query << " TO #{user_string}"
     query << self.class.cmd_options(options) unless options.nil?
     mysql([defaults_file, '-e', query].compact)
