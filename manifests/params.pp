@@ -76,7 +76,7 @@ class mysql::params {
       # mysql::bindings
       $java_package_name     = 'mysql-connector-java'
       $perl_package_name     = 'perl-DBD-MySQL'
-      $perl_package_provider = 'yum'
+      $perl_package_provider = undef
       $python_package_name   = 'MySQL-python'
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
@@ -115,7 +115,7 @@ class mysql::params {
       # mysql::bindings
       $java_package_name     = 'mysql-connector-java'
       $perl_package_name     = 'perl-DBD-mysql'
-      $perl_package_provider = 'rug'
+      $perl_package_provider = undef
       $python_package_name   = 'python-mysql'
       $ruby_package_name     = $::operatingsystem ? {
         /OpenSuSE/           => 'rubygem-mysql',
@@ -142,7 +142,7 @@ class mysql::params {
       # mysql::bindings
       $java_package_name     = 'libmysql-java'
       $perl_package_name     = 'libdbd-mysql-perl'
-      $perl_package_provider = 'apt'
+      $perl_package_provider = undef
       $python_package_name   = 'python-mysqldb'
       $ruby_package_name     = 'libmysql-ruby'
     }
@@ -166,7 +166,7 @@ class mysql::params {
       # mysql::bindings
       $java_package_name     = 'databases/mysql-connector-java'
       $perl_package_name     = 'p5-DBD-mysql'
-      $perl_package_provider = 'ports'
+      $perl_package_provider = undef
       $python_package_name   = 'databases/py-MySQLdb'
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
@@ -192,7 +192,7 @@ class mysql::params {
           # mysql::bindings
           $java_package_name     = 'mysql-connector-java'
           $perl_package_name     = 'perl-DBD-MySQL'
-          $perl_package_provider = 'yum'
+          $perl_package_provider = undef
           $python_package_name   = 'MySQL-python'
           $ruby_package_name     = 'ruby-mysql'
           $ruby_package_provider = 'gem'
