@@ -1,4 +1,13 @@
-2013-10-03 - Version 2.0.0
+2013-10-03 - Version 2.0.0-rc2
+
+Summary:
+
+Bugfixes
+
+Fixes:
+- Fix a duplicate parameter in mysql::server
+
+2013-10-03 - Version 2.0.0-rc1
 
 Summary:
 
