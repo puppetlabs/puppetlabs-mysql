@@ -7,7 +7,6 @@ class mysql::server (
   $config_file             = $mysql::params::config_file,
   $manage_config_file      = $mysql::params::manage_config_file,
   $old_root_password       = $mysql::params::old_root_password,
-  $old_root_password       = $mysql::params::old_root_password,
   $override_options        = {},
   $package_ensure          = $mysql::params::server_package_ensure,
   $package_name            = $mysql::params::server_package_name,
