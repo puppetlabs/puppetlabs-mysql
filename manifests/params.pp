@@ -10,12 +10,17 @@ class mysql::params {
   $server_service_manage  = true
   $server_service_enabled = true
   # mysql::bindings
-  $bindings_enable        = false
-  $java_package_ensure    = 'present'
-  $perl_package_ensure    = 'present'
-  $php_package_ensure     = 'present'
-  $python_package_ensure  = 'present'
-  $ruby_package_ensure    = 'present'
+  $bindings_enable         = false
+  $java_package_ensure     = 'present'
+  $java_package_provider   = undef
+  $perl_package_ensure     = 'present'
+  $perl_package_provider   = undef
+  $php_package_ensure      = 'present'
+  $php_package_provider    = undef
+  $python_package_ensure   = 'present'
+  $python_package_provider = undef
+  $ruby_package_ensure     = 'present'
+  $ruby_package_provider   = undef
 
 
   case $::osfamily {
