@@ -1,3 +1,20 @@
+2013-10-03 - Version 2.0.0
+
+Summary:
+
+This module has been completely refactored and works significantly different.
+The changes are broad and touch almost every piece of the module.
+
+See the README.md for full details of all changes and syntax.
+Please remain on 1.0.0 if you don't have time to fully test this in dev.
+
+* mysql::server, mysql::client, and mysql::bindings are the primary interface
+classes.
+* mysql::server takes an `options_override` parameter to set my.cnf options,
+with the hash format: { 'section' => { 'thing' => 'value' }}
+* mysql attempts backwards compatibility by forwarding all parameters to
+mysql::server.
+
 2013-09-23 - Version 1.0.0
 
 Summary:
