@@ -27,14 +27,56 @@ describe 'mysql class' do
         r.exit_code.should be_zero
       end
     end
+
+    describe package(package_name) do
+      it { should be_installed }
+    end
+
+    describe service(service_name) do
+      it { should be_running }
+      it { should be_enabled }
+    end
   end
 
-  describe package(package_name) do
-    it { should be_installed }
+  describe 'my.cnf' do
+    it 'should contain sensible values' do
+      pp = <<-EOS
+        class { 'mysql::server': }
+      EOS
+      puppet_apply(pp) do |r|
+        r.exit_code.should_not == 1
+      end
+    end
+
+    describe file('/etc/my.cnf') do
+      it { should contain 'key_buffer = 16M' }
+      it { should contain 'max_binlog_size = 100M' }
+      it { should contain 'query_cache_size = 16M' }
+    end
   end
 
-  describe service(service_name) do
-    it { should be_running }
-    it { should be_enabled }
+  describe 'my.cnf changes' do
+    it 'sets values' do
+      pp = <<-EOS
+        class { 'mysql::server':
+          override_options => { 'mysqld' => 
+            { 'key_buffer'       => '32M',
+              'max_binlog_size'  => '200M',
+              'query_cache_size' => '32M',
+            }
+          }  
+        }
+      EOS
+      puppet_apply(pp) do |r|
+        r.exit_code.should_not == 1
+      end
+    end
+
+    describe file('/etc/my.cnf') do
+      it { should contain 'key_buffer = 32M' }
+      it { should contain 'max_binlog_size = 200M' }
+      it { should contain 'query_cache_size = 32M' }
+    end
   end
+
 end
