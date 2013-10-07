@@ -148,4 +148,80 @@ describe 'mysql_grant' do
     end
   end
 
+  # Test combinations of user@host to ensure all cases work.
+  describe 'short hostname' do
+    it 'should apply' do
+      pp = <<-EOS
+        mysql_grant { 'test@short/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test@short',
+          privileges => 'ALL',
+        }
+        mysql_grant { 'test@long.hostname.com/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test@long.hostname.com',
+          privileges => 'ALL',
+        }
+        mysql_grant { 'test@192.168.5.6/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test@192.168.5.6',
+          privileges => 'ALL',
+        }
+        mysql_grant { 'test@2607:f0d0:1002:0051:0000:0000:0000:0004/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test@2607:f0d0:1002:0051:0000:0000:0000:0004',
+          privileges => 'ALL',
+        }
+        mysql_grant { 'test@::1/128/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test@::1/128',
+          privileges => 'ALL',
+        }
+      EOS
+
+      puppet_apply(pp)
+    end
+
+    it 'finds short hostname' do
+      shell("mysql -NBe \"SHOW GRANTS FOR test@short\"") do |r|
+        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'short'/
+        r.stderr.should be_empty
+        r.exit_code.should be_zero
+      end
+    end
+    it 'finds long hostname' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'long.hostname.com'\"") do |r|
+        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'long.hostname.com'/
+        r.stderr.should be_empty
+        r.exit_code.should be_zero
+      end
+    end
+    it 'finds ipv4' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.6'\"") do |r|
+        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.6'/
+        r.stderr.should be_empty
+        r.exit_code.should be_zero
+      end
+    end
+    it 'finds ipv6' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'\"") do |r|
+        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'/
+        r.stderr.should be_empty
+        r.exit_code.should be_zero
+      end
+    end
+    it 'finds short ipv6' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
+        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'::1\/128'/
+        r.stderr.should be_empty
+        r.exit_code.should be_zero
+      end
+    end
+  end
+
 end
