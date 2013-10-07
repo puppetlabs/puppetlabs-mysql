@@ -6,13 +6,26 @@ describe 'mysql::server::monitor' do
   let :pre_condition do
     "include 'mysql::server'"
   end
-  let :params do
+
+  let :default_params do
     {
-      :mysql_monitor_username => 'monitoruser',
-      :mysql_monitor_password => 'monitorpass',
-      :mysql_monitor_hostname => 'monitorhost'
+      :mysql_monitor_username   => 'monitoruser',
+      :mysql_monitor_password   => 'monitorpass',
+      :mysql_monitor_hostname   => 'monitorhost',
     }
   end
 
+  let :params do
+    default_params
+  end
+
   it { should contain_mysql_user('monitoruser@monitorhost')}
+
+  it { should contain_mysql_grant('monitoruser@monitorhost/*.*').with(
+    :ensure     => 'present',
+    :user       => 'monitoruser@monitorhost',
+    :table      => '*.*',
+    :privileges => ["PROCESS", "SUPER"],
+    :require    => 'Mysql_user[monitoruser@monitorhost]'
+  )}
 end
