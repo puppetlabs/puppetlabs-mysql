@@ -3,7 +3,7 @@ require 'spec_helper_system'
 describe 'mysql::server::monitor class' do
   context 'should work with no errors' do
     pp = <<-EOS
-      class { 'mysql::server': root_password => 'foo' } 
+      class { 'mysql::server': root_password => 'password' } 
       
       class { 'mysql::server::monitor':
         mysql_monitor_username => 'monitoruser',

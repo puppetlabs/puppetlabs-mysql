@@ -13,9 +13,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
       grants.each_line do |grant|
         # Match the munges we do in the type.
         munged_grant = grant.delete("'").delete("`")
-        # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root'@'127.0.0.1') (WITH GRANT OPTION)
-        if match = munged_grant.match(/^GRANT\s(.*)\sON\s(.*)\sTO\s(\w+@\w+)(\s.*)$/)
-          privileges, table, grantuser, rest = match.captures
+        # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root')@('127.0.0.1') (WITH GRANT OPTION)
+        if match = munged_grant.match(/^GRANT\s(.+)\sON\s(.+)\sTO\s([\w.:]+)@([\w.:\/]+)(\s.*)$/)
+          privileges, table, user, host, rest = match.captures
           # Once we split privileges up on the , we need to make sure we
           # shortern ALL PRIVILEGES to just all.
           stripped_privileges = privileges.split(',').map do |priv|
@@ -25,11 +25,11 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
           options = rest.match(/WITH\s(.*)\sOPTION$/).captures if rest.include?('WITH')
           # We need to return an array of instances so capture these
           instances << new(
-              :name       => "#{grantuser}/#{table}",
+              :name       => "#{user}@#{host}/#{table}",
               :ensure     => :present,
               :privileges => stripped_privileges,
               :table      => table,
-              :user       => user,
+              :user       => "#{user}@#{host}",
               :options    => options
           )
         end
