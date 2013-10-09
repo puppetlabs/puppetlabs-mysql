@@ -1,3 +1,16 @@
+2013-10-09 - Version 2.0.0-rc4
+
+Summary:
+
+Bugfixes to mysql_grant and mysql_user form the bulk of this rc, as well as
+ensuring that values in the override_options hash that contain a value of ''
+are created as just "key" in the conf rather than "key =" or "key = false".
+
+Fixes:
+- Improve mysql_grant to work with IPv6 addresses (both long and short).
+- Ensure @host users work as well as user@host users.
+- Updated my.cnf template to support items with no values.
+
 2013-10-07 - Version 2.0.0-rc3
 
 Summary:
