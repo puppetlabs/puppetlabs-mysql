@@ -30,7 +30,7 @@ longer work with the previous classes and configuration as before.  We've
 attempted to handle backwards compatibility automatically by adding a
 `attempt_compatibility_mode` parameter to the main mysql class.  If you set
 this to true it will attempt to map your previous parameters into the new
-mysql::server class.
+`mysql::server` class.
 
 ###WARNING
 
@@ -48,8 +48,8 @@ live.  Even if it's just a no-op and a manual comparision.  Please be careful!
 ###Beginning with MySQL
 
 If you just want a server installing with the default options you can run
-include '::mysql::server'.  If you need to customize options, such as the root
-password or /etc/my.cnf settings then you can also include mysql::server and
+`include '::mysql::server'`.  If you need to customize options, such as the root
+password or /etc/my.cnf settings then you can also include `mysql::server` and
 pass in an override hash as seen below:
 
 ```puppet
@@ -60,13 +60,13 @@ class { '::mysql::server':
 
 ##Usage
 
-All interaction for the server is done via mysql::server.  To install the
-client you use mysql::client, and to install bindings you can use
-mysql::bindings.
+All interaction for the server is done via `mysql::server`.  To install the
+client you use `mysql::client`, and to install bindings you can use
+`mysql::bindings`.
 
 ###Overrides
 
-The hash structure for overrides in mysql::server is as follows:
+The hash structure for overrides in `mysql::server` is as follows:
 
 ```puppet
 override_options = {
@@ -78,17 +78,19 @@ override_options = {
 
 For items that you would traditionally represent as:
 
+<pre>
 [section]
 thing
+</pre>
 
-You can just make an entry like thing => true in the hash.  MySQL doesn't
+You can just make an entry like `thing => true` in the hash.  MySQL doesn't
 care if thing is alone or set to a value, it'll happily accept both.
 
 ###Custom configuration
 
 To add custom mysql configuration you can drop additional files into
-/etc/mysql/conf.d/ in order to override settings or add additional ones (if you
-choose not to use override_options in mysql::server).  This location is
+`/etc/mysql/conf.d/` in order to override settings or add additional ones (if you
+choose not to use override_options in `mysql::server`).  This location is
 hardcoded into the my.cnf template file.
 
 ##Reference
@@ -96,24 +98,24 @@ hardcoded into the my.cnf template file.
 ###Classes
 
 ####Public classes
-* mysql::server: Installs and configures MySQL.
-* mysql::server::account_security: Deletes default MySQL accounts.
-* mysql::server::monitor: Sets up a monitoring user.
-* mysql::server::mysqltuner: Installs MySQL tuner script.
-* mysql::server::backup: Sets up MySQL backups via cron.
-* mysql::bindings: Installs various MySQL language bindings.
-* mysql::client: Installs MySQL client (for non-servers).
+* `mysql::server`: Installs and configures MySQL.
+* `mysql::server::account_security`: Deletes default MySQL accounts.
+* `mysql::server::monitor`: Sets up a monitoring user.
+* `mysql::server::mysqltuner`: Installs MySQL tuner script.
+* `mysql::server::backup`: Sets up MySQL backups via cron.
+* `mysql::bindings`: Installs various MySQL language bindings.
+* `mysql::client`: Installs MySQL client (for non-servers).
 
 ####Private classes
-* mysql::server::install: Installs packages.
-* mysql::server::config: Configures MYSQL.
-* mysql::server::service: Manages service.
-* mysql::server::root_password: Sets MySQL root password.
-* mysql::bindings::java: Installs Java bindings.
-* mysql::bindings::perl: Installs Perl bindings.
-* mysql::bindings::python: Installs Python bindings.
-* mysql::bindings::ruby: Installs Ruby bindings.
-* mysql::client::install:  Installs MySQL client.
+* `mysql::server::install`: Installs packages.
+* `mysql::server::config`: Configures MYSQL.
+* `mysql::server::service`: Manages service.
+* `mysql::server::root_password`: Sets MySQL root password.
+* `mysql::bindings::java`: Installs Java bindings.
+* `mysql::bindings::perl`: Installs Perl bindings.
+* `mysql::bindings::python`: Installs Python bindings.
+* `mysql::bindings::ruby`: Installs Ruby bindings.
+* `mysql::client::install`:  Installs MySQL client.
 
 ###Parameters
 
@@ -121,7 +123,7 @@ hardcoded into the my.cnf template file.
 
 #####`root_password`
 
-What is the MySQL root password.  Puppet will attempt to set it to this and update /root/.my.cnf.
+What is the MySQL root password.  Puppet will attempt to set it to this and update `/root/.my.cnf`.
 
 #####`old_root_password`
 
@@ -132,14 +134,22 @@ What was the previous root password (REQUIRED if you wish to change the root pas
 This is the hash of override options to pass into MySQL.  It can be visualized
 like a hash of the my.cnf file, so that entries look like:
 
-override_options => { 'section' => { 'key' => 'value' } }
+```puppet
+override_options = {
+  'section' => {
+    'item'             => 'thing',
+  }
+}
+```
 
 For items that you would traditionally represent as:
 
+<pre>
 [section]
 thing
+</pre>
 
-You can just make an entry like thing => true in the hash.  MySQL doesn't
+You can just make an entry like `thing => true` in the hash.  MySQL doesn't
 care if thing is alone or set to a value, it'll happily accept both.
 
 #####`config_file`
@@ -173,7 +183,7 @@ What is the name of the mysql server package to install.
 #####`remove_default_accounts`
 
 Boolean to decide if we should automatically include
-mysql::server::account_security.
+`mysql::server::account_security`.
 
 #####`service_enabled`
 
@@ -322,6 +332,14 @@ What provider should be used to install the package.
 #####`bindings_enable`
 
 Boolean to automatically install all bindings.
+
+#####`package_ensure`
+
+What to set the package to.  Can be present, absent, or version.
+
+#####`package_name`
+
+What is the name of the mysql client package to install.
 
 ###Defines
 
