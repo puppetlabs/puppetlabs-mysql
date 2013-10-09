@@ -2,7 +2,11 @@
 <% if v.is_a?(Hash) -%>
 [<%= k %>]
 <% @options[k].sort.map do |ki, vi| -%>
+<% if vi and vi != '' -%>
 <%= ki %> = <%= vi %>
+<% else -%>
+<%= ki %>
+<% end -%>
 <% end -%>
 
 <% end -%>
