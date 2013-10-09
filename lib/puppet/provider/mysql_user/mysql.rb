@@ -1,4 +1,5 @@
-Puppet::Type.type(:mysql_user).provide(:mysql) do
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
+Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysql) do
 
   desc 'manage users for a mysql database.'
   commands :mysql => 'mysql'
@@ -22,7 +23,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql) do
       "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"].compact).split("\n")
     # To reduce the number of calls to MySQL we collect all the properties in
     # one big swoop.
-    users.select{ |user| user =~ /.+@/ }.collect do |name|
+    users.collect do |name|
       query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, @password = mysql([defaults_file, "-NBe", query].compact).split(/\s/)
