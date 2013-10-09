@@ -16,7 +16,7 @@ usvn_user@localhost
     SQL_OUTPUT
   end
 
-  let(:parsed_users) { %w(root@127.0.0.1 root@::1 debian-sys-maint@localhost root@localhost usvn_user@localhost) }
+  let(:parsed_users) { %w(root@127.0.0.1 root@::1 @localhost debian-sys-maint@localhost root@localhost usvn_user@localhost @vagrant-ubuntu-raring-64) }
 
   let(:resource) { Puppet::Type.type(:mysql_user).new(
       { :ensure                   => :present,
