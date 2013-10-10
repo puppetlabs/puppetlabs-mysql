@@ -14,7 +14,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
         # Match the munges we do in the type.
         munged_grant = grant.delete("'").delete("`")
         # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root')@('127.0.0.1') (WITH GRANT OPTION)
-        if match = munged_grant.match(/^GRANT\s(.+)\sON\s(.+)\sTO\s([\w.:]+)@([\w.:\/]+)(\s.*)$/)
+        if match = munged_grant.match(/^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)$/)
           privileges, table, user, host, rest = match.captures
           # Once we split privileges up on the , we need to make sure we
           # shortern ALL PRIVILEGES to just all.
