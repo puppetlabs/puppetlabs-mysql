@@ -224,4 +224,64 @@ describe 'mysql_grant' do
     end
   end
 
+  describe 'complex test' do
+    it 'setup mysql::server' do
+      pp = <<-EOS
+      $dbSubnet = '10.10.10.%'
+
+      mysql_database { 'foo':
+        ensure => present,
+      }
+
+      exec { 'mysql-create-table':
+        command     => '/usr/bin/mysql -NBe "CREATE TABLE foo.bar (name VARCHAR(20))"',
+        environment => "HOME=${::root_home}",
+        unless      => '/usr/bin/mysql -NBe "SELECT 1 FROM foo.bar LIMIT 1;"',
+        require     => Mysql_database['foo'],
+      }
+
+      Mysql_grant {
+          ensure     => present,
+          options    => ['GRANT'],
+          privileges => ['ALL'],
+          table      => '*.*',
+          require    => [ Mysql_database['foo'], Exec['mysql-create-table'] ],
+      }
+
+      mysql_grant { "user1@${dbSubnet}/*.*":
+          user       => "user1@${dbSubnet}",
+      }
+      mysql_grant { "user2@${dbSubnet}/foo.bar":
+          privileges => ['SELECT', 'INSERT', 'UPDATE'],
+          user       => "user2@${dbSubnet}",
+          table      => 'foo.bar',
+      }
+      mysql_grant { "user3@${dbSubnet}/foo.*":
+          privileges => ['SELECT', 'INSERT', 'UPDATE'],
+          user       => "user3@${dbSubnet}",
+          table      => 'foo.*',
+      }
+      mysql_grant { 'web@%/*.*':
+          user       => 'web@%',
+      }
+      mysql_grant { "web@${dbSubnet}/*.*":
+          user       => "web@${dbSubnet}",
+      }
+      mysql_grant { "web@${fqdn}/*.*":
+          user       => "web@${fqdn}",
+      }
+      mysql_grant { 'web@localhost/*.*':
+          user       => 'web@localhost',
+      }
+      EOS
+
+      puppet_apply(pp) do |r|
+        r.exit_code.should_not == 1
+        r.refresh
+        r.exit_code.should be_zero
+      end
+    end
+  end
+
+
 end
