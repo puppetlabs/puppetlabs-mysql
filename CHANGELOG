@@ -1,3 +1,13 @@
+2013-10-09 - Version 2.0.0-rc5
+
+Summary:
+
+Hopefully the final rc!  Further fixes to mysql_grant (stripping out the
+cleverness so we match a much wider range of input.)
+
+Fixes:
+- Make mysql_grant accept '.*'@'.*' in terms of input for user@host.
+
 2013-10-09 - Version 2.0.0-rc4
 
 Summary:
