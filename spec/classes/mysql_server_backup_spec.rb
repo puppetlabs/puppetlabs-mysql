@@ -91,7 +91,7 @@ describe 'mysql::server::backup' do
     ) }
 
     it 'should have a backup file for each database' do
-      content = catalogue.resource('file','mysqlbackup.sh').send(:parameters)[:content]
+      content = subject.resource('file','mysqlbackup.sh').send(:parameters)[:content]
       content.should match(' mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date')
 #      verify_contents(subject, 'mysqlbackup.sh', [
 #        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',
