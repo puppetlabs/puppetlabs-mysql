@@ -1,7 +1,7 @@
 class mysql::perl(
   $package_ensure   = $mysql::params::perl_package_ensure,
   $package_name     = $mysql::params::perl_package_name,
-  $package_provider = $mysql::params::perl_package_provider,
+  $package_provider = $mysql::params::perl_package_provider
 ) inherits mysql::params {
 
   notify { "mysql::perl has been renamed to mysql::bindings::perl and this
