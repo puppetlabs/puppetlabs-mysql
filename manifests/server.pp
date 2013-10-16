@@ -1,9 +1,5 @@
 # Class: mysql::server:  See README.md for documentation.
 class mysql::server (
-  #Deprecated.
-  $enabled                 = undef,
-  $manage_service          = undef,
-  #
   $config_file             = $mysql::params::config_file,
   $manage_config_file      = $mysql::params::manage_config_file,
   $old_root_password       = $mysql::params::old_root_password,
@@ -18,7 +14,10 @@ class mysql::server (
   $service_enabled         = $mysql::params::server_service_enabled,
   $service_manage          = $mysql::params::server_service_manage,
   $service_name            = $mysql::params::server_service_name,
-  $service_provider        = $mysql::params::server_service_provider
+  $service_provider        = $mysql::params::server_service_provider,
+  # Deprecated parameters
+  $enabled                 = undef,
+  $manage_service          = undef
 ) inherits mysql::params {
 
   # Deprecated parameters.
