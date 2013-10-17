@@ -1,3 +1,3 @@
 class { 'mysql::server':
-  config_hash => { 'root_password' => 'password', },
+  root_password => 'password',
 }
