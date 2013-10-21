@@ -1,3 +1,15 @@
+2013-10-21 - Version 2.0.1
+
+Summary:
+
+This is a bugfix release to handle an issue where unsorted mysql_grant{}
+privileges could cause Puppet to incorrectly reapply the permissions on
+each run.
+
+Fixes:
+- Mysql_grant now sorts privileges in the type and provider for comparision.
+- Comment and test tweak for PE3.1.
+
 2013-10-14 - Version 2.0.0
 
 Summary:
