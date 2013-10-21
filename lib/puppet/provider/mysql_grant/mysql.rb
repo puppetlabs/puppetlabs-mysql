@@ -27,7 +27,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
           instances << new(
               :name       => "#{user}@#{host}/#{table}",
               :ensure     => :present,
-              :privileges => stripped_privileges,
+              :privileges => stripped_privileges.sort,
               :table      => table,
               :user       => "#{user}@#{host}",
               :options    => options
