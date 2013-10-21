@@ -1,5 +1,5 @@
 name 'puppetlabs-mysql'
-version '2.0.0'
+version '2.0.1'
 source 'git://github.com/puppetlabs/puppetlabs-mysql.git'
 author 'Puppet Labs'
 license 'Apache 2.0'
