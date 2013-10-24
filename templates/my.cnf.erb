@@ -4,7 +4,7 @@
 <% @options[k].sort.map do |ki, vi| -%>
 <% if vi and vi != '' -%>
 <%= ki %> = <%= vi %>
-<% else -%>
+<% elsif vi -%>
 <%= ki %>
 <% end -%>
 <% end -%>
