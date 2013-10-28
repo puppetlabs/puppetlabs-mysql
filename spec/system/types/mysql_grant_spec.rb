@@ -283,5 +283,32 @@ describe 'mysql_grant' do
     end
   end
 
+  describe 'lower case privileges' do
+    it 'create ALL privs' do
+      pp = <<-EOS
+      mysql_grant { 'lowercase@localhost/*.*':
+          user       => 'lowercase@localhost',
+          privileges => 'ALL',
+          table      => '*.*',
+      }
+      EOS
+
+      puppet_apply(pp)
+    end
+
+    it 'create lowercase all privs' do
+      pp = <<-EOS
+      mysql_grant { 'lowercase@localhost/*.*':
+          user       => 'lowercase@localhost',
+          privileges => 'all',
+          table      => '*.*',
+      }
+      EOS
+
+      puppet_apply(pp) do |r|
+        r.exit_code.should be_zero
+      end
+    end
+  end
 
 end

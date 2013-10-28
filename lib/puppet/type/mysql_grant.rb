@@ -3,9 +3,7 @@ Puppet::Type.newtype(:mysql_grant) do
   @doc = "Manage a MySQL user's rights."
   ensurable
 
-  autorequire(:file) do
-    '/root/.my.cnf'
-  end
+  autorequire(:file) { '/root/.my.cnf' }
 
   def initialize(*args)
     super
@@ -38,6 +36,10 @@ Puppet::Type.newtype(:mysql_grant) do
 
   newproperty(:privileges, :array_matching => :all) do
     desc 'Privileges for user'
+
+    munge do |value|
+      value.upcase
+    end
   end
 
   newproperty(:table) do
