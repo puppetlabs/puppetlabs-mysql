@@ -17,4 +17,11 @@ class mysql::client (
     }
   }
 
+  anchor { 'mysql::client::start': }
+  anchor { 'mysql::client::end': }
+
+  Anchor['mysql::client::start'] ->
+  Class['mysql::client::install'] ->
+  Anchor['mysql::client::end']
+
 }
