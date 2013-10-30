@@ -7,7 +7,7 @@ Puppet::Type.newtype(:database_user) do
   newparam(:name, :namevar=>true) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."
     validate do |value|
-      Puppet.warning("database has been deprecated in favor of mysql_database.")
+      Puppet.warning("database has been deprecated in favor of mysql_user.")
       # https://dev.mysql.com/doc/refman/5.1/en/account-names.html
       # Regex should problably be more like this: /^[`'"]?[^`'"]*[`'"]?@[`'"]?[\w%\.]+[`'"]?$/
       raise(ArgumentError, "Invalid database user #{value}") unless value =~ /[\w-]*@[\w%\.:]+/
