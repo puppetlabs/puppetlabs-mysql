@@ -3,3 +3,4 @@ pkg/
 Gemfile.lock
 .rspec_system
 spec/fixtures
+/coverage/
