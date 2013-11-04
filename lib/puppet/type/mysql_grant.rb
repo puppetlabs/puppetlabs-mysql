@@ -7,6 +7,10 @@ Puppet::Type.newtype(:mysql_grant) do
 
   def initialize(*args)
     super
+    # fail if GRANT OPTION is included in the privileges
+    if self[:ensure] == :present and Array(self[:privileges]).count > 0 and self[:privileges].to_s.include?('GRANT')
+      fail('GRANT OPTION not allowed in privileges. Set via options.')
+    end
     # Forcibly munge any privilege with 'ALL' in the array to exist of just
     # 'ALL'.  This can't be done in the munge in the property as that iterates
     # over the array and there's no way to replace the entire array before it's
