@@ -14,10 +14,10 @@ Puppet::Type.newtype(:mysql_grant) do
     if self[:ensure] == :present and Array(self[:privileges]).count > 1 and self[:privileges].to_s.include?('ALL')
       self[:privileges] = 'ALL'
     end
-    # Sort the privileges array in order to ensure the comparision in the provider
-    # self.instances method match.  Otherwise this causes it to keep resetting the
-    # privileges.
-    self[:privileges] = Array(self[:privileges]).sort!
+    # Capitalize and sort all elements of the privileges array in order to
+    # ensure the comparision in the provider self.instances method match.
+    # Otherwise this causes it to keep resetting the privileges.
+    self[:privileges] = Array(self[:privileges]).map(&:upcase).sort!
   end
 
   validate do
