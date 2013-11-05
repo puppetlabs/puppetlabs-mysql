@@ -17,14 +17,11 @@ class mysql::client (
     }
   }
 
-  anchor { 'mysql::client::start': }
-  anchor { 'mysql::client::end': }
 
-  # Anchor pattern workaround to avoid resources of mysql::client::install 
-  # to "float off" outside mysql::client
-  Anchor['mysql::client::start'] ->
-  Class['mysql::client'] ->
-  Class['mysql::client::install'] ->
-  Anchor['mysql::client::end']
+  # Anchor pattern workaround to avoid resources of mysql::client::install to
+  # "float off" outside mysql::client
+  anchor { 'mysql::client::start': } ->
+    Class['mysql::client::install'] ->
+  anchor { 'mysql::client::end': }
 
 }
