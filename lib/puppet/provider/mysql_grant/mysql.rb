@@ -22,7 +22,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
             priv == 'ALL PRIVILEGES' ? 'ALL' : priv.lstrip.rstrip
           end
           # Same here, but to remove OPTION leaving just GRANT.
-          options = rest.match(/WITH\s(.*)\sOPTION$/).captures if rest.include?('WITH')
+          options = rest.include?('WITH') ? rest.match(/WITH\s(.*)\sOPTION$/).captures : ['']
           # We need to return an array of instances so capture these
           instances << new(
               :name       => "#{user}@#{host}/#{table}",
@@ -54,7 +54,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     query = "GRANT #{priv_string}"
     query << " ON #{table_string}"
     query << " TO #{user_string}"
-    query << self.class.cmd_options(options) unless options.nil?
+    query << self.class.cmd_options(options)
     mysql([defaults_file, '-e', query].compact)
   end
 
@@ -64,7 +64,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     @property_hash[:ensure]     = :present
     @property_hash[:table]      = @resource[:table]
     @property_hash[:user]       = @resource[:user]
-    @property_hash[:options]    = @resource[:options] if @resource[:options]
+    @property_hash[:options]    = @resource[:options]
     @property_hash[:privileges] = @resource[:privileges]
 
     exists? ? (return true) : (return false)
@@ -75,6 +75,11 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     table_string = self.class.cmd_table(table)
 
     query = "REVOKE ALL ON #{table_string} FROM #{user_string}"
+    mysql([defaults_file, '-e', query].compact)
+    # revoke grant option needs to be a extra query, because
+    # "REVOKE ALL PRIVILEGES, GRANT OPTION [..]" is only valid mysql syntax
+    # if no ON clause is used.
+    query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
     mysql([defaults_file, '-e', query].compact)
   end
 

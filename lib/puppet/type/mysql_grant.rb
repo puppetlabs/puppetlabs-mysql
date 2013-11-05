@@ -7,6 +7,18 @@ Puppet::Type.newtype(:mysql_grant) do
 
   def initialize(*args)
     super
+    # fail if GRANT OPTION is included in the privileges
+    if self[:ensure] == :present and Array(self[:privileges]).count > 0 and self[:privileges].to_s.include?('GRANT')
+      fail('GRANT OPTION not allowed in privileges. Set via options.')
+    end
+    # options should be replaced by a boolean property grant, but for 
+    # compatibility sake: Any option with grant in it is handled as grant grant
+    # option and any option without is handled as revoke grant option:
+    if self[:ensure] == :present and self[:options].to_s.upcase.include?('GRANT')
+      self[:options] = 'GRANT'
+    else
+      self[:options] = ''
+    end
     # Forcibly munge any privilege with 'ALL' in the array to exist of just
     # 'ALL'.  This can't be done in the munge in the property as that iterates
     # over the array and there's no way to replace the entire array before it's
@@ -14,10 +26,10 @@ Puppet::Type.newtype(:mysql_grant) do
     if self[:ensure] == :present and Array(self[:privileges]).count > 1 and self[:privileges].to_s.include?('ALL')
       self[:privileges] = 'ALL'
     end
-    # Sort the privileges array in order to ensure the comparision in the provider
-    # self.instances method match.  Otherwise this causes it to keep resetting the
-    # privileges.
-    self[:privileges] = Array(self[:privileges]).sort!
+    # Capitalize and sort all elements of the privileges array in order to
+    # ensure the comparision in the provider self.instances method match.
+    # Otherwise this causes it to keep resetting the privileges.
+    self[:privileges] = Array(self[:privileges]).map(&:upcase).sort!
   end
 
   validate do
