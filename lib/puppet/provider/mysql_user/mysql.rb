@@ -7,7 +7,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
   # Optional defaults file
   def self.defaults_file
     if File.file?("#{Facter.value(:root_home)}/.my.cnf")
-      "--defaults-file=#{Facter.value(:root_home)}/.my.cnf"
+      "--defaults-extra-file=#{Facter.value(:root_home)}/.my.cnf"
     else
       nil
     end
