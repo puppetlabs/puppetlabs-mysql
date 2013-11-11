@@ -13,6 +13,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
       nil
     end
   end
+  
   def defaults_file
     self.class.defaults_file
   end

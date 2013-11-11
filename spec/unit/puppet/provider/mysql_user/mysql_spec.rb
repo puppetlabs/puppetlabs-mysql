@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:mysql_user).provider(:mysql) do
-  let(:defaults_file) { '--defaults-file=/root/.my.cnf' }
+  let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
   let(:newhash) { '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5' }
 
   let(:raw_users) do
@@ -84,9 +84,9 @@ usvn_user@localhost
   end
 
   describe 'self.defaults_file' do
-    it 'sets --defaults-file' do
+    it 'sets --defaults-extra-file' do
       File.stubs(:file?).with('/root/.my.cnf').returns(true)
-      provider.defaults_file.should eq '--defaults-file=/root/.my.cnf'
+      provider.defaults_file.should eq '--defaults-extra-file=/root/.my.cnf'
     end
     it 'fails if file missing' do
       File.expects(:file?).with('/root/.my.cnf').returns(false)
