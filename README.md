@@ -221,10 +221,10 @@ $users = {
 
 #####`grants`
 
-Optional hash of grants, which are passed to [mysql_grant](#mysql_grants). Example:
+Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). Example:
 ```puppet
 $grants = {
-  'someuser@localhost/somedb.*': {
+  'someuser@localhost/somedb.*' => {
     ensure     => 'present',
     options    => ['GRANT'],
     privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
