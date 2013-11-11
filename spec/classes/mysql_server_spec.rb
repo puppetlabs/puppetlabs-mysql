@@ -7,6 +7,7 @@ describe 'mysql::server' do
     it { should contain_class('mysql::server::config') }
     it { should contain_class('mysql::server::service') }
     it { should contain_class('mysql::server::root_password') }
+    it { should contain_class('mysql::server::providers') }
   end
 
   # make sure that overriding the mysqld settings keeps the defaults for everything else
@@ -81,6 +82,79 @@ describe 'mysql::server' do
       let(:params) {{:root_password => 'SET' }}
       it { should contain_mysql_user('root@localhost') }
       it { should contain_file('/root/.my.cnf') }
+    end
+
+  end
+
+  context 'mysql::server::providers' do
+    describe 'with users' do
+      let(:params) {{:users => {
+        'foo@localhost' => {
+          'max_connections_per_hour' => '1',
+          'max_queries_per_hour'     => '2',
+          'max_updates_per_hour'     => '3',
+          'max_user_connections'     => '4',
+          'password_hash'            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
+        },
+        'foo2@localhost' => {}
+      }}}
+      it { should contain_mysql_user('foo@localhost').with(
+        :max_connections_per_hour => '1',
+        :max_queries_per_hour     => '2',
+        :max_updates_per_hour     => '3',
+        :max_user_connections     => '4',
+        :password_hash            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
+      )}
+      it { should contain_mysql_user('foo2@localhost').with(
+        :max_connections_per_hour => nil,
+        :max_queries_per_hour     => nil,
+        :max_updates_per_hour     => nil,
+        :max_user_connections     => nil,
+        :password_hash            => ''
+      )}
+    end
+
+    describe 'with grants' do
+      let(:params) {{:grants => {
+        'foo@localhost/somedb.*' => {
+          'user'       => 'foo@localhost',
+          'table'      => 'somedb.*',
+          'privileges' => ["SELECT", "UPDATE"],
+          'options'    => ["GRANT"],
+        },
+        'foo2@localhost/*.*' => {
+          'user'       => 'foo2@localhost',
+          'table'      => '*.*',
+          'privileges' => ["SELECT"],
+        },
+      }}}
+      it { should contain_mysql_grant('foo@localhost/somedb.*').with(
+        :user       => 'foo@localhost',
+        :table      => 'somedb.*',
+        :privileges => ["SELECT", "UPDATE"],
+        :options    => ["GRANT"]
+      )}
+      it { should contain_mysql_grant('foo2@localhost/*.*').with(
+        :user       => 'foo2@localhost',
+        :table      => '*.*',
+        :privileges => ["SELECT"],
+        :options    => nil
+      )}
+    end
+
+    describe 'with databases' do
+      let(:params) {{:databases => {
+        'somedb' => {
+          'charset' => 'latin1',
+          'collate' => 'latin1',
+        },
+        'somedb2' => {}
+      }}}
+      it { should contain_mysql_database('somedb').with(
+        :charset => 'latin1',
+        :collate => 'latin1'
+      )}
+      it { should contain_mysql_database('somedb2')}
     end
 
   end
