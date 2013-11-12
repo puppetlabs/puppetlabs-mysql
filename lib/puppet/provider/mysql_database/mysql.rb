@@ -1,19 +1,8 @@
-Puppet::Type.type(:mysql_database).provide(:mysql) do
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
+Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::Mysql) do
   desc 'Manages MySQL databases.'
 
   commands :mysql => 'mysql'
-
-  def self.defaults_file
-    if File.file?("#{Facter.value(:root_home)}/.my.cnf")
-      "--defaults-file=#{Facter.value(:root_home)}/.my.cnf"
-    else
-      nil
-    end
-  end
-
-  def defaults_file
-    self.class.defaults_file
-  end
 
   def self.instances
     mysql([defaults_file, '-NBe', 'show databases'].compact).split("\n").collect do |name|

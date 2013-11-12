@@ -6,7 +6,7 @@ describe provider_class do
   subject { provider_class }
 
   let(:root_home) { '/root' }
-  let(:defaults_file) { '--defaults-file=/root/.my.cnf' }
+  let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
   let(:newhash) { '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5' }
 
   let(:raw_users) do
@@ -35,7 +35,7 @@ usvn_user@localhost
     Facter.stubs(:value).with(:root_home).returns(root_home)
     Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     subject.stubs(:which).with('mysql').returns('/usr/bin/mysql')
-    subject.stubs(:defaults_file).returns('--defaults-file=/root/.my.cnf')
+    subject.stubs(:defaults_file).returns('--defaults-extra-file=/root/.my.cnf')
   end
 
   describe 'self.instances' do
@@ -110,9 +110,9 @@ usvn_user@localhost
   end
 
   describe 'self.defaults_file' do
-    it 'sets --defaults-file' do
+    it 'sets --defaults-extra-file' do
       File.stubs(:file?).with('#{root_home}/.my.cnf').returns(true)
-      @provider.defaults_file.should == '--defaults-file=/root/.my.cnf'
+      @provider.defaults_file.should == '--defaults-extra-file=/root/.my.cnf'
     end
   end
 
