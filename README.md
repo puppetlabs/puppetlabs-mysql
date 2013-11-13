@@ -262,6 +262,21 @@ MySQL user password for backups.
 
 Directory to backup into.
 
+#####`backupdirmode`
+
+Permissions applied to the backup directory. This parameter is passed directly
+to the `file` resource.
+
+#####`backupdirowner`
+
+Owner for the backup directory. This parameter is passed directly to the `file`
+resource.
+
+#####`backupdirgroup`
+
+Group owner for the backup directory. This parameter is passed directly to the
+`file` resource.
+
 #####`backupcompress`
 
 Boolean to determine if backups should be compressed.
