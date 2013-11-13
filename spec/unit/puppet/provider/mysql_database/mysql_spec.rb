@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:mysql_database).provider(:mysql) do
 
-  let(:defaults_file) { '--defaults-file=/root/.my.cnf' }
+  let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
 
   let(:raw_databases) do
     <<-SQL_OUTPUT
@@ -77,9 +77,9 @@ test
   end
 
   describe 'self.defaults_file' do
-    it 'sets --defaults-file' do
+    it 'sets --defaults-extra-file' do
       File.stubs(:file?).with('/root/.my.cnf').returns(true)
-      provider.defaults_file.should eq '--defaults-file=/root/.my.cnf'
+      provider.defaults_file.should eq '--defaults-extra-file=/root/.my.cnf'
     end
     it 'fails if file missing' do
       File.stubs(:file?).with('/root/.my.cnf').returns(false)

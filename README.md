@@ -70,7 +70,7 @@ client you use `mysql::client`, and to install bindings you can use
 The hash structure for overrides in `mysql::server` is as follows:
 
 ```puppet
-override_options = {
+$override_options = {
   'section' => {
     'item'             => 'thing',
   }
@@ -112,6 +112,7 @@ hardcoded into the my.cnf template file.
 * `mysql::server::config`: Configures MYSQL.
 * `mysql::server::service`: Manages service.
 * `mysql::server::root_password`: Sets MySQL root password.
+* `mysql::server::providers`: Creates users, grants, and databases.
 * `mysql::bindings::java`: Installs Java bindings.
 * `mysql::bindings::perl`: Installs Perl bindings.
 * `mysql::bindings::python`: Installs Python bindings.
@@ -136,7 +137,7 @@ This is the hash of override options to pass into MySQL.  It can be visualized
 like a hash of the my.cnf file, so that entries look like:
 
 ```puppet
-override_options = {
+$override_options = {
   'section' => {
     'item'             => 'thing',
   }
@@ -201,6 +202,51 @@ What is the name of the mysql server service.
 #####`service_provider`
 
 Which provider to use to manage the service.
+
+#####`users`
+
+Optional hash of users to create, which are passed to [mysql_user](#mysql_user). Example:
+```puppet
+$users = {
+  'someuser@localhost' => {
+    ensure                   => 'present',
+    max_connections_per_hour => '0',
+    max_queries_per_hour     => '0',
+    max_updates_per_hour     => '0',
+    max_user_connections     => '0',
+    password_hash            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
+  },
+}
+```
+
+#####`grants`
+
+Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). Example:
+```puppet
+$grants = {
+  'someuser@localhost/somedb.*' => {
+    ensure     => 'present',
+    options    => ['GRANT'],
+    privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
+    table      => 'somedb.*',
+    user       => 'someuser@localhost',
+  },
+}
+```
+
+#####`databases`
+
+Optional hash of databases to create, which are passed to [mysql_database](#mysql_database). Example:
+```puppet
+$databases = {
+  'somedb' => {
+    ensure  => 'present',
+    charset => 'utf8',
+  },
+}
+```
+
+#####`service_provider`
 
 ####mysql::server::backup
 

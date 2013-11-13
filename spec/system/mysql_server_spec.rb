@@ -5,12 +5,15 @@ describe 'mysql class' do
   when 'RedHat'
     package_name = 'mysql-server'
     service_name = 'mysqld'
+    mycnf        = '/etc/my.cnf'
   when 'Suse'
     package_name = 'mysql-community-server'
     service_name = 'mysql'
+    mycnf        = '/etc/my.cnf'
   when 'Debian'
     package_name = 'mysql-server'
     service_name = 'mysql'
+    mycnf        = '/etc/mysql/my.cnf'
   end
 
   describe 'running puppet code' do
@@ -38,7 +41,7 @@ describe 'mysql class' do
     end
   end
 
-  describe 'my.cnf' do
+  describe 'mycnf' do
     it 'should contain sensible values' do
       pp = <<-EOS
         class { 'mysql::server': }
@@ -48,7 +51,7 @@ describe 'mysql class' do
       end
     end
 
-    describe file('/etc/my.cnf') do
+    describe file(mycnf) do
       it { should contain 'key_buffer = 16M' }
       it { should contain 'max_binlog_size = 100M' }
       it { should contain 'query_cache_size = 16M' }
@@ -72,7 +75,7 @@ describe 'mysql class' do
       end
     end
 
-    describe file('/etc/my.cnf') do
+    describe file(mycnf) do
       it { should contain 'key_buffer = 32M' }
       it { should contain 'max_binlog_size = 200M' }
       it { should contain 'query_cache_size = 32M' }

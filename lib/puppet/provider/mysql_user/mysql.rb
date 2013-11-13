@@ -4,18 +4,6 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
   desc 'manage users for a mysql database.'
   commands :mysql => 'mysql'
 
-  # Optional defaults file
-  def self.defaults_file
-    if File.file?("#{Facter.value(:root_home)}/.my.cnf")
-      "--defaults-file=#{Facter.value(:root_home)}/.my.cnf"
-    else
-      nil
-    end
-  end
-  def defaults_file
-    self.class.defaults_file
-  end
-
   # Build a property_hash containing all the discovered information about MySQL
   # users.
   def self.instances
