@@ -1,6 +1,6 @@
 {
     "name": "puppetlabs/mysql",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "summary": "Manage MySQL, includes types/providers",
     "source": "git@github.com/puppetlabs/puppetlabs-mysql.git",
     "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
