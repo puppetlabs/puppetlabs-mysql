@@ -18,7 +18,13 @@ describe 'mysql::server::root_password class' do
     end
 
     it 'deletes all databases' do
-      shell('rm -rf `grep datadir /etc/my.cnf | cut -d" " -f 3`/*')
+      case node.facts['osfamily']
+      when 'Redhat'
+        shell('rm -rf `grep datadir /etc/my.cnf | cut -d" " -f 3`/*')
+      when 'Debian'
+        shell('rm -rf `grep datadir /etc/mysql/my.cnf | cut -d" " -f 3`/*')
+        shell('mysql_install_db')
+      end
     end
 
     it 'starts up mysql' do
