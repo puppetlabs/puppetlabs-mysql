@@ -130,4 +130,42 @@ describe 'mysql_grant' do
     end
   end
 
+  # Test combinations of user@host to ensure all cases work.
+  describe 'hostname with wildcards' do
+    it 'should apply' do
+      pp = <<-EOS
+        mysql_grant { 'test@192.168.%/test.*':
+          ensure => 'present',
+          table => 'test.*',
+          user => 'test@192.168.%',
+          privileges => 'ALL',
+        }
+      EOS
+
+      puppet_apply(pp)
+    end
+
+    it 'finds hostname with wildcards' do
+      shell("mysql -NBe \"SHOW GRANTS FOR test@'192.168.%'\"") do |r|
+        r.stdout.should =~ /GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.%'/
+        r.stderr.should be_empty
+        r.exit_code.should be_zero
+      end
+    end
+
+    it 'should not do any changes on second run' do
+      pp = <<-EOS
+        mysql_grant { 'test@192.168.%/test.*':
+          ensure => 'present',
+          table => 'test.*',
+          user => 'test@192.168.%',
+          privileges => 'ALL',
+        }
+      EOS
+
+      puppet_apply(pp) do |r|
+        r.exit_code.should be_zero
+      end
+    end
+  end
 end
