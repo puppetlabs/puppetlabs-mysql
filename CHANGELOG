@@ -1,3 +1,33 @@
+2013-11-13 - Version 2.1.0
+
+Summary:
+
+The most important changes in 2.1.0 are improvements to the my.cnf creation,
+as well as providers.  Setting options to = true strips them to be just the
+key name itself, which is required for some options.
+
+The provider updates fix a number of bugs, from lowercase privileges to
+deprecation warnings.
+
+Last, the new hiera integration functionality should make it easier to
+externalize all your grantts, users, and, databases.  Another great set of
+community submissions helped to make this release.
+
+Features:
+- Some options can not take a argument. Gets rid of the '= true' when an
+option is set to true.
+- Easier hiera integration:  Add hash parameters to mysql::server to allow
+specifying grants, users, and databases.
+
+Fixes:
+- Fix an issue with lowercase privileges in mysql_grant{} causing them to be reapplied needlessly.
+- Changed defaults-file to defaults-extra-file in providers.
+- Ensure /root/.my.cnf is 0600 and root owned.
+- database_user deprecation warning was incorrect.
+- Add anchor pattern for client.pp
+- Documentation improvements.
+- Various test fixes.
+
 2013-10-21 - Version 2.0.1
 
 Summary:
