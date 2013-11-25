@@ -3,7 +3,8 @@
 #   user@host => global
 #   user@host/db => per-db
 
-Puppet::Type.type(:database_grant).provide(:mysql) do
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
+Puppet::Type.type(:database_grant).provide(:mysql, :parent => Puppet::Provider::Mysql) do
 
   desc 'Uses mysql as database.'
 
@@ -193,18 +194,6 @@ Puppet::Type.type(:database_grant).provide(:mysql) do
       detail = ["The privilege#{p[0]} '#{invalid_privs.join(',')}' #{p[1]}."]
       fail [detail, hints].join(' ')
     end
-  end
-
-  # Optional defaults file
-  def self.defaults_file
-    if File.file?("#{Facter.value(:root_home)}/.my.cnf")
-      "--defaults-extra-file=#{Facter.value(:root_home)}/.my.cnf"
-    else
-      nil
-    end
-  end
-  def defaults_file
-    self.class.defaults_file
   end
 
 end

@@ -78,36 +78,36 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
   mk_resource_methods
 
   def password_hash=(string)
-    merged_name = @resource[:name].sub('@', "'@'")
-    mysql([defaults_file, '-e', "SET PASSWORD FOR '#{merged_name}' = '#{string}'"].compact)
+    merged_name = self.class.cmd_user(@resource[:name])
+    mysql([defaults_file, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
 
     password_hash == string ? (return true) : (return false)
   end
 
   def max_user_connections=(int)
-    merged_name = @resource[:name].sub('@', "'@'")
-    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{int}"].compact).chomp
+    merged_name = self.class.cmd_user(@resource[:name])
+    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_USER_CONNECTIONS #{int}"].compact).chomp
 
     max_user_connections == int ? (return true) : (return false)
   end
 
   def max_connections_per_hour=(int)
-    merged_name = @resource[:name].sub('@', "'@'")
-    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_CONNECTIONS_PER_HOUR #{int}"].compact).chomp
+    merged_name = self.class.cmd_user(@resource[:name])
+    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_CONNECTIONS_PER_HOUR #{int}"].compact).chomp
 
     max_connections_per_hour == int ? (return true) : (return false)
   end
 
   def max_queries_per_hour=(int)
-    merged_name = @resource[:name].sub('@', "'@'")
-    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_QUERIES_PER_HOUR #{int}"].compact).chomp
+    merged_name = self.class.cmd_user(@resource[:name])
+    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_QUERIES_PER_HOUR #{int}"].compact).chomp
 
     max_queries_per_hour == int ? (return true) : (return false)
   end
 
   def max_updates_per_hour=(int)
-    merged_name = @resource[:name].sub('@', "'@'")
-    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_UPDATES_PER_HOUR #{int}"].compact).chomp
+    merged_name = self.class.cmd_user(@resource[:name])
+    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}"].compact).chomp
 
     max_updates_per_hour == int ? (return true) : (return false)
   end

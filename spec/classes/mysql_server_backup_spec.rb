@@ -46,6 +46,23 @@ describe 'mysql::server::backup' do
     end
   end
 
+  context 'custom ownership and mode for backupdir' do
+    let(:params) do
+      { :backupdirmode => '0750',
+        :backupdirowner => 'testuser',
+        :backupdirgroup => 'testgrp',
+      }.merge(default_params)
+    end
+
+    it { should contain_file('mysqlbackupdir').with(
+      :path => '/tmp',
+      :ensure => 'directory',
+      :mode => '0750',
+      :owner => 'testuser',
+      :group => 'testgrp'
+    ) }
+  end
+
   context 'with compression disabled' do
     let(:params) do
       { :backupcompress => false }.merge(default_params)

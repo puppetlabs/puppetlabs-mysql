@@ -49,7 +49,7 @@ Puppet::Type.newtype(:mysql_grant) do
       value.delete("`")
     end
 
-    newvalues(/.*\..*/)
+    newvalues(/.*\..*/,/@/)
   end
 
   newproperty(:user) do

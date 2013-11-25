@@ -19,7 +19,7 @@ describe 'mysql::server::root_password class' do
 
     it 'deletes all databases' do
       case node.facts['osfamily']
-      when 'Redhat'
+      when 'RedHat'
         shell('rm -rf `grep datadir /etc/my.cnf | cut -d" " -f 3`/*')
       when 'Debian'
         shell('rm -rf `grep datadir /etc/mysql/my.cnf | cut -d" " -f 3`/*')
