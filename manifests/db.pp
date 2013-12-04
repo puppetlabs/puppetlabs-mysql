@@ -46,7 +46,12 @@ define mysql::db (
     $refresh = ! $enforce_sql
 
     if $sql {
-      $sql.each { |$s|
+      if is_array($sql) {
+        $sql_set = $sql
+      } else {
+        $sql_set = [$sql]
+      }
+      $sql_set.each { |$s|
           exec{ "${name}-${s}-import":
           command     => "/usr/bin/mysql ${name} < ${s}",
           logoutput   => true,
