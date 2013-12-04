@@ -46,13 +46,15 @@ define mysql::db (
     $refresh = ! $enforce_sql
 
     if $sql {
-      exec{ "${name}-import":
-        command     => "/usr/bin/mysql ${name} < ${sql}",
-        logoutput   => true,
-        environment => "HOME=${::root_home}",
-        refreshonly => $refresh,
-        require     => Mysql_grant["${user}@${host}/${table}"],
-        subscribe   => Mysql_database[$name],
+      $sql.each { |$s|
+          exec{ "${name}-import":
+          command     => "/usr/bin/mysql ${name} < ${s}",
+          logoutput   => true,
+          environment => "HOME=${::root_home}",
+          refreshonly => $refresh,
+          require     => Mysql_grant["${user}@${host}/${table}"],
+          subscribe   => Mysql_database[$name],
+        }
       }
     }
   }
