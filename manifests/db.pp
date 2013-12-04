@@ -47,7 +47,7 @@ define mysql::db (
 
     if $sql {
       $sql.each { |$s|
-          exec{ "${name}-import":
+          exec{ "${name}-${s}-import":
           command     => "/usr/bin/mysql ${name} < ${s}",
           logoutput   => true,
           environment => "HOME=${::root_home}",
