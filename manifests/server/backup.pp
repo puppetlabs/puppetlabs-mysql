@@ -2,6 +2,7 @@
 class mysql::server::backup (
   $backupuser,
   $backuppassword,
+  $hashed_password = false,
   $backupdir,
   $backupdirmode = '0700',
   $backupdirowner = 'root',
@@ -12,12 +13,16 @@ class mysql::server::backup (
   $backupdatabases = [],
   $file_per_database = false,
   $ensure = 'present',
-  $time = ['23', '5'],
+  $time = ['23', '5']
 ) {
+
+  if !$hashed_password {
+    $backuppassword_hash = mysql_password($backuppassword)
+  }
 
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
-    password_hash => mysql_password($backuppassword),
+    password_hash => $backuppassword_hash,
     provider      => 'mysql',
     require       => Class['mysql::server::config'],
   }
