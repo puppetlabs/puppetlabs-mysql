@@ -69,4 +69,8 @@ Puppet::Type.newtype(:mysql_grant) do
     desc 'Options to grant.'
   end
 
+  newproperty(:grant_require, :array_matching => :all) do
+    desc 'Options for require.'
+  end
+
 end
