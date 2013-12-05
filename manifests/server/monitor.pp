@@ -15,7 +15,7 @@ class mysql::server::monitor (
 
   mysql_user { "${mysql_monitor_username}@${mysql_monitor_hostname}":
     ensure        => present,
-    password_hash => ,
+    password_hash => $mysql_monitor_password_hash,
     require       => Class['mysql::server::service'],
   }
 
