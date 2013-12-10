@@ -19,6 +19,12 @@ RSpec.configure do |c|
     # Install module and dependencies
     puppet_module_install(:source => proj_root, :module_name => 'mysql')
     hosts.each do |host|
+      # Required for binding tests.
+      if fact('osfamily') == 'RedHat'
+        version = fact("operatingsystemmajrelease")
+        shell("rpm -i http://yum.puppetlabs.com/puppetlabs-release-el-#{version}.noarch.rpm")
+      end
+
       shell('/bin/touch /etc/puppet/hiera.yaml')
       shell('puppet module install puppetlabs-stdlib --version 2.2.1', { :acceptable_exit_codes => [0,1] })
     end
