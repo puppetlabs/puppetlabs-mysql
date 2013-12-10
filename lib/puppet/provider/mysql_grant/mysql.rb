@@ -23,6 +23,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
           end
           # Same here, but to remove OPTION leaving just GRANT.
           options = rest.match(/WITH\s(.*)\sOPTION$/).captures if rest.include?('WITH')
+
+          # Get all REQUIRE options.
+          grant_require = rest.match(/REQUIRE\s(.*)\sWITH/).captures if rest.include?('REQUIRE')
+
           # We need to return an array of instances so capture these
           instances << new(
               :name       => "#{user}@#{host}/#{table}",
@@ -30,7 +34,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
               :privileges => stripped_privileges.sort,
               :table      => table,
               :user       => "#{user}@#{host}",
-              :options    => options
+              :options    => options,
+              :grant_require  => grant_require
           )
         end
       end
@@ -47,24 +52,26 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     end
   end
 
-  def grant(user, table, privileges, options)
+  def grant(user, table, privileges, options, grant_require)
     user_string = self.class.cmd_user(user)
     priv_string = self.class.cmd_privs(privileges)
     table_string = self.class.cmd_table(table)
     query = "GRANT #{priv_string}"
     query << " ON #{table_string}"
     query << " TO #{user_string}"
+    query << self.class.cmd_grant_require(grant_require) unless grant_require.nil?
     query << self.class.cmd_options(options) unless options.nil?
     mysql([defaults_file, '-e', query].compact)
   end
 
   def create
-    grant(@resource[:user], @resource[:table], @resource[:privileges], @resource[:options])
+    grant(@resource[:user], @resource[:table], @resource[:privileges], @resource[:options], @resource[:grant_require] )
 
     @property_hash[:ensure]     = :present
     @property_hash[:table]      = @resource[:table]
     @property_hash[:user]       = @resource[:user]
     @property_hash[:options]    = @resource[:options] if @resource[:options]
+    @property_hash[:grant_require] = @resource[:grant_require] if @resource[:grant_require]
     @property_hash[:privileges] = @resource[:privileges]
 
     exists? ? (return true) : (return false)
@@ -98,7 +105,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
 
   def privileges=(privileges)
     revoke(@property_hash[:user], @property_hash[:table])
-    grant(@property_hash[:user], @property_hash[:table], privileges, @property_hash[:options])
+    grant(@property_hash[:user], @property_hash[:table], privileges, @property_hash[:options], @property_hash[:grant_require])
     @property_hash[:privileges] = privileges
 
     self.privileges
@@ -106,10 +113,18 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
 
   def options=(options)
     revoke(@property_hash[:user], @property_hash[:table])
-    grant(@property_hash[:user], @property_hash[:table], @property_hash[:privileges], options)
+    grant(@property_hash[:user], @property_hash[:table], @property_hash[:privileges], options, @property_hash[:grant_require])
     @property_hash[:options] = options
 
     self.options
+  end
+
+    def grant_require=(grant_require)
+    revoke(@property_hash[:user], @property_hash[:table])
+    grant(@property_hash[:user], @property_hash[:table], @property_hash[:privileges], @property_hash[:options], grant_require)
+    @property_hash[:grant_require] = grant_require
+
+    self.grant_require
   end
 
 end

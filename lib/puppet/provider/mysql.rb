@@ -64,4 +64,16 @@ class Puppet::Provider::Mysql < Puppet::Provider
     option_string
   end
 
+    # Take in potential 'require' ssl option and build up a query string with them.
+  def self.cmd_grant_require(grant_require)
+    grant_require_string = ' REQUIRE'
+    grant_require.each_with_index do |opt, index|
+        if index > 0
+          grant_require_string << ' AND'
+        end
+        grant_require_string << " #{opt}"
+    end
+    grant_require_string
+  end
+
 end
