@@ -22,7 +22,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
             priv == 'ALL PRIVILEGES' ? 'ALL' : priv.lstrip.rstrip
           end
           # Same here, but to remove OPTION leaving just GRANT.
-          options = rest.match(/WITH\s(.*)\sOPTION$/).captures if rest.include?('WITH')
+          options = ['GRANT'] if rest.match(/WITH\sGRANT\sOPTION/)
           # We need to return an array of instances so capture these
           instances << new(
               :name       => "#{user}@#{host}/#{table}",
