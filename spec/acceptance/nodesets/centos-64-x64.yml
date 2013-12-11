@@ -1,5 +1,5 @@
 HOSTS:
-  centos-64-x64:
+  centos-64-x64.local:
     roles:
       - master
     platform: el-6-i386
