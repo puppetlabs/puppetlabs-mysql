@@ -50,7 +50,13 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
   def grant(user, table, privileges, options)
     user_string = self.class.cmd_user(user)
     priv_string = self.class.cmd_privs(privileges)
-    table_string = self.class.cmd_table(table)
+    
+    if priv_string == 'PROXY'
+      table_string = "''@''"
+    else
+      table_string = self.class.cmd_table(table)
+    end
+    
     query = "GRANT #{priv_string}"
     query << " ON #{table_string}"
     query << " TO #{user_string}"
