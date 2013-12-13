@@ -188,7 +188,7 @@ class mysql::params {
     },
     'mysqld_safe'        => {
       'nice'             => '0',
-      'log_error'        => $mysql::params::log_error,
+      'log-error'        => $mysql::params::log_error,
       'socket'           => $mysql::params::socket,
     },
     'mysqld'                  => {
@@ -197,12 +197,12 @@ class mysql::params {
       'datadir'               => $mysql::params::datadir,
       'expire_logs_days'      => '10',
       'key_buffer_size'       => '16M',
-      'log_error'             => $mysql::params::log_error,
+      'log-error'             => $mysql::params::log_error,
       'max_allowed_packet'    => '16M',
       'max_binlog_size'       => '100M',
       'max_connections'       => '151',
       'myisam_recover'        => 'BACKUP',
-      'pid_file'              => $mysql::params::pidfile,
+      'pid-file'              => $mysql::params::pidfile,
       'port'                  => '3306',
       'query_cache_limit'     => '1M',
       'query_cache_size'      => '16M',
