@@ -79,8 +79,16 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
   def revoke(user, table)
     user_string = self.class.cmd_user(user)
     table_string = self.class.cmd_table(table)
-
-    query = "REVOKE ALL ON #{table_string} FROM #{user_string}"
+    priv_string = self.class.cmd_privs(privileges)
+    
+    if priv_string == 'PROXY'
+      table_string = "''@''"
+    else
+      table_string = self.class.cmd_table(table)
+    end
+    
+    query = "REVOKE #{priv_string}"
+    query << " ON #{table_string} FROM #{user_string}"
     mysql([defaults_file, '-e', query].compact)
   end
 
