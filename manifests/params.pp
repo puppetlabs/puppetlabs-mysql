@@ -193,10 +193,10 @@ class mysql::params {
     },
     'mysqld'                  => {
       'basedir'               => $mysql::params::basedir,
-      'bind_address'          => '127.0.0.1',
+      'bind-address'          => '127.0.0.1',
       'datadir'               => $mysql::params::datadir,
       'expire_logs_days'      => '10',
-      'key_buffer'            => '16M',
+      'key_buffer_size'       => '16M',
       'log_error'             => $mysql::params::log_error,
       'max_allowed_packet'    => '16M',
       'max_binlog_size'       => '100M',
@@ -223,7 +223,7 @@ class mysql::params {
       'quote-names'         => true,
     },
     'isamchk'      => {
-      'key_buffer' => '16M',
+      'key_buffer_size' => '16M',
     },
   }
 
