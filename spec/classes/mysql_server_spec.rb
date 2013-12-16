@@ -20,6 +20,19 @@ describe 'mysql::server' do
     end
   end
 
+  describe 'with multiple instance of an option' do
+    let(:params) {{ :override_options => { 'mysqld' => { 'replicate-do-db' => ['base1', 'base2', 'base3'], } }}}
+    it do
+      should contain_file('/etc/my.cnf').with_content(
+        /^replicate-do-db = base1$/
+      ).with_content(
+        /^replicate-do-db = base2$/
+      ).with_content(
+        /^replicate-do-db = base3$/
+      )
+    end
+  end
+
   context 'with remove_default_accounts set' do
     let (:params) {{ :remove_default_accounts => true }}
     it { should contain_class('mysql::server::account_security') }

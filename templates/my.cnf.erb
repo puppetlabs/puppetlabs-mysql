@@ -4,6 +4,10 @@
 <% @options[k].sort.map do |ki, vi| -%>
 <% if vi == true -%>
 <%= ki %>
+<% elsif vi.is_a?(Array) -%>
+<% vi.each do |vii| -%>
+<%= ki %> = <%= vii %>
+<% end -%>
 <% elsif vi and vi != '' -%>
 <%= ki %> = <%= vi %>
 <% elsif vi -%>

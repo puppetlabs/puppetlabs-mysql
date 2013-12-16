@@ -87,6 +87,24 @@ thing
 You can just make an entry like `thing => true` in the hash.  MySQL doesn't
 care if thing is alone or set to a value, it'll happily accept both.
 
+If an option need multiple instances, you can pass an Array. For example :
+
+```puppet
+$override_options = {
+  'mysqld' => {
+    'replicate-do-db' => ['base1', 'base2'],
+  }
+}
+```
+
+will produce :
+
+<pre>
+[mysql]
+replicate-do-db = base1
+replicate-do-db = base2
+</pre>
+
 ###Custom configuration
 
 To add custom mysql configuration you can drop additional files into
