@@ -19,7 +19,7 @@ class mysql::server::backup (
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
     provider      => 'mysql',
-    require       => Class['mysql::server::config'],
+    require       => Class['mysql::server::root_password'],
   }
 
   mysql_grant { "${backupuser}@localhost/*.*":
