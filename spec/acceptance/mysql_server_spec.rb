@@ -55,7 +55,7 @@ describe 'mysql class' do
     end
 
     describe file(mycnf) do
-      it { should contain 'key_buffer = 16M' }
+      it { should contain 'key_buffer_size = 16M' }
       it { should contain 'max_binlog_size = 100M' }
       it { should contain 'query_cache_size = 16M' }
     end
@@ -134,15 +134,29 @@ describe 'mysql class' do
   end
 
   describe 'restart' do
-    it 'stops the service restarting if set' do
+    it 'restart => true' do
       pp = <<-EOS
         class { 'mysql::server':
-          restart          => false,
-          override_options => { 'mysqld' => { 'test' => 'value' } }
+          restart          => true,
+          override_options => { 'mysqldump' => { 'default-character-set' => 'UTF-8' } }
         }
       EOS
 
       apply_manifest(pp, :catch_failures => true) do |r|
+        expect(r.exit_code).to eq(2)
+        expect(r.stdout).to match(/Scheduling refresh/)
+      end
+    end
+    it 'restart => false' do
+      pp = <<-EOS
+        class { 'mysql::server':
+          restart          => false,
+          override_options => { 'mysqldump' => { 'default-character-set' => 'UTF-16' } }
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true) do |r|
+        expect(r.exit_code).to eq(2)
         expect(r.stdout).to_not match(/Scheduling refresh/)
       end
     end

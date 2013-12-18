@@ -58,12 +58,25 @@ class mysql::server (
   anchor { 'mysql::server::start': }
   anchor { 'mysql::server::end': }
 
-  Anchor['mysql::server::start'] ->
-  Class['mysql::server::install'] ->
-  Class['mysql::server::config'] ->
-  Class['mysql::server::service'] ->
-  Class['mysql::server::root_password'] ->
-  Class['mysql::server::providers'] ->
-  Anchor['mysql::server::end']
+  if $restart {
+    Anchor['mysql::server::start'] ->
+    Class['mysql::server::install'] ->
+    # Only difference between the blocks is that we use ~> to restart if
+    # restart is set to true.
+    Class['mysql::server::config'] ~>
+    Class['mysql::server::service'] ->
+    Class['mysql::server::root_password'] ->
+    Class['mysql::server::providers'] ->
+    Anchor['mysql::server::end']
+  } else {
+    Anchor['mysql::server::start'] ->
+    Class['mysql::server::install'] ->
+    Class['mysql::server::config'] ->
+    Class['mysql::server::service'] ->
+    Class['mysql::server::root_password'] ->
+    Class['mysql::server::providers'] ->
+    Anchor['mysql::server::end']
+  }
+
 
 }

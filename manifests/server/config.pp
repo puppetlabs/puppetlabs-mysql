@@ -7,7 +7,6 @@ class mysql::server::config {
     owner  => 'root',
     group  => $mysql::server::root_group,
     mode   => '0400',
-    notify => Class['mysql::server::service'],
   }
 
   file { '/etc/mysql':
