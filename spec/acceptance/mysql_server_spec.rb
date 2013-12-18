@@ -133,8 +133,8 @@ describe 'mysql class' do
     end
   end
 
-  describe 'restart => true' do
-    it 'restarts the service' do
+  describe 'restart' do
+    it 'restart => true' do
       pp = <<-EOS
         class { 'mysql::server':
           restart          => true,
@@ -143,21 +143,20 @@ describe 'mysql class' do
       EOS
 
       apply_manifest(pp, :catch_failures => true) do |r|
+        expect(r.exit_code).to eq(2)
         expect(r.stdout).to match(/Scheduling refresh/)
       end
     end
-  end
-
-  describe 'restart => false' do
-    it 'does not restart the service' do
+    it 'restart => false' do
       pp = <<-EOS
         class { 'mysql::server':
           restart          => false,
-          override_options => { 'mysqldump' => { 'default-character-set' => 'UTF-8' } }
+          override_options => { 'mysqldump' => { 'default-character-set' => 'UTF-16' } }
         }
       EOS
 
       apply_manifest(pp, :catch_failures => true) do |r|
+        expect(r.exit_code).to eq(2)
         expect(r.stdout).to_not match(/Scheduling refresh/)
       end
     end
