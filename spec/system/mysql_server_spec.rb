@@ -82,4 +82,25 @@ describe 'mysql class' do
     end
   end
 
+  describe 'my.cnf should contain multiple instances of the same option' do
+    it 'sets multiple values' do
+      pp = <<-EOS
+        class { 'mysql::server':
+          override_options => { 'mysqld' => 
+            { 'replicate-do-db' => ['base1', 'base2', 'base3'], }
+          }  
+        }
+      EOS
+      puppet_apply(pp) do |r|
+        r.exit_code.should_not == 1
+      end
+    end
+
+    describe file(mycnf) do
+      it { should contain 'replicate-do-db = base1' }
+      it { should contain 'replicate-do-db = base2' }
+      it { should contain 'replicate-do-db = base3' }
+    end
+  end
+
 end
