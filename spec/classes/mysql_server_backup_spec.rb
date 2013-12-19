@@ -13,7 +13,9 @@ describe 'mysql::server::backup' do
   context 'standard conditions' do
     let(:params) { default_params }
 
-    it { should contain_mysql_user('testuser@localhost')}
+    it { should contain_mysql_user('testuser@localhost').with(
+      :require => 'Class[Mysql::Server::Root_password]'
+    )}
 
     it { should contain_mysql_grant('testuser@localhost/*.*').with(
       :privileges => ["SELECT", "RELOAD", "LOCK TABLES", "SHOW VIEW"]
