@@ -92,9 +92,7 @@ describe 'mysql class' do
           }  
         }
       EOS
-      puppet_apply(pp) do |r|
-        r.exit_code.should_not == 1
-      end
+      apply_manifest(pp, :catch_failures => true)
     end
 
     describe file(mycnf) do
