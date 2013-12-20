@@ -114,6 +114,5 @@ class mysql(
   include '::mysql::client::install'
   include '::mysql::bindings'
 
-  Class['mysql::config'] -> Mysql::Db <| |>
 
 }

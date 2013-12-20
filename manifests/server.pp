@@ -55,4 +55,7 @@ class mysql::server (
       provider => $service_provider,
     }
   }
+
+  Class['mysql::config'] -> Mysql::Db <| |>
+
 }
