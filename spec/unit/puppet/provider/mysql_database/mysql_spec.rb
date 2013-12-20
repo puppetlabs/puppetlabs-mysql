@@ -56,7 +56,7 @@ test
 
   describe 'create' do
     it 'makes a database' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', "create database `#{resource[:name]}` character set #{resource[:charset]} collate #{resource[:collate]}"])
+      provider.expects(:mysql).with([defaults_file, '-NBe', "create database if not exists `#{resource[:name]}` character set #{resource[:charset]} collate #{resource[:collate]}"])
       provider.expects(:exists?).returns(true)
       provider.create.should be_true
     end
