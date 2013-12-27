@@ -10,7 +10,7 @@ The provider updates fix a number of bugs, from lowercase privileges to
 deprecation warnings.
 
 Last, the new hiera integration functionality should make it easier to
-externalize all your grantts, users, and, databases.  Another great set of
+externalize all your grants, users, and, databases.  Another great set of
 community submissions helped to make this release.
 
 Features:
@@ -37,7 +37,7 @@ privileges could cause Puppet to incorrectly reapply the permissions on
 each run.
 
 Fixes:
-- Mysql_grant now sorts privileges in the type and provider for comparision.
+- Mysql_grant now sorts privileges in the type and provider for comparison.
 - Comment and test tweak for PE3.1.
 
 2013-10-14 - Version 2.0.0

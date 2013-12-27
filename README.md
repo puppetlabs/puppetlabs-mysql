@@ -20,7 +20,7 @@ The MySQL module installs, configures, and manages the MySQL service.
 ##Module Description
 
 The MySQL module manages both the installation and configuration of MySQL as
-well as extends Pupppet to allow management of MySQL resources, such as
+well as extends Puppet to allow management of MySQL resources, such as
 databases, users, and grants.
 
 ##Backwards Compatibility
@@ -35,7 +35,7 @@ this to true it will attempt to map your previous parameters into the new
 ###WARNING
 
 This may fail.  It may eat your MySQL server.  PLEASE test it before running it
-live.  Even if it's just a no-op and a manual comparision.  Please be careful!
+live.  Even if it's just a no-op and a manual comparison.  Please be careful!
 
 ##Setup
 
@@ -313,7 +313,7 @@ Array of databases to specifically backup.
 
 #####`file_per_database`
 
-Should a seperate file be used per database.
+Should a separate file be used per database.
 
 #####`ensure`
 
