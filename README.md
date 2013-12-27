@@ -511,7 +511,7 @@ You can read the complete module contribution guide [on the Puppet Labs wiki.](h
 
 ### Authors
 
-This module is based on work by David Schmitt. The following contributor have contributed patches to this module (beyond Puppet Labs):
+This module is based on work by David Schmitt. The following contributors have contributed patches to this module (beyond Puppet Labs):
 
 * Larry Ludwig
 * Christian G. Warden
