@@ -2,6 +2,7 @@
 define mysql::db (
   $user,
   $password,
+  $hashed_password = false,
   $charset     = 'utf8',
   $collate     = 'utf8_general_ci',
   $host        = 'localhost',
@@ -26,9 +27,13 @@ define mysql::db (
     before   => Mysql_user["${user}@${host}"],
   }
 
+  if !$hashed_password {
+    $password_hash = mysql_password($password)
+  }
+
   $user_resource = {
     ensure        => $ensure,
-    password_hash => mysql_password($password),
+    password_hash => $password_hash,
     provider      => 'mysql',
     require       => Class['mysql::server'],
   }
