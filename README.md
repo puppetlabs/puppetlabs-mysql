@@ -82,7 +82,7 @@ For items that you would traditionally represent as:
 thing = X
 </pre>
 
-You can just make an entry like `thing => true` or `thing => value` in the hash.  MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.
+You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.
 
 If an option needs multiple instances, you can pass an array. For example
 
@@ -164,7 +164,7 @@ For items that you would traditionally represent as:
 thing = X
 </pre>
 
-You can just make an entry like `thing => true` or `thing => value` in the hash.  MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.
+You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.
 
 #####`config_file`
 
@@ -188,7 +188,7 @@ What is the group used for root?
 
 #####`package_ensure`
 
-What to set the package to.  Can be 'present', 'absent', or '[version]'.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`package_name`
 
@@ -360,7 +360,7 @@ Boolean to decide if the Ruby bindings should be installed.
 
 #####`java_package_ensure`
 
-What to set the package to.  Can be 'present', 'absent', or '[version]'.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`java_package_name`
 
@@ -372,7 +372,7 @@ What provider should be used to install the package.
 
 #####`perl_package_ensure`
 
-What to set the package to.  Can be 'present', 'absent', or '[version]'.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`perl_package_name`
 
@@ -384,7 +384,7 @@ What provider should be used to install the package.
 
 #####`python_package_ensure`
 
-What to set the package to.  Can be 'present', 'absent', or '[version]'.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`python_package_name`
 
@@ -396,7 +396,7 @@ What provider should be used to install the package.
 
 #####`ruby_package_ensure`
 
-What to set the package to.  Can be 'present', 'absent', or '[version]'.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`ruby_package_name`
 
@@ -414,7 +414,7 @@ Boolean to automatically install all bindings.
 
 #####`package_ensure`
 
-What to set the package to.  Can be 'present', 'absent', or '[version]'.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`package_name`
 
