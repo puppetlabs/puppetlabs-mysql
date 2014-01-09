@@ -33,7 +33,7 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
-mysql -s -r -N -e 'SHOW DATABASES' | while read dbname
+mysql -u${USER} -p${PASS} -s -r -N -e 'SHOW DATABASES' | while read dbname
 do
   mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
     ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
