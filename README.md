@@ -323,6 +323,14 @@ Present or absent, allows you to remove the backup scripts.
 
 An array of two elements to set the time to backup.  Allows ['23', '5'] or ['3', '45'] for HH:MM times.
 
+#####`backuposuser`
+
+OS user performing the backup.
+
+#####`backuposgroup`
+
+OS group performing the backup.
+
 ####mysql::server::monitor
 
 #####`mysql_monitor_username`
