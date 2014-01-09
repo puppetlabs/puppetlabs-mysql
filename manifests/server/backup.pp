@@ -16,6 +16,8 @@ class mysql::server::backup (
   $time = ['23', '5'],
   $postscript = false,
   $execpath   = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $backuposuser = 'root',
+  $backuposgroup = 'root',
 ) {
 
   mysql_user { "${backupuser}@localhost":
@@ -36,7 +38,7 @@ class mysql::server::backup (
   cron { 'mysql-backup':
     ensure  => $ensure,
     command => '/usr/local/sbin/mysqlbackup.sh',
-    user    => 'root',
+    user    => $backuposuser,
     hour    => $time[0],
     minute  => $time[1],
     require => File['mysqlbackup.sh'],
@@ -46,8 +48,8 @@ class mysql::server::backup (
     ensure  => $ensure,
     path    => '/usr/local/sbin/mysqlbackup.sh',
     mode    => '0700',
-    owner   => 'root',
-    group   => 'root',
+    owner   => $backuposuser,
+    group   => $backuposgroup,
     content => template('mysql/mysqlbackup.sh.erb'),
   }
 
