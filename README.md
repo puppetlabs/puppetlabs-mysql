@@ -329,6 +329,14 @@ An array of two elements to set the backup time.  Allows ['23', '5'] or ['3', '4
 
 A script that is executed at when the backup is finished. This could be used to (r)sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines, when supplied as an array. It could also be one or more externally managed (executable) files.
 
+#####`backuposuser`
+
+OS user performing the backup.
+
+#####`backuposgroup`
+
+OS group performing the backup.
+
 ####mysql::server::monitor
 
 #####`mysql_monitor_username`
