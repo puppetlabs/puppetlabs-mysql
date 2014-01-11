@@ -34,6 +34,9 @@ class Puppet::Provider::Mysql < Puppet::Provider
     # We can't escape *.* so special case this.
     if table == '*.*'
       table_string << '*.*'
+    # Special case also for PROCEDURES
+    elsif table.start_with?('PROCEDURE ')
+      table_string << table.sub(/^PROCEDURE (.*)(\..*)/, 'PROCEDURE `\1`\2')
     else
       table_string << table.sub(/^(.*)(\..*)/, '`\1`\2')
     end
