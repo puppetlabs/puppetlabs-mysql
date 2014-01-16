@@ -8,6 +8,7 @@ class mysql::server::backup (
   $backupdirgroup = 'root',
   $backupcompress = true,
   $backuprotate = 30,
+  $backupcronjob = true,
   $delete_before_dump = false,
   $backupdatabases = [],
   $file_per_database = false,
@@ -31,7 +32,7 @@ class mysql::server::backup (
   }
 
   cron { 'mysql-backup':
-    ensure  => $ensure,
+    ensure  => $backupcronjob ? { false => 'absent', default => $ensure },
     command => '/usr/local/sbin/mysqlbackup.sh',
     user    => 'root',
     hour    => $time[0],
