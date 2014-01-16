@@ -322,6 +322,10 @@ Allows you to remove the backup scripts. Can be 'present' or 'absent'.
 
 An array of two elements to set the backup time.  Allows ['23', '5'] or ['3', '45'] for HH:MM times.
 
+#####`backupcronjob`
+
+Defines whether to install the Backup Cron Job. Defaults to true. Useful when you want Bacula to start the backup process.
+
 ####mysql::server::monitor
 
 #####`mysql_monitor_username`
