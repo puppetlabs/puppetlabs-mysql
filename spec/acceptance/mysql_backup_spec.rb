@@ -29,9 +29,11 @@ describe 'mysql::server::backup class' do
   end
 
   describe 'mysqlbackup.sh' do
-    it 'should run mysqlbackup.sh with no errors' do
+    it 'should run mysqlbackup.sh with no errors and no output' do
       shell("/usr/local/sbin/mysqlbackup.sh") do |r|
-        expect(r.stderr).to eq("-- Warning: Skipping the data of table mysql.event. Specify the --events option explicitly.\n")
+        expect(r.stderr).to eq("")
+        expect(r.stdout).to eq("")
+        expect(r.exit_code).to be_zero
       end
     end
 

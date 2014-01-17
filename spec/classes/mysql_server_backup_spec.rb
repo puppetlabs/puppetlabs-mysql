@@ -41,10 +41,23 @@ describe 'mysql::server::backup' do
         ' --all-databases | bzcat -zc > ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql.bz2',
       ])
     end
+    it 'should not ignore the events table by default' do
+      verify_contents(subject, 'mysqlbackup.sh', [
+        'mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
+      ])
+    end
 
     it 'should have 25 days of rotation' do
       # MySQL counts from 0 I guess.
       should contain_file('mysqlbackup.sh').with_content(/.*ROTATE=24.*/)
+    end
+  end
+  context 'version with ignore events table' do
+    let(:params) { { :command_ext => '--events --ignore-table=mysql.event' }.merge(default_params) }
+    it 'should ignore the events table by default' do
+      verify_contents(subject, 'mysqlbackup.sh', [
+        'mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction --events --ignore-table=mysql.event\\',
+      ])
     end
   end
 
