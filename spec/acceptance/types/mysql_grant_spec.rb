@@ -283,4 +283,26 @@ describe 'mysql_grant' do
       expect(apply_manifest(pp, :catch_failures => true).exit_code).to eq(0)
     end
   end
+  
+  describe 'adding procedure privileges' do
+    it 'should work without errors' do
+       pp = <<-EOS
+       mysql_grant { 'test2@tester/PROCEDURE test.simpleproc':
+         ensure     => 'present',
+         table      => 'PROCEDURE test.simpleproc',
+         user       => 'test2@tester',
+         privileges => ['EXECUTE'],
+       }
+       EOS
+       
+      apply_manifest(pp, :catch_failures => true)
+    end
+    
+    it 'should find the user' do
+      shell("mysql -NBe \"SHOW GRANTS FOR test2@tester\"") do |r|
+        expect(r.stdout).to match(/GRANT EXECUTE ON PROCEDURE `test`.`simpleproc` TO 'test2'@'tester'/)
+        expect(r.stderr).to be_empty
+      end
+    end
+  end
 end
