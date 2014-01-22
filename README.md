@@ -261,10 +261,6 @@ $databases = {
 }
 ```
 
-#####`service_provider`
-
-The provider for the service
-
 ####mysql::server::backup
 
 #####`backupuser`
