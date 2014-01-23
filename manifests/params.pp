@@ -174,10 +174,10 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
-      $service_provider = upstart
+      $server_service_provider = upstart
     }
     default: {
-      $service_provider = undef
+      $server_service_provider = undef
     }
   }
 
