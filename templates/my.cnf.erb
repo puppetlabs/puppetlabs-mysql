@@ -2,16 +2,14 @@
 <%   if v.is_a?(Hash) -%>
 [<%=   k %>]
 <%     v.sort.map do |ki, vi| -%>
-<%       if vi == true -%>
+<%       if vi == true or v == '' -%>
 <%=        ki %>
 <%       elsif vi.is_a?(Array) -%>
 <%         vi.each do |vii| -%>
 <%=          ki %> = <%= vii %>
 <%         end -%>
-<%       elsif vi and vi != '' -%>
+<%       else -%>
 <%=        ki %> = <%= vi %>
-<%       elsif vi -%>
-<%=        ki %>
 <%       end -%>
 <%     end -%>
 <%   end %>
