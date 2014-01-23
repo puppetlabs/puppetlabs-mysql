@@ -16,6 +16,7 @@ env:
   matrix:
     - PUPPET_GEM_VERSION="~> 2.7.0"
     - PUPPET_GEM_VERSION="~> 3.3.0"
+    - PUPPET_GEM_VERSION="~> 3.4.0"
   global:
     - PUBLISHER_LOGIN=puppetlabs
     - secure: |-
