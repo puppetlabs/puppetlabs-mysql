@@ -82,8 +82,7 @@ For items that you would traditionally represent as:
 thing = X
 </pre>
 
-You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.
-
+You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.  To keep an option out of the my.cnf file, e.g. when using override_options to revert to a default value, you can pass thing => undef.
 If an option needs multiple instances, you can pass an array. For example
 
 ```puppet
@@ -164,7 +163,7 @@ For items that you would traditionally represent as:
 thing = X
 </pre>
 
-You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.
+You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.  To keep an option out of the my.cnf file, e.g. when using override_options to revert to a default value, you can pass thing => undef.
 
 #####`config_file`
 
