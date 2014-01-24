@@ -12,6 +12,8 @@ module Puppet::Parser::Functions
 
     When there is a duplicate key that is a hash, they are recursively merged.
     When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
+    When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate),
+      the rightmost style will win.
 
     ENDHEREDOC
 
@@ -36,17 +38,21 @@ module Puppet::Parser::Functions
   end
 end
 
-def overlay( hash1, hash2 )
-    hash2.each do |key, value|
-        if( value.is_a?(Hash) )
-            if( ! hash1.has_key?( key ) or ! hash1[key].is_a?(Hash))
-                hash1[key] = value
-            else
-                overlay( hash1[key], value )
-            end
-        else
-            hash1[key] = value
-        end
-    end
+def has_normalized!(hash, key)
+  return true if hash.has_key?( key )
+  return false unless key.match(/-|_/)
+  other_key = key.include?('-') ? key.gsub( '-', '_' ) : key.gsub( '_', '-' )
+  return false unless hash.has_key?( other_key )
+  hash[key] = hash.delete( other_key )
+  return true;
 end
 
+def overlay( hash1, hash2 )
+  hash2.each do |key, value|
+    if(has_normalized!( hash1, key ) and value.is_a?(Hash) and hash1[key].is_a?(Hash))
+      overlay( hash1[key], value )
+    else
+      hash1[key] = value
+    end
+  end
+end
