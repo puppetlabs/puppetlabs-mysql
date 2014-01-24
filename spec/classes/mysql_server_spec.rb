@@ -33,6 +33,24 @@ describe 'mysql::server' do
     end
   end
 
+  describe 'an option set to true' do
+    let(:params) {
+      { :override_options => { 'mysqld' => { 'ssl' => true } }}
+    }
+    it do
+      should contain_file('/etc/my.cnf').with_content(/^\s*ssl\s*(?:$|= true)/m)
+    end
+  end
+
+  describe 'an option set to false' do
+    let(:params) {
+      { :override_options => { 'mysqld' => { 'ssl' => false } }}
+    }
+    it do
+      should contain_file('/etc/my.cnf').with_content(/^\s*ssl = false/m)
+    end
+  end
+
   context 'with remove_default_accounts set' do
     let (:params) {{ :remove_default_accounts => true }}
     it { should contain_class('mysql::server::account_security') }

@@ -1,21 +1,18 @@
 <% @options.sort.map do |k,v| -%>
-<% if v.is_a?(Hash) -%>
-[<%= k %>]
-<% @options[k].sort.map do |ki, vi| -%>
-<% if vi == true -%>
-<%= ki %>
-<% elsif vi.is_a?(Array) -%>
-<% vi.each do |vii| -%>
-<%= ki %> = <%= vii %>
-<% end -%>
-<% elsif vi and vi != '' -%>
-<%= ki %> = <%= vi %>
-<% elsif vi -%>
-<%= ki %>
-<% end -%>
-<% end -%>
-
-<% end -%>
+<%   if v.is_a?(Hash) -%>
+[<%=   k %>]
+<%     v.sort.map do |ki, vi| -%>
+<%       if vi == true or v == '' -%>
+<%=        ki %>
+<%       elsif vi.is_a?(Array) -%>
+<%         vi.each do |vii| -%>
+<%=          ki %> = <%= vii %>
+<%         end -%>
+<%       else -%>
+<%=        ki %> = <%= vi %>
+<%       end -%>
+<%     end -%>
+<%   end %>
 <% end -%>
 
 !includedir /etc/mysql/conf.d/
