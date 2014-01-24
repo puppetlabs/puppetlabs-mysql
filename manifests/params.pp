@@ -25,20 +25,45 @@ class mysql::params {
 
   case $::osfamily {
     'RedHat': {
-      if $::operatingsystem == 'Fedora' and (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 19 or $::operatingsystemrelease == "Rawhide") {
+      case $::operatingsystem {
+        'Fedora': {
+          if is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 19 or $::operatingsystemrelease == "Rawhide" {
+            $provider = 'mariadb'
+          } else {
+            $provider = 'mysql'
+          }
+        }
+        'RedHat': {
+          if $::operatingsystemrelease >= 7 {
+            $provider = 'mariadb'
+          } else {
+            $provider = 'mysql'
+          }
+        }
+        default: {
+          $provider = 'mysql'
+        }
+      }
+
+      if $provider == 'mariadb' {
         $client_package_name = 'mariadb'
         $server_package_name = 'mariadb-server'
+        $server_service_name = 'mariadb'
+        $log_error           = '/var/log/mariadb/mariadb.log'
+        $config_file         = '/etc/my.cnf.d/server.cnf'
+        $pidfile             = '/var/run/mariadb/mariadb.pid'
       } else {
         $client_package_name = 'mysql'
         $server_package_name = 'mysql-server'
+        $server_service_name = 'mysqld'
+        $log_error           = '/var/log/mysqld.log'
+        $config_file         = '/etc/my.cnf'
+        $pidfile             = '/var/run/mysqld/mysqld.pid'
       }
+
       $basedir             = '/usr'
-      $config_file         = '/etc/my.cnf'
       $datadir             = '/var/lib/mysql'
-      $log_error           = '/var/log/mysqld.log'
-      $pidfile             = '/var/run/mysqld/mysqld.pid'
       $root_group          = 'root'
-      $server_service_name = 'mysqld'
       $socket              = '/var/lib/mysql/mysql.sock'
       $ssl_ca              = '/etc/mysql/cacert.pem'
       $ssl_cert            = '/etc/mysql/server-cert.pem'

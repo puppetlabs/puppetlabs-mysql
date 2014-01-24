@@ -8,6 +8,10 @@ class mysql::server::service {
   }
 
   if $mysql::server::real_service_manage {
+    file { $mysql::params::log_error:
+      owner => 'mysql',
+      group => 'mysql',
+    }
     service { 'mysqld':
       ensure   => $service_ensure,
       name     => $mysql::server::service_name,
