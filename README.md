@@ -317,6 +317,12 @@ Allows you to remove the backup scripts. Can be 'present' or 'absent'.
 
 An array of two elements to set the backup time.  Allows ['23', '5'] or ['3', '45'] for HH:MM times.
 
+#####`command_ext`
+
+A string to add additional command line commands that will be added to mysqldump in the backup script.
+By default it's either empty or adding '--events --ignore-table=mysql.event' to silence cron output,
+if you are using a mysql version affected by http://bugs.mysql.com/bug.php?id=68376 .
+
 ####mysql::server::monitor
 
 #####`mysql_monitor_username`

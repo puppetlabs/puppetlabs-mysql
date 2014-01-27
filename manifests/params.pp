@@ -227,4 +227,9 @@ class mysql::params {
     },
   }
 
+  if (versioncmp($::mysql_version,'5.1.68') > 0) {
+    $backup_command_ext = '--events --ignore-table=mysql.event'
+  } else {
+    $backup_command_ext = ''
+  }
 }
