@@ -1,3 +1,4 @@
+---
 branches:
   only:
     - master
@@ -15,6 +16,7 @@ env:
   matrix:
     - PUPPET_GEM_VERSION="~> 2.7.0"
     - PUPPET_GEM_VERSION="~> 3.3.0"
+    - PUPPET_GEM_VERSION="~> 3.4.0"
   global:
     - PUBLISHER_LOGIN=puppetlabs
     - secure: |-
@@ -22,6 +24,7 @@ env:
         0a6bJRUWpLWIuDco08fHMeCTWoFGzE97EDelhHKSYiTNllzYKWPHy7ki/al6
         wjz0gLtiDfmktHQOHatBy6EKLFjoyjGoE4cUUta4Ixq4tMBNzEA=
 matrix:
+  fast_finish: true
   exclude:
     - rvm: 1.9.3
       env: PUPPET_GEM_VERSION="~> 2.7.0"

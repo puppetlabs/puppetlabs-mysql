@@ -174,10 +174,10 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
-      $service_provider = upstart
+      $server_service_provider = upstart
     }
     default: {
-      $service_provider = undef
+      $server_service_provider = undef
     }
   }
 
@@ -188,21 +188,21 @@ class mysql::params {
     },
     'mysqld_safe'        => {
       'nice'             => '0',
-      'log_error'        => $mysql::params::log_error,
+      'log-error'        => $mysql::params::log_error,
       'socket'           => $mysql::params::socket,
     },
     'mysqld'                  => {
       'basedir'               => $mysql::params::basedir,
-      'bind_address'          => '127.0.0.1',
+      'bind-address'          => '127.0.0.1',
       'datadir'               => $mysql::params::datadir,
       'expire_logs_days'      => '10',
-      'key_buffer'            => '16M',
-      'log_error'             => $mysql::params::log_error,
+      'key_buffer_size'       => '16M',
+      'log-error'             => $mysql::params::log_error,
       'max_allowed_packet'    => '16M',
       'max_binlog_size'       => '100M',
       'max_connections'       => '151',
       'myisam_recover'        => 'BACKUP',
-      'pid_file'              => $mysql::params::pidfile,
+      'pid-file'              => $mysql::params::pidfile,
       'port'                  => '3306',
       'query_cache_limit'     => '1M',
       'query_cache_size'      => '16M',
@@ -223,7 +223,7 @@ class mysql::params {
       'quote-names'         => true,
     },
     'isamchk'      => {
-      'key_buffer' => '16M',
+      'key_buffer_size' => '16M',
     },
   }
 

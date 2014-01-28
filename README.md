@@ -15,42 +15,40 @@
 
 ##Overview
 
-The MySQL module installs, configures, and manages the MySQL service.
+The mysql module installs, configures, and manages the MySQL service.
 
 ##Module Description
 
-The MySQL module manages both the installation and configuration of MySQL as
-well as extends Pupppet to allow management of MySQL resources, such as
+The mysql module manages both the installation and configuration of MySQL as
+well as extends Puppet to allow management of MySQL resources, such as
 databases, users, and grants.
 
 ##Backwards Compatibility
 
-This module has just undergone a very large rewrite.  As a result it will no
-longer work with the previous classes and configuration as before.  We've
-attempted to handle backwards compatibility automatically by adding a
+This module has just undergone a very large rewrite.  Some new classes have been added, and many previous classes and configurations work differently than before.  We've attempted to handle backwards compatibility automatically by adding a
 `attempt_compatibility_mode` parameter to the main mysql class.  If you set
-this to true it will attempt to map your previous parameters into the new
+this to 'true' it will attempt to map your previous parameters into the new
 `mysql::server` class.
 
-###WARNING
+#####WARNING
 
-This may fail.  It may eat your MySQL server.  PLEASE test it before running it
-live.  Even if it's just a no-op and a manual comparision.  Please be careful!
+Compatibility mode may fail. It may eat your MySQL server. PLEASE test it before running it live, even if the test is just a no-op and manual comparison. Please be careful!
 
 ##Setup
 
 ###What MySQL affects
 
-* MySQL package.
-* MySQL configuration files.
-* MySQL service.
+* MySQL package
+* MySQL configuration files
+* MySQL service
 
 ###Beginning with MySQL
 
-If you just want a server installing with the default options you can run
-`include '::mysql::server'`.  If you need to customize options, such as the root
-password or /etc/my.cnf settings then you can also include `mysql::server` and
-pass in an override hash as seen below:
+If you just want a server installed with the default options you can run
+`include '::mysql::server'`.  
+
+If you need to customize options, such as the root
+password or `/etc/my.cnf` settings, then you must also pass in an override hash:
 
 ```puppet
 class { '::mysql::server':
@@ -70,7 +68,7 @@ client you use `mysql::client`, and to install bindings you can use
 The hash structure for overrides in `mysql::server` is as follows:
 
 ```puppet
-override_options = {
+$override_options = {
   'section' => {
     'item'             => 'thing',
   }
@@ -81,18 +79,32 @@ For items that you would traditionally represent as:
 
 <pre>
 [section]
-thing
+thing = X
 </pre>
 
-You can just make an entry like `thing => true` in the hash.  MySQL doesn't
-care if thing is alone or set to a value, it'll happily accept both.
+You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.  To keep an option out of the my.cnf file, e.g. when using override_options to revert to a default value, you can pass thing => undef.
+If an option needs multiple instances, you can pass an array. For example
+
+```puppet
+$override_options = {
+  'mysqld' => {
+    'replicate-do-db' => ['base1', 'base2'],
+  }
+}
+```
+
+will produce
+
+<pre>
+[mysql]
+replicate-do-db = base1
+replicate-do-db = base2
+</pre>
 
 ###Custom configuration
 
-To add custom mysql configuration you can drop additional files into
-`/etc/mysql/conf.d/` in order to override settings or add additional ones (if you
-choose not to use override_options in `mysql::server`).  This location is
-hardcoded into the my.cnf template file.
+To add custom MySQL configuration, drop additional files into
+`/etc/mysql/conf.d/`. Dropping files into conf.d allows you to override settings or add additional ones, which is helpful if you choose not to use `override_options` in `mysql::server`. The conf.d location is hardcoded into the my.cnf template file.
 
 ##Reference
 
@@ -112,6 +124,7 @@ hardcoded into the my.cnf template file.
 * `mysql::server::config`: Configures MYSQL.
 * `mysql::server::service`: Manages service.
 * `mysql::server::root_password`: Sets MySQL root password.
+* `mysql::server::providers`: Creates users, grants, and databases.
 * `mysql::bindings::java`: Installs Java bindings.
 * `mysql::bindings::perl`: Installs Perl bindings.
 * `mysql::bindings::python`: Installs Python bindings.
@@ -124,19 +137,19 @@ hardcoded into the my.cnf template file.
 
 #####`root_password`
 
-What is the MySQL root password.  Puppet will attempt to set it to this and update `/root/.my.cnf`.
+The MySQL root password.  Puppet will attempt to set the root password and update `/root/.my.cnf` with it.
 
 #####`old_root_password`
 
-What was the previous root password (REQUIRED if you wish to change the root password via Puppet.)
+The previous root password (**REQUIRED** if you wish to change the root password via Puppet.)
 
 #####`override_options`
 
-This is the hash of override options to pass into MySQL.  It can be visualized
-like a hash of the my.cnf file, so that entries look like:
+The hash of override options to pass into MySQL.  It can be structured
+like a hash in the my.cnf file, so entries look like
 
 ```puppet
-override_options = {
+$override_options = {
   'section' => {
     'item'             => 'thing',
   }
@@ -147,11 +160,10 @@ For items that you would traditionally represent as:
 
 <pre>
 [section]
-thing
+thing = X
 </pre>
 
-You can just make an entry like `thing => true` in the hash.  MySQL doesn't
-care if thing is alone or set to a value, it'll happily accept both.
+You can just make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. You can also pass an array `thing => ['value', 'value2']` or even list each `thing => value` separately on separate lines. MySQL doesn't care if 'thing' is alone or set to a value; it'll happily accept both.  To keep an option out of the my.cnf file, e.g. when using override_options to revert to a default value, you can pass thing => undef.
 
 #####`config_file`
 
@@ -159,15 +171,15 @@ The location of the MySQL configuration file.
 
 #####`manage_config_file`
 
-Should we manage the MySQL configuration file.
+Whether the MySQL configuration file should be managed.
 
 #####`purge_conf_dir`
 
-Should we purge the conf.d directory?
+Whether the conf.d directory should be purged.
 
 #####`restart`
 
-Should the service be restarted when things change?
+Whether the service should be restarted when things change.
 
 #####`root_group`
 
@@ -175,11 +187,11 @@ What is the group used for root?
 
 #####`package_ensure`
 
-What to set the package to.  Can be present, absent, or version.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`package_name`
 
-What is the name of the mysql server package to install.
+The name of the mysql server package to install.
 
 #####`remove_default_accounts`
 
@@ -196,17 +208,63 @@ Boolean to decide if the service should be managed.
 
 #####`service_name`
 
-What is the name of the mysql server service.
+The name of the mysql server service.
 
 #####`service_provider`
 
-Which provider to use to manage the service.
+The provider to use to manage the service.
+
+#####`users`
+
+Optional hash of users to create, which are passed to [mysql_user](#mysql_user). 
+
+```puppet
+$users = {
+  'someuser@localhost' => {
+    ensure                   => 'present',
+    max_connections_per_hour => '0',
+    max_queries_per_hour     => '0',
+    max_updates_per_hour     => '0',
+    max_user_connections     => '0',
+    password_hash            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
+  },
+}
+```
+
+#####`grants`
+
+Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). 
+
+```puppet
+$grants = {
+  'someuser@localhost/somedb.*' => {
+    ensure     => 'present',
+    options    => ['GRANT'],
+    privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
+    table      => 'somedb.*',
+    user       => 'someuser@localhost',
+  },
+}
+```
+
+#####`databases`
+
+Optional hash of databases to create, which are passed to [mysql_database](#mysql_database).
+
+```puppet
+$databases = {
+  'somedb' => {
+    ensure  => 'present',
+    charset => 'utf8',
+  },
+}
+```
 
 ####mysql::server::backup
 
 #####`backupuser`
 
-MySQL user to create for backing up.
+MySQL user to create for backups.
 
 #####`backuppassword`
 
@@ -214,7 +272,22 @@ MySQL user password for backups.
 
 #####`backupdir`
 
-Directory to backup into.
+Directory to back up into.
+
+#####`backupdirmode`
+
+Permissions applied to the backup directory. This parameter is passed directly
+to the `file` resource.
+
+#####`backupdirowner`
+
+Owner for the backup directory. This parameter is passed directly to the `file`
+resource.
+
+#####`backupdirgroup`
+
+Group owner for the backup directory. This parameter is passed directly to the
+`file` resource.
 
 #####`backupcompress`
 
@@ -230,19 +303,19 @@ Boolean to determine if you should cleanup before backing up or after.
 
 #####`backupdatabases`
 
-Array of databases to specifically backup.
+Array of databases to specifically back up.
 
 #####`file_per_database`
 
-Should a seperate file be used per database.
+Whether a separate file be used per database.
 
 #####`ensure`
 
-Present or absent, allows you to remove the backup scripts.
+Allows you to remove the backup scripts. Can be 'present' or 'absent'.
 
 #####`time`
 
-An array of two elements to set the time to backup.  Allows ['23', '5'] or ['3', '45'] for HH:MM times.
+An array of two elements to set the backup time.  Allows ['23', '5'] or ['3', '45'] for HH:MM times.
 
 ####mysql::server::monitor
 
@@ -282,7 +355,7 @@ Boolean to decide if the Ruby bindings should be installed.
 
 #####`java_package_ensure`
 
-What to set the package to.  Can be present, absent, or version.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`java_package_name`
 
@@ -294,7 +367,7 @@ What provider should be used to install the package.
 
 #####`perl_package_ensure`
 
-What to set the package to.  Can be present, absent, or version.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`perl_package_name`
 
@@ -306,7 +379,7 @@ What provider should be used to install the package.
 
 #####`python_package_ensure`
 
-What to set the package to.  Can be present, absent, or version.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`python_package_name`
 
@@ -318,7 +391,7 @@ What provider should be used to install the package.
 
 #####`ruby_package_ensure`
 
-What to set the package to.  Can be present, absent, or version.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`ruby_package_name`
 
@@ -336,7 +409,7 @@ Boolean to automatically install all bindings.
 
 #####`package_ensure`
 
-What to set the package to.  Can be present, absent, or version.
+What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
 #####`package_name`
 
@@ -346,7 +419,7 @@ What is the name of the mysql client package to install.
 
 ####mysql::db
 
-Creates a database with a user and assign some privileges.
+Creates a database with a user and assigns some privileges.
 
 ```puppet
     mysql::db { 'mydb':
@@ -361,7 +434,7 @@ Creates a database with a user and assign some privileges.
 
 ####mysql_database
 
-mysql_database can be used to create and manage databases within MySQL:
+`mysql_database` can be used to create and manage databases within MySQL.
 
 ```puppet
 mysql_database { 'information_schema':
@@ -378,7 +451,7 @@ mysql_database { 'mysql':
 
 ####mysql_user
 
-mysql_user can be used to create and manage user grants within MySQL:
+`mysql_user` can be used to create and manage user grants within MySQL.
 
 ```puppet
 mysql_user { 'root@127.0.0.1':
@@ -392,7 +465,7 @@ mysql_user { 'root@127.0.0.1':
 
 ####mysql_grant
 
-mysql_grant can be used to create grant permissions to access databases within
+`mysql_grant` can be used to create grant permissions to access databases within
 MySQL.  To use it you must create the title of the resource as shown below,
 following the pattern of `username@hostname/database.table`:
 
@@ -432,7 +505,7 @@ You can read the complete module contribution guide [on the Puppet Labs wiki.](h
 
 ### Authors
 
-This module is based on work by David Schmitt. The following contributor have contributed patches to this module (beyond Puppet Labs):
+This module is based on work by David Schmitt. The following contributors have contributed patches to this module (beyond Puppet Labs):
 
 * Larry Ludwig
 * Christian G. Warden

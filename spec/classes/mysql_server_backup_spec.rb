@@ -13,7 +13,9 @@ describe 'mysql::server::backup' do
   context 'standard conditions' do
     let(:params) { default_params }
 
-    it { should contain_mysql_user('testuser@localhost')}
+    it { should contain_mysql_user('testuser@localhost').with(
+      :require => 'Class[Mysql::Server::Root_password]'
+    )}
 
     it { should contain_mysql_grant('testuser@localhost/*.*').with(
       :privileges => ["SELECT", "RELOAD", "LOCK TABLES", "SHOW VIEW"]
@@ -46,6 +48,23 @@ describe 'mysql::server::backup' do
     end
   end
 
+  context 'custom ownership and mode for backupdir' do
+    let(:params) do
+      { :backupdirmode => '0750',
+        :backupdirowner => 'testuser',
+        :backupdirgroup => 'testgrp',
+      }.merge(default_params)
+    end
+
+    it { should contain_file('mysqlbackupdir').with(
+      :path => '/tmp',
+      :ensure => 'directory',
+      :mode => '0750',
+      :owner => 'testuser',
+      :group => 'testgrp'
+    ) }
+  end
+
   context 'with compression disabled' do
     let(:params) do
       { :backupcompress => false }.merge(default_params)
@@ -74,7 +93,7 @@ describe 'mysql::server::backup' do
     ) }
 
     it 'should have a backup file for each database' do
-      content = catalogue.resource('file','mysqlbackup.sh').send(:parameters)[:content]
+      content = subject.resource('file','mysqlbackup.sh').send(:parameters)[:content]
       content.should match(' mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date')
 #      verify_contents(subject, 'mysqlbackup.sh', [
 #        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',

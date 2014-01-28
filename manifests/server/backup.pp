@@ -3,6 +3,9 @@ class mysql::server::backup (
   $backupuser,
   $backuppassword,
   $backupdir,
+  $backupdirmode = '0700',
+  $backupdirowner = 'root',
+  $backupdirgroup = 'root',
   $backupcompress = true,
   $backuprotate = 30,
   $delete_before_dump = false,
@@ -16,7 +19,7 @@ class mysql::server::backup (
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
     provider      => 'mysql',
-    require       => Class['mysql::server::config'],
+    require       => Class['mysql::server::root_password'],
   }
 
   mysql_grant { "${backupuser}@localhost/*.*":
@@ -48,9 +51,9 @@ class mysql::server::backup (
   file { 'mysqlbackupdir':
     ensure => 'directory',
     path   => $backupdir,
-    mode   => '0700',
-    owner  => 'root',
-    group  => 'root',
+    mode   => $backupdirmode,
+    owner  => $backupdirowner,
+    group  => $backupdirgroup,
   }
 
 }

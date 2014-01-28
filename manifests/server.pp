@@ -15,6 +15,10 @@ class mysql::server (
   $service_manage          = $mysql::params::server_service_manage,
   $service_name            = $mysql::params::server_service_name,
   $service_provider        = $mysql::params::server_service_provider,
+  $users                   = {},
+  $grants                  = {},
+  $databases               = {},
+
   # Deprecated parameters
   $enabled                 = undef,
   $manage_service          = undef
@@ -43,6 +47,7 @@ class mysql::server (
   include '::mysql::server::config'
   include '::mysql::server::service'
   include '::mysql::server::root_password'
+  include '::mysql::server::providers'
 
   if $remove_default_accounts {
     class { '::mysql::server::account_security':
@@ -53,11 +58,25 @@ class mysql::server (
   anchor { 'mysql::server::start': }
   anchor { 'mysql::server::end': }
 
-  Anchor['mysql::server::start'] ->
-  Class['mysql::server::install'] ->
-  Class['mysql::server::config'] ->
-  Class['mysql::server::service'] ->
-  Class['mysql::server::root_password'] ->
-  Anchor['mysql::server::end']
+  if $restart {
+    Anchor['mysql::server::start'] ->
+    Class['mysql::server::install'] ->
+    # Only difference between the blocks is that we use ~> to restart if
+    # restart is set to true.
+    Class['mysql::server::config'] ~>
+    Class['mysql::server::service'] ->
+    Class['mysql::server::root_password'] ->
+    Class['mysql::server::providers'] ->
+    Anchor['mysql::server::end']
+  } else {
+    Anchor['mysql::server::start'] ->
+    Class['mysql::server::install'] ->
+    Class['mysql::server::config'] ->
+    Class['mysql::server::service'] ->
+    Class['mysql::server::root_password'] ->
+    Class['mysql::server::providers'] ->
+    Anchor['mysql::server::end']
+  }
+
 
 }

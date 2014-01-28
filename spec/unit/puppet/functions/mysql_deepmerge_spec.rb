@@ -30,7 +30,7 @@ describe Puppet::Parser::Functions.function(:mysql_deepmerge) do
     end
 
     it 'should accept empty strings as puppet undef' do
-      expect { new_hash = scope.function_mysql_deepmerge([{}, ''])}.not_to raise_error(Puppet::ParseError, /unexpected argument type String/)
+      expect { new_hash = scope.function_mysql_deepmerge([{}, ''])}.not_to raise_error
     end
 
     it 'should be able to mysql_deepmerge two hashes' do
@@ -72,6 +72,20 @@ describe Puppet::Parser::Functions.function(:mysql_deepmerge) do
       hash = scope.function_mysql_deepmerge([{ 'key1' => { 'a' => 1, 'b' => 2 }, 'key2' => { 'c' => 3 } }, { 'key1' => { 'b' => 99 } }])
       hash['key1'].should == { 'a' => 1, 'b' => 99 }
       hash['key2'].should == { 'c' => 3 }
+    end
+
+    it 'should equate keys mod dash and underscore' do
+      hash = scope.function_mysql_deepmerge([{  'a-b-c' => 1 } , { 'a_b_c' => 10 }])
+      hash['a_b_c'].should == 10
+      hash.should_not have_key('a-b-c')
+    end
+
+    it 'should keep style of the last when keys are euqal mod dash and underscore' do
+      hash = scope.function_mysql_deepmerge([{  'a-b-c' => 1,  'b_c_d' => { 'c-d-e' => 2, 'e-f-g' => 3 }} , { 'a_b_c' => 10, 'b-c-d' => { 'c_d_e' => 12 } }])
+      hash['a_b_c'].should == 10
+      hash.should_not have_key('a-b-c')
+      hash['b-c-d'].should == { 'e-f-g' => 3, 'c_d_e' => 12 }
+      hash.should_not have_key('b_c_d')
     end
   end
 end

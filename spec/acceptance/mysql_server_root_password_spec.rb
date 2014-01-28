@@ -1,4 +1,4 @@
-require 'spec_helper_system'
+require 'spec_helper_acceptance'
 
 describe 'mysql::server::root_password class' do
 
@@ -8,9 +8,7 @@ describe 'mysql::server::root_password class' do
       class { 'mysql::server': service_enabled => false }
       EOS
 
-      puppet_apply(pp) do |r|
-        r.exit_code.should_not == 1
-      end
+      apply_manifest(pp, :catch_failures => true)
     end
 
     it 'deletes the /root/.my.cnf password' do
@@ -18,7 +16,7 @@ describe 'mysql::server::root_password class' do
     end
 
     it 'deletes all databases' do
-      case node.facts['osfamily']
+      case fact('osfamily')
       when 'RedHat'
         shell('rm -rf `grep datadir /etc/my.cnf | cut -d" " -f 3`/*')
       when 'Debian'
@@ -32,9 +30,7 @@ describe 'mysql::server::root_password class' do
       class { 'mysql::server': service_enabled => true }
       EOS
 
-      puppet_apply(pp) do |r|
-        r.exit_code.should_not == 1
-      end
+      puppet_apply(pp, :catch_failures => true)
     end
   end
 
@@ -45,11 +41,8 @@ describe 'mysql::server::root_password class' do
       EOS
 
       # Run it twice and test for idempotency
-      puppet_apply(pp) do |r|
-        r.exit_code.should_not == 1
-        r.refresh
-        r.exit_code.should be_zero
-      end
+      apply_manifest(pp, :catch_failures => true)
+      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
     end
   end
 
@@ -60,12 +53,8 @@ describe 'mysql::server::root_password class' do
       EOS
 
       # Run it twice and test for idempotency
-      puppet_apply(pp) do |r|
-        r.exit_code.should_not == 1
-        r.refresh
-        r.exit_code.should be_zero
-      end
+      apply_manifest(pp, :catch_failures => true)
+      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
     end
   end
-
 end
