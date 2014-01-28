@@ -462,6 +462,23 @@ Then collect it on the remote DB server.
     Mysql::Db <<| tag == $domain |>>
 ```
 
+If you set the sql param to a file when creating a database,
+the file gets imported into the new database.
+
+For large sql files you should raise the $import_timeout parameter,
+set by default to 300 seconds
+
+```puppet
+    mysql::db { 'mydb':
+      user     => 'myuser',
+      password => 'mypass',
+      host     => 'localhost',
+      grant    => ['SELECT', 'UPDATE'],
+      sql      => '/path/to/sqlfile',
+      import_timeout => 900,
+    }
+```
+
 ###Providers
 
 ####mysql_database
