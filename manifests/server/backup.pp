@@ -8,6 +8,7 @@ class mysql::server::backup (
   $backupdirgroup = 'root',
   $backupcompress = true,
   $backuprotate = 30,
+  $ignore_events = true,
   $delete_before_dump = false,
   $backupdatabases = [],
   $file_per_database = false,
