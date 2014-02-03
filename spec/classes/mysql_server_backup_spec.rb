@@ -126,7 +126,7 @@ describe 'mysql::server::backup' do
             #      verify_contents(subject, 'mysqlbackup.sh', [
             #        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',
             #      ])
-        end 
+        end
     end
 
     context 'with file per database' do
@@ -136,7 +136,7 @@ describe 'mysql::server::backup' do
 
         it 'should loop through backup all databases' do
             verify_contents(subject, 'mysqlbackup.sh', [
-                            'mysql -s -r -N -e \'SHOW DATABASES\' | while read dbname',
+                            'mysql -u${USER} -p${PASS} -s -r -N -e \'SHOW DATABASES\' | while read dbname',
                             'do',
                             '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
                             '    ${EVENTS} \\',
