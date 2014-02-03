@@ -108,7 +108,7 @@ describe 'mysql::server::backup' do
     
     it 'should loop through backup all databases' do
       verify_contents(subject, 'mysqlbackup.sh', [
-        'mysql -s -r -N -e \'SHOW DATABASES\' | while read dbname',
+        'mysql -u${USER} -p${PASS} -s -r -N -e \'SHOW DATABASES\' | while read dbname',
         'do',
         '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
         '    ${dbname} | bzcat -zc > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql.bz2',
