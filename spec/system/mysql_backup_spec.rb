@@ -14,6 +14,12 @@ describe 'mysql::server::backup class' do
         backuppassword => 'mypassword',
         backupdir      => '/tmp/backups',
         backupcompress => true,
+        postscript     => [
+          'rm -rf /var/tmp/mysqlbackups',
+          'rm -f /var/tmp/mysqlbackups.done',
+          'cp -r /tmp/backups /var/tmp/mysqlbackups',
+          'touch /var/tmp/mysqlbackups.done',
+        ],
       }
     EOS
 

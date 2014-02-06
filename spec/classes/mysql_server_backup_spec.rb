@@ -152,4 +152,32 @@ describe 'mysql::server::backup' do
             end
         end
     end
+
+		context 'with postscript' do
+			let(:params) do
+				default_params.merge({ :postscript => 'rsync -a /tmp backup01.local-lan:' })
+			end
+
+			it 'should be add postscript' do
+				verify_contents(subject, 'mysqlbackup.sh', [
+					'rsync -a /tmp backup01.local-lan:',
+				])
+			end
+		end
+
+		context 'with postscripts' do
+			let(:params) do
+				default_params.merge({ :postscript => [
+					'rsync -a /tmp backup01.local-lan:',
+					'rsync -a /tmp backup02.local-lan:',
+				]})
+			end
+
+			it 'should be add postscript' do
+				verify_contents(subject, 'mysqlbackup.sh', [
+					'rsync -a /tmp backup01.local-lan:',
+					'rsync -a /tmp backup02.local-lan:',
+				])
+			end
+		end
 end
