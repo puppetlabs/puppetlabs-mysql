@@ -65,3 +65,8 @@ if [ $? -eq 0 ] ; then
 fi
 <% end -%>
 
+<% if @postscript -%>
+  <%- [@postscript].flatten.compact.each do |script|%>
+<%= script %>
+  <%- end -%>
+<% end -%>
