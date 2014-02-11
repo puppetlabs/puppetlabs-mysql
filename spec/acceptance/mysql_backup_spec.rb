@@ -29,7 +29,6 @@ describe 'mysql::server::backup class' do
       end
       apply_manifest(pp, :catch_failures => true) do |r|
         expect(r.stderr).to eq("")
-        expect(r.exit_code).to be_zero
       end
     end
   end

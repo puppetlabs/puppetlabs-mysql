@@ -14,10 +14,8 @@ describe 'mysql::db define' do
 
       # Run it twice and test for idempotency
       apply_manifest(pp, :catch_failures => true)
-      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
-    end
+      apply_manifest(pp, :catch_changes => true)
 
-    it 'should have the database' do
       expect(shell("mysql -e 'show databases;'|grep spec1").exit_code).to be_zero
     end
   end
@@ -41,7 +39,7 @@ describe 'mysql::db define' do
 
       # Run it twice and test for idempotency
       apply_manifest(pp, :catch_failures => true)
-      expect(apply_manifest(pp, :catch_failures => true).exit_code).to be_zero
+      apply_manifest(pp, :catch_changes => true)
     end
 
     it 'should have the table' do
