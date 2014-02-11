@@ -97,8 +97,12 @@ describe 'mysql::bindings class' do
       it { should be_installed }
     end
 
-    describe package(php_package) do
-      it { should be_installed }
+    # This package is not available out of the box and adding in other repos
+    # is a bit much for the scope of this test.
+    unless fact('osfamily') == 'RedHat'
+      describe package(php_package) do
+        it { should be_installed }
+      end
     end
 
     describe package(python_package) do
