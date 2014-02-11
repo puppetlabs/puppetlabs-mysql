@@ -22,7 +22,7 @@ RSpec.configure do |c|
       # Required for binding tests.
       if fact('osfamily') == 'RedHat'
         version = fact("operatingsystemmajrelease")
-        shell("rpm -q puppetlabs-release || rpm -i http://yum.puppetlabs.com/puppetlabs-release-el-#{version}.noarch.rpm")
+        shell("yum localinstall -y http://yum.puppetlabs.com/puppetlabs-release-el-#{version}.noarch.rpm")
       end
 
       shell('/bin/touch /etc/puppet/hiera.yaml')
