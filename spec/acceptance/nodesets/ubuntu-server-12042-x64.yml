@@ -3,6 +3,9 @@ HOSTS:
     roles:
       - master
     platform: ubuntu-server-12.04-amd64
-    box : ubuntu-server-12042-x64-vbox4210-nocm
-    box_url : http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210-nocm.box
+    box : ubuntu-server-12042-x64-vbox4210
+    box_url : http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box
     hypervisor : vagrant
+CONFIG:
+  log_level: debug
+  type: foss
