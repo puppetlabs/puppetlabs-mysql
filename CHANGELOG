@@ -1,3 +1,36 @@
+2014-02-13 - Version 2.2.0
+
+Summary:
+
+Features:
+- Add `backupdirmode`, `backupdirowner`, `backupdirgroup` to
+  mysql::server::backup to allow customizing the mysqlbackupdir.
+- Support multiple options of the same name, allowing you to
+  do 'replicate-do-db' => ['base1', 'base2', 'base3'] in order to get three
+  lines of replicate-do-db = base1, replicate-do-db = base2 etc.
+- 
+
+Bugfixes:
+- Fix `restart` so it actually stops mysql restarting if set to false.
+- DRY out the defaults_file functionality in the providers.
+- mysql_grant fixed to work with root@localhost/@.
+- mysql_grant fixed for WITH MAX_QUERIES_PER_HOUR
+- mysql_grant fixed so revoking all privileges accounts for GRANT OPTION
+- mysql_grant fixed to remove duplicate privileges.
+- mysql_grant fixed to handle PROCEDURES when removing privileges.
+- mysql_database won't try to create existing databases, breaking replication.
+- bind_address renamed bind-address in 'mysqld' options.
+- key_buffer renamed to key_buffer_size.
+- log_error renamed to log-error.
+- pid_file renamed to pid-file.
+- Ensure mysql::server:root_password runs before mysql::server::backup
+- Fix options_override -> override_options in the README.
+- Extensively rewrite the README to be accurate and awesome.
+
+- Move to requiring stdlib 3.2.0, shipped in PE3.0
+- Add many new tests.
+
+
 2013-11-13 - Version 2.1.0
 
 Summary:
