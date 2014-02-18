@@ -24,8 +24,9 @@ describe 'manage_config_file' do
       }
     EOS
     # Make sure this doesn't exist so we can test if puppet
-    # readded it
-    shell('rm /etc/my.cnf')
+    # readded it.  It may not exist in the first place on
+    # some platforms.
+    shell('rm /etc/my.cnf', :acceptable_exit_codes => [0,1,2])
     apply_manifest(pp, :catch_failures => true)
   end
 
