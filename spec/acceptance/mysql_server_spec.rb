@@ -191,12 +191,13 @@ describe 'mysql class' do
       pp = <<-EOS
         class { 'mysql::server':
           root_group => 'test',
+          config_file => '/tmp/mysql_group_test',
         }
       EOS
       apply_manifest(pp, :catch_failures => true)
     end
 
-    describe file('/etc/my.cnf') do
+    describe file('/tmp/mysql_group_test') do
       it { should be_grouped_into 'test' }
     end
   end
