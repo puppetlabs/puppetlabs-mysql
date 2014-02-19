@@ -58,3 +58,14 @@ describe 'mysql::server::root_password class' do
     end
   end
 end
+
+# Debian relies on a debian-sys-maint@ account to do almost everything.
+# Without recreating this account we can't even stop the service in future
+# tests.
+if fact('osfamily') == 'Debian'
+  describe 'readd debian user' do
+    it 'readds the user' do
+      shell("MYSQL_PASSWORD=`head -5 /etc/mysql/debian.cnf | grep password | cut -d' ' -f 3`; mysql -NBe \"GRANT ALL PRIVILEGES ON *.* to 'debian-sys-maint'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}' WITH GRANT OPTION;\"")
+    end
+  end
+end
