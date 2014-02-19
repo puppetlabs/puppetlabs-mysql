@@ -1,3 +1,13 @@
+2014-02-19 - Version 2.2.1
+
+Summary:
+
+Minor release that repairs mysql_database{} so that it sees the correct
+collation settings (it was only checking the global mysql ones, not the
+actual database and constantly setting it over and over since January 22nd).
+
+Also fixes a bunch of tests on various platforms.
+
 2014-02-13 - Version 2.2.0
 
 Summary:
