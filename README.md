@@ -313,6 +313,10 @@ Whether a separate file be used per database.
 
 Allows you to remove the backup scripts. Can be 'present' or 'absent'.
 
+#####`execpath`
+
+Allows you to set a custom PATH should your mysql installation be non-standard places. Defaults to `/usr/bin:/usr/sbin:/bin:/sbin`
+
 #####`time`
 
 An array of two elements to set the backup time.  Allows ['23', '5'] or ['3', '45'] for HH:MM times.

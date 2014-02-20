@@ -21,6 +21,7 @@ describe 'mysql::server::backup class' do
             'cp -r /tmp/backups /var/tmp/mysqlbackups',
             'touch /var/tmp/mysqlbackups.done',
           ],
+          execpath      => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
         }
       EOS
 

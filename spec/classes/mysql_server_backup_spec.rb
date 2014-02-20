@@ -8,6 +8,7 @@ describe 'mysql::server::backup' do
             'backupdir'          => '/tmp',
             'backuprotate'       => '25',
             'delete_before_dump' => true,
+            'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
         }
     }
     context 'standard conditions' do
@@ -50,6 +51,10 @@ describe 'mysql::server::backup' do
         it 'should have 25 days of rotation' do
             # MySQL counts from 0 I guess.
             should contain_file('mysqlbackup.sh').with_content(/.*ROTATE=24.*/)
+        end
+
+        it 'should have a standard PATH' do
+            should contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
         end
     end
 
