@@ -11,6 +11,7 @@ class mysql::server::backup (
   $ignore_events = true,
   $delete_before_dump = false,
   $backupdatabases = [],
+  $excludedatabases = [],
   $file_per_database = false,
   $ensure = 'present',
   $time = ['23', '5'],

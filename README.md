@@ -45,7 +45,7 @@ Compatibility mode may fail. It may eat your MySQL server. PLEASE test it before
 ###Beginning with MySQL
 
 If you just want a server installed with the default options you can run
-`include '::mysql::server'`.  
+`include '::mysql::server'`.
 
 If you need to customize options, such as the root
 password or `/etc/my.cnf` settings, then you must also pass in an override hash:
@@ -216,7 +216,7 @@ The provider to use to manage the service.
 
 #####`users`
 
-Optional hash of users to create, which are passed to [mysql_user](#mysql_user). 
+Optional hash of users to create, which are passed to [mysql_user](#mysql_user).
 
 ```puppet
 $users = {
@@ -233,7 +233,7 @@ $users = {
 
 #####`grants`
 
-Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). 
+Optional hash of grants, which are passed to [mysql_grant](#mysql_grant).
 
 ```puppet
 $grants = {
@@ -304,6 +304,11 @@ Boolean to determine if you should cleanup before backing up or after.
 #####`backupdatabases`
 
 Array of databases to specifically back up.
+
+#####`excludedatabases`
+
+Array of databases to exclude from backups. Thus only works when
+`file_per_database` is true.
 
 #####`file_per_database`
 
