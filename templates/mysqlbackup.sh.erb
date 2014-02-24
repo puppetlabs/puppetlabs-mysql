@@ -40,7 +40,7 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
-mysql -s -r -N -e 'SHOW DATABASES' <% if !@excludedatabases.empty? %> | grep -v '^\(<%= @excludedatabases.join('|') %>\)$' <% end %> | while read dbname
+mysql -s -r -N -e 'SHOW DATABASES' <% if !@excludedatabases.empty? %> | grep -v '^\(<%= @excludedatabases.join('\|') %>\)$' <% end %> | while read dbname
 do
   mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
     ${EVENTS} \
