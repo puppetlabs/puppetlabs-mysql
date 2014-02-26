@@ -85,7 +85,7 @@ class mysql::params {
       # mysql::bindings
       $java_package_name   = 'mysql-connector-java'
       $perl_package_name   = 'perl-DBD-mysql'
-      $php_package_name    = 'apache2-mod_php5'
+      $php_package_name    = 'apache2-mod_php53'
       $python_package_name = 'python-mysql'
       $ruby_package_name   = $::operatingsystem ? {
         /OpenSuSE/         => 'rubygem-mysql',

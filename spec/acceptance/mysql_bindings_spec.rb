@@ -13,7 +13,7 @@ when 'RedHat'
 when 'Suse'
   java_package   = 'mysql-connector-java'
   perl_package   = 'perl-DBD-MySQL'
-  php_package    = 'apache2-mod_php5'
+  php_package    = 'apache2-mod_php53'
   python_package = 'python-mysql'
   case operatingsystem
   when /OpenSuSE/
