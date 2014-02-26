@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql::server::account_security class' do
+describe 'mysql::server::account_security class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   describe 'running puppet code' do
     it 'should work with no errors' do
       pp = <<-EOS

@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql::server::monitor class' do
+describe 'mysql::server::monitor class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   it 'should work with no errors' do
     pp = <<-EOS
       class { 'mysql::server': root_password => 'password' }

@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql class' do
+describe 'mysql class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   case fact('osfamily')
   when 'RedHat'
     package_name     = 'mysql-server'

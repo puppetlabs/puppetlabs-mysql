@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql::db define' do
+describe 'mysql::db define', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   describe 'creating a database' do
     # Using puppet_apply as a helper
     it 'should work with no errors' do

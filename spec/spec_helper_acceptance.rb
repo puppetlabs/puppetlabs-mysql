@@ -1,5 +1,7 @@
 require 'beaker-rspec'
 
+UNSUPPORTED_PLATFORMS = [ 'Windows', 'Solaris', 'AIX' ]
+
 unless ENV['RS_PROVISION'] == 'no'
   hosts.each do |host|
     # Install Puppet

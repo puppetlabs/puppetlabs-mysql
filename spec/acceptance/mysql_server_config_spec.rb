@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'config location' do
+describe 'config location', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   it 'creates the file elsewhere' do
     pp = <<-EOS
         class { 'mysql::server':
