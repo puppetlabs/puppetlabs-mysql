@@ -12,7 +12,7 @@ when 'RedHat'
   ruby_package   = 'ruby-mysql'
 when 'Suse'
   java_package   = 'mysql-connector-java'
-  perl_package   = 'perl-DBD-MySQL'
+  perl_package   = 'perl-DBD-mysql'
   php_package    = 'apache2-mod_php53'
   python_package = 'python-mysql'
   case operatingsystem
