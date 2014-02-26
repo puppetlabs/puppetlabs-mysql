@@ -21,7 +21,7 @@ describe 'manage_config_file' do
       class { 'mysql::server':
         config_file        => '/etc/my.cnf',
         manage_config_file => false,
-        manage_service     => false,
+        service_manage     => false,
       }
     EOS
     # Make sure this doesn't exist so we can test if puppet
