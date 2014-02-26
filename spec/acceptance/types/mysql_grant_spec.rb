@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql_grant' do
+describe 'mysql_grant', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
 
   describe 'setup' do
     it 'setup mysql::server' do
@@ -283,7 +283,7 @@ describe 'mysql_grant' do
       expect(apply_manifest(pp, :catch_failures => true).exit_code).to eq(0)
     end
   end
-  
+
   describe 'adding procedure privileges' do
     it 'should work without errors' do
        pp = <<-EOS
@@ -294,10 +294,10 @@ describe 'mysql_grant' do
          privileges => ['EXECUTE'],
        }
        EOS
-       
+
       apply_manifest(pp, :catch_failures => true)
     end
-    
+
     it 'should find the user' do
       shell("mysql -NBe \"SHOW GRANTS FOR test2@tester\"") do |r|
         expect(r.stdout).to match(/GRANT EXECUTE ON PROCEDURE `test`.`simpleproc` TO 'test2'@'tester'/)

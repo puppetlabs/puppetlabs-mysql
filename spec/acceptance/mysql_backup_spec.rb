@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql::server::backup class' do
+describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   context 'should work with no errors' do
     it 'when configuring mysql backups' do
       pp = <<-EOS

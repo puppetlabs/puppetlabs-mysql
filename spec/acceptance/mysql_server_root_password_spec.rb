@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql::server::root_password class' do
+describe 'mysql::server::root_password class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
 
   describe 'reset' do
     it 'shuts down mysql' do

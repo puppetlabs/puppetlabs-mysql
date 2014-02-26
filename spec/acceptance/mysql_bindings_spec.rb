@@ -44,7 +44,7 @@ else
   end
 end
 
-describe 'mysql::bindings class' do
+describe 'mysql::bindings class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
 
   describe 'running puppet code' do
     it 'should work with no errors' do
