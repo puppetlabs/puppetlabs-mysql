@@ -26,7 +26,7 @@ class mysql::server::backup (
   }
 
   mysql_grant { "${backupuser}@localhost/*.*":
-    ensure     => present,
+    ensure     => $ensure,
     user       => "${backupuser}@localhost",
     table      => '*.*',
     privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ],
