@@ -41,7 +41,7 @@ RSpec.configure do |c|
         end
       end
 
-      shell('/bin/touch /etc/puppet/hiera.yaml')
+      shell("/bin/touch #{default['distmoduledir']}/hiera.yaml")
       shell('puppet module install puppetlabs-stdlib --version 3.2.0', { :acceptable_exit_codes => [0,1] })
     end
   end
