@@ -5,7 +5,10 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
     it 'when configuring mysql backups' do
       pp = <<-EOS
         class { 'mysql::server': root_password => 'password' }
-        mysql::db { 'backup1':
+        mysql::db { [
+          'backup1',
+          'backup2'
+        ]:
           user     => 'backup',
           password => 'secret',
         }
