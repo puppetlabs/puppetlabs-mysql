@@ -1,9 +1,11 @@
-##2014-03-04 - Supported Release 2.2.x
+##2014-03-04 - Supported Release 2.2.2
 ###Summary
-
-####Features
+This is a supported release. Mostly comprised of enhanced testing, plus a
+bugfix for Suse.
 
 ####Bugfixes
+- PHP bindings on Suse
+- Test fixes
 
 ####Known Bugs
 * No known bugs
