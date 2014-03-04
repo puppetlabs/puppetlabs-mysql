@@ -27,4 +27,10 @@ class mysql::server::config {
       mode    => '0644',
     }
   }
+
+  if $options['mysqld']['ssl-disable'] {
+    notify {'ssl-disable':
+      message =>'Disabling SSL is evil! You should never ever do this except if you are forced to use a mysql version compiled without SSL support'
+    }
+  }
 }
