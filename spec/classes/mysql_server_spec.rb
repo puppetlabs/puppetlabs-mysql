@@ -56,6 +56,15 @@ describe 'mysql::server' do
     it { should contain_class('mysql::server::account_security') }
   end
 
+  describe 'possibility of disabling ssl completely' do
+    let(:params) {
+      { :override_options => { 'mysqld' => { 'ssl' => true, 'ssl-disable' => true } }}
+    }
+    it do
+      should contain_file('/etc/my.cnf').without_content(/^\s*ssl\s*(?:$|= true)/m)
+    end
+  end
+
   context 'mysql::server::install' do
     let(:params) {{ :package_ensure => 'present', :name => 'mysql-server' }}
     it do

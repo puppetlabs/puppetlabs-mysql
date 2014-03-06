@@ -212,6 +212,7 @@ class mysql::params {
       'ssl-ca'                => $mysql::params::ssl_ca,
       'ssl-cert'              => $mysql::params::ssl_cert,
       'ssl-key'               => $mysql::params::ssl_key,
+      'ssl-disable'           => false,
       'thread_cache_size'     => '8',
       'thread_stack'          => '256K',
       'tmpdir'                => $mysql::params::tmpdir,
