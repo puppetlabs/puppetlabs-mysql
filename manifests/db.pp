@@ -2,6 +2,7 @@
 define mysql::db (
   $user,
   $password,
+  $dbname      = $name,
   $charset     = 'utf8',
   $collate     = 'utf8_general_ci',
   $host        = 'localhost',
@@ -13,11 +14,11 @@ define mysql::db (
   #input validation
   validate_re($ensure, '^(present|absent)$',
   "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-  $table = "${name}.*"
+  $table = "${dbname}.*"
 
   include '::mysql::client'
 
-  mysql_database { $name:
+  mysql_database { $dbname:
     ensure   => $ensure,
     charset  => $charset,
     collate  => $collate,
@@ -46,13 +47,13 @@ define mysql::db (
     $refresh = ! $enforce_sql
 
     if $sql {
-      exec{ "${name}-import":
-        command     => "/usr/bin/mysql ${name} < ${sql}",
+      exec{ "${dbname}-import":
+        command     => "/usr/bin/mysql ${dbname} < ${sql}",
         logoutput   => true,
         environment => "HOME=${::root_home}",
         refreshonly => $refresh,
         require     => Mysql_grant["${user}@${host}/${table}"],
-        subscribe   => Mysql_database[$name],
+        subscribe   => Mysql_database[$dbname],
       }
     }
   }

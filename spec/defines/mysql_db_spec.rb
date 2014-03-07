@@ -48,4 +48,9 @@ describe 'mysql::db', :type => :define do
       'collate' => 'utf8_danish_ci',
     })
   end
+
+  it 'should use dbname parameter as database name instead of name' do
+    params.merge!({'dbname' => 'real_db'})
+    should contain_mysql_database('real_db')
+  end
 end
