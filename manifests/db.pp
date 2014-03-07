@@ -18,14 +18,14 @@ define mysql::db (
 
   include '::mysql::client'
 
-  mysql_database { $dbname:
+  $db_resource = {
     ensure   => $ensure,
     charset  => $charset,
     collate  => $collate,
     provider => 'mysql',
     require  => [ Class['mysql::server'], Class['mysql::client'] ],
-    before   => Mysql_user["${user}@${host}"],
   }
+  ensure_resource('mysql_database', $dbname, $db_resource)
 
   $user_resource = {
     ensure        => $ensure,
@@ -41,7 +41,7 @@ define mysql::db (
       provider   => 'mysql',
       user       => "${user}@${host}",
       table      => $table,
-      require    => [ Mysql_user["${user}@${host}"], Class['mysql::server'] ],
+      require    => [Mysql_database[$dbname], Mysql_user["${user}@${host}"], Class['mysql::server'] ],
     }
 
     $refresh = ! $enforce_sql
