@@ -434,6 +434,25 @@ Creates a database with a user and assigns some privileges.
     }
 ```
 
+Or using a different resource name with exported resources,
+
+```puppet
+    @@mysql::db { "mydb_${fqdn}":
+      user     => 'myuser',
+      password => 'mypass',
+      dbname   => 'mydb',
+      host     => ${fqdn},
+      grant    => ['SELECT', 'UPDATE'],
+      tag      => $domain,
+    }
+```
+
+Then collect it on the remote DB server.
+
+```puppet
+    Mysql::Db <<| tag == $domain |>>
+```
+
 ###Providers
 
 ####mysql_database

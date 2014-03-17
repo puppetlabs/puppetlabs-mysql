@@ -58,4 +58,31 @@ describe 'mysql::db define' do
       end
     end
   end
+
+  describe 'creating a database with dbname parameter' do
+    # Using puppet_apply as a helper
+    it 'should work with no errors' do
+      pp = <<-EOS
+        class { 'mysql::server': override_options => { 'root_password' => 'password' } }
+        mysql::db { 'spec1':
+          user     => 'root1',
+          password => 'password',
+	  dbname   => 'realdb',
+        }
+      EOS
+
+      # Run it twice and test for idempotency
+      puppet_apply(pp) do |r|
+        [0,2].should include r.exit_code
+        r.refresh
+        r.exit_code.should be_zero
+      end
+    end
+
+    it 'should have the database' do
+      shell("mysql -e 'show databases;'|grep realdb") do |s|
+        s.exit_code.should be_zero
+      end
+    end
+  end
 end
