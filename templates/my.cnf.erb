@@ -17,4 +17,4 @@
 <%   end %>
 <% end -%>
 
-!includedir /etc/mysql/conf.d/
+!includedir <%= scope.lookupvar('mysql::server::config_dir') %>/conf.d

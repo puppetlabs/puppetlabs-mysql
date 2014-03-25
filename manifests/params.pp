@@ -4,6 +4,7 @@ class mysql::params {
   $manage_config_file     = true
   $old_root_password      = ''
   $purge_conf_dir         = false
+  $config_dir             = '/etc/mysql'
   $restart                = false
   $root_password          = 'UNSET'
   $server_package_ensure  = 'present'

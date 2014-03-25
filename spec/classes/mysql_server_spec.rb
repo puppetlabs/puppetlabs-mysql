@@ -75,6 +75,27 @@ describe 'mysql::server' do
     end
   end
 
+  context 'mysql::server::config alternative conf dir' do
+    let(:params){{ :config_dir => '/etc/mysql-alternative' }}
+    it do
+      should contain_file('/etc/mysql-alternative').with({
+        :ensure => :directory,
+        :mode   => '0755',
+      })
+    end
+    it do
+      should contain_file('/etc/mysql-alternative/conf.d').with({
+        :ensure => :directory,
+        :mode   => '0755',
+      })
+    end
+    it do
+      should contain_file('/etc/mysql-alternative/my.cnf').with_content(
+        %r{^!includedir /etc/mysql-alternative/conf.d/$}
+      )
+    end
+  end
+
   context 'mysql::server::config' do
     it do
       should contain_file('/etc/mysql').with({

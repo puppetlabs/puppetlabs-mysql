@@ -15,6 +15,36 @@ describe 'config location', :unless => UNSUPPORTED_PLATFORMS.include?(fact('oper
   end
 end
 
+describe 'config dir location', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  it 'creates the config dir elsewhere' do
+    pp = <<-EOS
+        class { 'mysql::server':
+          config_dir => '/etc/alternativedir',
+        }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
+  end
+
+  describe file('/etc/alternativedir') do
+    it { should be_directory }
+  end
+end
+
+describe 'config dir location', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+  it 'creates the config dir elsewhere' do
+    pp = <<-EOS
+        class { 'mysql::server':
+          config_dir => '/etc/alternativedir',
+        }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
+  end
+
+  describe file('/etc/alternativedir') do
+    it { should be_directory }
+  end
+end
+
 describe 'manage_config_file' do
   it 'wont reset the location of my.cnf' do
     pp = <<-EOS

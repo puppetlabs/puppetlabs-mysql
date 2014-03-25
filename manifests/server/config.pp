@@ -9,12 +9,12 @@ class mysql::server::config {
     mode   => '0400',
   }
 
-  file { '/etc/mysql':
+  file { $mysql::server::config_dir:
     ensure => directory,
     mode   => '0755',
   }
 
-  file { '/etc/mysql/conf.d':
+  file { "${mysql::server::config_dir}/conf.d":
     ensure  => directory,
     mode    => '0755',
     recurse => $mysql::server::purge_conf_dir,
