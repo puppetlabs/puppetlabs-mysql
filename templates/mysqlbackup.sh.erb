@@ -11,7 +11,7 @@
 ##### START CONFIG ###################################################
 
 USER=<%= @backupuser %>
-PASS=<%= @backuppassword %>
+PASS='<%= @backuppassword %>'
 DIR=<%= @backupdir %>
 ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 
