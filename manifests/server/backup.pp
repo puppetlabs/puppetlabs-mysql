@@ -15,6 +15,7 @@ class mysql::server::backup (
   $ensure = 'present',
   $time = ['23', '5'],
   $postscript = false,
+  $execpath   = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) {
 
   mysql_user { "${backupuser}@localhost":
