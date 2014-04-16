@@ -16,6 +16,7 @@ class mysql::server::backup (
   $time = ['23', '5'],
   $postscript = false,
   $execpath   = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $mysqlbackup_sh_template = 'mysql/mysqlbackup.sh.erb',
 ) {
 
   mysql_user { "${backupuser}@localhost":
@@ -48,7 +49,7 @@ class mysql::server::backup (
     mode    => '0700',
     owner   => 'root',
     group   => 'root',
-    content => template('mysql/mysqlbackup.sh.erb'),
+    content => template($mysqlbackup_sh_template),
   }
 
   file { 'mysqlbackupdir':
