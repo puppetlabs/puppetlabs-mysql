@@ -40,7 +40,7 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
-mysql -s -r -N -e 'SHOW DATABASES' | while read dbname
+mysql -s -r -N -e 'SELECT SCHEMA_NAME FROM information_schema.schemata WHERE SCHEMA_NAME NOT IN ("information_schema", "performance_schema", "test", "mysql");' | while read dbname
 do
   mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
     ${EVENTS} \
