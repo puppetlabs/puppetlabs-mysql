@@ -9,9 +9,11 @@ describe 'mysql::bindings' do
     'ruby_enable'   => true,
   }}
 
-  shared_examples 'bindings' do |osfamily, operatingsystem, java_name, perl_name, php_name, python_name, ruby_name|
+  shared_examples 'bindings' do |osfamily, operatingsystem, operatingsystemrelease, java_name, perl_name, php_name, python_name, ruby_name|
     let :facts do
-      { :osfamily => osfamily, :operatingsystem => operatingsystem, :root_home => '/root'}
+      { :osfamily => osfamily, :operatingsystem => operatingsystem,
+        :operatingsystemrelease => operatingsystemrelease, :root_home => '/root',
+      }
     end
     it { should contain_package('mysql-connector-java').with(
       :name   => java_name,
@@ -32,17 +34,17 @@ describe 'mysql::bindings' do
   end
 
   context 'Debian' do
-    it_behaves_like 'bindings', 'Debian', 'Debian', 'libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby'
-    it_behaves_like 'bindings', 'Debian', 'Ubuntu', 'libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby'
+    it_behaves_like 'bindings', 'Debian', 'Debian', '7.4','libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby'
+    it_behaves_like 'bindings', 'Debian', 'Ubuntu', '14.04', 'libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby'
   end
 
   context 'freebsd' do
-    it_behaves_like 'bindings', 'FreeBSD', 'FreeBSD', 'databases/mysql-connector-java', 'p5-DBD-mysql', 'databases/php5-mysql', 'databases/py-MySQLdb', 'databases/ruby-mysql'
+    it_behaves_like 'bindings', 'FreeBSD', 'FreeBSD', '10.0', 'databases/mysql-connector-java', 'p5-DBD-mysql', 'databases/php5-mysql', 'databases/py-MySQLdb', 'databases/ruby-mysql'
   end
 
   context 'redhat' do
-    it_behaves_like 'bindings', 'RedHat', 'RedHat', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql'
-    it_behaves_like 'bindings', 'RedHat', 'OpenSuSE', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql'
+    it_behaves_like 'bindings', 'RedHat', 'RedHat', '6.5', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql'
+    it_behaves_like 'bindings', 'RedHat', 'OpenSuSE', '11.3', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql'
   end
 
   describe 'on any other os' do
