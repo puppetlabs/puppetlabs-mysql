@@ -19,7 +19,7 @@ describe 'mysql::server::backup' do
         )}
 
         it { should contain_mysql_grant('testuser@localhost/*.*').with(
-            :privileges => ["SELECT", "RELOAD", "LOCK TABLES", "SHOW VIEW"]
+            :privileges => ["SELECT", "RELOAD", "LOCK TABLES", "SHOW VIEW", "PROCESS"]
         )}
 
         it { should contain_cron('mysql-backup').with(
