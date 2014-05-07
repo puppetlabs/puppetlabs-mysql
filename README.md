@@ -104,7 +104,7 @@ replicate-do-db = base2
 ###Custom configuration
 
 To add custom MySQL configuration, drop additional files into
-`/etc/mysql/conf.d/`. Dropping files into conf.d allows you to override settings or add additional ones, which is helpful if you choose not to use `override_options` in `mysql::server`. The conf.d location is hardcoded into the my.cnf template file.
+`includedir`. Dropping files into `includedir` allows you to override settings or add additional ones, which is helpful if you choose not to use `override_options` in `mysql::server`. The `includedir` location is by default set to /etc/mysql/conf.d.
 
 ##Reference
 
@@ -173,9 +173,12 @@ The location of the MySQL configuration file.
 
 Whether the MySQL configuration file should be managed.
 
+#####`includedir`
+The location of !includedir for custom configuration overrides.
+
 #####`purge_conf_dir`
 
-Whether the conf.d directory should be purged.
+Whether the `includedir` directory should be purged.
 
 #####`restart`
 
