@@ -2,6 +2,7 @@
 class mysql::server::config {
 
   $options = $mysql::server::options
+  $includedir = $mysql::server::includedir
 
   File {
     owner  => 'root',
@@ -9,16 +10,13 @@ class mysql::server::config {
     mode   => '0400',
   }
 
-  file { '/etc/mysql':
-    ensure => directory,
-    mode   => '0755',
-  }
-
-  file { '/etc/mysql/conf.d':
-    ensure  => directory,
-    mode    => '0755',
-    recurse => $mysql::server::purge_conf_dir,
-    purge   => $mysql::server::purge_conf_dir,
+  if $includedir and $includedir != '' {
+    file { "$mysql::server::includedir":
+      ensure  => directory,
+      mode    => '0755',
+      recurse => $mysql::server::purge_conf_dir,
+      purge   => $mysql::server::purge_conf_dir,
+    }
   }
 
   if $mysql::server::manage_config_file  {

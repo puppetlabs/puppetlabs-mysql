@@ -76,24 +76,44 @@ describe 'mysql::server' do
   end
 
   context 'mysql::server::config' do
-    it do
-      should contain_file('/etc/mysql').with({
-        :ensure => :directory,
-        :mode   => '0755',
-      })
+    context 'with includedir' do
+      let(:params) {{ :includedir => '/etc/my.cnf.d' }}
+      it do
+        should contain_file('/etc/my.cnf.d').with({
+          :ensure => :directory,
+          :mode   => '0755',
+        })
+      end
+
+      it do
+        should contain_file('/etc/my.cnf').with({
+          :mode => '0644',
+        })
+      end
+
+      it do
+         should contain_file('/etc/my.cnf').with_content(/!includedir/)
+      end
     end
 
-    it do
-      should contain_file('/etc/mysql/conf.d').with({
-        :ensure => :directory,
-        :mode   => '0755',
-      })
-    end
+    context 'without includedir' do
+      let(:params) {{ :includedir => '' }}
+      it do
+        should_not contain_file('/etc/my.cnf.d').with({
+          :ensure => :directory,
+          :mode   => '0755',
+        })
+      end
 
-    it do
-      should contain_file('/etc/my.cnf').with({
-        :mode => '0644',
-      })
+      it do
+        should contain_file('/etc/my.cnf').with({
+          :mode => '0644',
+        })
+      end
+
+      it do
+         should contain_file('/etc/my.cnf').without_content(/!includedir/)
+      end
     end
   end
 
