@@ -88,6 +88,7 @@ define mysql::server::config (
   include mysql::config
 
   if is_hash($settings) {
+    $includedir = $mysql::params::includedir,
     $content = template('mysql/my.conf.cnf.erb')
   } else {
     $content = $settings

@@ -55,6 +55,8 @@ class mysql::params {
         $service_name = 'mariadb'
         $log_error           = '/var/log/mariadb/mariadb.log'
         $config_file         = '/etc/my.cnf.d/server.cnf'
+        # mariadb package by default has !includedir set in my.cnf to /etc/my.cnf.d
+        $includedir          = undef
         $pidfile             = '/var/run/mariadb/mariadb.pid'
       } else {
         $client_package_name = 'mysql'
@@ -62,6 +64,7 @@ class mysql::params {
         $service_name = 'mysqld'
         $log_error           = '/var/log/mysqld.log'
         $config_file         = '/etc/my.cnf'
+        $includedir          = '/etc/my.cnf.d'
         $pidfile             = '/var/run/mysqld/mysqld.pid'
       }
 
@@ -87,6 +90,7 @@ class mysql::params {
       $socket               = '/var/run/mysqld/mysqld.sock'
       $pidfile              = '/var/run/mysqld/mysqld.pid'
       $config_file          = '/etc/mysql/my.cnf'
+      $includedir           = '/etc/mysql/conf.d'
       $log_error            = '/var/log/mysql/error.log'
       $ruby_package_name    = 'libmysql-ruby'
       $python_package_name  = 'python-mysqldb'
@@ -106,6 +110,7 @@ class mysql::params {
       $socket                = '/tmp/mysql.sock'
       $pidfile               = '/var/db/mysql/mysql.pid'
       $config_file           = '/var/db/mysql/my.cnf'
+      $includedir            = '/var/db/mysql/my.cnf.d'
       $log_error             = "/var/db/mysql/${::hostname}.err"
       $ruby_package_name     = 'ruby-mysql'
       $ruby_package_provider = 'gem'
@@ -127,6 +132,7 @@ class mysql::params {
           $server_package_name   = 'mysql-server'
           $socket                = '/var/lib/mysql/mysql.sock'
           $config_file           = '/etc/my.cnf'
+          $includedir            = '/etc/my.cnf.d'
           $log_error             = '/var/log/mysqld.log'
           $ruby_package_name     = 'ruby-mysql'
           $ruby_package_provider = 'gem'

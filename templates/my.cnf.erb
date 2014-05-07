@@ -16,7 +16,7 @@ skip-external-locking
 
 <% if bind_address %>
 bind-address    = <%= bind_address %>
-<% end %> 
+<% end %>
 
 key_buffer         = 16M
 max_allowed_packet = 16M
@@ -44,4 +44,6 @@ max_allowed_packet = 16M
 [mysql]
 [isamchk]
 key_buffer    = 16M
-!includedir /etc/mysql/conf.d/
+<% if @includedir and @includedir != '' %>
+!includedir <%= @includedir %>
+<% end %>
