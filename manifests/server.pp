@@ -1,6 +1,7 @@
 # Class: mysql::server:  See README.md for documentation.
 class mysql::server (
   $config_file             = $mysql::params::config_file,
+  $config_dir              = $mysql::params::config_dir,
   $manage_config_file      = $mysql::params::manage_config_file,
   $old_root_password       = $mysql::params::old_root_password,
   $override_options        = {},

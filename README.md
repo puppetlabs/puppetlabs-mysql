@@ -169,6 +169,11 @@ You can just make an entry like `thing => true`, `thing => value`, or `thing => 
 
 The location of the MySQL configuration file.
 
+#####`config_dir`
+
+The location of the MySQL configuration dir. Note: This is not the conf.d
+directory!
+
 #####`manage_config_file`
 
 Whether the MySQL configuration file should be managed.
