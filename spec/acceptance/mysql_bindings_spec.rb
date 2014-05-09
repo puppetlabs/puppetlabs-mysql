@@ -27,10 +27,14 @@ when 'Suse'
   end
 when 'Debian'
   java_package = 'libmysql-java'
-  perl_package   = 'libdbd-mysql-perl'
-  php_package    = 'php5-mysql'
-  python_package = 'python-mysqldb'
-  ruby_package   = 'libmysql-ruby'
+  perl_package     = 'libdbd-mysql-perl'
+  php_package      = 'php5-mysql'
+  python_package   = 'python-mysqldb'
+  if fact('lsbdistcodename') == 'trusty'
+    ruby_package   = 'ruby-mysql'
+  else
+    ruby_package   = 'libmysql-ruby'
+  end
 when 'FreeBSD'
   java_package = 'databases/mysql-connector-java'
   perl_package   = 'p5-DBD-mysql'
