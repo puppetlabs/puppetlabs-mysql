@@ -139,7 +139,10 @@ class mysql::params {
       $perl_package_name   = 'libdbd-mysql-perl'
       $php_package_name    = 'php5-mysql'
       $python_package_name = 'python-mysqldb'
-      $ruby_package_name   = 'libmysql-ruby'
+      $ruby_package_name   = $::lsbdistcodename ? {
+        'trusty'           => 'ruby-mysql',
+        default            => 'libmysql-ruby',
+      }
     }
 
     'FreeBSD': {
