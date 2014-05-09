@@ -18,7 +18,7 @@ describe 'mysql::server::root_password class', :unless => UNSUPPORTED_PLATFORMS.
     it 'deletes all databases' do
       case fact('osfamily')
       when 'RedHat', 'Suse'
-        shell('rm -rf `grep datadir /etc/my.cnf | cut -d" " -f 3`/*')
+        shell('grep -q datadir /etc/my.cnf && rm -rf `grep datadir /etc/my.cnf | cut -d" " -f 3`/*')
       when 'Debian'
         shell('rm -rf `grep datadir /etc/mysql/my.cnf | cut -d" " -f 3`/*')
         shell('mysql_install_db')
