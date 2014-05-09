@@ -50,7 +50,7 @@ class mysql::params {
         $server_package_name = 'mariadb-server'
         $server_service_name = 'mariadb'
         $log_error           = '/var/log/mariadb/mariadb.log'
-        $config_file         = '/etc/my.cnf.d/server.cnf'
+        $config_file         = '/etc/my.cnf'
         $pidfile             = '/var/run/mariadb/mariadb.pid'
       } else {
         $client_package_name = 'mysql'
