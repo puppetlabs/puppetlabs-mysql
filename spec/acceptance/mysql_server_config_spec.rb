@@ -15,7 +15,7 @@ describe 'config location', :unless => UNSUPPORTED_PLATFORMS.include?(fact('oper
   end
 end
 
-describe 'manage_config_file' do
+describe 'manage_config_file', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   it 'wont reset the location of my.cnf' do
     pp = <<-EOS
       class { 'mysql::server':
@@ -36,7 +36,7 @@ describe 'manage_config_file' do
   end
 end
 
-describe 'resets' do
+describe 'resets', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   it 'cleans up' do
     pp = <<-EOS
         class { 'mysql::server': }
