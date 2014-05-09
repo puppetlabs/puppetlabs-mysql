@@ -2,6 +2,7 @@ require 'spec_helper_acceptance'
 
 osfamily = fact('osfamily')
 operatingsystem = fact('operatingsystem')
+ruby_package_provider = 'undef'
 
 case osfamily
 when 'RedHat'
@@ -10,6 +11,9 @@ when 'RedHat'
   php_package    = 'php-mysql'
   python_package = 'MySQL-python'
   ruby_package   = 'ruby-mysql'
+  if fact('operatingsystemmajrelease') == '7'
+    ruby_package_provider = 'gem'
+  end
 when 'Suse'
   java_package   = 'mysql-connector-java'
   perl_package   = 'perl-DBD-mysql'
@@ -81,7 +85,7 @@ describe 'mysql::bindings class', :unless => UNSUPPORTED_PLATFORMS.include?(fact
           perl_package_provider   => undef,
           php_package_provider    => undef,
           python_package_provider => undef,
-          ruby_package_provider   => undef,
+          ruby_package_provider   => #{ruby_package_provider},
         }
       EOS
 
@@ -110,8 +114,15 @@ describe 'mysql::bindings class', :unless => UNSUPPORTED_PLATFORMS.include?(fact
       it { should be_installed }
     end
 
-    describe package(ruby_package) do
-      it { should be_installed }
+    # ruby-mysql is installed via gem on RHEL7, be_installed doesn't know how to check that
+    if fact('osfamily') == 'RedHat' && fact('operatingsystemmajrelease') == '7'
+      describe package(ruby_package) do
+        it { should_not be_installed }
+      end
+    else
+      describe package(ruby_package) do
+        it { should be_installed }
+      end
     end
   end
 end

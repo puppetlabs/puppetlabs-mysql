@@ -13,6 +13,10 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
           password => 'secret',
         }
 
+        package { 'bzip2':
+          ensure => present,
+        }
+
         class { 'mysql::server::backup':
           backupuser     => 'myuser',
           backuppassword => 'mypassword',
@@ -25,6 +29,7 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
             'touch /var/tmp/mysqlbackups.done',
           ],
           execpath      => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          require       => Package['bzip2'],
         }
       EOS
 

@@ -33,6 +33,8 @@ RSpec.configure do |c|
           shell("yum localinstall -y http://mirror.pnl.gov/epel/6/i386/epel-release-6-8.noarch.rpm")
         elsif version == '5'
           shell("yum localinstall -y http://mirrors.servercentral.net/fedora/epel/5/i386/epel-release-5-4.noarch.rpm")
+        elsif version == '7'
+          puts "There aren't actually any failures on RHEL7 without EPEL."
         else
           puts "Sorry, this version is not supported."
           exit

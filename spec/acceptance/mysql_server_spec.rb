@@ -3,10 +3,17 @@ require 'spec_helper_acceptance'
 describe 'mysql class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
   case fact('osfamily')
   when 'RedHat'
-    package_name     = 'mysql-server'
-    service_name     = 'mysqld'
-    service_provider = 'undef'
-    mycnf            = '/etc/my.cnf'
+    if fact('operatingsystemmajrelease') == '7'
+      package_name     = 'mariadb-server'
+      service_name     = 'mariadb'
+      service_provider = 'undef'
+      mycnf            = '/etc/my.cnf'
+    else
+      package_name     = 'mysql-server'
+      service_name     = 'mysqld'
+      service_provider = 'undef'
+      mycnf            = '/etc/my.cnf'
+    end
   when 'Suse'
     case fact('operatingsystem')
     when 'OpenSuSE'
