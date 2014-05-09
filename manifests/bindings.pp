@@ -6,22 +6,30 @@ class mysql::bindings (
   $php_enable    = false,
   $python_enable = false,
   $ruby_enable   = false,
+  $client_dev    = false,
+  $daemon_dev    = false,
   # Settings for the various classes.
-  $java_package_ensure     = $mysql::params::java_package_ensure,
-  $java_package_name       = $mysql::params::java_package_name,
-  $java_package_provider   = $mysql::params::java_package_provider,
-  $perl_package_ensure     = $mysql::params::perl_package_ensure,
-  $perl_package_name       = $mysql::params::perl_package_name,
-  $perl_package_provider   = $mysql::params::perl_package_provider,
-  $php_package_ensure      = $mysql::params::php_package_ensure,
-  $php_package_name        = $mysql::params::php_package_name,
-  $php_package_provider    = $mysql::params::php_package_provider,
-  $python_package_ensure   = $mysql::params::python_package_ensure,
-  $python_package_name     = $mysql::params::python_package_name,
-  $python_package_provider = $mysql::params::python_package_provider,
-  $ruby_package_ensure     = $mysql::params::ruby_package_ensure,
-  $ruby_package_name       = $mysql::params::ruby_package_name,
-  $ruby_package_provider   = $mysql::params::ruby_package_provider
+  $java_package_ensure         = $mysql::params::java_package_ensure,
+  $java_package_name           = $mysql::params::java_package_name,
+  $java_package_provider       = $mysql::params::java_package_provider,
+  $perl_package_ensure         = $mysql::params::perl_package_ensure,
+  $perl_package_name           = $mysql::params::perl_package_name,
+  $perl_package_provider       = $mysql::params::perl_package_provider,
+  $php_package_ensure          = $mysql::params::php_package_ensure,
+  $php_package_name            = $mysql::params::php_package_name,
+  $php_package_provider        = $mysql::params::php_package_provider,
+  $python_package_ensure       = $mysql::params::python_package_ensure,
+  $python_package_name         = $mysql::params::python_package_name,
+  $python_package_provider     = $mysql::params::python_package_provider,
+  $ruby_package_ensure         = $mysql::params::ruby_package_ensure,
+  $ruby_package_name           = $mysql::params::ruby_package_name,
+  $ruby_package_provider       = $mysql::params::ruby_package_provider,
+  $client_dev_package_ensure   = $mysql::params::client_dev_package_ensure,
+  $client_dev_package_name     = $mysql::params::client_dev_package_name,
+  $client_dev_package_provider = $mysql::params::client_dev_package_provider,
+  $daemon_dev_package_ensure   = $mysql::params::daemon_dev_package_ensure,
+  $daemon_dev_package_name     = $mysql::params::daemon_dev_package_name,
+  $daemon_dev_package_provider = $mysql::params::daemon_dev_package_provider
 ) inherits mysql::params {
 
   if $java_enable   { include '::mysql::bindings::java' }
@@ -29,5 +37,7 @@ class mysql::bindings (
   if $php_enable    { include '::mysql::bindings::php' }
   if $python_enable { include '::mysql::bindings::python' }
   if $ruby_enable   { include '::mysql::bindings::ruby' }
+  if $client_dev    { include '::mysql::bindings::client_dev' }
+  if $daemon_dev    { include '::mysql::bindings::daemon_dev' }
 
 }
