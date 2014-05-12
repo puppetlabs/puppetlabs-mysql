@@ -54,6 +54,13 @@ end
 
 describe 'mysql::bindings class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
 
+  if fact('osfamily') == 'RedHat' and fact('operatingsystemmajrelease') =~ /(5|6)/
+    it 'adds epel' do
+      pp = "class { 'epel': }"
+      apply_manifest(pp, :catch_failures => true)
+    end
+  end
+
   describe 'running puppet code' do
     it 'should work with no errors' do
       pp = <<-EOS
