@@ -156,6 +156,29 @@ class mysql::params {
       $daemon_dev_package_name = 'libmysqld-dev'
     }
 
+    'Archlinux': {
+      $client_package_name = 'mariadb-clients'
+      $server_package_name = 'mariadb'
+      $basedir             = '/usr'
+      $config_file         = '/etc/mysql/my.cnf'
+      $datadir             = '/var/lib/mysql'
+      $log_error           = '/var/log/mysqld.log'
+      $pidfile             = '/var/run/mysqld/mysqld.pid'
+      $root_group          = 'root'
+      $server_service_name = 'mysqld'
+      $socket              = '/var/lib/mysql/mysql.sock'
+      $ssl_ca              = '/etc/mysql/cacert.pem'
+      $ssl_cert            = '/etc/mysql/server-cert.pem'
+      $ssl_key             = '/etc/mysql/server-key.pem'
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = 'mysql-connector-java'
+      $perl_package_name   = 'perl-dbd-mysql'
+      $php_package_name    = undef
+      $python_package_name = 'mysql-python'
+      $ruby_package_name   = 'mysql-ruby'
+    }
+
     'FreeBSD': {
       $client_package_name = 'databases/mysql55-client'
       $server_package_name = 'databases/mysql55-server'
