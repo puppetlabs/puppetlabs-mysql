@@ -11,7 +11,7 @@ mysql::db { "mydb_${fqdn}":
   user     => 'myuser',
   password => 'mypass',
   dbname   => 'mydb',
-  host     => ${fqdn},
+  host     => $::fqdn,
   grant    => ['SELECT', 'UPDATE'],
   tag      => $domain,
 }
