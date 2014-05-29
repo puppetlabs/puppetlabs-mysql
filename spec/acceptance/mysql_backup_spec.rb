@@ -33,12 +33,8 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
         }
       EOS
 
-      apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stderr).to eq("")
-      end
-      apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stderr).to eq("")
-      end
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_failures => true)
     end
   end
 
