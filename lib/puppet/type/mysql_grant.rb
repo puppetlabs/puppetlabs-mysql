@@ -24,6 +24,7 @@ Puppet::Type.newtype(:mysql_grant) do
     fail('privileges parameter is required.') if self[:ensure] == :present and self[:privileges].nil?
     fail('table parameter is required.') if self[:ensure] == :present and self[:table].nil?
     fail('user parameter is required.') if self[:ensure] == :present and self[:user].nil?
+    fail('name must match user and table parameters') if self[:name] != "#{self[:user]}/#{self[:table]}"
   end
 
   newparam(:name, :namevar => true) do
