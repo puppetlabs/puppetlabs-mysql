@@ -10,17 +10,21 @@ class mysql::params {
   $server_service_manage  = true
   $server_service_enabled = true
   # mysql::bindings
-  $bindings_enable         = false
-  $java_package_ensure     = 'present'
-  $java_package_provider   = undef
-  $perl_package_ensure     = 'present'
-  $perl_package_provider   = undef
-  $php_package_ensure      = 'present'
-  $php_package_provider    = undef
-  $python_package_ensure   = 'present'
-  $python_package_provider = undef
-  $ruby_package_ensure     = 'present'
-  $ruby_package_provider   = undef
+  $bindings_enable             = false
+  $java_package_ensure         = 'present'
+  $java_package_provider       = undef
+  $perl_package_ensure         = 'present'
+  $perl_package_provider       = undef
+  $php_package_ensure          = 'present'
+  $php_package_provider        = undef
+  $python_package_ensure       = 'present'
+  $python_package_provider     = undef
+  $ruby_package_ensure         = 'present'
+  $ruby_package_provider       = undef
+  $client_dev_package_ensure   = 'present'
+  $client_dev_package_provider = undef
+  $daemon_dev_package_ensure   = 'present'
+  $daemon_dev_package_provider = undef
 
 
   case $::osfamily {
@@ -61,20 +65,22 @@ class mysql::params {
         $pidfile             = '/var/run/mysqld/mysqld.pid'
       }
 
-      $basedir             = '/usr'
-      $datadir             = '/var/lib/mysql'
-      $root_group          = 'root'
-      $socket              = '/var/lib/mysql/mysql.sock'
-      $ssl_ca              = '/etc/mysql/cacert.pem'
-      $ssl_cert            = '/etc/mysql/server-cert.pem'
-      $ssl_key             = '/etc/mysql/server-key.pem'
-      $tmpdir              = '/tmp'
+      $basedir                 = '/usr'
+      $datadir                 = '/var/lib/mysql'
+      $root_group              = 'root'
+      $socket                  = '/var/lib/mysql/mysql.sock'
+      $ssl_ca                  = '/etc/mysql/cacert.pem'
+      $ssl_cert                = '/etc/mysql/server-cert.pem'
+      $ssl_key                 = '/etc/mysql/server-key.pem'
+      $tmpdir                  = '/tmp'
       # mysql::bindings
-      $java_package_name   = 'mysql-connector-java'
-      $perl_package_name   = 'perl-DBD-MySQL'
-      $php_package_name    = 'php-mysql'
-      $python_package_name = 'MySQL-python'
-      $ruby_package_name   = 'ruby-mysql'
+      $java_package_name       = 'mysql-connector-java'
+      $perl_package_name       = 'perl-DBD-MySQL'
+      $php_package_name        = 'php-mysql'
+      $python_package_name     = 'MySQL-python'
+      $ruby_package_name       = 'ruby-mysql'
+      $client_dev_package_name = 'libmysqlclient-devel'
+      $daemon_dev_package_name = 'mysql-devel'
     }
 
     'Suse': {
@@ -116,24 +122,26 @@ class mysql::params {
         /OpenSuSE/         => 'rubygem-mysql',
         /(SLES|SLED)/      => 'ruby-mysql',
       }
+      $client_dev_package_name = 'libmysqlclient-devel'
+      $daemon_dev_package_name = 'mysql-devel'
     }
 
     'Debian': {
-      $client_package_name = 'mysql-client'
-      $server_package_name = 'mysql-server'
+      $client_package_name     = 'mysql-client'
+      $server_package_name     = 'mysql-server'
 
-      $basedir             = '/usr'
-      $config_file         = '/etc/mysql/my.cnf'
-      $datadir             = '/var/lib/mysql'
-      $log_error           = '/var/log/mysql/error.log'
-      $pidfile             = '/var/run/mysqld/mysqld.pid'
-      $root_group          = 'root'
-      $server_service_name = 'mysql'
-      $socket              = '/var/run/mysqld/mysqld.sock'
-      $ssl_ca              = '/etc/mysql/cacert.pem'
-      $ssl_cert            = '/etc/mysql/server-cert.pem'
-      $ssl_key             = '/etc/mysql/server-key.pem'
-      $tmpdir              = '/tmp'
+      $basedir                 = '/usr'
+      $config_file             = '/etc/mysql/my.cnf'
+      $datadir                 = '/var/lib/mysql'
+      $log_error               = '/var/log/mysql/error.log'
+      $pidfile                 = '/var/run/mysqld/mysqld.pid'
+      $root_group              = 'root'
+      $server_service_name     = 'mysql'
+      $socket                  = '/var/run/mysqld/mysqld.sock'
+      $ssl_ca                  = '/etc/mysql/cacert.pem'
+      $ssl_cert                = '/etc/mysql/server-cert.pem'
+      $ssl_key                 = '/etc/mysql/server-key.pem'
+      $tmpdir                  = '/tmp'
       # mysql::bindings
       $java_package_name   = 'libmysql-java'
       $perl_package_name   = 'libdbd-mysql-perl'
@@ -143,6 +151,8 @@ class mysql::params {
         'trusty'           => 'ruby-mysql',
         default            => 'libmysql-ruby',
       }
+      $client_dev_package_name = 'libmysqlclient-dev'
+      $daemon_dev_package_name = 'mysqld-dev'
     }
 
     'FreeBSD': {
@@ -166,6 +176,9 @@ class mysql::params {
       $php_package_name    = 'php5-mysql'
       $python_package_name = 'databases/py-MySQLdb'
       $ruby_package_name   = 'databases/ruby-mysql'
+      # The libraries installed by these packages are included in client and server packages, no installation required.
+      $client_dev_package_name     = undef
+      $daemon_dev_package_name     = undef
     }
 
     default: {
@@ -191,6 +204,9 @@ class mysql::params {
           $php_package_name    = 'php-mysql'
           $python_package_name = 'MySQL-python'
           $ruby_package_name   = 'ruby-mysql'
+          # The libraries installed by these packages are included in client and server packages, no installation required.
+          $client_dev_package_name     = undef
+          $daemon_dev_package_name     = undef
         }
 
         default: {
