@@ -1,6 +1,6 @@
 require 'puppet'
-require 'puppet/type/mysql_user'
-describe Puppet::Type.type(:mysql_user) do
+require 'puppet/type/database_user'
+describe Puppet::Type.type(:database_user) do
 
     let :params do
         {
@@ -10,7 +10,7 @@ describe Puppet::Type.type(:mysql_user) do
 
     it 'should require a name' do
         expect {
-            Puppet::Type.type(:mysql_user).new({})
+            Puppet::Type.type(:database_user).new({})
         }.to raise_error(Puppet::Error, 'Title or name must be provided')
     end
 
@@ -20,12 +20,12 @@ describe Puppet::Type.type(:mysql_user) do
         end
 
         it 'should accept a user name' do
-            resource = Puppet::Type.type(:mysql_user).new(params)
+            resource = Puppet::Type.type(:database_user).new(params)
             resource[:name].should == 'foo@localhost'
         end
 
         it 'should accept a password' do
-            resource = Puppet::Type.type(:mysql_user).new(params)
+            resource = Puppet::Type.type(:database_user).new(params)
             resource[:password_hash] = 'foo'
             resource[:password_hash].should == 'foo'
         end
@@ -39,7 +39,7 @@ describe Puppet::Type.type(:mysql_user) do
 
         it 'should fail with a long user name' do
             expect {
-                resource = Puppet::Type.type(:mysql_user).new(params)
+                resource = Puppet::Type.type(:database_user).new(params)
             }.to raise_error(/MySQL usernames are limited to a maximum of 16 characters/)
         end
     end
@@ -50,7 +50,7 @@ describe Puppet::Type.type(:mysql_user) do
         end
 
         it 'should accept a user name' do
-            resource = Puppet::Type.type(:mysql_user).new(params)
+            resource = Puppet::Type.type(:database_user).new(params)
             resource[:name].should == 'foo@'
         end
     end
@@ -62,7 +62,7 @@ describe Puppet::Type.type(:mysql_user) do
 
         it 'should fail without a hostname' do
             expect {
-                resource = Puppet::Type.type(:mysql_user).new(params)
+                resource = Puppet::Type.type(:database_user).new(params)
             }.to raise_error(/Invalid database user foo/)
         end
     end
