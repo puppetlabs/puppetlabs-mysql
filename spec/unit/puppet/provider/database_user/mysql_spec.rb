@@ -52,7 +52,7 @@ usvn_user@localhost
       subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "grant usage on *.* to 'joe'@'localhost' identified by PASSWORD
       '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' with max_user_connections 10"])
       @provider.expects(:exists?).returns(true)
-      @provider.create.should be_true
+      @provider.create.should be_truthy
     end
   end
 
@@ -60,7 +60,7 @@ usvn_user@localhost
     it 'removes a user if present' do
       subject.expects(:mysql).with([defaults_file, 'mysql', '-e', "drop user 'joe'@'localhost'"])
       @provider.expects(:exists?).returns(false)
-      @provider.destroy.should be_true
+      @provider.destroy.should be_truthy
     end
   end
 
@@ -98,7 +98,7 @@ usvn_user@localhost
   describe 'exists?' do
     it 'checks if user exists' do
       subject.expects(:mysql).with([defaults_file, 'mysql', '-NBe', "select '1' from mysql.user where CONCAT(user, '@', host) = 'joe@localhost'"]).returns('1')
-      @provider.exists?.should be_true
+      @provider.exists?.should be_truthy
     end
   end
 
