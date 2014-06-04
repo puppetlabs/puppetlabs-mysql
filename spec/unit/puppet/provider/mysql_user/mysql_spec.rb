@@ -65,7 +65,7 @@ usvn_user@localhost
     it 'makes a user' do
       provider.expects(:mysql).with([defaults_file, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' IDENTIFIED BY PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10"])
       provider.expects(:exists?).returns(true)
-      provider.create.should be_true
+      provider.create.should be_truthy
     end
   end
 
@@ -73,13 +73,13 @@ usvn_user@localhost
     it 'removes a user if present' do
       provider.expects(:mysql).with([defaults_file, '-e', "DROP USER 'joe'@'localhost'"])
       provider.expects(:exists?).returns(false)
-      provider.destroy.should be_true
+      provider.destroy.should be_truthy
     end
   end
 
   describe 'exists?' do
     it 'checks if user exists' do
-      instance.exists?.should be_true
+      instance.exists?.should be_truthy
     end
   end
 
