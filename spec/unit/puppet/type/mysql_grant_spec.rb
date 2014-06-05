@@ -41,4 +41,10 @@ describe Puppet::Type.type(:mysql_grant) do
     }.to raise_error(Puppet::Error, 'Title or name must be provided')
   end
 
+  it 'should require the name to match the user and table' do
+    expect {
+      Puppet::Type.type(:mysql_grant).new(:name => 'foo', :privileges => ['ALL', 'PROXY'], :table => ['*.*','@'], :user => 'foo@localhost')
+    }.to raise_error /name must match user and table parameters/
+  end
+
 end

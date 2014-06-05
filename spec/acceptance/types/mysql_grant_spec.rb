@@ -70,6 +70,21 @@ describe 'mysql_grant', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatin
     end
   end
 
+  describe 'adding privileges with invalid name' do
+    it 'should fail' do
+      pp = <<-EOS
+        mysql_grant { 'test':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test2@tester',
+          privileges => ['SELECT', 'UPDATE'],
+        }
+      EOS
+
+      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/name must match user and table parameters/)
+    end
+  end
+
   describe 'adding option' do
     it 'should work without errors' do
       pp = <<-EOS
