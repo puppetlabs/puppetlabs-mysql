@@ -53,9 +53,10 @@ password or `/etc/my.cnf` settings, then you must also pass in an override hash:
 ```puppet
 class { '::mysql::server':
   root_password    => 'strongpassword',
-  override_options => { 'mysqld' => { 'max_connections' => '1024' } }
+  override_options => $override_options
 }
 ```
+(see 'Overrides' below for examples of the hash structure for `$override_options`)
 
 ##Usage
 
@@ -70,7 +71,7 @@ The hash structure for overrides in `mysql::server` is as follows:
 ```puppet
 $override_options = {
   'section' => {
-    'item'             => 'thing',
+    'item' => 'thing',
   }
 }
 ```
@@ -218,8 +219,8 @@ The provider to use to manage the service.
 
 Optional hash of users to create, which are passed to [mysql_user](#mysql_user). 
 
-```puppet
-$users = {
+```
+users => {
   'someuser@localhost' => {
     ensure                   => 'present',
     max_connections_per_hour => '0',
@@ -235,8 +236,8 @@ $users = {
 
 Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). 
 
-```puppet
-$grants = {
+```
+grants => {
   'someuser@localhost/somedb.*' => {
     ensure     => 'present',
     options    => ['GRANT'],
@@ -251,8 +252,8 @@ $grants = {
 
 Optional hash of databases to create, which are passed to [mysql_database](#mysql_database).
 
-```puppet
-$databases = {
+```
+databases => {
   'somedb' => {
     ensure  => 'present',
     charset => 'utf8',
