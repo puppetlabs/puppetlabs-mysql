@@ -73,6 +73,7 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
         class { 'mysql::server::backup':
           ensure     => 'absent',
           backupuser => 'myuser',
+          backupdir  => '/tmp/backups',
         }
       EOS
 
