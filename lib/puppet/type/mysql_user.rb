@@ -15,6 +15,11 @@ Puppet::Type.newtype(:mysql_user) do
         raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
       end
     end
+
+    munge do |value|
+      user_part, host_part = value.split('@')
+      "#{user_part}@#{host_part.downcase}"
+    end
   end
 
   newproperty(:password_hash) do
