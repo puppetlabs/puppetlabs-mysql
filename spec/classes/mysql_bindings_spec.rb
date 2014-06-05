@@ -48,8 +48,8 @@ describe 'mysql::bindings' do
   end
 
   context 'Debian' do
-    it_behaves_like 'bindings', 'Debian', 'Debian', '7.4','libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby', 'libmysqlclient-dev', 'mysqld-dev'
-    it_behaves_like 'bindings', 'Debian', 'Ubuntu', '14.04', 'libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby', 'libmysqlclient-dev', 'mysqld-dev'
+    it_behaves_like 'bindings', 'Debian', 'Debian', '7.4','libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby', 'libmysqlclient-dev', 'libmysqld-dev'
+    it_behaves_like 'bindings', 'Debian', 'Ubuntu', '14.04', 'libmysql-java', 'libdbd-mysql-perl', 'php5-mysql', 'python-mysqldb', 'libmysql-ruby', 'libmysqlclient-dev', 'libmysqld-dev'
   end
 
   context 'freebsd' do
@@ -57,8 +57,8 @@ describe 'mysql::bindings' do
   end
 
   context 'redhat' do
-    it_behaves_like 'bindings', 'RedHat', 'RedHat', '6.5', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql', 'libmysqlclient-devel', 'mysql-devel'
-    it_behaves_like 'bindings', 'RedHat', 'OpenSuSE', '11.3', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql', 'libmysqlclient-devel', 'mysql-devel'
+    it_behaves_like 'bindings', 'RedHat', 'RedHat', '6.5', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql', nil, 'mysql-devel'
+    it_behaves_like 'bindings', 'RedHat', 'OpenSuSE', '11.3', 'mysql-connector-java', 'perl-DBD-MySQL', 'php-mysql', 'MySQL-python', 'ruby-mysql', nil, 'mysql-devel'
   end
 
   describe 'on any other os' do
