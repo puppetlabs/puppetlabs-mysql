@@ -42,7 +42,7 @@ cleanup
 <% if @file_per_database -%>
 mysql -s -r -N -e 'SHOW DATABASES' | while read dbname
 do
-  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction --databases --add-drop-database \
     ${EVENTS} \
     ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 done
@@ -53,7 +53,7 @@ mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
 <% end -%>
 <% else -%>
 <% @backupdatabases.each do |db| -%>
-mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction --databases --add-drop-database \
     ${EVENTS} \
  <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>

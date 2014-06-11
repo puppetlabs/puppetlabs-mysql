@@ -138,7 +138,7 @@ describe 'mysql::server::backup' do
             verify_contents(subject, 'mysqlbackup.sh', [
                             'mysql -s -r -N -e \'SHOW DATABASES\' | while read dbname',
                             'do',
-                            '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
+                            '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction --databases --add-drop-database \\',
                             '    ${EVENTS} \\',
                             '    ${dbname} | bzcat -zc > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql.bz2',
                             'done',
