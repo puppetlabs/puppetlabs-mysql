@@ -80,7 +80,7 @@ class mysql::params {
       $php_package_name        = 'php-mysql'
       $python_package_name     = 'MySQL-python'
       $ruby_package_name       = 'ruby-mysql'
-      $client_dev_package_name = 'libmysqlclient-devel'
+      $client_dev_package_name = undef
       $daemon_dev_package_name = 'mysql-devel'
     }
 
@@ -153,7 +153,7 @@ class mysql::params {
         default            => 'libmysql-ruby',
       }
       $client_dev_package_name = 'libmysqlclient-dev'
-      $daemon_dev_package_name = 'mysqld-dev'
+      $daemon_dev_package_name = 'libmysqld-dev'
     }
 
     'FreeBSD': {
