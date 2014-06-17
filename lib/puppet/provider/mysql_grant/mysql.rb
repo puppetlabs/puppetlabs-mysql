@@ -8,7 +8,20 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     users.select{ |user| user =~ /.+@/ }.collect do |user|
       user_string = self.cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
-      grants = mysql([defaults_file, "-NBe", query].compact)
+      begin
+        grants = mysql([defaults_file, "-NBe", query].compact)
+      rescue Puppet::ExecutionFailure => e
+        # Silently ignore users with no grants. Can happen e.g. if user is
+        # defined with fqdn and server is run with skip-name-resolve. Example:
+        # Default root user created by mysql_install_db on a host with fqdn
+        # of myhost.mydomain.my: root@myhost.mydomain.my, when MySQL is started
+        # with --skip-name-resolve.
+        if e.inspect =~ /There is no such grant defined for user/
+          next
+        else
+          raise Puppet::Error, "#mysql had an error ->  #{e.inspect}"
+        end
+      end
       # Once we have the list of grants generate entries for each.
       grants.each_line do |grant|
         # Match the munges we do in the type.
