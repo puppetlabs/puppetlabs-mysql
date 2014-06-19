@@ -16,8 +16,8 @@
 #   [*ssl_cert]           - path to ssl-cert
 #   [*ssl_key]            - path to ssl-key
 #   [*log_error]          - path to mysql error log
+#   [*open_files_limit*]  - The maximum number of open files
 #   [*max_connections*]   - The maximum number of simultaneous client connections
-#   [*open_files_limit*]  - The number of file descriptors available to mysqld
 #   [*default_engine]     - configure a default table engine
 #   [*root_group]         - use specified group for root-owned files
 #   [*restart]            - whether to restart mysqld (true/false)
@@ -51,8 +51,8 @@ class mysql::config(
   $ssl_cert          = $mysql::params::ssl_cert,
   $ssl_key           = $mysql::params::ssl_key,
   $log_error         = $mysql::params::log_error,
-  $max_connections   = '151',
   $open_files_limit  = '-1',
+  $max_connections   = '1024',
   $default_engine    = 'UNSET',
   $root_group        = $mysql::params::root_group,
   $restart           = $mysql::params::restart
