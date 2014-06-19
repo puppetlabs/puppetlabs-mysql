@@ -52,7 +52,7 @@ class mysql::config(
   $ssl_key           = $mysql::params::ssl_key,
   $log_error         = $mysql::params::log_error,
   $max_connections   = '151',
-  $open_files_limit  = '1024',
+  $open_files_limit  = '-1',
   $default_engine    = 'UNSET',
   $root_group        = $mysql::params::root_group,
   $restart           = $mysql::params::restart
