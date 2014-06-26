@@ -11,15 +11,15 @@ rvm:
   - 2.0.0
 env:
   matrix:
-    - PUPPET_GEM_VERSION="~> 2.7.0"
-    - PUPPET_GEM_VERSION="~> 3.3.0"
-    - PUPPET_GEM_VERSION="~> 3.4.0"
+  - PUPPET_GEM_VERSION="~> 2.7.0"
+  - PUPPET_GEM_VERSION="~> 3.3.0"
+  - PUPPET_GEM_VERSION="~> 3.4.0"
 matrix:
   fast_finish: true
   exclude:
-    - rvm: 1.9.3
-      env: PUPPET_GEM_VERSION="~> 2.7.0"
-    - rvm: 2.0.0
-      env: PUPPET_GEM_VERSION="~> 2.7.0"
+  - rvm: 1.9.3
+    env: PUPPET_GEM_VERSION="~> 2.7.0"
+  - rvm: 2.0.0
+    env: PUPPET_GEM_VERSION="~> 2.7.0"
 notifications:
   email: false
