@@ -13,6 +13,12 @@ group :development, :test do
   gem 'mime-types', '<2.0',      :require => false
 end
 
+if facterversion = ENV['FACTER_GEM_VERSION']
+  gem 'facter', facterversion, :require => false
+else
+  gem 'facter', :require => false
+end
+
 if puppetversion = ENV['PUPPET_GEM_VERSION']
   gem 'puppet', puppetversion, :require => false
 else
