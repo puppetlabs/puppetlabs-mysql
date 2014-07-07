@@ -285,4 +285,20 @@ describe 'mysql class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatin
     end
   end
 
+  describe 'creates the appropriate databases when datadir is set' do
+    tmpdir = default.tmpdir('mysql')
+    it 'sets up mysql' do
+      pp = <<-EOS
+      class { 'mysql::server':
+        override_options => { 'mysqld' => { 'datadir' => '#{tmpdir}/mysql' }},
+      }
+      EOS
+      shell("mkdir -p #{tmpdir}; chown -R mysql:mysql #{tmpdir}")
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe file("#{tmpdir}/mysql/mysql") do
+      it { should be_directory }
+    end
+  end
 end
