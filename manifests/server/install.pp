@@ -18,6 +18,12 @@ class mysql::server::install {
       path      => '/bin:/sbin:/usr/bin:/usr/sbin',
       require   => Package['mysql-server'],
     }
+
+    if $mysql::server::restart {
+      Exec['mysql_install_db'] {
+        notify => Class['mysql::service'],
+      }
+    }
   }
 
 }
