@@ -17,6 +17,7 @@ define mysql::db (
   $table = "${dbname}.*"
 
   include '::mysql::client'
+  include '::mysql::server'
 
   $db_resource = {
     ensure   => $ensure,
