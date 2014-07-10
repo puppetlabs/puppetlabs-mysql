@@ -4,9 +4,9 @@
 
 1. [Overview](#overview)
 2. [Module Description - What the module does and why it is useful](#module-description)
+3. [Backwards compatibility information](#backwards-compatibility)
 3. [Setup - The basics of getting started with mysql](#setup)
     * [What mysql affects](#what-mysql-affects)
-    * [Setup requirements](#setup-requirements)
     * [Beginning with mysql](#beginning-with-mysql)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
