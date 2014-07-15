@@ -1,4 +1,12 @@
 {
+  "name": "puppetlabs-mysql",
+  "version": "2.3.1",
+  "author": "Puppet Labs",
+  "summary": "Mysql module",
+  "license": "Apache 2.0",
+  "source": "git://github.com/puppetlabs/puppetlabs-mysql.git",
+  "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
+  "issues_url": "https://github.com/puppetlabs/puppetlabs-mysql/issues",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -64,14 +72,7 @@
       "version_requirement": "3.x"
     }
   ],
-  "name": "puppetlabs-mysql",
-  "version": "2.3.0",
-  "source": "git://github.com/puppetlabs/puppetlabs-mysql.git",
-  "author": "Puppet Labs",
-  "license": "Apache 2.0",
-  "summary": "Mysql module",
   "description": "Mysql module",
-  "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
