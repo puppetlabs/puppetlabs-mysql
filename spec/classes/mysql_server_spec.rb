@@ -75,6 +75,40 @@ describe 'mysql::server' do
     end
   end
 
+  context 'mysql::server::install on RHEL 7' do
+    let :facts do
+      { :osfamily                  => 'RedHat',
+        :operatingsystem           => 'RedHat',
+        :operatingsystemmajrelease => 7
+      }
+    end
+
+    let(:params) {{ :package_ensure => 'present', :name => 'mariadb-server' }}
+    it do
+      should contain_package('mysql-server').with({
+      :ensure => :present,
+      :name   => 'mariadb-server',
+    })
+    end
+  end
+
+  context 'mysql::server::install on CentOS 7' do
+    let :facts do
+      { :osfamily                  => 'RedHat',
+        :operatingsystem           => 'CentOS',
+        :operatingsystemmajrelease => 7
+      }
+    end
+
+    let(:params) {{ :package_ensure => 'present', :name => 'mariadb-server' }}
+    it do
+      should contain_package('mysql-server').with({
+      :ensure => :present,
+      :name   => 'mariadb-server',
+    })
+    end
+  end
+
   context 'mysql::server::config' do
     it do
       should contain_file('/etc/mysql').with({
