@@ -104,8 +104,7 @@ replicate-do-db = base2
 
 ###Custom configuration
 
-To add custom MySQL configuration, drop additional files into
-`/etc/mysql/conf.d/`. Dropping files into conf.d allows you to override settings or add additional ones, which is helpful if you choose not to use `override_options` in `mysql::server`. The conf.d location is hardcoded into the my.cnf template file.
+See [`mysql::server::confd`](#mysqlserverconfd).
 
 ##Reference
 
@@ -425,6 +424,23 @@ What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 What is the name of the mysql client package to install.
 
 ###Defines
+
+####mysql::server::confd
+
+Create additional `conf.d` configuration files which will supplement or
+override the `override_options` param of `mysql::server`. It will set the
+correct file path and relationships for you. Takes either a `content` or
+`source` param per a normal `file{}` resource.
+
+```puppet
+mysql::server::confd { 'read_only':
+  content => "[mysqld]\nread_only\n",
+}
+
+mysql::server::confd { 'innodb_extra':
+  source => 'puppet:///some/path/innodb_extra.cnf',
+}
+```
 
 ####mysql::db
 
