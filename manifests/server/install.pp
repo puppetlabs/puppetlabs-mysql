@@ -21,7 +21,7 @@ class mysql::server::install {
 
     if $mysql::server::restart {
       Exec['mysql_install_db'] {
-        notify => Class['mysql::service'],
+        notify => Class['mysql::server::service'],
       }
     }
   }
