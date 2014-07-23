@@ -64,7 +64,7 @@ test
 
   describe 'destroy' do
     it 'removes a database if present' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', "drop database `#{resource[:name]}`"])
+      provider.expects(:mysql).with([defaults_file, '-NBe', "drop database if exists `#{resource[:name]}`"])
       provider.expects(:exists?).returns(false)
       provider.destroy.should be_truthy
     end

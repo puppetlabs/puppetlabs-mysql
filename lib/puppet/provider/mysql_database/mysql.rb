@@ -41,7 +41,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
   end
 
   def destroy
-    mysql([defaults_file, '-NBe', "drop database `#{@resource[:name]}`"].compact)
+    mysql([defaults_file, '-NBe', "drop database if exists `#{@resource[:name]}`"].compact)
 
     @property_hash.clear
     exists? ? (return false) : (return true)
