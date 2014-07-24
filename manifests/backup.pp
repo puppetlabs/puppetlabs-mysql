@@ -7,6 +7,7 @@ class mysql::backup (
   $backuprotate = 30,
   $delete_before_dump = false,
   $backupdatabases = [],
+  $excludedatabases = [],
   $file_per_database = false,
   $ensure = 'present',
   $time = ['23', '5'],
@@ -24,6 +25,7 @@ class mysql::backup (
     backuprotate       => $backuprotate,
     delete_before_dump => $delete_before_dump,
     backupdatabases    => $backupdatabases,
+    excludedatabases   => $excludedatabases,
     file_per_database  => $file_per_database,
     time               => $time,
   }
