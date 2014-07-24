@@ -66,4 +66,23 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
       end
     end
   end
+
+  context 'should work with no errors' do
+    it 'when removing mysql backups' do
+      pp = <<-EOS
+        class { 'mysql::server::backup':
+          ensure     => 'absent',
+          backupuser => 'myuser',
+          backupdir  => '/tmp/backups',
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true) do |r|
+        expect(r.stderr).to eq("")
+      end
+      apply_manifest(pp, :catch_failures => true) do |r|
+        expect(r.stderr).to eq("")
+      end
+    end
+  end
 end

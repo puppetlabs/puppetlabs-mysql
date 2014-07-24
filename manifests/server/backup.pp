@@ -1,8 +1,8 @@
 # See README.me for usage.
 class mysql::server::backup (
   $backupuser,
-  $backuppassword,
   $backupdir,
+  $backuppassword = undef,
   $backupdirmode = '0700',
   $backupdirowner = 'root',
   $backupdirgroup = 'root',
@@ -18,11 +18,20 @@ class mysql::server::backup (
   $execpath   = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) {
 
+  if $ensure != 'absent' and !$backuppassword {
+    fail("${class_name} 'backuppassword' must be set.")
+  }
+
+  $mysql_user_require = $ensure ? {
+    'absent' => undef,
+    default  => Class['mysql::server::root_password'],
+  }
+
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
     provider      => 'mysql',
-    require       => Class['mysql::server::root_password'],
+    require       => $mysql_user_require,
   }
 
   mysql_grant { "${backupuser}@localhost/*.*":
@@ -51,8 +60,13 @@ class mysql::server::backup (
     content => template('mysql/mysqlbackup.sh.erb'),
   }
 
+  $directory_ensure = $ensure ? {
+    'absent' => $ensure,
+    default  => 'directory',
+  }
+
   file { 'mysqlbackupdir':
-    ensure => 'directory',
+    ensure => $directory_ensure,
     path   => $backupdir,
     mode   => $backupdirmode,
     owner  => $backupdirowner,
