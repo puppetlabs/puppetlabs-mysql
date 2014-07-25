@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql_grant', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'mysql_grant' do
 
   describe 'setup' do
     it 'setup mysql::server' do

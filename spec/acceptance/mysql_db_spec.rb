@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql::db define', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'mysql::db define' do
   describe 'creating a database' do
     # Using puppet_apply as a helper
     it 'should work with no errors' do
@@ -55,7 +55,7 @@ describe 'mysql::db define', :unless => UNSUPPORTED_PLATFORMS.include?(fact('ope
         mysql::db { 'spec1':
           user     => 'root1',
           password => 'password',
-	  dbname   => 'realdb',
+          dbname   => 'realdb',
         }
       EOS
 

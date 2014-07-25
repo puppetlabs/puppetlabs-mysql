@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'mysql::server::backup class' do
   context 'should work with no errors' do
     it 'when configuring mysql backups' do
       pp = <<-EOS
@@ -11,10 +11,6 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
         ]:
           user     => 'backup',
           password => 'secret',
-        }
-
-        package { 'bzip2':
-          ensure => present,
         }
 
         class { 'mysql::server::backup':
@@ -29,7 +25,6 @@ describe 'mysql::server::backup class', :unless => UNSUPPORTED_PLATFORMS.include
             'touch /var/tmp/mysqlbackups.done',
           ],
           execpath      => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
-          require       => Package['bzip2'],
         }
       EOS
 
