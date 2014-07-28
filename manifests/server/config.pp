@@ -20,7 +20,8 @@ class mysql::server::config {
   }
 
   if $mysql::server::manage_config_file  {
-    file { $mysql::server::config_file:
+    file { 'mysql-config-file':
+      path    => $mysql::server::config_file,
       content => template('mysql/my.cnf.erb'),
       mode    => '0644',
     }
