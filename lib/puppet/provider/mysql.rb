@@ -1,9 +1,27 @@
+require 'puppet/util/package'
+
 class Puppet::Provider::Mysql < Puppet::Provider
 
   # Without initvars commands won't work.
   initvars
   commands :mysql      => 'mysql'
   commands :mysqladmin => 'mysqladmin'
+
+  # if we actually *can* find mysql in the path, we check the version, and
+  # based on that, we check if the passed version is >= the product_version
+  def self.version_check(version)
+    begin
+      # mysql --version # for mysql and mariadb
+      # =#> mysql  Ver 14.14 Distrib 5.5.37, for debian-linux-gnu (x86_64) using readline 6.2
+      # =#> mysql  Ver 15.1 Distrib 10.0.12-MariaDB, for debian-linux-gnu (x86_64) using readline 5.1
+
+      product_version = mysql('--version').split[4].chop
+    rescue Puppet::ExecutionFailure
+      false
+    else
+      true if Puppet::Util::Package.versioncmp(product_version, version) >= 0
+    end
+  end
 
   # Optional defaults file
   def self.defaults_file

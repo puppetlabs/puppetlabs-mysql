@@ -4,18 +4,6 @@ Puppet::Type.type(:mysql_user).provide(:mariadb, :parent => 'mysql') do
 
   confine :feature => :long_usernames
 
-  commands :mysql => 'mysql'
-
-  # if we actually *can* find mysql in the path, we check the version, and
-  # based on that, we confine. The following code is based on the rpm/yum providers
-  if command('mysql')
-    confine :true => begin
-    product_version = mysql('--version')
-    rescue Puppet::ExecutionFailure
-      false
-    else
-      true if /10\.\d+.\d+-MariaDB/.match(product_version)
-    end
-  end
+  confine :true => version_check('10.0.0-MariaDB')
 
 end
