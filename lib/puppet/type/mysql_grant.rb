@@ -3,6 +3,9 @@ Puppet::Type.newtype(:mysql_grant) do
   @doc = "Manage a MySQL user's rights."
   ensurable
 
+  feature :long_usernames,
+          "The provider supports usernames > 16 bytes."
+
   autorequire(:file) { '/root/.my.cnf' }
 
   def initialize(*args)
