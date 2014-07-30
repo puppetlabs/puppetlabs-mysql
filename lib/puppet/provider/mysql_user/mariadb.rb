@@ -2,6 +2,8 @@ Puppet::Type.type(:mysql_user).provide(:mariadb, :parent => 'mysql') do
 
   desc 'manage users for a mariadb database.'
 
+  confine :feature => :long_usernames
+
   commands :mysql => 'mysql'
 
   # if we actually *can* find mysql in the path, we check the version, and
