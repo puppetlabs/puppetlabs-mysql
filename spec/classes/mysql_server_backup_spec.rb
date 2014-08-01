@@ -44,7 +44,7 @@ describe 'mysql::server::backup' do
         end
         it 'should skip backing up events table by default' do
             verify_contents(subject, 'mysqlbackup.sh', [
-                            'EVENTS="--ignore-table=mysql.event"',
+                            'ADDITIONAL_OPTIONS="--ignore-table=mysql.event"',
             ])
         end
 
@@ -55,6 +55,13 @@ describe 'mysql::server::backup' do
 
         it 'should have a standard PATH' do
             should contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
+        end
+
+        # We should not include routines and triggers by default because the
+        # default has no named databases, and uses one file.
+        it 'should not include triggers or routines by default' do
+            should contain_file('mysqlbackup.sh').without_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers".*/)
+            should contain_file('mysqlbackup.sh').without_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines".*/)
         end
     end
 
@@ -104,7 +111,7 @@ describe 'mysql::server::backup' do
 
         it 'should be able to backup events table' do
             verify_contents(subject, 'mysqlbackup.sh', [
-                            'EVENTS="--events"',
+                            'ADDITIONAL_OPTIONS="--events"',
             ])
         end
     end
@@ -126,7 +133,15 @@ describe 'mysql::server::backup' do
             #      verify_contents(subject, 'mysqlbackup.sh', [
             #        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',
             #      ])
-        end 
+        end
+
+        # Specifying a database list implies file per database.  This tests
+        # that the default value for routines and triggers is true.
+        it 'should include triggers and routines' do
+            should contain_file('mysqlbackup.sh').with_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers".*/)
+            should contain_file('mysqlbackup.sh').with_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines".*/)
+        end
+
     end
 
     context 'with file per database' do
@@ -139,11 +154,18 @@ describe 'mysql::server::backup' do
                             'mysql -s -r -N -e \'SHOW DATABASES\' | while read dbname',
                             'do',
                             '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
-                            '    ${EVENTS} \\',
+                            '    ${ADDITIONAL_OPTIONS} \\',
                             '    ${dbname} | bzcat -zc > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql.bz2',
                             'done',
             ])
         end
+
+        # Again, the default is true...
+        it 'should include triggers and routines' do
+            should contain_file('mysqlbackup.sh').with_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers".*/)
+            should contain_file('mysqlbackup.sh').with_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines".*/)
+        end
+
 
         context 'with compression disabled' do
             let(:params) do
@@ -159,30 +181,83 @@ describe 'mysql::server::backup' do
     end
 
 		context 'with postscript' do
-			let(:params) do
-				default_params.merge({ :postscript => 'rsync -a /tmp backup01.local-lan:' })
-			end
+			  let(:params) do
+				    default_params.merge({ :postscript => 'rsync -a /tmp backup01.local-lan:' })
+			  end
 
-			it 'should be add postscript' do
-				verify_contents(subject, 'mysqlbackup.sh', [
-					'rsync -a /tmp backup01.local-lan:',
-				])
-			end
+			  it 'should be add postscript' do
+				    verify_contents(subject, 'mysqlbackup.sh', [
+					      'rsync -a /tmp backup01.local-lan:',
+				    ])
+			  end
 		end
 
 		context 'with postscripts' do
-			let(:params) do
-				default_params.merge({ :postscript => [
-					'rsync -a /tmp backup01.local-lan:',
-					'rsync -a /tmp backup02.local-lan:',
-				]})
-			end
+			  let(:params) do
+				    default_params.merge({ :postscript => [
+					      'rsync -a /tmp backup01.local-lan:',
+					      'rsync -a /tmp backup02.local-lan:',
+				    ]})
+			  end
 
-			it 'should be add postscript' do
-				verify_contents(subject, 'mysqlbackup.sh', [
-					'rsync -a /tmp backup01.local-lan:',
-					'rsync -a /tmp backup02.local-lan:',
-				])
-			end
-		end
+			  it 'should be add postscript' do
+				    verify_contents(subject, 'mysqlbackup.sh', [
+					      'rsync -a /tmp backup01.local-lan:',
+					      'rsync -a /tmp backup02.local-lan:',
+				    ])
+			  end
+    end
+
+    # Make sure we toggle routines with the right switch.
+    context 'with file_per_database and no routines' do
+        let(:params) do
+            { :file_per_database => true,
+              :include_triggers => true,
+              :include_routines => false,
+            }.merge(default_params)
+        end
+
+        it 'should include triggers' do
+            should contain_file('mysqlbackup.sh').with_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers".*/)
+        end
+
+        it 'should not include routines' do
+            should contain_file('mysqlbackup.sh').without_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines".*/)
+        end
+
+    end
+
+    # Make sure we toggle triggers with the right switch.
+    context 'with file_per_database and no routines' do
+        let(:params) do
+            { :file_per_database => true,
+              :include_triggers => false,
+              :include_routines => true,
+            }.merge(default_params)
+        end
+
+        it 'should not include triggers' do
+            should contain_file('mysqlbackup.sh').without_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers".*/)
+        end
+
+        it 'should include routines' do
+            should contain_file('mysqlbackup.sh').with_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines".*/)
+        end
+    end
+
+    # Specifying databases to backup implies file-per-database, but we should
+    # still exclude triggers and resources if we set those options to false.
+    context 'with database list and no triggers or routines' do
+        let(:params) do
+            { :backupdatabases => ['mysql'],
+              :include_triggers => false,
+              :include_routines => false,
+            }.merge(default_params)
+        end
+
+        it 'should not include triggers or routines' do
+            should contain_file('mysqlbackup.sh').without_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers".*/)
+            should contain_file('mysqlbackup.sh').without_content(/.*ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines".*/)
+        end
+    end
 end
