@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql_database', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'mysql_database' do
   describe 'setup' do
     it 'should work with no errors' do
       pp = <<-EOS

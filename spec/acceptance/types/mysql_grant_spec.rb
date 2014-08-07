@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql_grant', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'mysql_grant' do
 
   describe 'setup' do
     it 'setup mysql::server' do
@@ -352,13 +352,6 @@ describe 'mysql_grant', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatin
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-    end
-
-    it 'should have skip_name_resolve set' do
-      shell("mysql -NBe 'select @@skip_name_resolve'") do |r|
-        expect(r.stdout).to match(/1/)
-        expect(r.stderr).to be_empty
-      end
     end
 
     it 'should fail with fqdn' do
