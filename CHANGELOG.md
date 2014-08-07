@@ -1,3 +1,30 @@
+##2014-07-15 - Supported Release 2.3.1
+###Summary
+
+This release merely updates metadata.json so the module can be uninstalled and
+upgraded via the puppet module command.
+
+##2014-05-14 - Supported Release 2.3.0
+
+This release primarily adds support for RHEL7 and Ubuntu 14.04 but it
+also adds a couple of new parameters to allow for further customization,
+as well as ensuring backups can backup stored procedures properly.
+
+####Features
+Added `execpath` to allow a custom executable path for non-standard mysql installations.
+Added `dbname` to mysql::db and use ensure_resource to create the resource.
+Added support for RHEL7 and Fedora Rawhide.
+Added support for Ubuntu 14.04.
+Create a warning for if you disable SSL.
+Ensure the error logfile is owned by MySQL.
+Disable ssl on FreeBSD.
+Add PROCESS privilege for backups.
+
+####Bugfixes
+
+####Known Bugs
+* No known bugs
+
 ##2014-03-04 - Supported Release 2.2.3
 ###Summary
 
