@@ -354,13 +354,6 @@ describe 'mysql_grant' do
       apply_manifest(pp, :catch_failures => true)
     end
 
-    it 'should have skip_name_resolve set' do
-      shell("mysql -NBe 'select @@skip_name_resolve'") do |r|
-        expect(r.stdout).to match(/1/)
-        expect(r.stderr).to be_empty
-      end
-    end
-
     it 'should fail with fqdn' do
       expect(shell("mysql -NBe \"SHOW GRANTS FOR test@fqdn.com\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'test' on host 'fqdn.com'/)
     end
