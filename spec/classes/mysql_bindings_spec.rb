@@ -67,7 +67,7 @@ describe 'mysql::bindings' do
     end
 
     it 'should fail' do
-      expect { subject }.to raise_error(/Unsupported osfamily: foo/)
+      expect { subject }.to raise_error(/Unsupported platform:/)
     end
   end
 

@@ -7,8 +7,7 @@ describe 'mysql::server' do
         let(:facts) { facts }
 
         context 'should gracefully fail' do
-          it { should_not contain_class('mysql::server') }
-          it { should raise_error(/Unsupported osfamily: foo/) }
+          it { expect { should compile}.to raise_error(Puppet::Error, /Unsupported platform:/) }
         end
       end
     end
