@@ -19,13 +19,13 @@ describe 'mysql::server::backup' do
         context 'standard conditions' do
           let(:params) { default_params }
 
+          # Cannot use that_requires here, doesn't work on classes.
           it { is_expected.to contain_mysql_user('testuser@localhost').with(
-            :require => 'Class[Mysql::Server::Root_password]'
-          )}
+            :require => 'Class[Mysql::Server::Root_password]') }
 
           it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
-            :privileges => ["SELECT", "RELOAD", "LOCK TABLES", "SHOW VIEW", "PROCESS"]
-          )}
+            :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
+          ).that_requires('Mysql_user[testuser@localhost]') }
 
           it { is_expected.to contain_cron('mysql-backup').with(
             :command => '/usr/local/sbin/mysqlbackup.sh',
@@ -43,18 +43,18 @@ describe 'mysql::server::backup' do
           )}
 
           it 'should have compression by default' do
-            verify_contents(subject, 'mysqlbackup.sh', [
-              ' --all-databases | bzcat -zc > ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql.bz2',
-            ])
+            is_expected.to contain_file('mysqlbackup.sh').with(
+              :content => /bzcat -zc/
+            )
           end
           it 'should skip backing up events table by default' do
-            verify_contents(subject, 'mysqlbackup.sh', [
-              'EVENTS="--ignore-table=mysql.event"',
-            ])
+            is_expected.to contain_file('mysqlbackup.sh').with(
+              :content => /EVENTS="--ignore-table=mysql.event"/
+            )
           end
 
           it 'should have 25 days of rotation' do
-            # MySQL counts from 0 I guess.
+            # MySQL counts from 0
             is_expected.to contain_file('mysqlbackup.sh').with_content(/.*ROTATE=24.*/)
           end
 
@@ -91,9 +91,9 @@ describe 'mysql::server::backup' do
           ) }
 
           it 'should be able to disable compression' do
-            verify_contents(subject, 'mysqlbackup.sh', [
-              ' --all-databases > ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql',
-            ])
+            is_expected.to contain_file('mysqlbackup.sh').without_content(
+              /.*bzcat -zc.*/
+            )
           end
         end
 
@@ -108,12 +108,11 @@ describe 'mysql::server::backup' do
           ) }
 
           it 'should be able to backup events table' do
-            verify_contents(subject, 'mysqlbackup.sh', [
-              'EVENTS="--events"',
-            ])
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /EVENTS="--events"/
+            )
           end
         end
-
 
         context 'with database list specified' do
           let(:params) do
@@ -123,15 +122,14 @@ describe 'mysql::server::backup' do
           it { is_expected.to contain_file('mysqlbackup.sh').with(
             :path   => '/usr/local/sbin/mysqlbackup.sh',
             :ensure => 'present'
-          ) }
+            )
+          }
 
           it 'should have a backup file for each database' do
-            content = subject.resource('file','mysqlbackup.sh').send(:parameters)[:content]
-            expect(content).to match(' mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date')
-            #      verify_contents(subject, 'mysqlbackup.sh', [
-            #        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',
-            #      ])
-          end 
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date'/
+            )
+          end
         end
 
         context 'with file per database' do
@@ -140,14 +138,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'should loop through backup all databases' do
-            verify_contents(subject, 'mysqlbackup.sh', [
-              'mysql -s -r -N -e \'SHOW DATABASES\' | while read dbname',
-              'do',
-              '  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \\',
-              '    ${EVENTS} \\',
-              '    ${dbname} | bzcat -zc > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql.bz2',
-              'done',
-            ])
+            is_expected.to contain_file('mysqlbackup.sh').with_content(/.*SHOW DATABASES.*/)
           end
 
           context 'with compression disabled' do
@@ -156,9 +147,12 @@ describe 'mysql::server::backup' do
             end
 
             it 'should loop through backup all databases without compression' do
-              verify_contents(subject, 'mysqlbackup.sh', [
-                '    ${dbname} > ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql',
-              ])
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /.*SHOW DATABASES.*/
+              )
+              is_expected.to contain_file('mysqlbackup.sh').without_content(
+                /.*bzcat -zc.*/
+              )
             end
           end
         end
@@ -169,9 +163,9 @@ describe 'mysql::server::backup' do
           end
 
           it 'should be add postscript' do
-            verify_contents(subject, 'mysqlbackup.sh', [
-              'rsync -a /tmp backup01.local-lan:',
-            ])
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /rsync -a \/tmp backup01.local-lan:/,
+            )
           end
         end
 
@@ -184,10 +178,9 @@ describe 'mysql::server::backup' do
           end
 
           it 'should be add postscript' do
-            verify_contents(subject, 'mysqlbackup.sh', [
-              'rsync -a /tmp backup01.local-lan:',
-              'rsync -a /tmp backup02.local-lan:',
-            ])
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/,
+            )
           end
         end
       end
