@@ -20,9 +20,9 @@ describe 'mysql::server::monitor' do
           default_params
         end
 
-        it { should contain_mysql_user('monitoruser@monitorhost')}
+        it { is_expected.to contain_mysql_user('monitoruser@monitorhost')}
 
-        it { should contain_mysql_grant('monitoruser@monitorhost/*.*').with(
+        it { is_expected.to contain_mysql_grant('monitoruser@monitorhost/*.*').with(
           :ensure     => 'present',
           :user       => 'monitoruser@monitorhost',
           :table      => '*.*',

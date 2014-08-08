@@ -17,33 +17,33 @@ describe 'mysql::db', :type => :define do
   end
 
   it 'should not notify the import sql exec if no sql script was provided' do
-    should contain_mysql_database('test_db').without_notify
+    is_expected.to contain_mysql_database('test_db').without_notify
   end
 
   it 'should subscribe to database if sql script is given' do
     params.merge!({'sql' => 'test_sql'})
-    should contain_exec('test_db-import').with_subscribe('Mysql_database[test_db]')
+    is_expected.to contain_exec('test_db-import').with_subscribe('Mysql_database[test_db]')
   end
 
   it 'should only import sql script on creation if not enforcing' do
     params.merge!({'sql' => 'test_sql', 'enforce_sql' => false})
-    should contain_exec('test_db-import').with_refreshonly(true)
+    is_expected.to contain_exec('test_db-import').with_refreshonly(true)
   end
 
   it 'should import sql script on creation if enforcing' do
     params.merge!({'sql' => 'test_sql', 'enforce_sql' => true})
-    should contain_exec('test_db-import').with_refreshonly(false)
+    is_expected.to contain_exec('test_db-import').with_refreshonly(false)
   end
 
   it 'should not create database and database user' do
     params.merge!({'ensure' => 'absent', 'host' => 'localhost'})
-    should contain_mysql_database('test_db').with_ensure('absent')
-    should contain_mysql_user('testuser@localhost').with_ensure('absent')
+    is_expected.to contain_mysql_database('test_db').with_ensure('absent')
+    is_expected.to contain_mysql_user('testuser@localhost').with_ensure('absent')
   end
 
   it 'should create with an appropriate collate and charset' do
     params.merge!({'charset' => 'utf8', 'collate' => 'utf8_danish_ci'})
-    should contain_mysql_database('test_db').with({
+    is_expected.to contain_mysql_database('test_db').with({
       'charset' => 'utf8',
       'collate' => 'utf8_danish_ci',
     })
@@ -51,6 +51,6 @@ describe 'mysql::db', :type => :define do
 
   it 'should use dbname parameter as database name instead of name' do
     params.merge!({'dbname' => 'real_db'})
-    should contain_mysql_database('real_db')
+    is_expected.to contain_mysql_database('real_db')
   end
 end

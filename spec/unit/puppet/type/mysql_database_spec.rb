@@ -7,17 +7,17 @@ describe Puppet::Type.type(:mysql_database) do
   end
 
   it 'should accept a database name' do
-    @user[:name].should == 'test'
+    expect(@user[:name]).to eq('test')
   end
 
   it 'should accept a charset' do
     @user[:charset] = 'latin1'
-    @user[:charset].should == 'latin1'
+    expect(@user[:charset]).to eq('latin1')
   end
 
   it 'should accept a collate' do
     @user[:collate] = 'latin1_swedish_ci'
-    @user[:collate].should == 'latin1_swedish_ci'
+    expect(@user[:collate]).to eq('latin1_swedish_ci')
   end
 
   it 'should require a name' do
