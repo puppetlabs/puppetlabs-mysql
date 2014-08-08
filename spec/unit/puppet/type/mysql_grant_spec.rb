@@ -7,32 +7,32 @@ describe Puppet::Type.type(:mysql_grant) do
   end
 
   it 'should accept a grant name' do
-    @user[:name].should == 'foo@localhost/*.*'
+    expect(@user[:name]).to eq('foo@localhost/*.*')
   end
   
   it 'should accept ALL privileges' do
     @user[:privileges] = 'ALL'
-    @user[:privileges].should == ['ALL']
+    expect(@user[:privileges]).to eq(['ALL'])
   end
 
   it 'should accept PROXY privilege' do
     @user[:privileges] = 'PROXY'
-    @user[:privileges].should == ['PROXY']
+    expect(@user[:privileges]).to eq(['PROXY'])
   end
   
   it 'should accept a table' do
     @user[:table] = '*.*'
-    @user[:table].should == '*.*'
+    expect(@user[:table]).to eq('*.*')
   end
   
   it 'should accept @ for table' do
     @user[:table] = '@'
-    @user[:table].should == '@'
+    expect(@user[:table]).to eq('@')
   end
   
   it 'should accept a user' do
     @user[:user] = 'foo@localhost'
-    @user[:user].should == 'foo@localhost'
+    expect(@user[:user]).to eq('foo@localhost')
   end
   
   it 'should require a name' do

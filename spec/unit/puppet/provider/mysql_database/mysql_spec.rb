@@ -43,7 +43,7 @@ test
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "show variables like '%_database'", db.chomp]).returns("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF")
       end
       databases = provider.class.instances.collect {|x| x.name }
-      parsed_databases.should match_array(databases)
+      expect(parsed_databases).to match_array(databases)
     end
   end
 
@@ -58,7 +58,7 @@ test
     it 'makes a database' do
       provider.expects(:mysql).with([defaults_file, '-NBe', "create database if not exists `#{resource[:name]}` character set #{resource[:charset]} collate #{resource[:collate]}"])
       provider.expects(:exists?).returns(true)
-      provider.create.should be_truthy
+      expect(provider.create).to be_truthy
     end
   end
 
@@ -66,30 +66,30 @@ test
     it 'removes a database if present' do
       provider.expects(:mysql).with([defaults_file, '-NBe', "drop database if exists `#{resource[:name]}`"])
       provider.expects(:exists?).returns(false)
-      provider.destroy.should be_truthy
+      expect(provider.destroy).to be_truthy
     end
   end
 
   describe 'exists?' do
     it 'checks if database exists' do
-      instance.exists?.should be_truthy
+      expect(instance.exists?).to be_truthy
     end
   end
 
   describe 'self.defaults_file' do
     it 'sets --defaults-extra-file' do
       File.stubs(:file?).with('/root/.my.cnf').returns(true)
-      provider.defaults_file.should eq '--defaults-extra-file=/root/.my.cnf'
+      expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'
     end
     it 'fails if file missing' do
       File.stubs(:file?).with('/root/.my.cnf').returns(false)
-      provider.defaults_file.should be_nil
+      expect(provider.defaults_file).to be_nil
     end
   end
 
   describe 'charset' do
     it 'returns a charset' do
-      instance.charset.should == 'latin1'
+      expect(instance.charset).to eq('latin1')
     end
   end
 
@@ -103,7 +103,7 @@ test
 
   describe 'collate' do
     it 'returns a collate' do
-      instance.collate.should == 'latin1_swedish_ci'
+      expect(instance.collate).to eq('latin1_swedish_ci')
     end
   end
 

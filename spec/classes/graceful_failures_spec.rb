@@ -7,7 +7,7 @@ describe 'mysql::server' do
         let(:facts) { facts }
 
         context 'should gracefully fail' do
-          it { expect { should compile}.to raise_error(Puppet::Error, /Unsupported platform:/) }
+          it { expect { is_expected.to compile}.to raise_error(Puppet::Error, /Unsupported platform:/) }
         end
       end
     end

@@ -19,25 +19,25 @@ describe 'mysql::server::backup' do
         context 'standard conditions' do
           let(:params) { default_params }
 
-          it { should contain_mysql_user('testuser@localhost').with(
+          it { is_expected.to contain_mysql_user('testuser@localhost').with(
             :require => 'Class[Mysql::Server::Root_password]'
           )}
 
-          it { should contain_mysql_grant('testuser@localhost/*.*').with(
+          it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
             :privileges => ["SELECT", "RELOAD", "LOCK TABLES", "SHOW VIEW", "PROCESS"]
           )}
 
-          it { should contain_cron('mysql-backup').with(
+          it { is_expected.to contain_cron('mysql-backup').with(
             :command => '/usr/local/sbin/mysqlbackup.sh',
             :ensure  => 'present'
           )}
 
-          it { should contain_file('mysqlbackup.sh').with(
+          it { is_expected.to contain_file('mysqlbackup.sh').with(
             :path   => '/usr/local/sbin/mysqlbackup.sh',
             :ensure => 'present'
           ) }
 
-          it { should contain_file('mysqlbackupdir').with(
+          it { is_expected.to contain_file('mysqlbackupdir').with(
             :path   => '/tmp',
             :ensure => 'directory'
           )}
@@ -55,11 +55,11 @@ describe 'mysql::server::backup' do
 
           it 'should have 25 days of rotation' do
             # MySQL counts from 0 I guess.
-            should contain_file('mysqlbackup.sh').with_content(/.*ROTATE=24.*/)
+            is_expected.to contain_file('mysqlbackup.sh').with_content(/.*ROTATE=24.*/)
           end
 
           it 'should have a standard PATH' do
-            should contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
+            is_expected.to contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
           end
         end
 
@@ -71,7 +71,7 @@ describe 'mysql::server::backup' do
             }.merge(default_params)
           end
 
-          it { should contain_file('mysqlbackupdir').with(
+          it { is_expected.to contain_file('mysqlbackupdir').with(
             :path => '/tmp',
             :ensure => 'directory',
             :mode => '0750',
@@ -85,7 +85,7 @@ describe 'mysql::server::backup' do
             { :backupcompress => false }.merge(default_params)
           end
 
-          it { should contain_file('mysqlbackup.sh').with(
+          it { is_expected.to contain_file('mysqlbackup.sh').with(
             :path   => '/usr/local/sbin/mysqlbackup.sh',
             :ensure => 'present'
           ) }
@@ -102,7 +102,7 @@ describe 'mysql::server::backup' do
             { :ignore_events => false }.merge(default_params)
           end
 
-          it { should contain_file('mysqlbackup.sh').with(
+          it { is_expected.to contain_file('mysqlbackup.sh').with(
             :path   => '/usr/local/sbin/mysqlbackup.sh',
             :ensure => 'present'
           ) }
@@ -120,14 +120,14 @@ describe 'mysql::server::backup' do
             { :backupdatabases => ['mysql'] }.merge(default_params)
           end
 
-          it { should contain_file('mysqlbackup.sh').with(
+          it { is_expected.to contain_file('mysqlbackup.sh').with(
             :path   => '/usr/local/sbin/mysqlbackup.sh',
             :ensure => 'present'
           ) }
 
           it 'should have a backup file for each database' do
             content = subject.resource('file','mysqlbackup.sh').send(:parameters)[:content]
-            content.should match(' mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date')
+            expect(content).to match(' mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date')
             #      verify_contents(subject, 'mysqlbackup.sh', [
             #        ' mysql | bzcat -zc ${DIR}/${PREFIX}mysql_`date +%Y%m%d-%H%M%S`.sql',
             #      ])

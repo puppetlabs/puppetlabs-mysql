@@ -20,12 +20,12 @@ describe Puppet::Type.type(:mysql_user) do
     end
 
     it 'should accept a user name' do
-      @user[:name].should == 'foo@localhost'
+      expect(@user[:name]).to eq('foo@localhost')
     end
 
     it 'should accept a password' do
       @user[:password_hash] = 'foo'
-      @user[:password_hash].should == 'foo'
+      expect(@user[:password_hash]).to eq('foo')
     end
   end
 
@@ -35,7 +35,7 @@ describe Puppet::Type.type(:mysql_user) do
     end
 
     it 'should lowercase the user name' do
-      @user[:name].should == 'foo@localhost'
+      expect(@user[:name]).to eq('foo@localhost')
     end
 
   end

@@ -6,7 +6,7 @@ describe 'mysql::server::mysqltuner' do
       describe "on #{pe_version} #{pe_platform}" do
         let(:facts) { facts }
 
-        it { should contain_file('/usr/local/bin/mysqltuner') }
+        it { is_expected.to contain_file('/usr/local/bin/mysqltuner') }
       end
     end
   end
