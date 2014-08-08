@@ -241,7 +241,7 @@ class mysql::params {
         }
 
         default: {
-          fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat, Debian, and FreeBSD, or operatingsystem Amazon")
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn't support ${::osfamily} or ${::operatingsystem}")
         }
       }
     }
@@ -303,4 +303,8 @@ class mysql::params {
     },
   }
 
+  ## Additional graceful failures
+  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' {
+    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 5.0 and beyond")
+  }
 }
