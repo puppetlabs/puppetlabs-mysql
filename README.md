@@ -133,6 +133,7 @@ hardcoded into the my.cnf template file.
 * `mysql::server::providers`: Creates users, grants, and databases.
 * `mysql::bindings::java`: Installs Java bindings.
 * `mysql::bindings::perl`: Installs Perl bindings.
+* `mysql::bindings::php`: Installs PHP bindings.
 * `mysql::bindings::python`: Installs Python bindings.
 * `mysql::bindings::ruby`: Installs Ruby bindings.
 * `mysql::client::install`:  Installs MySQL client.
