@@ -14,122 +14,20 @@ describe 'mysql::server' do
           it { is_expected.to contain_class('mysql::server::providers') }
         end
 
-        # make sure that overriding the mysqld settings keeps the defaults for everything else
-        context 'with overrides' do
-          let(:params) {{ :override_options => { 'mysqld' => { 'socket' => '/var/lib/mysql/mysql.sock' } } }}
-          it do
-            is_expected.to contain_file('mysql-config-file').with({
-              :mode => '0644',
-            }).with_content(/basedir/)
-          end
-        end
-
-        describe 'with multiple instance of an option' do
-          let(:params) {{ :override_options => { 'mysqld' => { 'replicate-do-db' => ['base1', 'base2', 'base3'], } }}}
-          it do
-            is_expected.to contain_file('mysql-config-file').with_content(
-              /^replicate-do-db = base1$/
-            ).with_content(
-              /^replicate-do-db = base2$/
-            ).with_content(
-              /^replicate-do-db = base3$/
-            )
-          end
-        end
-
-        describe 'an option set to true' do
-          let(:params) {
-            { :override_options => { 'mysqld' => { 'ssl' => true } }}
-          }
-          it do
-            is_expected.to contain_file('mysql-config-file').with_content(/^\s*ssl\s*(?:$|= true)/m)
-          end
-        end
-
-        describe 'an option set to false' do
-          let(:params) {
-            { :override_options => { 'mysqld' => { 'ssl' => false } }}
-          }
-          it do
-            is_expected.to contain_file('mysql-config-file').with_content(/^\s*ssl = false/m)
-          end
-        end
-
         context 'with remove_default_accounts set' do
-          let (:params) {{ :remove_default_accounts => true }}
+          let(:params) {{ :remove_default_accounts => true }}
           it { is_expected.to contain_class('mysql::server::account_security') }
         end
 
-        describe 'possibility of disabling ssl completely' do
-          let(:params) {
-            { :override_options => { 'mysqld' => { 'ssl' => true, 'ssl-disable' => true } }}
-          }
-          it do
-            is_expected.to contain_file('mysql-config-file').without_content(/^\s*ssl\s*(?:$|= true)/m)
-          end
-        end
-
         context 'mysql::server::install' do
-          let(:params) {{ :package_ensure => 'present', :name => 'mysql-server' }}
-          it do
+          it 'contains the package' do
             is_expected.to contain_package('mysql-server').with({
-            :ensure => :present,
-            :name   => 'mysql-server',
-          })
-          end
-        end
-
-        if pe_platform =~ /redhat-7/
-          context 'mysql::server::install on RHEL 7' do
-            let(:params) {{ :package_ensure => 'present', :name => 'mariadb-server' }}
-            it do
-              is_expected.to contain_package('mysql-server').with({
               :ensure => :present,
-              :name   => 'mariadb-server',
             })
-            end
           end
-        end
-
-        context 'mysql::server::config' do
-          context 'with includedir' do
-            let(:params) {{ :includedir => '/etc/my.cnf.d' }}
-            it do
-              is_expected.to contain_file('/etc/my.cnf.d').with({
-                :ensure => :directory,
-                :mode   => '0755',
-              })
-            end
-
-            it do
-              is_expected.to contain_file('mysql-config-file').with({
-                :mode => '0644',
-              })
-            end
-
-            it do
-              is_expected.to contain_file('mysql-config-file').with_content(/!includedir/)
-            end
-          end
-
-          context 'without includedir' do
-            let(:params) {{ :includedir => '' }}
-            it do
-              is_expected.not_to contain_file('mysql-config-file').with({
-                :ensure => :directory,
-                :mode   => '0755',
-              })
-            end
-
-            it do
-              is_expected.to contain_file('mysql-config-file').with({
-                :mode => '0644',
-              })
-            end
-
-            it do
-              is_expected.to contain_file('mysql-config-file').without_content(/!includedir/)
-            end
+          context 'with datadir overridden' do
+            let(:params) {{ :override_options => { 'mysqld' => { 'datadir' => '/tmp' }} }}
+            it { is_expected.to contain_exec('mysql_install_db') }
           end
         end
 
@@ -159,7 +57,6 @@ describe 'mysql::server' do
             it { is_expected.to contain_mysql_user('root@localhost') }
             it { is_expected.to contain_file('/root/.my.cnf') }
           end
-
         end
 
         context 'mysql::server::providers' do
