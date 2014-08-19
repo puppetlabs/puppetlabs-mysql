@@ -1,7 +1,6 @@
 ---
 Gemfile:
   optional:
-    - gem: mime-types
-      version: '<2.0'
+  - gem: puppet_facts
 spec/spec_helper.rb:
   unmanaged: true
