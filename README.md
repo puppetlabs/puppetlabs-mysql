@@ -337,6 +337,14 @@ OS user performing the backup.
 
 OS group performing the backup.
 
+#####`backuposuser`
+
+OS user performing the backup.
+
+#####`backuposgroup`
+
+OS group performing the backup.
+
 ####mysql::server::monitor
 
 #####`mysql_monitor_username`
