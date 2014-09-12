@@ -127,7 +127,7 @@ describe 'mysql::server::backup' do
 
           it 'should have a backup file for each database' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
-              /mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date'/
+              /mysql | bzcat -zc \$\{DIR\}\\\$\{PREFIX\}mysql_`date'/
             )
           end
         end
@@ -164,7 +164,7 @@ describe 'mysql::server::backup' do
 
           it 'should be add postscript' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
-              /rsync -a \/tmp backup01.local-lan:/,
+              /rsync -a \/tmp backup01.local-lan:/
             )
           end
         end
