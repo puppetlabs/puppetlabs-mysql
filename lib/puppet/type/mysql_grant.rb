@@ -17,7 +17,15 @@ Puppet::Type.newtype(:mysql_grant) do
     # Sort the privileges array in order to ensure the comparision in the provider
     # self.instances method match.  Otherwise this causes it to keep resetting the
     # privileges.
-    self[:privileges] = Array(self[:privileges]).map(&:upcase).uniq.reject{|k| k == 'GRANT' or k == 'GRANT OPTION'}.sort!
+    self[:privileges] = Array(self[:privileges]).map{ |priv|
+       # split and sort the column_privileges in the parentheses and rejoin
+       if priv.include?('(')
+         type, col=priv.strip.split(/\s+|\b/,2)
+         type.upcase + " (" + col.slice(1...-1).strip.split(/\s*,\s*/).sort.join(', ') + ")"
+       else
+         priv.strip.upcase
+       end
+     }.uniq.reject{|k| k == 'GRANT' or k == 'GRANT OPTION'}.sort!
   end
 
   validate do
@@ -37,10 +45,6 @@ Puppet::Type.newtype(:mysql_grant) do
 
   newproperty(:privileges, :array_matching => :all) do
     desc 'Privileges for user'
-
-    munge do |value|
-      value.upcase
-    end
   end
 
   newproperty(:table) do

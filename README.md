@@ -511,6 +511,16 @@ mysql_grant { 'root@localhost/*.*':
 }
 ```
 
+It is possible to specify privileges down to the column level:
+```puppet
+mysql_grant { 'root@localhost/mysql.user':
+  ensure     => 'present',
+  privileges => ['SELECT (Host, User)'],
+  table      => 'mysql.user',
+  user       => 'root@localhost',
+}
+```
+
 ##Limitations
 
 This module has been tested on:

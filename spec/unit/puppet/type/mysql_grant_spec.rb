@@ -47,4 +47,28 @@ describe Puppet::Type.type(:mysql_grant) do
     }.to raise_error /name must match user and table parameters/
   end
 
+  describe 'it should munge privileges' do
+
+    it 'to just ALL' do
+      @user = Puppet::Type.type(:mysql_grant).new(
+        :name => 'foo@localhost/*.*',  :table => ['*.*','@'], :user => 'foo@localhost',
+        :privileges => ['ALL', 'PROXY'] )
+      expect(@user[:privileges]).to eq(['ALL'])
+    end
+
+    it 'to upcase and ordered' do
+      @user = Puppet::Type.type(:mysql_grant).new(
+        :name => 'foo@localhost/*.*',  :table => ['*.*','@'], :user => 'foo@localhost',
+        :privileges => ['select', 'Insert'] )
+      expect(@user[:privileges]).to eq(['INSERT', 'SELECT'])
+    end
+
+    it 'ordered including column privileges' do
+      @user = Puppet::Type.type(:mysql_grant).new(
+        :name => 'foo@localhost/*.*',  :table => ['*.*','@'], :user => 'foo@localhost',
+        :privileges => ['SELECT(Host,Address)', 'Insert'] )
+      expect(@user[:privileges]).to eq(['INSERT', 'SELECT (Address, Host)'])
+    end
+  end
+
 end
