@@ -10,7 +10,7 @@
 <%         vi.each do |vii| -%>
 <%=          ki %> = <%= vii %>
 <%         end -%>
-<%       elsif vi != :undef -%>
+<%       elsif ![nil, '', :undef].include?(vi) -%>
 <%=        ki %> = <%= vi %>
 <%       end -%>
 <%     end -%>
