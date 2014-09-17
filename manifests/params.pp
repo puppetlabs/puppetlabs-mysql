@@ -88,15 +88,28 @@ class mysql::params {
     }
 
     'Suse': {
-      $client_package_name   = $::operatingsystem ? {
-        /OpenSuSE/           => 'mysql-community-server-client',
-        /(SLES|SLED)/        => 'mysql-client',
+      case $::operatingsystem {
+        'OpenSuSE': {
+          if ( versioncmp( $::operatingsystemrelease, '13.1' ) >= 0  ) {
+            $client_package_name = 'mariadb-client'
+            $server_package_name = 'mariadb'
+            # First service start fails if this is set. Runs fine without
+            # it being set, in any case. Leaving it as-is for the mysql.
+            $basedir             = undef
+          } else {
+            $client_package_name = 'mysql-community-server-client'
+            $server_package_name = 'mysql-community-server'
+            $basedir             = '/usr'
+          }
+        }
+        'SLES',
+        'SLED':
+        {
+          $client_package_name = 'mysql-client'
+          $server_package_name = 'mysql'
+          $basedir             = '/usr'
+        }
       }
-      $server_package_name   = $::operatingsystem ? {
-        /OpenSuSE/           => 'mysql-community-server',
-        /(SLES|SLED)/        => 'mysql',
-      }
-      $basedir             = '/usr'
       $config_file         = '/etc/my.cnf'
       $includedir          = '/etc/my.cnf.d'
       $datadir             = '/var/lib/mysql'
