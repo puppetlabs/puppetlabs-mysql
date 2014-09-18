@@ -89,12 +89,14 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     user_string = self.class.cmd_user(user)
     table_string = self.class.cmd_table(table)
 
-    query = "REVOKE ALL ON #{table_string} FROM #{user_string}"
-    mysql([defaults_file, '-e', query].compact)
     # revoke grant option needs to be a extra query, because
     # "REVOKE ALL PRIVILEGES, GRANT OPTION [..]" is only valid mysql syntax
     # if no ON clause is used.
+    # It hast to be executed before "REVOKE ALL [..]" since a GRANT has to
+    # exist to be executed successfully
     query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
+    mysql([defaults_file, '-e', query].compact)
+    query = "REVOKE ALL ON #{table_string} FROM #{user_string}"
     mysql([defaults_file, '-e', query].compact)
   end
 

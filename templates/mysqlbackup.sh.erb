@@ -40,7 +40,7 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
-mysql -s -r -N -e 'SHOW DATABASES' | while read dbname
+mysql -u${USER} -p${PASS} -s -r -N -e 'SHOW DATABASES' | while read dbname
 do
   mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
     ${EVENTS} \
