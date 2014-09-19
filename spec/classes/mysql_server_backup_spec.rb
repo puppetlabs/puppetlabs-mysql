@@ -164,7 +164,7 @@ describe 'mysql::server::backup' do
 
           it 'should be add postscript' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
-              /rsync -a \/tmp backup01.local-lan:/,
+              /rsync -a \/tmp backup01.local-lan:/
             )
           end
         end
@@ -179,7 +179,7 @@ describe 'mysql::server::backup' do
 
           it 'should be add postscript' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
-              /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/,
+              /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/
             )
           end
         end
