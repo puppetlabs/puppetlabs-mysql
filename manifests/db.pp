@@ -9,6 +9,7 @@ define mysql::db (
   $grant       = 'ALL',
   $sql         = '',
   $enforce_sql = false,
+  $sql_timeout = 300,
   $ensure      = 'present'
 ) {
   #input validation
@@ -54,6 +55,7 @@ define mysql::db (
         refreshonly => $refresh,
         require     => Mysql_grant["${user}@${host}/${table}"],
         subscribe   => Mysql_database[$dbname],
+        timeout     => $sql_timeout
       }
     }
   }
