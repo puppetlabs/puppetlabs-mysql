@@ -7,7 +7,7 @@ define mysql::db (
   $collate     = 'utf8_general_ci',
   $host        = 'localhost',
   $grant       = 'ALL',
-  $sql         = '',
+  $sql         = undef,
   $enforce_sql = false,
   $ensure      = 'present'
 ) {
