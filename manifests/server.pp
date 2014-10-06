@@ -16,6 +16,8 @@ class mysql::server (
   $service_manage          = $mysql::params::server_service_manage,
   $service_name            = $mysql::params::server_service_name,
   $service_provider        = $mysql::params::server_service_provider,
+  $create_root_user        = $mysql::params::create_root_user,
+  $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
   $users                   = {},
   $grants                  = {},
   $databases               = {},

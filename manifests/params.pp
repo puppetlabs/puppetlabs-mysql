@@ -10,6 +10,8 @@ class mysql::params {
   $server_service_manage  = true
   $server_service_enabled = true
   $client_package_ensure  = 'present'
+  $create_root_user       = true
+  $create_root_my_cnf     = true
   # mysql::bindings
   $bindings_enable             = false
   $java_package_ensure         = 'present'
