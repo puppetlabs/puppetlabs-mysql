@@ -30,6 +30,9 @@ RSpec.configure do |c|
       if fact('osfamily') == 'RedHat'
         version = fact("operatingsystemmajrelease")
         shell("yum localinstall -y http://yum.puppetlabs.com/puppetlabs-release-el-#{version}.noarch.rpm")
+        if fact('operatingsystemmajrelease') =~ /7/ || fact('operatingsystem') =~ /Fedora/
+          shell("yum install -y bzip2")
+        end
       end
 
       shell("/bin/touch #{default['puppetpath']}/hiera.yaml")
