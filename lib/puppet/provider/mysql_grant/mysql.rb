@@ -29,10 +29,19 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
         # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root')@('127.0.0.1') (WITH GRANT OPTION)
         if match = munged_grant.match(/^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)$/)
           privileges, table, user, host, rest = match.captures
-          # Once we split privileges up on the , we need to make sure we
-          # shortern ALL PRIVILEGES to just all.
-          stripped_privileges = privileges.split(',').map do |priv|
-            priv == 'ALL PRIVILEGES' ? 'ALL' : priv.lstrip.rstrip
+          # split on ',' if it is not a non-'('-containing string followed by a
+          # closing parenthesis ')'-char - e.g. only split comma separated elements not in
+          # parentheses
+          stripped_privileges = privileges.strip.split(/\s*,\s*(?![^(]*\))/).map do |priv|
+            # split and sort the column_privileges in the parentheses and rejoin
+            if priv.include?('(')
+              type, col=priv.strip.split(/\s+|\b/,2)
+              type.upcase + " (" + col.slice(1...-1).strip.split(/\s*,\s*/).sort.join(', ') + ")"
+            else
+              # Once we split privileges up on the , we need to make sure we
+              # shortern ALL PRIVILEGES to just all.
+              priv == 'ALL PRIVILEGES' ? 'ALL' : priv.strip
+            end
           end
           # Same here, but to remove OPTION leaving just GRANT.
           options = ['GRANT'] if rest.match(/WITH\sGRANT\sOPTION/)
