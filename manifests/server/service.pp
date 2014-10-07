@@ -10,8 +10,9 @@ class mysql::server::service {
   }
 
   file { $mysql::params::log_error:
-    owner => 'mysql',
-    group => 'mysql',
+    ensure => present,
+    owner  => 'mysql',
+    group  => 'mysql',
   }
 
   service { 'mysqld':
