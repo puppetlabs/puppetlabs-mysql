@@ -43,6 +43,7 @@
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
+        "10 SP4",
         "11 SP1"
       ]
     },
@@ -65,7 +66,7 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": ">= 3.2.0 < 3.4.0"
+      "version_requirement": "3.x"
     },
     {
       "name": "puppet",

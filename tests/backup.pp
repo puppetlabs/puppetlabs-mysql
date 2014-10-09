@@ -1,7 +1,8 @@
 class { 'mysql::server':
-  config_hash => {'root_password' => 'password'}
+  root_password => 'password'
 }
-class { 'mysql::backup':
+
+class { 'mysql::server::backup':
   backupuser     => 'myuser',
   backuppassword => 'mypassword',
   backupdir      => '/tmp/backups',

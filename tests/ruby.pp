@@ -1,1 +1,1 @@
-include mysql::ruby
+include mysql::bindings::ruby
