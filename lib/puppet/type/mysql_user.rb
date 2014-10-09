@@ -4,12 +4,18 @@ Puppet::Type.newtype(:mysql_user) do
 
   ensurable
 
+  autorequire(:file) { '/root/.my.cnf' }
+
   newparam(:name, :namevar => true) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."
     validate do |value|
-      # https://dev.mysql.com/doc/refman/5.1/en/account-names.html
+      # http://dev.mysql.com/doc/refman/5.5/en/identifiers.html
       # Regex should problably be more like this: /^[`'"]?[^`'"]*[`'"]?@[`'"]?[\w%\.]+[`'"]?$/
-      raise(ArgumentError, "Invalid database user #{value}") unless value =~ /[\w-]*@[\w%\.:]+/
+      # If at least one special char is used, string must be quoted
+      raise(ArgumentError, "Database user #{value} must be quotted as it contains special characters") if value =~ /^[^'`"].*[^0-9a-zA-Z$_].*[^'`"]@[\w%\.:]+/
+      # If no special char, quoted is not needed, but allowed
+      # I don't see any case where this could happen, as it should be covered by previous check
+      raise(ArgumentError, "Invalid database user #{value}") unless value =~ /^['`"]?[0-9a-zA-Z$_]*['`"]?@[\w%\.:]+/
       username = value.split('@')[0]
       if username.size > 16
         raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
