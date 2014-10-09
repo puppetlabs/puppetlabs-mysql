@@ -1,1 +1,1 @@
-include mysql::perl
+include mysql::bindings::perl
