@@ -9,7 +9,8 @@ define mysql::db (
   $grant       = 'ALL',
   $sql         = undef,
   $enforce_sql = false,
-  $ensure      = 'present'
+  $ensure      = 'present',
+  $import_timeout = 300,
 ) {
   #input validation
   validate_re($ensure, '^(present|absent)$',
@@ -54,6 +55,7 @@ define mysql::db (
         refreshonly => $refresh,
         require     => Mysql_grant["${user}@${host}/${table}"],
         subscribe   => Mysql_database[$dbname],
+        timeout     => $import_timeout,
       }
     }
   }
