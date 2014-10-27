@@ -184,6 +184,29 @@ class mysql::params {
       $ruby_package_name   = 'mysql-ruby'
     }
 
+    'Gentoo': {
+      $client_package_name = 'virtual/mysql'
+      $server_package_name = 'virtual/mysql'
+      $basedir             = '/usr'
+      $config_file         = '/etc/mysql/my.cnf'
+      $datadir             = '/var/lib/mysql'
+      $log_error           = '/var/log/mysql/mysqld.err'
+      $pidfile             = '/run/mysqld/mysqld.pid'
+      $root_group          = 'root'
+      $server_service_name = 'mysql'
+      $socket              = '/run/mysqld/mysqld.sock'
+      $ssl_ca              = '/etc/mysql/cacert.pem'
+      $ssl_cert            = '/etc/mysql/server-cert.pem'
+      $ssl_key             = '/etc/mysql/server-key.pem'
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = 'dev-java/jdbc-mysql'
+      $perl_package_name   = 'dev-perl/DBD-mysql'
+      $php_package_name    = undef
+      $python_package_name = 'dev-python/mysql-python'
+      $ruby_package_name   = 'dev-ruby/mysql-ruby'
+    }
+
     'FreeBSD': {
       $client_package_name = 'databases/mysql55-client'
       $server_package_name = 'databases/mysql55-server'
