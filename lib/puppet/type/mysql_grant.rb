@@ -49,7 +49,7 @@ Puppet::Type.newtype(:mysql_grant) do
 
   newproperty(:table) do
     desc 'Table to apply privileges to.'
-
+    defaultto { @resource[:name].match("/").post_match }
     munge do |value|
       value.delete("`")
     end
@@ -59,6 +59,7 @@ Puppet::Type.newtype(:mysql_grant) do
 
   newproperty(:user) do
     desc 'User to operate on.'
+    defaultto { @resource[:name].match("/").pre_match }
     validate do |value|
       # https://dev.mysql.com/doc/refman/5.1/en/account-names.html
       # Regex should problably be more like this: /^[`'"]?[^`'"]*[`'"]?@[`'"]?[\w%\.]+[`'"]?$/
