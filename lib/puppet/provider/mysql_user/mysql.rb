@@ -18,7 +18,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
 
       new(:name                     => name,
           :ensure                   => :present,
-          :password_hash            => @password,
+          :password_hash            => @password.to_s,
           :max_user_connections     => @max_user_connections,
           :max_connections_per_hour => @max_connections_per_hour,
           :max_queries_per_hour     => @max_queries_per_hour,
