@@ -1,89 +1,133 @@
 require 'spec_helper'
+
 describe 'mysql::server' do
+  on_pe_supported_platforms(PLATFORMS).each do |pe_version,pe_platforms|
+    pe_platforms.each do |pe_platform,facts|
+      describe "on #{pe_version} #{pe_platform}" do
+        let(:facts) { facts }
 
-  let :constant_parameter_defaults do
-    {:config_hash    => {},
-     :package_ensure => 'present',
-     :enabled        => true
-    }
-  end
-
-  describe 'when ubuntu use upstart' do
-    let :facts do
-      { :osfamily => 'Debian',
-        :operatingsystem => 'Ubuntu',
-      }
-    end
-
-    it { should contain_service('mysqld').with(
-      :name     => 'mysql',
-      :ensure   => 'running',
-      :enable   => 'true',
-      :provider => 'upstart',
-      :require  => 'Package[mysql-server]'
-    )}
-  end
-
-  describe 'with osfamily specific defaults' do
-    {
-      'Debian' => {
-        :service_name => 'mysql',
-        :package_name => 'mysql-server'
-      },
-      'FreeBSD' => {
-        :service_name => 'mysql-server',
-        :package_name => 'databases/mysql55-server'
-      },
-      'Redhat' => {
-        :service_name => 'mysqld',
-        :package_name => 'mysql-server'
-      }
-    }.each do |osfamily, osparams|
-
-      describe "when osfamily is #{osfamily}" do
-
-        let :facts do
-          { :osfamily => osfamily }
+        context 'with defaults' do
+          it { is_expected.to contain_class('mysql::server::install') }
+          it { is_expected.to contain_class('mysql::server::config') }
+          it { is_expected.to contain_class('mysql::server::service') }
+          it { is_expected.to contain_class('mysql::server::root_password') }
+          it { is_expected.to contain_class('mysql::server::providers') }
         end
 
-        [
-          {},
-          {
-            :package_name   => 'dans_package',
-            :package_ensure => 'latest',
-            :service_name   => 'dans_service',
-            :config_hash    => {'root_password' => 'foo'},
-            :enabled        => false
-          }
-        ].each do |passed_params|
+        context 'with remove_default_accounts set' do
+          let(:params) {{ :remove_default_accounts => true }}
+          it { is_expected.to contain_class('mysql::server::account_security') }
+        end
 
-          describe "with #{passed_params == {} ? 'default' : 'specified'} parameters" do
+        context 'mysql::server::install' do
+          it 'contains the package' do
+            is_expected.to contain_package('mysql-server').with({
+              :ensure => :present,
+            })
+          end
+          context 'with datadir overridden' do
+            let(:params) {{ :override_options => { 'mysqld' => { 'datadir' => '/tmp' }} }}
+            it { is_expected.to contain_exec('mysql_install_db') }
+          end
+        end
 
-            let :parameter_defaults do
-              constant_parameter_defaults.merge(osparams)
+        context 'mysql::server::service' do
+          context 'with defaults' do
+            it { is_expected.to contain_service('mysqld') }
+          end
+
+          context 'service_enabled set to false' do
+            let(:params) {{ :service_enabled => false }}
+
+            it do
+              is_expected.to contain_service('mysqld').with({
+                :ensure => :stopped
+              })
             end
+          end
+        end
 
-            let :params do
-              passed_params
-            end
+        context 'mysql::server::root_password' do
+          describe 'when defaults' do
+            it { is_expected.not_to contain_mysql_user('root@localhost') }
+            it { is_expected.not_to contain_file('/root/.my.cnf') }
+          end
+          describe 'when set' do
+            let(:params) {{:root_password => 'SET' }}
+            it { is_expected.to contain_mysql_user('root@localhost') }
+            it { is_expected.to contain_file('/root/.my.cnf') }
+          end
+        end
 
-            let :param_values do
-              parameter_defaults.merge(params)
-            end
-
-            it { should contain_package('mysql-server').with(
-              :name   => param_values[:package_name],
-              :ensure => param_values[:package_ensure]
+        context 'mysql::server::providers' do
+          describe 'with users' do
+            let(:params) {{:users => {
+              'foo@localhost' => {
+                'max_connections_per_hour' => '1',
+                'max_queries_per_hour'     => '2',
+                'max_updates_per_hour'     => '3',
+                'max_user_connections'     => '4',
+                'password_hash'            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
+              },
+              'foo2@localhost' => {}
+            }}}
+            it { is_expected.to contain_mysql_user('foo@localhost').with(
+              :max_connections_per_hour => '1',
+              :max_queries_per_hour     => '2',
+              :max_updates_per_hour     => '3',
+              :max_user_connections     => '4',
+              :password_hash            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
             )}
-
-            it { should contain_service('mysqld').with(
-              :name    => param_values[:service_name],
-              :ensure  => param_values[:enabled] ? 'running' : 'stopped',
-              :enable  => param_values[:enabled],
-              :require => 'Package[mysql-server]'
+            it { is_expected.to contain_mysql_user('foo2@localhost').with(
+              :max_connections_per_hour => nil,
+              :max_queries_per_hour     => nil,
+              :max_updates_per_hour     => nil,
+              :max_user_connections     => nil,
+              :password_hash            => ''
             )}
+          end
 
-            it { should contain_service('mysqld').without_provider }
+          describe 'with grants' do
+            let(:params) {{:grants => {
+              'foo@localhost/somedb.*' => {
+                'user'       => 'foo@localhost',
+                'table'      => 'somedb.*',
+                'privileges' => ["SELECT", "UPDATE"],
+                'options'    => ["GRANT"],
+              },
+              'foo2@localhost/*.*' => {
+                'user'       => 'foo2@localhost',
+                'table'      => '*.*',
+                'privileges' => ["SELECT"],
+              },
+            }}}
+            it { is_expected.to contain_mysql_grant('foo@localhost/somedb.*').with(
+              :user       => 'foo@localhost',
+              :table      => 'somedb.*',
+              :privileges => ["SELECT", "UPDATE"],
+              :options    => ["GRANT"]
+            )}
+            it { is_expected.to contain_mysql_grant('foo2@localhost/*.*').with(
+              :user       => 'foo2@localhost',
+              :table      => '*.*',
+              :privileges => ["SELECT"],
+              :options    => nil
+            )}
+          end
+
+          describe 'with databases' do
+            let(:params) {{:databases => {
+              'somedb' => {
+                'charset' => 'latin1',
+                'collate' => 'latin1',
+              },
+              'somedb2' => {}
+            }}}
+            it { is_expected.to contain_mysql_database('somedb').with(
+              :charset => 'latin1',
+              :collate => 'latin1'
+            )}
+            it { is_expected.to contain_mysql_database('somedb2')}
           end
         end
       end

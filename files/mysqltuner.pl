@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
-# mysqltuner.pl - Version 1.2.0
+# mysqltuner.pl - Version 1.3.0
 # High Performance MySQL Tuning Script
-# Copyright (C) 2006-2011 Major Hayden - major@mhtx.net
+# Copyright (C) 2006-2014 Major Hayden - major@mhtx.net
 #
 # For the latest updates, please visit http://mysqltuner.com/
-# Git repository available at http://github.com/rackerhacker/MySQLTuner-perl
+# Git repository available at http://github.com/major/MySQLTuner-perl
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ use File::Spec;
 use Getopt::Long;
 
 # Set up a few variables for use in the script
-my $tunerversion = "1.2.0";
+my $tunerversion = "1.3.0";
 my (@adjvars, @generalrec);
 
 # Set defaults
@@ -76,6 +76,7 @@ GetOptions(\%opt,
 		'pass=s',
 		'skipsize',
 		'checkversion',
+		'mysqladmin=s',
 		'help',
 	);
 
@@ -100,6 +101,7 @@ sub usage {
 		"      --port <port>        Port to use for connection (default: 3306)\n".
 		"      --user <username>    Username to use for authentication\n".
 		"      --pass <password>    Password to use for authentication\n".
+		"      --mysqladmin <path>  Path to a custom mysqladmin executable\n".
 		"\n".
 		"   Performance and Reporting Options\n".
 		"      --skipsize           Don't enumerate tables and their types/sizes (default: on)\n".
@@ -219,14 +221,14 @@ sub os_setup {
 		} elsif ($os =~ /Darwin/) {
 			$physical_memory = `sysctl -n hw.memsize` or memerror;
 			$swap_memory = `sysctl -n vm.swapusage | awk '{print \$3}' | sed 's/\..*\$//'` or memerror;
-		} elsif ($os =~ /NetBSD|OpenBSD/) {
+		} elsif ($os =~ /NetBSD|OpenBSD|FreeBSD/) {
 			$physical_memory = `sysctl -n hw.physmem` or memerror;
 			if ($physical_memory < 0) {
 				$physical_memory = `sysctl -n hw.physmem64` or memerror;
 			}
 			$swap_memory = `swapctl -l | grep '^/' | awk '{ s+= \$2 } END { print s }'` or memerror;
 		} elsif ($os =~ /BSD/) {
-			$physical_memory = `sysctl -n hw.realmem`;
+			$physical_memory = `sysctl -n hw.realmem` or memerror;
 			$swap_memory = `swapinfo | grep '^/' | awk '{ s+= \$2 } END { print s }'`;
 		} elsif ($os =~ /SunOS/) {
 			$physical_memory = `/usr/sbin/prtconf | grep Memory | cut -f 3 -d ' '` or memerror;
@@ -249,12 +251,22 @@ my ($mysqllogin,$doremote,$remotestring);
 sub mysql_setup {
 	$doremote = 0;
 	$remotestring = '';
-	my $command = `which mysqladmin`;
-	chomp($command);
-	if (! -e $command) {
-		badprint "Unable to find mysqladmin in your \$PATH.  Is MySQL installed?\n";
+	my $mysqladmincmd;
+    if ($opt{mysqladmin}) {
+	    $mysqladmincmd = $opt{mysqladmin};
+    } else {
+		$mysqladmincmd = `which mysqladmin`;
+    }
+    chomp($mysqladmincmd);
+    if (! -e $mysqladmincmd && $opt{mysqladmin}) {
+		badprint "Unable to find the mysqladmin command you specified: ".$mysqladmincmd."\n";
+		exit;
+	} elsif (! -e $mysqladmincmd) {
+        badprint "Couldn't find mysqladmin in your \$PATH. Is MySQL installed?\n";
 		exit;
 	}
+
+
 	# Are we being asked to connect via a socket?
 	if ($opt{socket} ne 0) {
 		$remotestring = " -S $opt{socket}";
@@ -275,7 +287,7 @@ sub mysql_setup {
 	# Did we already get a username and password passed on the command line?
 	if ($opt{user} ne 0 and $opt{pass} ne 0) {
 		$mysqllogin = "-u $opt{user} -p'$opt{pass}'".$remotestring;
-		my $loginstatus = `mysqladmin ping $mysqllogin 2>&1`;
+		my $loginstatus = `$mysqladmincmd ping $mysqllogin 2>&1`;
 		if ($loginstatus =~ /mysqld is alive/) {
 			goodprint "Logged in using credentials passed on the command line\n";
 			return 1;
@@ -284,18 +296,52 @@ sub mysql_setup {
 			exit 0;
 		}
 	}
-	if ( -r "/etc/psa/.psa.shadow" and $doremote == 0 ) {
+	my $svcprop = `which svcprop 2>/dev/null`;
+	if (substr($svcprop, 0, 1) =~ "/") {
+		# We are on solaris
+		(my $mysql_login = `svcprop -p quickbackup/username svc:/network/mysql-quickbackup:default`) =~ s/\s+$//;
+		(my $mysql_pass = `svcprop -p quickbackup/password svc:/network/mysql-quickbackup:default`) =~ s/\s+$//;
+		if ( substr($mysql_login, 0, 7) ne "svcprop" ) {
+			# mysql-quickbackup is installed
+			$mysqllogin = "-u $mysql_login -p$mysql_pass";
+			my $loginstatus = `mysqladmin $mysqllogin ping 2>&1`;
+			if ($loginstatus =~ /mysqld is alive/) {
+				goodprint "Logged in using credentials from mysql-quickbackup.\n";
+				return 1;
+			} else {
+				badprint "Attempted to use login credentials from mysql-quickbackup, but they failed.\n";
+				exit 0;
+			}
+		}
+	} elsif ( -r "/etc/psa/.psa.shadow" and $doremote == 0 ) {
 		# It's a Plesk box, use the available credentials
 		$mysqllogin = "-u admin -p`cat /etc/psa/.psa.shadow`";
-		my $loginstatus = `mysqladmin ping $mysqllogin 2>&1`;
+		my $loginstatus = `$mysqladmincmd ping $mysqllogin 2>&1`;
 		unless ($loginstatus =~ /mysqld is alive/) {
 			badprint "Attempted to use login credentials from Plesk, but they failed.\n";
+			exit 0;
+		}
+	} elsif ( -r "/usr/local/directadmin/conf/mysql.conf" and $doremote == 0 ){
+		# It's a DirectAdmin box, use the available credentials
+		my $mysqluser=`cat /usr/local/directadmin/conf/mysql.conf | egrep '^user=.*'`;
+		my $mysqlpass=`cat /usr/local/directadmin/conf/mysql.conf | egrep '^passwd=.*'`;
+
+		$mysqluser =~ s/user=//;
+		$mysqluser =~ s/[\r\n]//;
+		$mysqlpass =~ s/passwd=//;
+		$mysqlpass =~ s/[\r\n]//;
+		
+		$mysqllogin = "-u $mysqluser -p$mysqlpass";
+		
+		my $loginstatus = `mysqladmin ping $mysqllogin 2>&1`;
+		unless ($loginstatus =~ /mysqld is alive/) {
+			badprint "Attempted to use login credentials from DirectAdmin, but they failed.\n";
 			exit 0;
 		}
 	} elsif ( -r "/etc/mysql/debian.cnf" and $doremote == 0 ){
 		# We have a debian maintenance account, use it
 		$mysqllogin = "--defaults-file=/etc/mysql/debian.cnf";
-		my $loginstatus = `mysqladmin $mysqllogin ping 2>&1`;
+		my $loginstatus = `$mysqladmincmd $mysqllogin ping 2>&1`;
 		if ($loginstatus =~ /mysqld is alive/) {
 			goodprint "Logged in using credentials from debian maintenance account.\n";
 			return 1;
@@ -305,7 +351,7 @@ sub mysql_setup {
 		}
 	} else {
 		# It's not Plesk or debian, we should try a login
-		my $loginstatus = `mysqladmin $remotestring ping 2>&1`;
+		my $loginstatus = `$mysqladmincmd $remotestring ping 2>&1`;
 		if ($loginstatus =~ /mysqld is alive/) {
 			# Login went just fine
 			$mysqllogin = " $remotestring ";
@@ -332,7 +378,7 @@ sub mysql_setup {
 				$mysqllogin .= " -p'$password'";
 			}
 			$mysqllogin .= $remotestring;
-			my $loginstatus = `mysqladmin ping $mysqllogin 2>&1`;
+			my $loginstatus = `$mysqladmincmd ping $mysqllogin 2>&1`;
 			if ($loginstatus =~ /mysqld is alive/) {
 				print STDERR "\n";
 				if (! length($password)) {
@@ -416,35 +462,10 @@ sub get_replication_status {
 	}
 }
 
-# Checks for updates to MySQLTuner
-sub validate_tuner_version {
-	print "\n-------- General Statistics --------------------------------------------------\n";
-	if ($opt{checkversion} eq 0) {
-		infoprint "Skipped version check for MySQLTuner script\n";
-		return;
-	}
-	my $update;
-	my $url = "http://mysqltuner.com/versioncheck.php?v=$tunerversion";
-	if (-e "/usr/bin/curl") {
-		$update = `/usr/bin/curl --connect-timeout 5 '$url' 2>$devnull`;
-		chomp($update);
-	} elsif (-e "/usr/bin/wget") {
-		$update = `/usr/bin/wget -e timestamping=off -T 5 -O - '$url' 2>$devnull`;
-		chomp($update);
-	}
-	if ($update eq 1) {
-		badprint "There is a new version of MySQLTuner available\n";
-	} elsif ($update eq 0) {
-		goodprint "You have the latest version of MySQLTuner\n";
-	} else {
-		infoprint "Unable to check for the latest MySQLTuner version\n";
-	}
-}
-
 # Checks for supported or EOL'ed MySQL versions
 my ($mysqlvermajor,$mysqlverminor);
 sub validate_mysql_version {
-	($mysqlvermajor,$mysqlverminor) = $myvar{'version'} =~ /(\d)\.(\d)/;
+	($mysqlvermajor,$mysqlverminor) = $myvar{'version'} =~ /(\d+)\.(\d+)/;
 	if (!mysql_version_ge(5)) {
 		badprint "Your MySQL version ".$myvar{'version'}." is EOL software!  Upgrade soon!\n";
 	} elsif (mysql_version_ge(6)) {
@@ -473,6 +494,20 @@ sub check_architecture {
 	} elsif (`uname` =~ /AIX/ && `bootinfo -K` =~ /64/) {
 		$arch = 64;
 		goodprint "Operating on 64-bit architecture\n";
+	} elsif (`uname` =~ /NetBSD|OpenBSD/ && `sysctl -b hw.machine` =~ /64/) {
+		$arch = 64;
+		goodprint "Operating on 64-bit architecture\n";
+	} elsif (`uname` =~ /FreeBSD/ && `sysctl -b hw.machine_arch` =~ /64/) {
+		$arch = 64;
+		goodprint "Operating on 64-bit architecture\n";
+	} elsif (`uname` =~ /Darwin/ && `uname -m` =~ /Power Macintosh/) {
+		# Darwin box.local 9.8.0 Darwin Kernel Version 9.8.0: Wed Jul 15 16:57:01 PDT 2009; root:xnu1228.15.4~1/RELEASE_PPC Power Macintosh
+		$arch = 64;
+		goodprint "Operating on 64-bit architecture\n";
+	} elsif (`uname` =~ /Darwin/ && `uname -m` =~ /x86_64/) {
+		# Darwin gibas.local 12.3.0 Darwin Kernel Version 12.3.0: Sun Jan  6 22:37:10 PST 2013; root:xnu-2050.22.13~1/RELEASE_X86_64 x86_64
+		$arch = 64;
+		goodprint "Operating on 64-bit architecture\n";
 	} else {
 		$arch = 32;
 		if ($physical_memory > 2147483648) {
@@ -494,12 +529,21 @@ sub check_storage_engines {
 	print "\n-------- Storage Engine Statistics -------------------------------------------\n";
 	infoprint "Status: ";
 	my $engines;
-	$engines .= (defined $myvar{'have_archive'} && $myvar{'have_archive'} eq "YES")? greenwrap "+Archive " : redwrap "-Archive " ;
-	$engines .= (defined $myvar{'have_bdb'} && $myvar{'have_bdb'} eq "YES")? greenwrap "+BDB " : redwrap "-BDB " ;
-	$engines .= (defined $myvar{'have_federated_engine'} && $myvar{'have_federated_engine'} eq "YES")? greenwrap "+Federated " : redwrap "-Federated " ;
-	$engines .= (defined $myvar{'have_innodb'} && $myvar{'have_innodb'} eq "YES")? greenwrap "+InnoDB " : redwrap "-InnoDB " ;
-	$engines .= (defined $myvar{'have_isam'} && $myvar{'have_isam'} eq "YES")? greenwrap "+ISAM " : redwrap "-ISAM " ;
-	$engines .= (defined $myvar{'have_ndbcluster'} && $myvar{'have_ndbcluster'} eq "YES")? greenwrap "+NDBCluster " : redwrap "-NDBCluster " ;
+	if (mysql_version_ge(5)) {
+		my @engineresults = `mysql $mysqllogin -Bse "SELECT ENGINE,SUPPORT FROM information_schema.ENGINES WHERE ENGINE NOT IN ('performance_schema','MyISAM','MERGE','MEMORY') ORDER BY ENGINE ASC"`;
+		foreach my $line (@engineresults) {
+			my ($engine,$engineenabled);
+			($engine,$engineenabled) = $line =~ /([a-zA-Z_]*)\s+([a-zA-Z]+)/;
+			$engines .= ($engineenabled eq "YES" || $engineenabled eq "DEFAULT") ? greenwrap "+".$engine." " : redwrap "-".$engine." ";
+		}
+	} else {
+		$engines .= (defined $myvar{'have_archive'} && $myvar{'have_archive'} eq "YES")? greenwrap "+Archive " : redwrap "-Archive " ;
+		$engines .= (defined $myvar{'have_bdb'} && $myvar{'have_bdb'} eq "YES")? greenwrap "+BDB " : redwrap "-BDB " ;
+		$engines .= (defined $myvar{'have_federated_engine'} && $myvar{'have_federated_engine'} eq "YES")? greenwrap "+Federated " : redwrap "-Federated " ;
+		$engines .= (defined $myvar{'have_innodb'} && $myvar{'have_innodb'} eq "YES")? greenwrap "+InnoDB " : redwrap "-InnoDB " ;
+		$engines .= (defined $myvar{'have_isam'} && $myvar{'have_isam'} eq "YES")? greenwrap "+ISAM " : redwrap "-ISAM " ;
+		$engines .= (defined $myvar{'have_ndbcluster'} && $myvar{'have_ndbcluster'} eq "YES")? greenwrap "+NDBCluster " : redwrap "-NDBCluster " ;
+	}
 	print "$engines\n";
 	if (mysql_version_ge(5)) {
 		# MySQL 5 servers can have table sizes calculated quickly from information schema
@@ -605,8 +649,10 @@ sub calculations {
 	$mycalc{'pct_connections_used'} = ($mycalc{'pct_connections_used'} > 100) ? 100 : $mycalc{'pct_connections_used'} ;
 
 	# Key buffers
-	if (mysql_version_ge(4, 1)) {
+	if (mysql_version_ge(4, 1) && $myvar{'key_buffer_size'} > 0) {
 		$mycalc{'pct_key_buffer_used'} = sprintf("%.1f",(1 - (($mystat{'Key_blocks_unused'} * $myvar{'key_cache_block_size'}) / $myvar{'key_buffer_size'})) * 100);
+	} else {
+		$mycalc{'pct_key_buffer_used'} = 0;
 	}
 	if ($mystat{'Key_read_requests'} > 0) {
 		$mycalc{'pct_keys_from_mem'} = sprintf("%.1f",(100 - (($mystat{'Key_reads'} / $mystat{'Key_read_requests'}) * 100)));
@@ -780,7 +826,10 @@ sub mysql_stats {
 	} elsif ($myvar{'query_cache_size'} < 1) {
 		badprint "Query cache is disabled\n";
 		push(@adjvars,"query_cache_size (>= 8M)");
-	} elsif ($mystat{'Com_select'} == 0) {
+	} elsif ($myvar{'query_cache_type'} eq "OFF") {
+                badprint "Query cache is disabled\n";
+                push(@adjvars,"query_cache_type (=1)");
+        } elsif ($mystat{'Com_select'} == 0) {
 		badprint "Query cache cannot be analyzed - no SELECT statements executed\n";
 	} else {
 		if ($mycalc{'query_cache_efficiency'} < 20) {
@@ -859,15 +908,18 @@ sub mysql_stats {
 	}
 
 	# Table cache
+	my $table_cache_var = "";
 	if ($mystat{'Open_tables'} > 0) {
 		if ($mycalc{'table_cache_hit_rate'} < 20) {
 			badprint "Table cache hit rate: $mycalc{'table_cache_hit_rate'}% (".hr_num($mystat{'Open_tables'})." open / ".hr_num($mystat{'Opened_tables'})." opened)\n";
 			if (mysql_version_ge(5, 1)) {
-				push(@adjvars,"table_cache (> ".$myvar{'table_open_cache'}.")");
+				$table_cache_var = "table_open_cache";
 			} else {
-				push(@adjvars,"table_cache (> ".$myvar{'table_cache'}.")");
+				$table_cache_var = "table_cache";
 			}
-			push(@generalrec,"Increase table_cache gradually to avoid file descriptor limits");
+			push(@adjvars,$table_cache_var." (> ".$myvar{'table_open_cache'}.")");
+			push(@generalrec,"Increase ".$table_cache_var." gradually to avoid file descriptor limits");
+			push(@generalrec,"Read this before increasing ".$table_cache_var." over 64: http://bit.ly/1mi7c4C");
 		} else {
 			goodprint "Table cache hit rate: $mycalc{'table_cache_hit_rate'}% (".hr_num($mystat{'Open_tables'})." open / ".hr_num($mystat{'Opened_tables'})." opened)\n";
 		}
@@ -909,11 +961,17 @@ sub mysql_stats {
 	# InnoDB
 	if (defined $myvar{'have_innodb'} && $myvar{'have_innodb'} eq "YES" && defined $enginestats{'InnoDB'}) {
 		if ($myvar{'innodb_buffer_pool_size'} > $enginestats{'InnoDB'}) {
-			goodprint "InnoDB data size / buffer pool: ".hr_bytes($enginestats{'InnoDB'})."/".hr_bytes($myvar{'innodb_buffer_pool_size'})."\n";
+			goodprint "InnoDB buffer pool / data size: ".hr_bytes($myvar{'innodb_buffer_pool_size'})."/".hr_bytes($enginestats{'InnoDB'})."\n";
 		} else {
-			badprint "InnoDB data size / buffer pool: ".hr_bytes($enginestats{'InnoDB'})."/".hr_bytes($myvar{'innodb_buffer_pool_size'})."\n";
+			badprint "InnoDB  buffer pool / data size: ".hr_bytes($myvar{'innodb_buffer_pool_size'})."/".hr_bytes($enginestats{'InnoDB'})."\n";
 			push(@adjvars,"innodb_buffer_pool_size (>= ".hr_bytes_rnd($enginestats{'InnoDB'}).")");
 		}
+	    if (defined $mystat{'Innodb_log_waits'} && $mystat{'Innodb_log_waits'} > 0) {
+		    badprint "InnoDB log waits: ".$mystat{'Innodb_log_waits'};
+    		push(@adjvars,"innodb_log_buffer_size (>= ".hr_bytes_rnd($myvar{'innodb_log_buffer_size'}).")");
+    	} else {
+    		goodprint "InnoDB log waits: ".$mystat{'Innodb_log_waits'};
+    	}
 	}
 }
 
@@ -947,7 +1005,6 @@ print	"\n >>  MySQLTuner $tunerversion - Major Hayden <major\@mhtx.net>\n".
 mysql_setup;					# Gotta login first
 os_setup;						# Set up some OS variables
 get_all_vars;					# Toss variables/status into hashes
-validate_tuner_version;			# Check current MySQLTuner version
 validate_mysql_version;			# Check current MySQL version
 check_architecture;				# Suggest 64-bit upgrade
 check_storage_engines;			# Show enabled storage engines

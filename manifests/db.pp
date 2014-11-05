@@ -1,82 +1,61 @@
-# Define: mysql::db
-#
-# This module creates database instances, a user, and grants that user
-# privileges to the database.  It can also import SQL from a file in order to,
-# for example, initialize a database schema.
-#
-# Since it requires class mysql::server, we assume to run all commands as the
-# root mysql user against the local mysql server.
-#
-# Parameters:
-#   [*title*]       - mysql database name.
-#   [*user*]        - username to create and grant access.
-#   [*password*]    - user's password.
-#   [*charset*]     - database charset.
-#   [*host*]        - host for assigning privileges to user.
-#   [*grant*]       - array of privileges to grant user.
-#   [*enforce_sql*] - whether to enforce or conditionally run sql on creation.
-#   [*sql*]         - sql statement to run.
-#   [*ensure*]      - specifies if a database is present or absent.
-#
-# Actions:
-#
-# Requires:
-#
-#   class mysql::server
-#
-# Sample Usage:
-#
-#  mysql::db { 'mydb':
-#    user     => 'my_user',
-#    password => 'password',
-#    host     => $::hostname,
-#    grant    => ['all']
-#  }
-#
+# See README.md for details.
 define mysql::db (
   $user,
   $password,
+  $dbname      = $name,
   $charset     = 'utf8',
+  $collate     = 'utf8_general_ci',
   $host        = 'localhost',
-  $grant       = 'all',
-  $sql         = '',
+  $grant       = 'ALL',
+  $sql         = undef,
   $enforce_sql = false,
-  $ensure      = 'present'
+  $ensure      = 'present',
+  $import_timeout = 300,
 ) {
-
+  #input validation
   validate_re($ensure, '^(present|absent)$',
   "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  $table = "${dbname}.*"
 
-  database { $name:
+  include '::mysql::client'
+
+  $db_resource = {
     ensure   => $ensure,
     charset  => $charset,
+    collate  => $collate,
     provider => 'mysql',
-    require  => Class['mysql::server'],
+    require  => [ Class['mysql::server'], Class['mysql::client'] ],
   }
+  ensure_resource('mysql_database', $dbname, $db_resource)
 
-  database_user { "${user}@${host}":
+  $user_resource = {
     ensure        => $ensure,
     password_hash => mysql_password($password),
     provider      => 'mysql',
-    require       => Database[$name],
+    require       => Class['mysql::server'],
   }
+  ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
   if $ensure == 'present' {
-    database_grant { "${user}@${host}/${name}":
+    mysql_grant { "${user}@${host}/${table}":
       privileges => $grant,
       provider   => 'mysql',
-      require    => Database_user["${user}@${host}"],
+      user       => "${user}@${host}",
+      table      => $table,
+      require    => [Mysql_database[$dbname], Mysql_user["${user}@${host}"], Class['mysql::server'] ],
     }
 
     $refresh = ! $enforce_sql
 
     if $sql {
-      exec{ "${name}-import":
-        command     => "/usr/bin/mysql ${name} < ${sql}",
+      exec{ "${dbname}-import":
+        command     => "/usr/bin/mysql ${dbname} < ${sql}",
         logoutput   => true,
+        environment => "HOME=${::root_home}",
         refreshonly => $refresh,
-        require     => Database_grant["${user}@${host}/${name}"],
-        subscribe   => Database[$name],
+        require     => Mysql_grant["${user}@${host}/${table}"],
+        subscribe   => Mysql_database[$dbname],
+        timeout     => $import_timeout,
       }
     }
   }

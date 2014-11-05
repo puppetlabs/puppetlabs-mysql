@@ -1,9 +1,9 @@
 ### MANAGED BY PUPPET ###
-<% settings.sort.each do |section, content|      -%>
+<% @settings.sort.each do |section, content|      -%>
 [<%= section %>]
 <%   content.sort.each do |key, values|          -%>
 <%     [values].flatten.sort.each do |value|     -%>
-<%= value == false ? '#' : '' %><%= key -%><%=
+<%= !value ? '#' : '' %><%= key -%><%=
          case value
          when true, false
            ''
