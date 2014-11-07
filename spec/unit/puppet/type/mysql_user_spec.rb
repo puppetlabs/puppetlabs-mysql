@@ -37,6 +37,23 @@ describe Puppet::Type.type(:mysql_user) do
     it 'should lowercase the user name' do
       expect(@user[:name]).to eq('foo@localhost')
     end
+  end
 
+  context 'using allo_wed$char@localhost' do
+    before :each do
+      @user = Puppet::Type.type(:mysql_user).new(:name => 'allo_wed$char@localhost', :password_hash => 'pass')
+    end
+
+    it 'should accept a user name' do
+      expect(@user[:name]).to eq('allo_wed$char@localhost')
+    end
+  end
+
+  context 'using in-valid@localhost' do
+    it 'should fail with an unquotted username with special char' do
+      expect {
+        Puppet::Type.type(:mysql_user).new(:name => 'in-valid@localhost', :password_hash => 'pass')
+      }.to raise_error /Database user in-valid@localhost must be quotted/
+    end
   end
 end
