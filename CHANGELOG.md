@@ -1,3 +1,27 @@
+##2014-11-11 - Supported Release 3.0.0
+###Summary
+
+Added several new features including MariaDB support and future parser
+
+####Features
+* Add MariaDB Support
+* Renamed `database_user` to `mysql_user`
+* Renamed `database` to `mysql_database`
+* Renamed `database_grant` to `mysql_grant`
+* The mysqltuner perl script has been updated to 1.3.0 based on work at http://github.com/major/MySQLTuner-perl
+* Add future parse support, fixed issues with undef to empty string
+* Pass the backup credentials to 'SHOW DATABASES'
+* Ability to specify the Includedir for `mysql::server`
+* `mysql::db` now has an import_timeout feature that defaults to 300
+* The `mysql` class has been removed
+* `mysql::server` now takes an `override_options` hash that will affect the installation
+* Ability to install both dev and client dev 
+
+####BugFix
+* `mysql::server::backup` now passes `ensure` param to the nested `mysql_grant`
+* `mysql::server::service` now properly requires the presence of the `log_error` file
+* `mysql::config` now occurs before `mysql::server::install_db` correctly
+
 ##2014-07-15 - Supported Release 2.3.1
 ###Summary
 
