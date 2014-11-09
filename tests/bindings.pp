@@ -1,3 +1,3 @@
 class { 'mysql::bindings':
-  php_enable => 'true',
+  php_enable => true,
 }
