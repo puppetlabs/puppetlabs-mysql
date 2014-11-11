@@ -34,7 +34,7 @@ define mysql::db (
   }
   $user_resource = {
     ensure        => $ensure,
-    password_hash => mysql_password($password_hash),
+    password_hash => $password_hash,
     provider      => 'mysql',
     require       => Class['mysql::server'],
   }
