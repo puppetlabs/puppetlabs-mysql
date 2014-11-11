@@ -1,6 +1,7 @@
 #
 class mysql::client (
   $bindings_enable = $mysql::params::bindings_enable,
+  $install_options = undef,
   $package_ensure  = $mysql::params::client_package_ensure,
   $package_name    = $mysql::params::client_package_name,
 ) inherits mysql::params {

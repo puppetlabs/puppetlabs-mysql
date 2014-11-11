@@ -178,6 +178,9 @@ Whether the MySQL configuration file should be managed.
 #####`includedir`
 The location of !includedir for custom configuration overrides.
 
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
+
 #####`purge_conf_dir`
 
 Whether the `includedir` directory should be purged.
@@ -346,6 +349,9 @@ The hostname to allow to access the MySQL monitoring user.
 
 ####mysql::bindings
 
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
+
 #####`java_enable`
 
 Boolean to decide if the Java bindings should be installed.
@@ -419,6 +425,9 @@ What provider should be used to install the package.
 #####`bindings_enable`
 
 Boolean to automatically install all bindings.
+
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
 
 #####`package_ensure`
 

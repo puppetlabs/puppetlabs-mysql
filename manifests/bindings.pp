@@ -1,13 +1,14 @@
 # See README.md.
 class mysql::bindings (
+  $install_options = undef,
   # Boolean to determine if we should include the classes.
-  $java_enable   = false,
-  $perl_enable   = false,
-  $php_enable    = false,
-  $python_enable = false,
-  $ruby_enable   = false,
-  $client_dev    = false,
-  $daemon_dev    = false,
+  $java_enable     = false,
+  $perl_enable     = false,
+  $php_enable      = false,
+  $python_enable   = false,
+  $ruby_enable     = false,
+  $client_dev      = false,
+  $daemon_dev      = false,
   # Settings for the various classes.
   $java_package_ensure         = $mysql::params::java_package_ensure,
   $java_package_name           = $mysql::params::java_package_name,
