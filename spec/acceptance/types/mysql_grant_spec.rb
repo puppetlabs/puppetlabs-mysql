@@ -31,7 +31,7 @@ describe 'mysql_grant' do
   end
 
   describe 'missing table for user' do
-    it 'should fail' do
+    it 'should work without errors' do
       pp = <<-EOS
         mysql_grant { 'atest@tester/test.*':
           ensure => 'present',
@@ -40,11 +40,11 @@ describe 'mysql_grant' do
         }
       EOS
 
-      apply_manifest(pp, :expect_failures => true)
+      apply_manifest(pp, :expect_failures => false)
     end
 
-    it 'should not find the user' do
-      expect(shell("mysql -NBe \"SHOW GRANTS FOR atest@tester\"", {:acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'atest' on host 'tester'/)
+    it 'should find the user' do
+      shell("mysql -NBe \"SHOW GRANTS FOR atest@tester\"", {:acceptable_exit_codes => 0})
     end
   end
 
@@ -109,7 +109,7 @@ describe 'mysql_grant' do
   end
 
   describe 'adding all privileges without table' do
-    it 'should fail' do
+    it 'should work without errors' do
       pp = <<-EOS
         mysql_grant { 'test4@tester/test.*':
           ensure     => 'present',
@@ -119,7 +119,7 @@ describe 'mysql_grant' do
         }
       EOS
 
-      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/table parameter is required./)
+      apply_manifest(pp, :expect_failures => false)
     end
   end
 
