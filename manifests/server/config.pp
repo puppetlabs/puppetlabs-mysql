@@ -18,6 +18,18 @@ class mysql::server::config {
       purge   => $mysql::server::purge_conf_dir,
     }
   }
+  
+  $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)
+  
+  if $logbin {
+    $logbindir = dirname($logbin)
+    file { "$logbindir":
+      ensure  => directory,
+      mode    => '0755',
+      owner   => $options['mysqld']['user'],
+      group   => $options['mysqld']['user'],
+    }
+  }
 
   if $mysql::server::manage_config_file  {
     file { 'mysql-config-file':
