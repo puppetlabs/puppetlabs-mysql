@@ -35,6 +35,11 @@ describe 'mysql::db', :type => :define do
     is_expected.to contain_exec('test_db-import').with_refreshonly(false)
   end
 
+  it 'should import sql scripts when more than one is specified' do
+    params.merge!({'sql' => ['test_sql', 'test_2_sql']})
+    is_expected.to contain_exec('test_db-import').with_command('cat test_sql test_2_sql | mysql test_db')
+  end
+
   it 'should not create database and database user' do
     params.merge!({'ensure' => 'absent', 'host' => 'localhost'})
     is_expected.to contain_mysql_database('test_db').with_ensure('absent')
