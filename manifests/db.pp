@@ -16,7 +16,12 @@ define mysql::db (
   validate_re($ensure, '^(present|absent)$',
   "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
   $table = "${dbname}.*"
-  $sql_inputs = join(any2array($sql), ' ')
+
+  if !(is_array($sql) or is_string($sql)) {
+    fail('$sql must be either a string or an array.')
+  }
+
+  $sql_inputs = join([$sql], ' ')
 
   include '::mysql::client'
 
