@@ -4,8 +4,6 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
   desc 'manage users for a mysql database.'
   commands :mysql => 'mysql'
 
-  confine :false => version_check('10.0.0-MariaDB')
-
   # Build a property_hash containing all the discovered information about MySQL
   # users.
   def self.instances

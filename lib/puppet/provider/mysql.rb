@@ -23,6 +23,14 @@ class Puppet::Provider::Mysql < Puppet::Provider
     end
   end
 
+  # username lenth.. this will need some refinement
+  def self.username_length
+    return 64 if version_check('10.0.0-MariaDB')
+    # this needs to be refined.
+    return 16
+  end
+
+
   # Optional defaults file
   def self.defaults_file
     if File.file?("#{Facter.value(:root_home)}/.my.cnf")

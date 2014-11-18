@@ -3,8 +3,6 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
 
   desc 'Set grants for users in MySQL.'
 
-  confine :false => version_check('10.0.0-MariaDB')
-
   def self.instances
     instances = []
     users.select{ |user| user =~ /.+@/ }.collect do |user|
