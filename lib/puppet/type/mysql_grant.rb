@@ -64,8 +64,9 @@ Puppet::Type.newtype(:mysql_grant) do
       # Regex should problably be more like this: /^[`'"]?[^`'"]*[`'"]?@[`'"]?[\w%\.]+[`'"]?$/
       raise(ArgumentError, "Invalid user #{value}") unless value =~ /[\w-]*@[\w%\.:]+/
       username = value.split('@')[0]
-      if username.size > 16
-        raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
+      length   = provider.class.username_length
+      if username.size > length
+        raise ArgumentError, "#{provider.class.name} usernames are limited to a maximum of #{length} characters"
       end
     end
   end
