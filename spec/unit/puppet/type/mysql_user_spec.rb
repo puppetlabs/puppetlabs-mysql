@@ -49,6 +49,24 @@ describe Puppet::Type.type(:mysql_user) do
     end
   end
 
+  context 'using a quoted 16 char username' do
+    before :each do
+      @user = Puppet::Type.type(:mysql_user).new(:name => '"debian-sys-maint"@localhost', :password_hash => 'pass')
+    end
+
+    it 'should accept a user name' do
+      expect(@user[:name]).to eq('"debian-sys-maint"@localhost')
+    end
+  end
+
+  context 'using a quoted username that is too long ' do
+    it 'should fail with a size error' do
+      expect {
+        Puppet::Type.type(:mysql_user).new(:name => '"debian-sys-maint2"@localhost', :password_hash => 'pass')
+      }.to raise_error /MySQL usernames are limited to a maximum of 16 characters/
+    end
+  end
+
   context 'using `speci!al#`@localhost' do
     before :each do
       @user = Puppet::Type.type(:mysql_user).new(:name => '`speci!al#`@localhost', :password_hash => 'pass')
