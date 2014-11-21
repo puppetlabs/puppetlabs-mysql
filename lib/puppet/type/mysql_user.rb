@@ -15,7 +15,7 @@ Puppet::Type.newtype(:mysql_user) do
       raise(ArgumentError, "Database user #{value} must be quotted as it contains special characters") if value =~ /^[^'`"].*[^0-9a-zA-Z$_].*[^'`"]@[\w%\.:]+/
       raise(ArgumentError, "Invalid database user #{value}") unless value =~ /^(?:['`"][^'`"]*['`"]|[0-9a-zA-Z$_]*)@[\w%\.:]+/
       username = value.split('@')[0]
-      if username.size > 16
+      if not ((username =~ /['"`]*['"`]$/ and username.size <= 18) or username.size <= 16)
         raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
       end
     end
