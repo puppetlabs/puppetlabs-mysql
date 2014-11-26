@@ -95,7 +95,7 @@ class mysql::params {
           $basedir             = '/usr'
         }
         'SLES','SLED': {
-          if $::operatingsystemmajrelease >= 12 {
+          if $::operatingsystemrelease >= 12 {
             $client_package_name = 'mariadb-client'
             $server_package_name = 'mariadb'
             $basedir             = undef
