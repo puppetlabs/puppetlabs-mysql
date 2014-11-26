@@ -45,13 +45,6 @@ class mysql::params {
             $provider = 'mysql'
           }
         }
-        'SLES': {
-          if $::operatingsystemmajrelease >= 12 {
-            $provider = 'mariadb'
-          } else {
-            $provider = 'mysql'
-          }
-        }
         default: {
           $provider = 'mysql'
         }
@@ -95,15 +88,27 @@ class mysql::params {
     }
 
     'Suse': {
-      $client_package_name   = $::operatingsystem ? {
-        /OpenSuSE/           => 'mysql-community-server-client',
-        /(SLES|SLED)/        => 'mysql-client',
+      case $::operatingsystem {
+        'OpenSuSE': {
+          $client_package_name = 'mysql-community-server-client'
+          $server_package_name = 'mysql-community-server'
+          $basedir             = '/usr'
+        }
+        'SLES','SLED': {
+          if $::operatingsystemmajrelease >= 12 {
+            $client_package_name = 'mariadb-client'
+            $server_package_name = 'mariadb'
+            $basedir             = undef
+          } else {
+            $client_package_name = 'mysql-client'
+            $server_package_name = 'mysql'
+            $basedir             = '/usr'
+          }
+        }
+        default: {
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn't support ${::operatingsystem}")
+        }
       }
-      $server_package_name   = $::operatingsystem ? {
-        /OpenSuSE/           => 'mysql-community-server',
-        /(SLES|SLED)/        => 'mysql',
-      }
-      $basedir             = '/usr'
       $config_file         = '/etc/my.cnf'
       $includedir          = '/etc/my.cnf.d'
       $datadir             = '/var/lib/mysql'
