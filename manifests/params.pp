@@ -45,13 +45,6 @@ class mysql::params {
             $provider = 'mysql'
           }
         }
-        'SLES': {
-          if $::operatingsystemmajrelease >= 12 {
-            $provider = 'mariadb'
-          } else {
-            $provider = 'mysql'
-          }
-        }
         default: {
           $provider = 'mysql'
         }
