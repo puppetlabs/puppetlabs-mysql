@@ -12,8 +12,8 @@ Puppet::Type.newtype(:mysql_user) do
       # http://dev.mysql.com/doc/refman/5.5/en/identifiers.html
       # Regex should problably be more like this: /^[`'"]?[^`'"]*[`'"]?@[`'"]?[\w%\.]+[`'"]?$/
       # If at least one special char is used, string must be quoted
-      raise(ArgumentError, "Database user #{value} must be quotted as it contains special characters") if value =~ /^[^'`"].*[^0-9a-zA-Z$_].*[^'`"]@[\w%\.:]+/
-      raise(ArgumentError, "Invalid database user #{value}") unless value =~ /^(?:['`"][^'`"]*['`"]|[0-9a-zA-Z$_]*)@[\w%\.:]+/
+      raise(ArgumentError, "Database user #{value} must be quotted as it contains special characters") if value =~ /^[^'`"].*[^0-9a-zA-Z$_\-].*[^'`"]@[\w%\.:]+/
+      raise(ArgumentError, "Invalid database user #{value}") unless value =~ /^(?:['`"][^'`"]*['`"]|[0-9a-zA-Z$_\-]*)@[\w%\.:]+/
       username = value.split('@')[0]
       if not ((username =~ /['"`]*['"`]$/ and username.size <= 18) or username.size <= 16)
         raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
