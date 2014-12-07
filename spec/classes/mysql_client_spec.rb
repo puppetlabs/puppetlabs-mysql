@@ -17,6 +17,19 @@ describe 'mysql::client' do
           it { is_expected.to contain_class('mysql::bindings') }
           it { is_expected.to contain_package('mysql_client') }
         end
+
+        context 'with package_manage set to true' do
+          let(:params) {{ :package_manage => true }}
+
+          it { is_expected.to contain_package('mysql_client') }
+        end
+
+        context 'with package_manage set to false' do
+          let(:params) {{ :package_manage => false }}
+
+          it { is_expected.not_to contain_package('mysql_client') }
+        end
+
       end
     end
   end

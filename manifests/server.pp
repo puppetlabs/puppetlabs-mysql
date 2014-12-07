@@ -7,6 +7,7 @@ class mysql::server (
   $old_root_password       = $mysql::params::old_root_password,
   $override_options        = {},
   $package_ensure          = $mysql::params::server_package_ensure,
+  $package_manage          = $mysql::params::server_package_manage,
   $package_name            = $mysql::params::server_package_name,
   $purge_conf_dir          = $mysql::params::purge_conf_dir,
   $remove_default_accounts = false,

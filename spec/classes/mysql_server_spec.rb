@@ -20,10 +20,18 @@ describe 'mysql::server' do
         end
 
         context 'mysql::server::install' do
-          it 'contains the package' do
+          it 'contains the package by default' do
             is_expected.to contain_package('mysql-server').with({
               :ensure => :present,
             })
+          end
+          context 'with package_manage set to true' do
+            let(:params) {{ :package_manage => true }}
+            it { is_expected.to contain_package('mysql-server') }
+          end
+          context 'with package_manage set to false' do
+            let(:params) {{ :package_manage => false }}
+            it { is_expected.not_to contain_package('mysql-server') }
           end
           context 'with datadir overridden' do
             let(:params) {{ :override_options => { 'mysqld' => { 'datadir' => '/tmp' }} }}

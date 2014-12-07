@@ -217,6 +217,10 @@ What is the group used for root?
 
 What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
 
+#####`package_manage`
+
+Whether to manage the mysql server package. Defaults to true.
+
 #####`package_name`
 
 The name of the mysql server package to install.
@@ -470,6 +474,10 @@ Pass install_options array to managed package resources. You must be sure to pas
 #####`package_ensure`
 
 What to set the package to.  Can be 'present', 'absent', or 'x.y.z'.
+
+#####`package_manage`
+
+Whether to manage the mysql client package. Defaults to true.
 
 #####`package_name`
 
