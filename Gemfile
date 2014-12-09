@@ -7,6 +7,7 @@ group :development, :unit_tests do
   gem 'puppet-lint',             :require => false
   gem 'simplecov',               :require => false
   gem 'puppet_facts',            :require => false
+  gem 'json',                    :require => false
 end
 
 group :system_tests do
