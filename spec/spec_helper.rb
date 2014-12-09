@@ -1,3 +1,6 @@
+if RUBY_VERSION == '1.8.7'
+  require 'rubygems'
+end
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'puppet_facts'
 include PuppetFacts
