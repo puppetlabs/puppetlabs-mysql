@@ -2,6 +2,7 @@
 class mysql::server (
   $config_file             = $mysql::params::config_file,
   $includedir              = $mysql::params::includedir,
+  $log_error               = $mysql::params::log_error,
   $install_options         = undef,
   $manage_config_file      = $mysql::params::manage_config_file,
   $old_root_password       = $mysql::params::old_root_password,
