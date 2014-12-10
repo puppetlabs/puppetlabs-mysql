@@ -81,7 +81,15 @@ describe Puppet::Type.type(:mysql_user) do
     it 'should fail with an unquotted username with special char' do
       expect {
         Puppet::Type.type(:mysql_user).new(:name => 'in-valid@localhost', :password_hash => 'pass')
-      }.to raise_error /Database user in-valid@localhost must be quotted/
+      }.to raise_error /Database user in-valid@localhost must be properly quoted, invalid character: '-'/
+    end
+  end
+
+  context 'using "misquoted@localhost' do
+    it 'should fail with a misquoted username is used' do
+      expect {
+        Puppet::Type.type(:mysql_user).new(:name => '"misquoted@localhost', :password_hash => 'pass')
+      }.to raise_error /Invalid database user "misquoted@localhost/
     end
   end
 end
