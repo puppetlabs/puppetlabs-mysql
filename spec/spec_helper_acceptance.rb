@@ -36,7 +36,7 @@ RSpec.configure do |c|
       end
 
       shell("/bin/touch #{default['puppetpath']}/hiera.yaml")
-      shell('puppet module install puppetlabs-stdlib --version 3.2.0', { :acceptable_exit_codes => [0,1] })
+      on host, puppet('module install puppetlabs-stdlib --version 3.2.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module','install','stahnma/epel'), { :acceptable_exit_codes => [0,1] }
     end
   end
