@@ -347,6 +347,24 @@ The password to create for MySQL monitoring.
 
 The hostname to allow to access the MySQL monitoring user.
 
+####mysql::server::mysqltuner
+
+***Note***
+
+If using this class on a non-network-connected system you must download the mysqltuner.pl script and have it hosted somewhere accessible via `http(s)://`, `puppet://`, `ftp://`, or a fully qualified file path.
+
+#####`ensure`
+
+Whether the file should be `present` or `absent`. Defaults to `present`.
+
+#####`version`
+
+The version to install from the major/MySQLTuner-perl github repository. Must be a valid tag. Defaults to 'v1.3.0'.
+
+#####`source`
+
+Parameter to optionally specify the source. If not specified, defaults to `https://github.com/major/MySQLTuner-perl/raw/${version}/mysqltuner.pl`
+
 ####mysql::bindings
 
 #####`install_options`
