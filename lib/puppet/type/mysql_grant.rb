@@ -64,10 +64,10 @@ Puppet::Type.newtype(:mysql_grant) do
       # If at least one special char is used, string must be quoted
 
       # http://stackoverflow.com/questions/8055727/negating-a-backreference-in-regular-expressions/8057827#8057827
-      if matches = /^(['`"])((?!\1).)+\1@([\w%\.:]+)$/.match(value)
+      if matches = /^(['`"])((?!\1).)*\1@([\w%\.:\-]+)/.match(value)
         user_part = matches[2]
         host_part = matches[3]
-      elsif matches = /^([0-9a-zA-Z$_]+)@([\w%\.:]+)$/.match(value)
+      elsif matches = /^([0-9a-zA-Z$_]*)@([\w%\.:\-]+)/.match(value)
         user_part = matches[1]
         host_part = matches[2]
       elsif matches = /^(?:(?!['`"]).*)([^0-9a-zA-Z$_]).*@.+$/.match(value)
