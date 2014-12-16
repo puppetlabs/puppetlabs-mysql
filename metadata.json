@@ -75,6 +75,7 @@
   ],
   "description": "Mysql module",
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0"}
+    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0"},
+    {"name":"nanliu/staging","version_requirement":"1.x"}
   ]
 }
