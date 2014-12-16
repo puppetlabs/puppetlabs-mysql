@@ -1,3 +1,25 @@
+##2014-12-16 - Supported Release 3.1.0
+###Summary
+
+This release includes several new features, including SLES12 support, and a number of bug fixes.
+
+####Notes
+
+`mysql::server::mysqltuner` has been refactored to fetch the mysqltuner script from github by default. If you are running on a non-network-connected system, you will need to download that file and have it available to your node at a path specified by the `source` parameter to the `mysqltuner` class.
+
+####Features
+- Add support for install_options for all package resources (MODULES-1484)
+- Add log-bin directory creation
+- Allow mysql::db to import multiple files (MODULES-1338)
+- SLES12 support
+- Improved identifier quoting detections
+- Reworked `mysql::server::mysqltuner` so that we are no longer packaging the script as it is licensed under the GPL.
+
+####Bugfixes
+- Fix regression in username validation
+- Proper containment for mysql::client in mysql::db
+- Support quoted usernames of length 15 and 16 chars
+
 ##2014-11-11 - Supported Release 3.0.0
 ###Summary
 
