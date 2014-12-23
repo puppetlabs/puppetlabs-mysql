@@ -20,7 +20,7 @@ class mysql::server::service {
     name     => $mysql::server::service_name,
     enable   => $mysql::server::real_service_enabled,
     provider => $mysql::server::service_provider,
-    require => [ File['mysql-config-file'], Package['mysql-server'] ]
+    require => $mysql::server::manage_config_file ? { true => [ File['mysql-config-file'], Package['mysql-server'] ], false => Package['mysql-server'] }
   }
 
 }
