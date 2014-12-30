@@ -32,14 +32,14 @@ class mysql::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
-          if is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 19 or $::operatingsystemrelease == 'Rawhide' {
+          if versioncmp($::operatingsystemrelease, '19') >= 0 or $::operatingsystemrelease == 'Rawhide' {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
           }
         }
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
-          if $::operatingsystemmajrelease >= 7 {
+          if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
@@ -95,7 +95,7 @@ class mysql::params {
           $basedir             = '/usr'
         }
         'SLES','SLED': {
-          if $::operatingsystemrelease >= 12 {
+          if versioncmp($::operatingsystemrelease, '12') >= 0 {
             $client_package_name = 'mariadb-client'
             $server_package_name = 'mariadb'
             $basedir             = undef
