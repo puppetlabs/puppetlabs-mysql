@@ -16,6 +16,10 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, @password = mysql([defaults_file, "-NBe", query].compact).split(/\s/)
 
+      if name.split('@')[0] =~ /^('|"){0}(\w+-){1,}\w+('|"){0}$/
+        name_split = name.split('@')
+        name = "'#{name_split[0]}'@#{name_split[1].downcase}"
+      end
       new(:name                     => name,
           :ensure                   => :present,
           :password_hash            => @password,
