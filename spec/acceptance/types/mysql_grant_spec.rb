@@ -70,6 +70,28 @@ describe 'mysql_grant' do
     end
   end
 
+  describe 'adding privileges with special character in name' do
+    it 'should work without errors' do
+      pp = <<-EOS
+        mysql_grant { 'test-2@tester/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test-2@tester',
+          privileges => ['SELECT', 'UPDATE'],
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should find the user' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"") do |r|
+        expect(r.stdout).to match(/GRANT SELECT, UPDATE.*TO 'test-2'@'tester'/)
+        expect(r.stderr).to be_empty
+      end
+    end
+  end
+
   describe 'adding privileges with invalid name' do
     it 'should fail' do
       pp = <<-EOS

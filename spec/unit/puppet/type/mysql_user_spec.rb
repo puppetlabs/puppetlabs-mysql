@@ -49,6 +49,16 @@ describe Puppet::Type.type(:mysql_user) do
     end
   end
 
+  context 'ensure the default \'debian-sys-main\'@localhost user can be parsed' do
+    before :each do
+      @user = Puppet::Type.type(:mysql_user).new(:name => '\'debian-sys-maint\'@localhost', :password_hash => 'pass')
+    end
+
+    it 'should accept a user name' do
+      expect(@user[:name]).to eq('\'debian-sys-maint\'@localhost')
+    end
+  end
+
   context 'using a quoted 16 char username' do
     before :each do
       @user = Puppet::Type.type(:mysql_user).new(:name => '"debian-sys-maint"@localhost', :password_hash => 'pass')
@@ -78,10 +88,12 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context 'using in-valid@localhost' do
-    it 'should fail with an unquotted username with special char' do
-      expect {
-        Puppet::Type.type(:mysql_user).new(:name => 'in-valid@localhost', :password_hash => 'pass')
-      }.to raise_error /Database user in-valid@localhost must be properly quoted, invalid character: '-'/
+    before :each do
+      @user = Puppet::Type.type(:mysql_user).new(:name => 'in-valid@localhost', :password_hash => 'pass')
+    end
+
+    it 'should accept a user name with special chatracters' do
+      expect(@user[:name]).to eq('in-valid@localhost')
     end
   end
 
