@@ -73,4 +73,14 @@ describe 'mysql_user' do
       end
     end
   end
+  context 'using resource should throw no errors' do
+    describe 'find users' do
+      it {
+        on default, puppet('resource mysql_user'), {:catch_failures => true} do |r|
+          expect(r.stdout).to_not match(/Error:/)
+          expect(r.stdout).to_not match(/must be properly quoted, invalid character:/)
+        end
+      }
+    end
+  end
 end
