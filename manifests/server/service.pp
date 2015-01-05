@@ -20,7 +20,9 @@ class mysql::server::service {
     name     => $mysql::server::service_name,
     enable   => $mysql::server::real_service_enabled,
     provider => $mysql::server::service_provider,
-    require => [ File['mysql-config-file'], Package['mysql-server'] ]
+    # if you manage the config file outside of the module or want mysql provided by another package, you may still use this service
+    # provided you set the parameters config_file resp. package_name on the mysql::server class
+    require  => [ File[$mysql::server::config_file], Package[$mysql::server::package_name]]
   }
 
 }
