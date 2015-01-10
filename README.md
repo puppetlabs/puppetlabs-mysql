@@ -52,8 +52,9 @@ password or `/etc/my.cnf` settings, then you must also pass in an override hash:
 
 ```puppet
 class { '::mysql::server':
-  root_password    => 'strongpassword',
-  override_options => $override_options
+  root_password           => 'strongpassword',
+  remove_default_accounts => true,
+  override_options        => $override_options
 }
 ```
 (see 'Overrides' below for examples of the hash structure for `$override_options`)
