@@ -539,6 +539,14 @@ mysql_user { 'root@127.0.0.1':
 }
 ```
 
+It is also possible to specify an authentication plugin.
+```
+mysql_user{ 'myuser'@'localhost':
+  ensure                   => 'present',
+  plugin                   => 'unix_socket',
+}
+```
+
 ####mysql_grant
 
 `mysql_grant` can be used to create grant permissions to access databases within
