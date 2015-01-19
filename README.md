@@ -566,6 +566,17 @@ mysql_grant { 'root@localhost/mysql.user':
 }
 ```
 
+####mysql_plugin
+
+`mysql_plugin` can be used to load plugins into the MySQL Server.
+
+```puppet
+mysql_plugin { 'auth_socket':
+  ensure     => 'present',
+  soname     => 'auth_socket.so',
+}
+```
+
 ##Limitations
 
 This module has been tested on:
@@ -603,4 +614,5 @@ This module is based on work by David Schmitt. The following contributors have c
 * William Van Hevelingen
 * Michael Arnold
 * Chris Weyl
+* Daniël van Eeden
 
