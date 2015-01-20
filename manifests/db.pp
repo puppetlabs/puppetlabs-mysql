@@ -29,20 +29,30 @@ define mysql::db (
   Class['::mysql::client']->
   anchor{"mysql::db_${name}::end": }
 
-  $db_resource = {
-    ensure   => $ensure,
-    charset  => $charset,
-    collate  => $collate,
-    provider => 'mysql',
-    require  => [ Class['mysql::server'], Class['mysql::client'] ],
+  if defined(Class['mysql::server']) {
+    $db_resource = {
+      ensure   => $ensure,
+      charset  => $charset,
+      collate  => $collate,
+      provider => 'mysql',
+      require  => [ Class['mysql::server'], Class['mysql::client'] ],
+    }
+  } else {
+    $db_resource = {
+      ensure   => $ensure,
+      charset  => $charset,
+      collate  => $collate,
+      provider => 'mysql',
+      require  => Class['mysql::client'],
+    }
   }
+
   ensure_resource('mysql_database', $dbname, $db_resource)
 
   $user_resource = {
     ensure        => $ensure,
     password_hash => mysql_password($password),
     provider      => 'mysql',
-    require       => Class['mysql::server'],
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
@@ -52,7 +62,7 @@ define mysql::db (
       provider   => 'mysql',
       user       => "${user}@${host}",
       table      => $table,
-      require    => [Mysql_database[$dbname], Mysql_user["${user}@${host}"], Class['mysql::server'] ],
+      require    => [Mysql_database[$dbname], Mysql_user["${user}@${host}"] ],
     }
 
     $refresh = ! $enforce_sql
@@ -70,4 +80,6 @@ define mysql::db (
       }
     }
   }
+
+  Mysql_database <| |> -> Mysql_user <| |>
 }
