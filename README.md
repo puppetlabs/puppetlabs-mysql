@@ -250,8 +250,6 @@ grants => {
     ensure     => 'present',
     options    => ['GRANT'],
     privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
-    table      => 'somedb.*',
-    user       => 'someuser@localhost',
   },
 }
 ```
@@ -551,8 +549,6 @@ mysql_grant { 'root@localhost/*.*':
   ensure     => 'present',
   options    => ['GRANT'],
   privileges => ['ALL'],
-  table      => '*.*',
-  user       => 'root@localhost',
 }
 ```
 
@@ -561,9 +557,18 @@ It is possible to specify privileges down to the column level:
 mysql_grant { 'root@localhost/mysql.user':
   ensure     => 'present',
   privileges => ['SELECT (Host, User)'],
-  table      => 'mysql.user',
-  user       => 'root@localhost',
 }
+```
+
+It is possible to specify multiple privileges by passing an 
+array to the ensure_resource function:
+```puppet
+$user_grant = {
+  ensure     => 'present',
+  options    => ['GRANT'],
+  privileges => ['ALL'],
+}
+ensure_resource('mysql_grant', ['a@localhost/*.*', 'b@localhost/*.*'], $user_grant)
 ```
 
 ##Limitations
@@ -603,4 +608,3 @@ This module is based on work by David Schmitt. The following contributors have c
 * William Van Hevelingen
 * Michael Arnold
 * Chris Weyl
-
