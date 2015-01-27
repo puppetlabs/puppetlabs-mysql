@@ -24,8 +24,13 @@ elsif fact('osfamily') =~ /Debian/
       plugin_lib = 'ha_example.so'
     end
   elsif fact('operatingsystem') =~ /Ubuntu/
+    if fact('operatingsystemrelease') =~ /^10\.04/
+      # Only available plugin is innodb which is already loaded and not unload- or reload-able
+      plugin = nil
+    else
       plugin     = 'example'
       plugin_lib = 'ha_example.so'
+    end
   end
 elsif fact('osfamily') =~ /Suse/
   plugin = nil # Plugin library path is broken on Suse http://lists.opensuse.org/opensuse-bugs/2013-08/msg01123.html
