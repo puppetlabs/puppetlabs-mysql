@@ -353,6 +353,34 @@ An array of two elements to set the backup time.  Allows ['23', '5'] or ['3', '4
 
 A script that is executed at when the backup is finished. This could be used to (r)sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines, when supplied as an array. It could also be one or more externally managed (executable) files.
 
+#####`provider`
+
+Set backup implementation
+
+* `mysqldump`
+* `mysqlbackup`: MySQL Enterprise Backup
+* `xtrabackup`: Percona XtraBackup
+
+####mysql::backup::mysqldump
+
+Implements mysql::server::backup with mysqldump
+
+Backup type: Logical
+
+####mysql::backup::mysqlbackup
+
+Implements mysql::server::backup with MySQL Enterprise Backup from Oracle
+
+Backup type: Physical
+
+For this you need the meb package, which is available in RPM and TAR format from Oracle. For Ubuntu you can use [meb-deb](https://github.com/dveeden/meb-deb) to create a package from an official tarball.
+
+####mysql::backup::xtrabackup
+
+Implements mysql::server::backup with XtraBackup from Percona
+
+Backup type: Physical
+
 ####mysql::server::monitor
 
 #####`mysql_monitor_username`
