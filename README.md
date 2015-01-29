@@ -52,8 +52,9 @@ password or `/etc/my.cnf` settings, then you must also pass in an override hash:
 
 ```puppet
 class { '::mysql::server':
-  root_password    => 'strongpassword',
-  override_options => $override_options
+  root_password           => 'strongpassword',
+  remove_default_accounts => true,
+  override_options        => $override_options
 }
 ```
 (see 'Overrides' below for examples of the hash structure for `$override_options`)
@@ -177,6 +178,9 @@ Whether the MySQL configuration file should be managed.
 
 #####`includedir`
 The location of !includedir for custom configuration overrides.
+
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
 
 #####`purge_conf_dir`
 
@@ -344,7 +348,28 @@ The password to create for MySQL monitoring.
 
 The hostname to allow to access the MySQL monitoring user.
 
+####mysql::server::mysqltuner
+
+***Note***
+
+If using this class on a non-network-connected system you must download the mysqltuner.pl script and have it hosted somewhere accessible via `http(s)://`, `puppet://`, `ftp://`, or a fully qualified file path.
+
+#####`ensure`
+
+Whether the file should be `present` or `absent`. Defaults to `present`.
+
+#####`version`
+
+The version to install from the major/MySQLTuner-perl github repository. Must be a valid tag. Defaults to 'v1.3.0'.
+
+#####`source`
+
+Parameter to optionally specify the source. If not specified, defaults to `https://github.com/major/MySQLTuner-perl/raw/${version}/mysqltuner.pl`
+
 ####mysql::bindings
+
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
 
 #####`java_enable`
 
@@ -419,6 +444,9 @@ What provider should be used to install the package.
 #####`bindings_enable`
 
 Boolean to automatically install all bindings.
+
+#####`install_options`
+Pass install_options array to managed package resources. You must be sure to pass the appropriate options for the correct package manager.
 
 #####`package_ensure`
 
@@ -538,6 +566,17 @@ mysql_grant { 'root@localhost/mysql.user':
 }
 ```
 
+####mysql_plugin
+
+`mysql_plugin` can be used to load plugins into the MySQL Server.
+
+```puppet
+mysql_plugin { 'auth_socket':
+  ensure     => 'present',
+  soname     => 'auth_socket.so',
+}
+```
+
 ##Limitations
 
 This module has been tested on:
@@ -575,4 +614,5 @@ This module is based on work by David Schmitt. The following contributors have c
 * William Van Hevelingen
 * Michael Arnold
 * Chris Weyl
+* Daniël van Eeden
 

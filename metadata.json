@@ -1,12 +1,12 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": "Puppet Labs",
-  "summary": "Mysql module",
-  "license": "Apache 2.0",
+  "summary": "Installs, configures, and manages the MySQL service.",
+  "license": "Apache-2.0",
   "source": "git://github.com/puppetlabs/puppetlabs-mysql.git",
   "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
-  "issues_url": "https://github.com/puppetlabs/puppetlabs-mysql/issues",
+  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
@@ -44,7 +44,8 @@
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
         "10 SP4",
-        "11 SP1"
+        "11 SP1",
+        "12"
       ]
     },
     {
@@ -75,9 +76,7 @@
   ],
   "description": "Mysql module",
   "dependencies": [
-    {
-      "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 3.2.0"
-    }
+    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0"},
+    {"name":"nanliu/staging","version_requirement":"1.x"}
   ]
 }

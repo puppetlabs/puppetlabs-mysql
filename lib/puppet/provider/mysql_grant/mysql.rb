@@ -29,6 +29,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
         # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root')@('127.0.0.1') (WITH GRANT OPTION)
         if match = munged_grant.match(/^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)?$/)
           privileges, table, user, host, rest = match.captures
+          table.gsub!('\\\\', '\\')
+
           # split on ',' if it is not a non-'('-containing string followed by a
           # closing parenthesis ')'-char - e.g. only split comma separated elements not in
           # parentheses

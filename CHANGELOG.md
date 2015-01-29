@@ -1,3 +1,49 @@
+##2014-12-16 - Supported Release 3.1.0
+###Summary
+
+This release includes several new features, including SLES12 support, and a number of bug fixes.
+
+####Notes
+
+`mysql::server::mysqltuner` has been refactored to fetch the mysqltuner script from github by default. If you are running on a non-network-connected system, you will need to download that file and have it available to your node at a path specified by the `source` parameter to the `mysqltuner` class.
+
+####Features
+- Add support for install_options for all package resources (MODULES-1484)
+- Add log-bin directory creation
+- Allow mysql::db to import multiple files (MODULES-1338)
+- SLES12 support
+- Improved identifier quoting detections
+- Reworked `mysql::server::mysqltuner` so that we are no longer packaging the script as it is licensed under the GPL.
+
+####Bugfixes
+- Fix regression in username validation
+- Proper containment for mysql::client in mysql::db
+- Support quoted usernames of length 15 and 16 chars
+
+##2014-11-11 - Supported Release 3.0.0
+###Summary
+
+Added several new features including MariaDB support and future parser
+
+####Backwards-incompatible Changes
+* Remove the deprecated `database`, `database_user`, and `database_grant` resources. The correct resources to use are `mysql`, `mysql_user`, and `mysql_grant` respectively.
+
+####Features
+* Add MariaDB Support
+* The mysqltuner perl script has been updated to 1.3.0 based on work at http://github.com/major/MySQLTuner-perl
+* Add future parse support, fixed issues with undef to empty string
+* Pass the backup credentials to 'SHOW DATABASES'
+* Ability to specify the Includedir for `mysql::server`
+* `mysql::db` now has an import\_timeout feature that defaults to 300
+* The `mysql` class has been removed
+* `mysql::server` now takes an `override_options` hash that will affect the installation
+* Ability to install both dev and client dev 
+
+####BugFix
+* `mysql::server::backup` now passes `ensure` param to the nested `mysql_grant`
+* `mysql::server::service` now properly requires the presence of the `log_error` file
+* `mysql::config` now occurs before `mysql::server::install_db` correctly
+
 ##2014-07-15 - Supported Release 2.3.1
 ###Summary
 
