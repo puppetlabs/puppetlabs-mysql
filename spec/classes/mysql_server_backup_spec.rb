@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'mysql::server::backup' do
   on_pe_supported_platforms(PLATFORMS).each do |pe_version,pe_platforms|
     pe_platforms.each do |pe_platform,facts|
-      describe "on #{pe_version} #{pe_platform}" do
+      describe "on #{pe_version} #{pe_platform} - mysqldump" do
         let(:facts) { facts }
 
         let(:default_params) {
@@ -182,6 +182,132 @@ describe 'mysql::server::backup' do
               /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/
             )
           end
+        end
+      end
+
+      describe "on #{pe_version} #{pe_platform} - mysqlbackup" do
+        let(:facts) { facts }
+
+        let(:default_params) {
+          { 'backupuser'         => 'testuser',
+            'backuppassword'     => 'testpass',
+            'backupdir'          => '/tmp',
+            'backuprotate'       => '25',
+            'backupmethod'       => 'mysqlbackup',
+            'delete_before_dump' => true,
+            'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          }
+        }
+
+        context 'standard conditions' do
+          let(:params) { default_params }
+
+          # Cannot use that_requires here, doesn't work on classes.
+          it { is_expected.to contain_mysql_user('testuser@localhost').with(
+            :require => 'Class[Mysql::Server::Root_password]') }
+
+          it { is_expected.to contain_package('meb') }
+
+          it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
+            :privileges => ['RELOAD', 'SUPER', 'REPLICATION CLIENT']
+          ).that_requires('Mysql_user[testuser@localhost]') }
+
+          it { is_expected.to contain_mysql_grant('testuser@localhost/mysql.backup_history').with(
+            :privileges => ['CREATE', 'INSERT', 'SELECT', 'DROP', 'UPDATE']
+          ).that_requires('Mysql_user[testuser@localhost]') }
+
+          it { is_expected.to contain_mysql_grant('testuser@localhost/mysql.backup_progress').with(
+            :privileges => ['CREATE', 'INSERT', 'DROP', 'UPDATE']
+          ).that_requires('Mysql_user[testuser@localhost]') }
+
+          it { is_expected.to contain_cron('mysqlbackup-weekly').with(
+            :command => 'mysqlbackup backup',
+            :ensure  => 'present'
+          )}
+
+          it { is_expected.to contain_cron('mysqlbackup-daily').with(
+            :command => 'mysqlbackup --incremental backup',
+            :ensure  => 'present'
+          )}
+
+          it { is_expected.to contain_file('mysqlbackupdir').with(
+            :path   => '/tmp',
+            :ensure => 'directory'
+          )}
+        end
+
+        context 'custom ownership and mode for backupdir' do
+          let(:params) do
+            { :backupdirmode => '0750',
+              :backupdirowner => 'testuser',
+              :backupdirgroup => 'testgrp',
+            }.merge(default_params)
+          end
+
+          it { is_expected.to contain_file('mysqlbackupdir').with(
+            :path => '/tmp',
+            :ensure => 'directory',
+            :mode => '0750',
+            :owner => 'testuser',
+            :group => 'testgrp'
+          ) }
+        end
+      end
+
+      describe "on #{pe_version} #{pe_platform} - xtrabackup" do
+        let(:facts) { facts }
+
+        let(:default_params) {
+          { 'backupuser'         => 'testuser',
+            'backuppassword'     => 'testpass',
+            'backupdir'          => '/tmp',
+            'backuprotate'       => '25',
+            'backupmethod'       => 'xtrabackup',
+            'delete_before_dump' => true,
+            'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          }
+        }
+
+        context 'standard conditions' do
+          let(:params) { default_params }
+
+          # Cannot use that_requires here, doesn't work on classes.
+          it { is_expected.to contain_mysql_user('testuser@localhost').with(
+            :require => 'Class[Mysql::Server::Root_password]') }
+
+          it { is_expected.to contain_package('percona-xtrabackup') }
+
+          it { is_expected.to contain_cron('xtrabackup-weekly').with(
+            :command => 'innobackupex $backupdir',
+            :ensure  => 'present'
+          )}
+
+          it { is_expected.to contain_cron('xtrabackup-daily').with(
+            :command => 'innobackupex --incremental $backupdir',
+            :ensure  => 'present'
+          )}
+
+          it { is_expected.to contain_file('mysqlbackupdir').with(
+            :path   => '/tmp',
+            :ensure => 'directory'
+          )}
+        end
+
+        context 'custom ownership and mode for backupdir' do
+          let(:params) do
+            { :backupdirmode => '0750',
+              :backupdirowner => 'testuser',
+              :backupdirgroup => 'testgrp',
+            }.merge(default_params)
+          end
+
+          it { is_expected.to contain_file('mysqlbackupdir').with(
+            :path => '/tmp',
+            :ensure => 'directory',
+            :mode => '0750',
+            :owner => 'testuser',
+            :group => 'testgrp'
+          ) }
         end
       end
     end
