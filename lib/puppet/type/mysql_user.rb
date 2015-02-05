@@ -37,7 +37,7 @@ Puppet::Type.newtype(:mysql_user) do
 
   newproperty(:password_hash) do
     desc 'The password hash of the user. Use mysql_password() for creating such a hash.'
-    newvalue(/\w+/)
+    newvalue(/\w*/)
   end
 
   newproperty(:max_user_connections) do

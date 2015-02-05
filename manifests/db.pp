@@ -38,9 +38,13 @@ define mysql::db (
   }
   ensure_resource('mysql_database', $dbname, $db_resource)
 
+  case empty($password) {
+    true  : { $password_hash = '' }
+    false : { $password_hash = mysql_password($password) }
+  }
   $user_resource = {
     ensure        => $ensure,
-    password_hash => mysql_password($password),
+    password_hash => $password_hash,
     provider      => 'mysql',
     require       => Class['mysql::server'],
   }
