@@ -4,6 +4,7 @@ Puppet::Type.newtype(:mysql_grant) do
   ensurable
 
   autorequire(:file) { '/root/.my.cnf' }
+  autorequire(:mysql_user) { self[:user] }
 
   def initialize(*args)
     super
