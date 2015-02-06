@@ -40,6 +40,11 @@ Puppet::Type.newtype(:mysql_user) do
     newvalue(/\w*/)
   end
 
+  newproperty(:plugin) do
+    desc 'The authentication plugin of the user.'
+    newvalue(/\w+/)
+  end
+
   newproperty(:max_user_connections) do
     desc "Max concurrent connections for the user. 0 means no (or global) limit."
     newvalue(/\d+/)
