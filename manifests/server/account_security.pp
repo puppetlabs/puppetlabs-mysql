@@ -9,8 +9,8 @@ class mysql::server::account_security {
   }
   if ($::fqdn != 'localhost.localdomain') {
     mysql_user {
-      [ "root@localhost.localdomain",
-        "@localhost.localdomain"]:
+      [ 'root@localhost.localdomain',
+        '@localhost.localdomain']:
       ensure  => 'absent',
       require => Anchor['mysql::server::end'],
     }
