@@ -22,7 +22,7 @@ class mysql::server::config {
   $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)
 
   if $logbin {
-    $logbindir = dirname($logbin)
+    $logbindir = mysql_dirname($logbin)
     file { $logbindir:
       ensure => directory,
       mode   => '0755',
