@@ -21,8 +21,8 @@ mysql_user{ 'dan@%':
 }
 
 mysql_user{ 'socketplugin@%':
-  ensure        => present,
-  plugin        => 'unix_socket',
+  ensure => present,
+  plugin => 'unix_socket',
 }
 
 mysql_user{ 'socketplugin@%':
