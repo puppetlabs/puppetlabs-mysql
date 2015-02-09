@@ -1,3 +1,26 @@
+##2015-02-09 - Supported Release 3.2.0
+###Summary
+This release includes several new features and bugfixes, including support for various plugins, making the output from mysql_password more consistent when input is empty and improved username validation.
+
+####Features
+- Add type and provider to manage plugins
+- Add support for authentication plugins
+- Add support for mysql_install_db on freebsd
+- Add `create_root_user` and `create_root_my_cnf` parameters to `mysql::server`
+
+####Bugfixes
+- Remove dependency on stdlib >= 4.1.0 (MODULES-1759)
+- Make grant autorequire user
+- Remove invalid parameter 'provider' from mysql_user instance (MODULES-1731)
+- Return empty string for empty input in mysql_password
+- Fix `mysql::account_security` when fqdn==localhost
+- Update username validation (MODULES-1520)
+- Future parser fix in params.pp
+- Fix package name for debian 8
+- Don't start the service until the server package is installed and the config file is in place
+- Test fixes
+- Lint fixes
+
 ##2014-12-16 - Supported Release 3.1.0
 ###Summary
 
