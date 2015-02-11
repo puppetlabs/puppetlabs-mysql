@@ -16,8 +16,9 @@ describe 'mysql::db', :type => :define do
 
         it 'should report an error when ensure is not present or absent' do
           params.merge!({'ensure' => 'invalid_val'})
-          expect { subject }.to raise_error(Puppet::Error,
-                                            /invalid_val is not supported for ensure\. Allowed values are 'present' and 'absent'\./)
+          expect { is_expected.to compile }.to raise_error(
+            /invalid_val is not supported for ensure\. Allowed values are 'present' and 'absent'\./
+          )
         end
 
         it 'should not notify the import sql exec if no sql script was provided' do
@@ -47,8 +48,7 @@ describe 'mysql::db', :type => :define do
 
         it 'should report an error if sql isn\'t a string or an array' do
           params.merge!({'sql' => {'foo' => 'test_sql', 'bar' => 'test_2_sql'}})
-          expect { subject }.to raise_error(Puppet::Error,
-                                            /\$sql must be either a string or an array\./)
+          expect { is_expected.to compile }.to raise_error(/\$sql must be either a string or an array\./)
         end
 
         it 'should not create database and database user' do

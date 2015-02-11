@@ -2,18 +2,22 @@ class { 'mysql::server':
   root_password => 'password'
 }
 
-mysql::plugin{ 'validate_password':
-  ensure => present,
-  soname => $::osfamily ? {
-    windows => 'validate_password.dll',
-    default => 'validate_password.so'
-  }
+$validate_password_soname = $::osfamily ? {
+  windows => 'validate_password.dll',
+  default => 'validate_password.so'
 }
 
-mysql::plugin{ 'auth_socket':
+mysql::plugin { 'validate_password':
   ensure => present,
-  soname => $::osfamily ? {
-    windows => 'auth_socket.dll',
-    default => 'auth_socket.so'
-  }
+  soname => $validate_password_soname,
+}
+
+$auth_socket_soname = $::osfamily ? {
+  windows => 'auth_socket.dll',
+  default => 'auth_socket.so'
+}
+
+mysql::plugin { 'auth_socket':
+  ensure => present,
+  soname => $auth_socket_soname,
 }
