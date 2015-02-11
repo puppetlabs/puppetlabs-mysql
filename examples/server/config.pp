@@ -1,3 +1,3 @@
 mysql::server::config { 'testfile':
-  
+
 }
