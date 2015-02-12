@@ -55,7 +55,7 @@ describe 'mysql::server' do
           describe 'when root_password set' do
             let(:params) {{:root_password => 'SET' }}
             it { is_expected.to contain_mysql_user('root@localhost') }
-            it { is_expected.to contain_file('/root/.my.cnf') }
+            it { is_expected.to contain_file('/root/.my.cnf').that_requires('Mysql_user[root@localhost]') }
           end
           describe 'when root_password set, create_root_user set to false' do
             let(:params) {{ :root_password => 'SET', :create_root_user => false }}
