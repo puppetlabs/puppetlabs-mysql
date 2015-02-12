@@ -20,7 +20,13 @@ class mysql::server::service {
     name     => $mysql::server::service_name,
     enable   => $mysql::server::real_service_enabled,
     provider => $mysql::server::service_provider,
-    require  => [ File['mysql-config-file'], Package['mysql-server'] ]
+    require  => Package['mysql-server'],
+  }
+
+  # only establish ordering between config file and service if
+  # we're managing the config file.
+  if $mysql::server::manage_config_file {
+    File['mysql-config-file'] -> Service['mysqld']
   }
 
 }
