@@ -19,7 +19,7 @@ class mysql::server::backup (
   $provider           = 'mysqldump',
 ) {
 
-  create_resources("class", {
+  create_resources('class', {
     "mysql::backup::${provider}" => {
       'backupuser'         => $backupuser,
       'backuppassword'     => $backuppassword,
