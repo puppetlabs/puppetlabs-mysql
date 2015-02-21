@@ -173,6 +173,9 @@ To add custom MySQL configuration, drop additional files into
 * `mysql::bindings::python`: Installs Python bindings.
 * `mysql::bindings::ruby`: Installs Ruby bindings.
 * `mysql::client::install`:  Installs MySQL client.
+* `mysql::backup::mysqldump`: Implements mysqldump backups.
+* `mysql::backup::mysqlbackup`: Implements backups with Oracle MySQL Enterprise Backup.
+* `mysql::backup::xtrabackup`: Implements backups with XtraBackup from Percona.
 
 ###Parameters
 
@@ -383,31 +386,11 @@ A script that is executed at when the backup is finished. This could be used to 
 
 #####`provider`
 
-Set backup implementation
+Sets the server backup implementation. Valid values are:
 
-* `mysqldump`
-* `mysqlbackup`: MySQL Enterprise Backup
-* `xtrabackup`: Percona XtraBackup
-
-####mysql::backup::mysqldump
-
-Implements mysql::server::backup with mysqldump
-
-Backup type: Logical
-
-####mysql::backup::mysqlbackup
-
-Implements mysql::server::backup with MySQL Enterprise Backup from Oracle
-
-Backup type: Physical
-
-For this you need the meb package, which is available in RPM and TAR format from Oracle. For Ubuntu you can use [meb-deb](https://github.com/dveeden/meb-deb) to create a package from an official tarball.
-
-####mysql::backup::xtrabackup
-
-Implements mysql::server::backup with XtraBackup from Percona
-
-Backup type: Physical
+* `mysqldump`: Implements backups with mysqldump. Backup type: Logical. This is the default value.
+* `mysqlbackup`: Implements backups with MySQL Enterprise Backup from Oracle. Backup type: Physical. To use this type of backup, you'll need the `meb` package, which is available in RPM and TAR formats from Oracle. For Ubuntu, you can use [meb-deb](https://github.com/dveeden/meb-deb) to create a package from an official tarball.
+* `xtrabackup`: Implements backups with XtraBackup from Percona. Backup type: Physical.
 
 ####mysql::server::monitor
 
