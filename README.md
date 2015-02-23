@@ -77,7 +77,7 @@ MySQL doesn't care if 'thing' is alone or set to a value; it happily accepts bot
 
 If an option needs multiple instances, you can pass an array. For example,
 
-`~~~
+~~~
 $override_options = {
   'mysqld' => {
     'replicate-do-db' => ['base1', 'base2'],
