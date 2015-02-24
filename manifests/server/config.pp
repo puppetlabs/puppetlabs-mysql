@@ -22,7 +22,7 @@ class mysql::server::config {
   $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)
 
   if $logbin {
-    $logbindir = dirname($logbin)
+    $logbindir = mysql_dirname($logbin)
     
     #Stop puppet from managing directory if just a filename/prefix is specified
     if $logbindir != '.' {
