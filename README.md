@@ -46,7 +46,7 @@ class { '::mysql::server':
 }
 ~~~
 
-See [**Customizing Server Options**](customizing-server-options) below for examples of the hash structure for $override_options`.
+See [**Customizing Server Options**](#customizing-server-options) below for examples of the hash structure for $override_options`.
 
 ##Usage
 
@@ -217,7 +217,7 @@ $override_options = {
 }
 ~~~
 
-See [**Customizing Server Options**](customizing-server-options) above for usage details.
+See [**Customizing Server Options**](#customizing-server-options) above for usage details.
 
 #####`config_file`
 
