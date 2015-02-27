@@ -249,6 +249,10 @@ The name of the group used for root. Can be a group name or a group ID. See more
 
 Whether the package exists or should be a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Defaults to 'present'.
 
+#####`package_manage`
+
+Whether to manage the mysql server package. Defaults to true.
+
 #####`package_name`
 
 The name of the MySQL server package to install.
@@ -550,6 +554,10 @@ Array of install options for managed package resources. You must pass the approp
 #####`package_ensure`
 
 Whether the MySQL package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
+
+#####`package_manage`
+
+Whether to manage the mysql client package. Defaults to true.
 
 #####`package_name`
 

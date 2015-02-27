@@ -7,9 +7,11 @@ class mysql::params {
   $restart                = false
   $root_password          = 'UNSET'
   $server_package_ensure  = 'present'
+  $server_package_manage  = true
   $server_service_manage  = true
   $server_service_enabled = true
   $client_package_ensure  = 'present'
+  $client_package_manage  = true
   $create_root_user       = true
   $create_root_my_cnf     = true
   # mysql::bindings
