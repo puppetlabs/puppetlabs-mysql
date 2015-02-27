@@ -1,5 +1,6 @@
 #
 class mysql::server::service {
+  $options = $mysql::server::options
 
   if $mysql::server::real_service_manage {
     if $mysql::server::real_service_enabled {
@@ -9,7 +10,7 @@ class mysql::server::service {
     }
   }
 
-  file { $mysql::params::log_error:
+  file { $options['mysqld']['log-error']:
     ensure => present,
     owner  => 'mysql',
     group  => 'mysql',

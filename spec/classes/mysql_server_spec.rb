@@ -45,6 +45,10 @@ describe 'mysql::server' do
               })
             end
           end
+          context 'with log-error overridden' do
+            let(:params) {{ :override_options => { 'mysqld' => { 'log-error' => '/tmp/error.log' }} }}
+            it { is_expected.to contain_file('/tmp/error.log') }
+          end
         end
 
         context 'mysql::server::root_password' do
