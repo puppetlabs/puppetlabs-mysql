@@ -9,7 +9,7 @@ class mysql::server::service {
     }
   }
 
-  file { $mysql::params::log_error:
+  file { $mysql::server::log_error:
     ensure => present,
     owner  => 'mysql',
     group  => 'mysql',
