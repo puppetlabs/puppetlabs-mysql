@@ -1,3 +1,16 @@
+##2015-03-03 - Supported Release 3.3.0
+###Summary
+This release includes major README updates, the addition of backup providers, and a fix for managing the log-bin directory.
+
+####Features
+- Add package_manage parameters to `mysql::server` and `mysql::client` (MODULES-1143)
+- README improvements
+- Add `mysqldump`, `mysqlbackup`, and `xtrabackup` backup providers.
+
+####Bugfixes
+- log-error overrides were not being properly used (MODULES-1804)
+- check for full path for log-bin to stop puppet from managing file '.'
+
 ##2015-02-09 - Supported Release 3.2.0
 ###Summary
 This release includes several new features and bugfixes, including support for various plugins, making the output from mysql_password more consistent when input is empty and improved username validation.
