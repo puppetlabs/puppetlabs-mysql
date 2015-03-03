@@ -3,6 +3,7 @@ class mysql::server (
   $config_file             = $mysql::params::config_file,
   $includedir              = $mysql::params::includedir,
   $install_options         = undef,
+  $install_secret_file     = $mysql::params::install_secret_file,
   $manage_config_file      = $mysql::params::manage_config_file,
   $old_root_password       = $mysql::params::old_root_password,
   $override_options        = {},
