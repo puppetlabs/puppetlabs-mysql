@@ -23,7 +23,7 @@ class mysql::server::config {
 
   if $logbin {
     $logbindir = mysql_dirname($logbin)
-    
+
     #Stop puppet from managing directory if just a filename/prefix is specified
     if $logbindir != '.' {
       file { $logbindir:

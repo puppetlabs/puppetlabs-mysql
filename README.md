@@ -10,6 +10,7 @@
 4. [Usage - Configuration options and additional functionality](#usage)
     * [Customizing Server Options](#customizing-server-options)
     * [Creating a Database](#creating-a-database)
+    * [Custom Configuration](#custom-configuration)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -140,7 +141,7 @@ mysql::db { 'mydb':
 }
 ~~~
 
-###Custom configuration
+###Custom Configuration
 
 To add custom MySQL configuration, drop additional files into
 `includedir`. Dropping files into `includedir` allows you to override settings or add additional ones, which is helpful if you choose not to use `override_options` in `mysql::server`. The `includedir` location is by default set to /etc/mysql/conf.d.
@@ -412,9 +413,7 @@ The hostname from which the monitoring user requests are allowed access.
 
 ####mysql::server::mysqltuner
 
-***Note***
-
-If using this class on a non-network-connected system you must download the mysqltuner.pl script and have it hosted somewhere accessible via `http(s)://`, `puppet://`, `ftp://`, or a fully qualified file path.
+**Note**: If you're using this class on a non-network-connected system, you must download the mysqltuner.pl script and have it hosted somewhere accessible via `http(s)://`, `puppet://`, `ftp://`, or a fully qualified file path.
 
 ##### `ensure`
 
