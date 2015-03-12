@@ -251,6 +251,33 @@ class mysql::params {
       $daemon_dev_package_name     = undef
     }
 
+    'OpenBSD': {
+      $client_package_name = 'mariadb-client'
+      $server_package_name = 'mariadb-server'
+      $basedir             = '/usr/local'
+      $config_file         = '/etc/my.cnf'
+      $includedir          = undef
+      $datadir             = '/var/mysql'
+      $log_error           = "/var/mysql/${::hostname}.err"
+      $pidfile             = '/var/mysql/mysql.pid'
+      $root_group          = 'wheel'
+      $server_service_name = 'mysqld'
+      $socket              = '/var/run/mysql/mysql.sock'
+      $ssl_ca              = undef
+      $ssl_cert            = undef
+      $ssl_key             = undef
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = undef
+      $perl_package_name   = 'p5-DBD-mysql'
+      $php_package_name    = 'php-mysql'
+      $python_package_name = 'py-mysql'
+      $ruby_package_name   = 'ruby-mysql'
+      # The libraries installed by these packages are included in client and server packages, no installation required.
+      $client_dev_package_name     = undef
+      $daemon_dev_package_name     = undef
+    }
+
     default: {
       case $::operatingsystem {
         'Amazon': {

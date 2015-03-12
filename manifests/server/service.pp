@@ -10,10 +10,16 @@ class mysql::server::service {
     }
   }
 
+  if $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['user'] {
+    $mysqluser = $mysql::server::override_options['mysqld']['user']
+  } else {
+    $mysqluser = $options['mysqld']['user']
+  }
+
   file { $options['mysqld']['log-error']:
     ensure => present,
-    owner  => 'mysql',
-    group  => 'mysql',
+    owner  => $mysqluser,
+    group  => $::mysql::server::root_group,
   }
 
   service { 'mysqld':
