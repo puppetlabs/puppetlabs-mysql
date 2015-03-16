@@ -7,6 +7,7 @@ class mysql::params {
   $restart                = false
   $root_password          = 'UNSET'
   $server_package_ensure  = 'present'
+  $log_error_mode         = '0640'
   $server_package_manage  = true
   $server_service_manage  = true
   $server_service_enabled = true

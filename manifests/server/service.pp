@@ -22,6 +22,7 @@ class mysql::server::service {
     ensure => present,
     owner  => $mysqluser,
     group  => $::mysql::server::mysql_group,
+    mode   => $::mysql::server::log_error_mode,
   }
 
   service { 'mysqld':
