@@ -8,6 +8,8 @@ class mysql::server::service {
     } else {
       $service_ensure = 'stopped'
     }
+  } else {
+    $service_ensure = undef
   }
 
   if $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['user'] {
