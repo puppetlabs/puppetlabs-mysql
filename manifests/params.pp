@@ -76,6 +76,7 @@ class mysql::params {
       $basedir                 = '/usr'
       $datadir                 = '/var/lib/mysql'
       $root_group              = 'root'
+      $mysql_group             = 'mysql'
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
@@ -125,6 +126,7 @@ class mysql::params {
         /(SLES|SLED)/      => '/var/lib/mysql/mysqld.pid',
       }
       $root_group          = 'root'
+      $mysql_group         = 'mysql'
       $server_service_name = 'mysql'
       $socket              = $::operatingsystem ? {
         /OpenSuSE/         => '/var/run/mysql/mysql.sock',
@@ -158,6 +160,7 @@ class mysql::params {
       $log_error               = '/var/log/mysql/error.log'
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
+      $mysql_group             = 'mysql'
       $server_service_name     = 'mysql'
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
@@ -187,6 +190,7 @@ class mysql::params {
       $log_error           = '/var/log/mysqld.log'
       $pidfile             = '/var/run/mysqld/mysqld.pid'
       $root_group          = 'root'
+      $mysql_group         = 'mysql'
       $server_service_name = 'mysqld'
       $socket              = '/var/lib/mysql/mysql.sock'
       $ssl_ca              = '/etc/mysql/cacert.pem'
@@ -210,6 +214,7 @@ class mysql::params {
       $log_error           = '/var/log/mysql/mysqld.err'
       $pidfile             = '/run/mysqld/mysqld.pid'
       $root_group          = 'root'
+      $mysql_group         = 'mysql'
       $server_service_name = 'mysql'
       $socket              = '/run/mysqld/mysqld.sock'
       $ssl_ca              = '/etc/mysql/cacert.pem'
@@ -234,6 +239,7 @@ class mysql::params {
       $log_error           = "/var/db/mysql/${::hostname}.err"
       $pidfile             = '/var/db/mysql/mysql.pid'
       $root_group          = 'wheel'
+      $mysql_group         = 'mysql'
       $server_service_name = 'mysql-server'
       $socket              = '/tmp/mysql.sock'
       $ssl_ca              = undef
@@ -261,6 +267,7 @@ class mysql::params {
       $log_error           = "/var/mysql/${::hostname}.err"
       $pidfile             = '/var/mysql/mysql.pid'
       $root_group          = 'wheel'
+      $mysql_group         = '_mysql'
       $server_service_name = 'mysqld'
       $socket              = '/var/run/mysql/mysql.sock'
       $ssl_ca              = undef
@@ -290,6 +297,7 @@ class mysql::params {
           $log_error           = '/var/log/mysqld.log'
           $pidfile             = '/var/run/mysqld/mysqld.pid'
           $root_group          = 'root'
+          $mysql_group         = 'mysql'
           $server_service_name = 'mysqld'
           $socket              = '/var/lib/mysql/mysql.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'

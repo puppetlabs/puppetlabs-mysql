@@ -21,7 +21,7 @@ class mysql::server::service {
   file { $options['mysqld']['log-error']:
     ensure => present,
     owner  => $mysqluser,
-    group  => $::mysql::server::root_group,
+    group  => $::mysql::server::mysql_group,
   }
 
   service { 'mysqld':
