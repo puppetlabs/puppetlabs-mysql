@@ -246,6 +246,10 @@ Whether the service should be restarted when things change. Valid values are 'tr
 
 The name of the group used for root. Can be a group name or a group ID. See more about the [`group` file attribute](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 
+#####`mysql_group`
+
+The name of the group of the mysql daemon user. Can be a group name or a group ID. See more about the [`group` file attribute](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
+
 #####`package_ensure`
 
 Whether the package exists or should be a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Defaults to 'present'.
