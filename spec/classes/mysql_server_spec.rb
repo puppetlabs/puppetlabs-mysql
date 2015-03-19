@@ -110,7 +110,7 @@ describe 'mysql::server' do
               :max_queries_per_hour     => nil,
               :max_updates_per_hour     => nil,
               :max_user_connections     => nil,
-              :password_hash            => ''
+              :password_hash            => nil
             )}
           end
 
