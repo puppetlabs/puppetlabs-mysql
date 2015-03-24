@@ -1,5 +1,15 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
+def location_for(place, fake_version = nil)
+  if place =~ /^(git:[^#]*)#(.*)/
+    [fake_version, { :git => $1, :branch => $2, :require => false }].compact
+  elsif place =~ /^file:\/\/(.*)/
+    ['>= 0', { :path => File.expand_path($1), :require => false }]
+  else
+    [place, { :require => false }]
+  end
+end
+
 group :development, :unit_tests do
   gem 'rspec-core', '3.1.7',     :require => false
   gem 'puppetlabs_spec_helper',  :require => false
@@ -8,8 +18,17 @@ group :development, :unit_tests do
   gem 'json',                    :require => false
 end
 
+beaker_version = ENV['BEAKER_VERSION']
+beaker_rspec_version = ENV['BEAKER_RSPEC_VERSION']
 group :system_tests do
-  gem 'beaker-rspec',  :require => false
+  if beaker_version
+    gem 'beaker', *location_for(beaker_version)
+  end
+  if beaker_rspec_version
+    gem 'beaker-rspec', *location_for(beaker_rspec_version)
+  else
+    gem 'beaker-rspec',  :require => false
+  end
   gem 'serverspec',    :require => false
 end
 
