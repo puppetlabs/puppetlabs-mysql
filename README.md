@@ -17,11 +17,11 @@
 
 ##Overview
 
-The mysql module installs, configures, and manages the MySQL service.
+The MySQL module installs, configures, and manages the MySQL service.
 
 ##Module Description
 
-The mysql module manages both the installation and configuration of MySQL, as well as extending Puppet to allow management of MySQL resources, such as databases, users, and grants.
+The MySQL module manages both the installation and configuration of MySQL, as well as extending Puppet to allow management of MySQL resources, such as databases, users, and grants.
 
 ##Setup
 
@@ -89,7 +89,7 @@ $override_options = {
 produces
 
 ~~~
-[mysql]
+[mysqld]
 replicate-do-db = base1
 replicate-do-db = base2
 ~~~
@@ -248,7 +248,7 @@ The name of the group used for root. Can be a group name or a group ID. See more
 
 #####`mysql_group`
 
-The name of the group of the mysql daemon user. Can be a group name or a group ID. See more about the [`group` file attribute](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
+The name of the group of the MySQL daemon user. Can be a group name or a group ID. See more about the [`group` file attribute](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 
 #####`package_ensure`
 
@@ -256,7 +256,7 @@ Whether the package exists or should be a specific version. Valid values are 'pr
 
 #####`package_manage`
 
-Whether to manage the mysql server package. Defaults to true.
+Whether to manage the MySQL server package. Defaults to true.
 
 #####`package_name`
 
@@ -560,7 +560,7 @@ Whether the MySQL package should be present, absent, or a specific version. Vali
 
 #####`package_manage`
 
-Whether to manage the mysql client package. Defaults to true.
+Whether to manage the MySQL client package. Defaults to true.
 
 #####`package_name`
 
@@ -778,7 +778,7 @@ The library file name.
 
 Generates a unique id, based on the node's MAC address, which can be used as
 `server_id`. This fact will *always* return `0` on all nodes which only have
-loopback interfaces. Given those nodes' connnectivity that's probably okay.
+loopback interfaces. Given those nodes' connectivity that's probably okay.
 
 ##Limitations
 
@@ -796,7 +796,7 @@ Testing on other platforms has been minimal and cannot be guaranteed.
 #Development
 
 Puppet Labs modules on the Puppet Forge are open projects, and community
-contributions are essential for keeping them great. We can’t access the
+contributions are essential for keeping them great. We can't access the
 huge number of platforms and myriad of hardware, software, and deployment
 configurations that Puppet is intended to serve.
 
