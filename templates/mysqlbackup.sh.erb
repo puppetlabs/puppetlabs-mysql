@@ -1,4 +1,8 @@
+<%- if @kernel == 'Linux' -%>
 #!/bin/bash
+<%- else -%>
+#!/bin/sh
+<%- end -%>
 #
 # MySQL Backup Script
 #  Dumps mysql databases to a file for another backup tool to pick up.
@@ -27,7 +31,9 @@ PATH=<%= @execpath %>
 
 
 
+<%- if @kernel == 'Linux' -%>
 set -o pipefail
+<%- end -%>
 
 cleanup()
 {
