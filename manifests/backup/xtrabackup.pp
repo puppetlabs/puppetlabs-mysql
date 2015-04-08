@@ -22,7 +22,6 @@ class mysql::backup::xtrabackup (
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
-    provider      => 'mysql',
     require       => Class['mysql::server::root_password'],
   }
 
