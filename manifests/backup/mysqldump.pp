@@ -5,7 +5,7 @@ class mysql::backup::mysqldump (
   $backupdir,
   $backupdirmode = '0700',
   $backupdirowner = 'root',
-  $backupdirgroup = 'root',
+  $backupdirgroup = $mysql::params::root_group,
   $backupcompress = true,
   $backuprotate = 30,
   $ignore_events = true,
@@ -46,7 +46,7 @@ class mysql::backup::mysqldump (
     path    => '/usr/local/sbin/mysqlbackup.sh',
     mode    => '0700',
     owner   => 'root',
-    group   => 'root',
+    group   => $mysql::params::root_group,
     content => template('mysql/mysqlbackup.sh.erb'),
   }
 

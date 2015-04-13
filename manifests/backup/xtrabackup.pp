@@ -6,7 +6,7 @@ class mysql::backup::xtrabackup (
   $backupmethod = 'mysqldump',
   $backupdirmode = '0700',
   $backupdirowner = 'root',
-  $backupdirgroup = 'root',
+  $backupdirgroup = $mysql::params::root_group,
   $backupcompress = true,
   $backuprotate = 30,
   $ignore_events = true,
