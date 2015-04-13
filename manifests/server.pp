@@ -21,6 +21,7 @@ class mysql::server (
   $service_provider        = $mysql::params::server_service_provider,
   $create_root_user        = $mysql::params::create_root_user,
   $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
+  $log_error_mode          = $mysql::params::log_error_mode,
   $users                   = {},
   $grants                  = {},
   $databases               = {},

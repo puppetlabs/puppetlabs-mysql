@@ -196,6 +196,11 @@ If set to 'true', creates `/root/.my.cnf`. Valid values are 'true', 'false'. Def
 
 `create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. This can be used for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
 
+#####`log_error_mode`
+
+Permissions applied to the error_log file from mysqld. This parameter is passed directly
+to the `file` resource. Default is '0640'.
+
 #####`root_password`
 
 The MySQL root password. Puppet attempts to set the root password and update `/root/.my.cnf` with it.

@@ -14,6 +14,7 @@ describe 'mysql class' do
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
           purge_conf_dir          => 'true',
+          log_error_mode          => '0644',
           remove_default_accounts => 'true',
           restart                 => 'true',
           root_group              => 'root',
