@@ -51,5 +51,18 @@ describe 'mysql class' do
       apply_manifest(pp, :catch_changes => true)
     end
   end
+
+  describe 'configuration needed for syslog' do
+    it 'should work with no errors' do
+      pp = <<-EOS
+        class { 'mysql::server':
+          override_options => { 'mysqld' => { 'log-error' => undef }, 'mysqld_safe' => { 'log-error' => false, 'syslog' => true }},
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
 end
 

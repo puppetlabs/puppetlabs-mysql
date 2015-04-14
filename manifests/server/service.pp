@@ -18,10 +18,12 @@ class mysql::server::service {
     $mysqluser = $options['mysqld']['user']
   }
 
-  file { $options['mysqld']['log-error']:
-    ensure => present,
-    owner  => $mysqluser,
-    group  => $::mysql::server::mysql_group,
+  if $options['mysqld']['log-error'] {
+    file { $options['mysqld']['log-error']:
+      ensure => present,
+      owner  => $mysqluser,
+      group  => $::mysql::server::mysql_group,
+    }
   }
 
   service { 'mysqld':
