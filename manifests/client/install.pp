@@ -1,3 +1,4 @@
+# See README.md.
 class mysql::client::install {
 
   if $mysql::client::package_manage {
