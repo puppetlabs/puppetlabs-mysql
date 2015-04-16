@@ -1,8 +1,8 @@
 #This is a helper class to add a monitoring user to the database
 class mysql::server::monitor (
-  $mysql_monitor_username,
-  $mysql_monitor_password,
-  $mysql_monitor_hostname
+  $mysql_monitor_username = '',
+  $mysql_monitor_password = '',
+  $mysql_monitor_hostname = ''
 ) {
 
   Anchor['mysql::server::end'] -> Class['mysql::server::monitor']

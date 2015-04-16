@@ -1,3 +1,4 @@
+# See README.md.
 class mysql::server::account_security {
   mysql_user {
     [ 'root@127.0.0.1',
