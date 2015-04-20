@@ -84,5 +84,8 @@ class mysql::server (
     Anchor['mysql::server::end']
   }
 
-
+Class['mysql::server'] -> Mysql_database <||>
+Class['mysql::server'] -> Mysql_user <||>
 }
+
+
