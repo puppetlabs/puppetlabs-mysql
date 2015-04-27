@@ -70,7 +70,7 @@ define mysql::db (
         timeout     => $import_timeout,
         onlyif      => $onlyif_empty ? {
           true    => "test $(mysql ${dbname} -e 'show tables' |wc -l ) -eq 0",
-          default => "false",
+          default => "test $(false)",
         }
       }
     }
