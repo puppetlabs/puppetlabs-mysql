@@ -12,6 +12,8 @@ class mysql::backup::mysqldump (
   $delete_before_dump = false,
   $backupdatabases    = [],
   $file_per_database  = false,
+  $include_triggers   = true,
+  $include_routines   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
   $postscript         = false,
@@ -28,7 +30,7 @@ class mysql::backup::mysqldump (
     ensure     => $ensure,
     user       => "${backupuser}@localhost",
     table      => '*.*',
-    privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ],
+    privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ],
     require    => Mysql_user["${backupuser}@localhost"],
   }
 

@@ -12,6 +12,8 @@ class mysql::backup::mysqlbackup (
   $delete_before_dump = false,
   $backupdatabases    = [],
   $file_per_database  = false,
+  $include_triggers   = true,
+  $include_routines   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
   $postscript         = false,

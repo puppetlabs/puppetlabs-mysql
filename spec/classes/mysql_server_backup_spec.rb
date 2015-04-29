@@ -24,7 +24,7 @@ describe 'mysql::server::backup' do
             :require => 'Class[Mysql::Server::Root_password]') }
 
           it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
-            :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
+            :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER']
           ).that_requires('Mysql_user[testuser@localhost]') }
 
           it { is_expected.to contain_cron('mysql-backup').with(
@@ -43,13 +43,26 @@ describe 'mysql::server::backup' do
           )}
 
           it 'should have compression by default' do
-            is_expected.to contain_file('mysqlbackup.sh').with(
-              :content => /bzcat -zc/
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /bzcat -zc/
             )
           end
+
           it 'should skip backing up events table by default' do
-            is_expected.to contain_file('mysqlbackup.sh').with(
-              :content => /EVENTS="--ignore-table=mysql.event"/
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /ADDITIONAL_OPTIONS="--ignore-table=mysql.event"/
+            )
+          end
+
+          it 'should not mention triggers by default because file_per_database is false' do
+            is_expected.to contain_file('mysqlbackup.sh').without_content(
+              /.*triggers.*/
+            )
+          end
+
+          it 'should not mention routines by default because file_per_database is false' do
+            is_expected.to contain_file('mysqlbackup.sh').without_content(
+              /.*routines.*/
             )
           end
 
@@ -109,7 +122,7 @@ describe 'mysql::server::backup' do
 
           it 'should be able to backup events table' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
-              /EVENTS="--events"/
+              /ADDITIONAL_OPTIONS="--events"/
             )
           end
         end
@@ -129,6 +142,78 @@ describe 'mysql::server::backup' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
               /mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date'/
             )
+          end
+
+          it 'should backup triggers by default' do
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
+            )
+          end
+
+          it 'should skip backing up routines by default' do
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+               /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"/
+            )
+          end
+
+          context 'with include_triggers set to true' do
+            let(:params) do
+              default_params.merge({
+                :backupdatabases => ['mysql'],
+                :include_triggers => true
+              })
+            end
+
+            it 'should backup triggers when asked' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
+              )
+            end
+          end
+
+          context 'with include_triggers set to false' do
+            let(:params) do
+              default_params.merge({
+                :backupdatabases => ['mysql'],
+                :include_triggers => false
+              })
+            end
+
+            it 'should skip backing up triggers when asked to skip' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"/
+              )
+            end
+          end
+
+          context 'with include_routines set to true' do
+            let(:params) do
+              default_params.merge({
+                :backupdatabases => ['mysql'],
+                :include_routines => true
+              })
+            end
+
+            it 'should backup routines when asked' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines"/
+              )
+            end
+          end
+
+          context 'with include_routines set to false' do
+            let(:params) do
+              default_params.merge({
+                :backupdatabases => ['mysql'],
+                :include_triggers => true
+              })
+            end
+
+            it 'should skip backing up routines when asked to skip' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"/
+              )
+            end
           end
         end
 
@@ -152,6 +237,78 @@ describe 'mysql::server::backup' do
               )
               is_expected.to contain_file('mysqlbackup.sh').without_content(
                 /.*bzcat -zc.*/
+              )
+            end
+          end
+
+          it 'should backup triggers by default' do
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
+            )
+          end
+
+          it 'should skip backing up routines by default' do
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
+              /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"/
+            )
+          end
+
+          context 'with include_triggers set to true' do
+            let(:params) do
+              default_params.merge({
+                :file_per_database => true,
+                :include_triggers => true
+              })
+            end
+
+            it 'should backup triggers when asked' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
+              )
+            end
+          end
+
+          context 'with include_triggers set to false' do
+            let(:params) do
+              default_params.merge({
+                :file_per_database => true,
+                :include_triggers => false
+              })
+            end
+
+            it 'should skip backing up triggers when asked to skip' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"/
+              )
+            end
+          end
+
+          context 'with include_routines set to true' do
+            let(:params) do
+              default_params.merge({
+                :file_per_database => true,
+                :include_routines => true
+              })
+            end
+
+            it 'should backup routines when asked' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines"/
+              )
+            end
+          end
+
+          context 'with include_routines set to false' do
+            let(:params) do
+              default_params.merge({
+                :file_per_database => true,
+                :include_triggers => true
+              })
+            end
+
+            it 'should skip backing up routines when asked to skip' do
+              is_expected.to contain_file('mysqlbackup.sh').with_content(
+                /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"/
               )
             end
           end
