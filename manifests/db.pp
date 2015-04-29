@@ -58,6 +58,11 @@ define mysql::db (
 
     $refresh = ! $enforce_sql
 
+    $onlyif_empty_bool = $onlyif_empty ? {
+      true    => "test $(mysql ${dbname} -e 'show tables' |wc -l ) -eq 0",
+      default => "test $(false)",
+    }
+
     if $sql {
       exec{ "${dbname}-import":
         command     => "cat ${sql_inputs} | mysql ${dbname}",
@@ -68,10 +73,7 @@ define mysql::db (
         require     => Mysql_grant["${user}@${host}/${table}"],
         subscribe   => Mysql_database[$dbname],
         timeout     => $import_timeout,
-        onlyif      => $onlyif_empty ? {
-          true    => "test $(mysql ${dbname} -e 'show tables' |wc -l ) -eq 0",
-          default => "test $(false)",
-        }
+        onlyif      => $onlyif_empty_bool,
       }
     }
   }
