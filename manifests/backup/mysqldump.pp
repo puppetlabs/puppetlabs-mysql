@@ -26,22 +26,19 @@ class mysql::backup::mysqldump (
     require       => Class['mysql::server::root_password'],
   }
 
+
   if $include_triggers {
-    mysql_grant { "${backupuser}@localhost/*.*":
-      ensure     => $ensure,
-      user       => "${backupuser}@localhost",
-      table      => '*.*',
-      privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ],
-      require    => Mysql_user["${backupuser}@localhost"],
-    }
+    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ]
   } else {
-    mysql_grant { "${backupuser}@localhost/*.*":
-      ensure     => $ensure,
-      user       => "${backupuser}@localhost",
-      table      => '*.*',
-      privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ],
-      require    => Mysql_user["${backupuser}@localhost"],
-    }
+    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ]
+  }
+
+  mysql_grant { "${backupuser}@localhost/*.*":
+    ensure     => $ensure,
+    user       => "${backupuser}@localhost",
+    table      => '*.*',
+    privileges => $privs,
+    require    => Mysql_user["${backupuser}@localhost"],
   }
 
   cron { 'mysql-backup':
