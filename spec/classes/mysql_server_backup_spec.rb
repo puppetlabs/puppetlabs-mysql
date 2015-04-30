@@ -27,6 +27,15 @@ describe 'mysql::server::backup' do
             :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER']
           ).that_requires('Mysql_user[testuser@localhost]') }
 
+          context 'with triggers excluded' do
+            let(:params) do
+              { :include_triggers => false }.merge(default_params)
+            end
+            it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
+              :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
+            ).that_requires('Mysql_user[testuser@localhost]') }
+          end
+
           it { is_expected.to contain_cron('mysql-backup').with(
             :command => '/usr/local/sbin/mysqlbackup.sh',
             :ensure  => 'present'
