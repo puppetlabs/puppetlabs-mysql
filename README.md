@@ -377,6 +377,14 @@ Specify an array of databases to back up.
 
 Whether a separate file be used per database. Valid values are 'true', 'false'. Defaults to 'false'.
 
+#####`include_routines`
+
+Whether or not to include routines for each database when doing a `file_per_database` backup. Defaults to `false`.
+
+#####`include_triggers`
+
+Whether or not to include triggers for a each database when doing a `file_per_database` backup. Defaults to `true`.
+
 #####`ensure`
 
 Allows you to remove the backup scripts. Valid values are 'present', 'absent'. Defaults to 'present'.
