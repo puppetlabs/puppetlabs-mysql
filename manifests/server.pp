@@ -4,7 +4,6 @@ class mysql::server (
   $includedir              = $mysql::params::includedir,
   $install_options         = undef,
   $manage_config_file      = $mysql::params::manage_config_file,
-  $old_root_password       = $mysql::params::old_root_password,
   $override_options        = {},
   $package_ensure          = $mysql::params::server_package_ensure,
   $package_manage          = $mysql::params::server_package_manage,
@@ -27,7 +26,8 @@ class mysql::server (
 
   # Deprecated parameters
   $enabled                 = undef,
-  $manage_service          = undef
+  $manage_service          = undef,
+  $old_root_password       = undef
 ) inherits mysql::params {
 
   # Deprecated parameters.
@@ -42,6 +42,9 @@ class mysql::server (
     $real_service_manage = $manage_service
   } else {
     $real_service_manage = $service_manage
+  }
+  if $old_root_password {
+    warning('old_root_password is no longer used and will be removed in a future release')
   }
 
   # Create a merged together set of options.  Rightmost hashes win over left.
