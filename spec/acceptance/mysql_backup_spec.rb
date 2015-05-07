@@ -129,4 +129,46 @@ describe 'mysql::server::backup class' do
       end
     end
   end
+
+  context 'with triggers and routines' do
+    it 'when configuring mysql backups with triggers and routines' do
+      pp = <<-EOS
+        class { 'mysql::server': root_password => 'password' }
+        mysql::db { [
+          'backup1',
+          'backup2'
+          ]:
+          user => 'backup',
+          password => 'secret',
+        }
+        package { 'bzip2':
+          ensure => present,
+        }
+        class { 'mysql::server::backup':
+          backupuser => 'myuser',
+          backuppassword => 'mypassword',
+          backupdir => '/tmp/backups',
+          backupcompress => true,
+          file_per_database => true,
+          include_triggers => true,
+          include_routines => true,
+          postscript => [
+            'rm -rf /var/tmp/mysqlbackups',
+            'rm -f /var/tmp/mysqlbackups.done',
+            'cp -r /tmp/backups /var/tmp/mysqlbackups',
+            'touch /var/tmp/mysqlbackups.done',
+          ],
+          execpath => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          require => Package['bzip2'],
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should run mysqlbackup.sh with no errors' do
+      shell("/usr/local/sbin/mysqlbackup.sh") do |r|
+        expect(r.stderr).to eq("")
+      end
+    end
+  end
 end

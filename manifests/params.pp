@@ -2,7 +2,6 @@
 class mysql::params {
 
   $manage_config_file     = true
-  $old_root_password      = ''
   $purge_conf_dir         = false
   $restart                = false
   $root_password          = 'UNSET'
