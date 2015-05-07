@@ -26,8 +26,7 @@ class mysql::backup::mysqldump (
     require       => Class['mysql::server::root_password'],
   }
 
-
-  if $include_triggers {
+  if $include_triggers and versioncmp($::mysql_version, '5.1.5') > 0 {
     $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ]
   } else {
     $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ]
