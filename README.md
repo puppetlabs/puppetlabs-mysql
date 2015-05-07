@@ -784,7 +784,11 @@ The library file name.
 
 ###Facts
 
-####`mysql_server_id`
+#### `mysql_version`
+
+Determines the MySql version by parsing the output from `mysql --version`
+
+#### `mysql_server_id`
 
 Generates a unique id, based on the node's MAC address, which can be used as
 `server_id`. This fact will *always* return `0` on all nodes which only have
