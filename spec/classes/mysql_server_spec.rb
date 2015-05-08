@@ -43,7 +43,15 @@ describe 'mysql::server' do
           context 'with defaults' do
             it { is_expected.to contain_service('mysqld') }
           end
-
+          context 'with package_manage set to true' do
+            let(:params) {{ :package_manage => true }}
+            it { is_expected.to contain_service('mysqld').that_requires('Package[mysql-package]') }
+          end
+          context 'with package_manage set to false' do
+            let(:params) {{ :package_manage => false }}
+            it { is_expected.to contain_service('mysqld') }
+            it { is_expected.not_to contain_service('mysqld').that_requires('Package[mysql-package]') }
+          end
           context 'service_enabled set to false' do
             let(:params) {{ :service_enabled => false }}
 
