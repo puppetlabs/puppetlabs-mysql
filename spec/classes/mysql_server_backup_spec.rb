@@ -4,7 +4,7 @@ describe 'mysql::server::backup' do
   on_pe_supported_platforms(PLATFORMS).each do |pe_version,pe_platforms|
     pe_platforms.each do |pe_platform,facts|
       describe "on #{pe_version} #{pe_platform}" do
-        let(:facts) { {'mysql_version' => '5.1.6'}.merge(facts) }
+        let(:facts) { facts }
 
         let(:default_params) {
           { 'backupuser'         => 'testuser',
@@ -26,12 +26,7 @@ describe 'mysql::server::backup' do
           it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
             :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER']
           ).that_requires('Mysql_user[testuser@localhost]') }
-          context 'mysql < 5.1.6' do
-            let(:facts) { {'mysql_version' => '5.0.95'}.merge(facts) }
-            it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
-               :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
-               ).that_requires('Mysql_user[testuser@localhost]') }
-          end
+
           context 'with triggers excluded' do
             let(:params) do
               { :include_triggers => false }.merge(default_params)
@@ -280,15 +275,6 @@ describe 'mysql::server::backup' do
                 /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
               )
             end
-            describe 'mysql_version < 5.0.11' do
-              let(:facts) { facts.merge({'mysql_version' => '5.0.10'}) }
-              it 'should backup triggers when asked' do
-                is_expected.to contain_file('mysqlbackup.sh').with_content(
-                   /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
-                )
-              end
-            end
-
           end
 
           context 'with include_triggers set to false' do
