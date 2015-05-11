@@ -385,7 +385,7 @@ Whether or not to include routines for each database when doing a `file_per_data
 
 #####`include_triggers`
 
-Whether or not to include triggers for a each database when doing a `file_per_database` backup. Defaults to `true`.
+Whether or not to include triggers for a each database when doing a `file_per_database` backup. Defaults to `false`.
 
 #####`ensure`
 
