@@ -13,7 +13,7 @@ class mysql::server::backup (
   $backupdatabases    = [],
   $file_per_database  = false,
   $include_routines   = false,
-  $include_triggers   = true,
+  $include_triggers   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
   $postscript         = false,
