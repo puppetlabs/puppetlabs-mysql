@@ -229,18 +229,18 @@ class mysql::params {
     }
 
     'FreeBSD': {
-      $client_package_name = 'databases/mysql55-client'
-      $server_package_name = 'databases/mysql55-server'
+      $client_package_name = 'databases/mysql56-client'
+      $server_package_name = 'databases/mysql56-server'
       $basedir             = '/usr/local'
-      $config_file         = '/var/db/mysql/my.cnf'
-      $includedir          = '/var/db/mysql/my.cnf.d'
+      $config_file         = '/usr/local/etc/my.cnf'
+      $includedir          = '/usr/local/etc/my.cnf.d'
       $datadir             = '/var/db/mysql'
-      $log_error           = "/var/db/mysql/${::hostname}.err"
-      $pidfile             = '/var/db/mysql/mysql.pid'
+      $log_error           = '/var/log/mysqld.log'
+      $pidfile             = '/var/run/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = 'mysql'
       $server_service_name = 'mysql-server'
-      $socket              = '/tmp/mysql.sock'
+      $socket              = '/var/db/mysql/mysql.sock'
       $ssl_ca              = undef
       $ssl_cert            = undef
       $ssl_key             = undef
