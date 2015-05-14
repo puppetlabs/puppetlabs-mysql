@@ -31,7 +31,7 @@ class mysql::server::service {
     name     => $mysql::server::service_name,
     enable   => $mysql::server::real_service_enabled,
     provider => $mysql::server::service_provider,
-    require  => Package[$mysql::params::server_package_name],
+    require  => Package[$mysql::server::service_name],
   }
 
   # only establish ordering between config file and service if
