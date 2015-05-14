@@ -74,8 +74,8 @@ class mysql::server (
   }
 
   Anchor['mysql::server::start'] ->
-  Class['mysql::server::install'] ->
   Class['mysql::server::config'] ->
+  Class['mysql::server::install'] ->
   Class['mysql::server::installdb'] ->
   Class['mysql::server::service'] ->
   Class['mysql::server::root_password'] ->
