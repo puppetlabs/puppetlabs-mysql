@@ -1,5 +1,6 @@
 # Class: mysql::server:  See README.md for documentation.
 class mysql::server (
+  $config_dir		   = $mysql::params::config_dir,
   $config_file             = $mysql::params::config_file,
   $includedir              = $mysql::params::includedir,
   $install_options         = undef,
@@ -62,6 +63,12 @@ class mysql::server (
   if $remove_default_accounts {
     class { '::mysql::server::account_security':
       require => Anchor['mysql::server::end'],
+    }
+  }
+
+  if $::osfamily == 'Debian' {
+    file { $config_dir:
+      ensure => directory,
     }
   }
 
