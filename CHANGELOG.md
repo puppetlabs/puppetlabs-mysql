@@ -1,3 +1,34 @@
+##2015-05-19 - Supported Release 3.4.0
+###Summary
+This release includes the addition of extra facts, OpenBSD compatibility, and a number of other features, improvements and bug fixes.
+
+####Features/Improvements
+- Added server_id fact which includes mac address for better uniqueness
+- Added OpenBSD compatibility, only for 'OpenBSD -current' (due to the recent switch to mariadb)
+- Added a $mysql_group parameter, and use that instead of the $root_group parameter to define the group membership of the mysql error log file.
+- Updated tests for rspec-puppet 2 and future parser
+- Further acceptance testing improvements
+- MODULES-1928 - allow log-error to be undef
+- Split package installation and database install
+- README wording improvements
+- Added options for including/excluding triggers and routines
+- Made the 'TRIGGER' privilege of mysqldump backups depend on whether or not we are actually backing up triggers
+- Cleaned up the privilege assignment in the mysqldump backup script
+- Add a fact for capturing the mysql version installed
+
+####Bugfixes
+- mysql backup: fix regression in mysql_user call
+- Set service_ensure to undef, in the case of an unmanaged service
+- README Typos fixed
+- Bugfix on Xtrabackup crons
+- Fixed a permission problem that was preventing triggers from being backed up
+- MODULES-1981: Revoke and grant difference of old and new privileges
+- Fix an issue were we assume triggers work
+- Change default for mysql::server::backup to ignore_triggers = false
+
+####Deprecations
+mysql::server::old_root_password property
+
 ##2015-03-03 - Supported Release 3.3.0
 ###Summary
 This release includes major README updates, the addition of backup providers, and a fix for managing the log-bin directory.
