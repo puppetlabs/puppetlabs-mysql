@@ -19,7 +19,7 @@ class mysql::server::installdb {
       creates   => "${datadir}/mysql",
       logoutput => on_failure,
       path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
-      require   => Package[$mysql::server::package_name],
+      require   => Package['mysql-server'],
     }
 
     if $mysql::server::restart {
