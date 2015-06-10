@@ -12,7 +12,7 @@ class mysql::backup::mysqldump (
   $delete_before_dump = false,
   $backupdatabases    = [],
   $file_per_database  = false,
-  $include_triggers   = true,
+  $include_triggers   = false,
   $include_routines   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
@@ -26,7 +26,7 @@ class mysql::backup::mysqldump (
     require       => Class['mysql::server::root_password'],
   }
 
-  if $include_triggers and versioncmp($::mysql_version, '5.1.5') > 0 {
+  if $include_triggers  {
     $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ]
   } else {
     $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ]
