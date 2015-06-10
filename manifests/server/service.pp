@@ -36,7 +36,7 @@ class mysql::server::service {
   # only establish ordering between service and package if
   # we're managing the package.
   if $mysql::server::package_manage {
-    Package['mysql-server'] {
+    Service['mysqld'] {
       require  => Package[$mysql::server::package_name],
     }
   }
