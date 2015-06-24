@@ -203,11 +203,11 @@ The MySQL root password. Puppet attempts to set the root password and update `/r
 
 This is required if `create_root_user` or `create_root_my_cnf` are 'true'. If `root_password` is 'UNSET', then `create_root_user` and `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created.
 
-Password changes are supported however the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, then updates `/root/.my.cnf` with the new password. 
+Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password. 
 
 ####`old_root_password`
 
-This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter for details on changing the root password.
+This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter above for details on changing the root password.
 
 #####`override_options`
 
@@ -386,7 +386,7 @@ Whether or not to include routines for each database when doing a `file_per_data
 
 #####`include_triggers`
 
-Whether or not to include triggers for a each database when doing a `file_per_database` backup. Defaults to `true`.
+Whether or not to include triggers for each database when doing a `file_per_database` backup. Defaults to `false`.
 
 #####`ensure`
 
@@ -785,11 +785,15 @@ The library file name.
 
 ###Facts
 
-####`mysql_server_id`
+#### `mysql_version`
+
+Determines the MySQL version by parsing the output from `mysql --version`
+
+#### `mysql_server_id`
 
 Generates a unique id, based on the node's MAC address, which can be used as
-`server_id`. This fact will *always* return `0` on all nodes which only have
-loopback interfaces. Given those nodes' connectivity that's probably okay.
+`server_id`. This fact will *always* return `0` on nodes that have only
+loopback interfaces. Because those nodes aren't connected to the outside world, this shouldn't cause any conflicts.
 
 ##Limitations
 

@@ -24,15 +24,15 @@ describe 'mysql::server::backup' do
             :require => 'Class[Mysql::Server::Root_password]') }
 
           it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
-            :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER']
+            :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
           ).that_requires('Mysql_user[testuser@localhost]') }
 
-          context 'with triggers excluded' do
+          context 'with triggers included' do
             let(:params) do
-              { :include_triggers => false }.merge(default_params)
+              { :include_triggers => true }.merge(default_params)
             end
             it { is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
-              :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
+              :privileges => ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER']
             ).that_requires('Mysql_user[testuser@localhost]') }
           end
 
@@ -153,9 +153,9 @@ describe 'mysql::server::backup' do
             )
           end
 
-          it 'should backup triggers by default' do
+          it 'should skip backup triggers by default' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
-              /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
+              /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"/
             )
           end
 
@@ -250,9 +250,9 @@ describe 'mysql::server::backup' do
             end
           end
 
-          it 'should backup triggers by default' do
+          it 'should skip backup triggers by default' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(
-              /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"/
+              /ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"/
             )
           end
 
