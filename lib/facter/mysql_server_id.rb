@@ -4,6 +4,6 @@ end
 
 Facter.add("mysql_server_id") do
   setcode do
-    get_mysql_id
+    get_mysql_id rescue nil
   end
 end
