@@ -804,6 +804,7 @@ This module has been tested on:
 * Ubuntu 10.04, 12.04, 14.04
 * Scientific Linux 5, 6
 * SLES 11
+* Solaris 11.2, 11.3, 12.0
 
 Testing on other platforms has been minimal and cannot be guaranteed.
 
