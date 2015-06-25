@@ -34,6 +34,7 @@ usvn_user@localhost
   before :each do
     # Set up the stubs for an instances call.
     Facter.stubs(:value).with(:root_home).returns('/root')
+    Facter.stubs(:value).with(:mysql_version).returns('5.6.24')
     Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
     provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns('joe@localhost')

@@ -26,7 +26,14 @@ Puppet::Type.newtype(:mysql_user) do
         raise(ArgumentError, "Invalid database user #{value}")
       end
 
-      raise(ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters') if user_part.size > 16
+      mysql_version = Facter.value(:mysql_version)
+      unless mysql_version.nil?
+        if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 and user_part.size > 16
+          raise(ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters')
+        elsif Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 and user_part.size > 80
+          raise(ArgumentError, 'MySQL usernames are limited to a maximum of 80 characters')
+        end
+      end
     end
 
     munge do |value|
