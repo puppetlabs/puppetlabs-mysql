@@ -23,7 +23,7 @@ class mysql::server (
   $users                   = {},
   $grants                  = {},
   $databases               = {},
-  $replication             = false,
+  $replication_enable      = false,
   $rep_server_id           = '1',
   $master_slave            = 'master',
 
@@ -57,7 +57,7 @@ class mysql::server (
     warning('old_root_password is no longer used and will be removed in a future release')
   }
 
-  $custom_options = $replication ? {
+  $custom_options = $replication_enable ? {
       'true'  => merge($override_options, $replication_options),
       default => $override_options,
   }
