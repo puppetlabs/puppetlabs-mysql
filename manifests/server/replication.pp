@@ -9,9 +9,9 @@ class mysql::server::replication {
     }
     
     exec { 'install-replication-plugin':
-      command => "mysql -u root -p${::mysql::server::root_password} -e "INSTALL PLUGIN rpl_semi_sync_${mysql::server::master_slave} SONAME 'semisync_${mysql::server::master_slave}.so';",
+      command => "mysql -u root -p${::mysql::server::root_password} -e \"INSTALL PLUGIN rpl_semi_sync_${mysql::server::master_slave} SONAME 'semisync_${mysql::server::master_slave}.so';\"",
       path    => '/usr/bin:/bin',
-      onlyif  => "test `mysql -u root -p${::mysql::server::root_password} -e "show variables like 'rpl_semi_sync_${mysql::server::master_slave}_enabled';" 2>/dev/null | grep -c ON` != 1",
+      onlyif  => "test `mysql -u root -p${::mysql::server::root_password} -e \"show variables like 'rpl_semi_sync_${mysql::server::master_slave}_enabled';\" 2>/dev/null | grep -c ON` != 1",
       require => Exec['start-service'],
     }
   }
