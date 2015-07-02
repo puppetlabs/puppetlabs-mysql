@@ -5,6 +5,7 @@ class mysql::server::replication {
   if $mysql::server::replication_enable {
     exec { 'start-service':
       command => '/etc/init.d/mysql start',
+      path    => '/usr/bin:/bin',
       onlyif  => "test `grep -c rpl_semi_sync /usr/my.cnf` != 1",
     }
     
