@@ -36,7 +36,7 @@ class mysql::server (
   $replication_options = {
     'mysqld' => {
       'server-id'                             => $rep_server_id,
-      "rpl_semi_sync_${master_slave}_enabled' => '1',
+      "rpl_semi_sync_${master_slave}_enabled" => '1',
     },
   }
 
