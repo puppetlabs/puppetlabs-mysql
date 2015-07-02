@@ -68,6 +68,7 @@ class mysql::server (
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
   include '::mysql::server::install'
+  include '::mysql::server::replication'
   include '::mysql::server::config'
   include '::mysql::server::installdb'
   include '::mysql::server::service'
