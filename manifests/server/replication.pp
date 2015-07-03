@@ -8,7 +8,7 @@ class mysql::server::replication {
     exec { 'install-replication-plugin':
       command => "mysql -u root -e \"INSTALL PLUGIN rpl_semi_sync_${mysql::server::master_slave} SONAME 'semisync_${mysql::server::master_slave}.so';\"",
       path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
-      unless  => "mysql -u root -e \"show variables like 'rpl_semi_sync_${mysql::server::master_slave}_enabled';\" | grep rpl_semi | grep -c ON",
+      unless  => "mysql -u root -p${$mysql::server::root_password} -e \"show variables like 'rpl_semi_sync_${mysql::server::master_slave}_enabled';\" 2>/dev/null | grep rpl_semi | grep -c ON",
     }
 
     ini_setting { "server-id":
