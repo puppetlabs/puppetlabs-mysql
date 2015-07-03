@@ -27,7 +27,7 @@ class mysql::server::installdb {
       path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
       require   => [
                     Package['mysql-server'],
-                    Exec['remove-replication-params',
+                    Exec['remove-replication-params'],
                     ],
     }
 
