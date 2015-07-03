@@ -58,7 +58,7 @@ class mysql::server (
   }
 
   $custom_options = $replication_enable ? {
-      'true'  => merge($override_options, $replication_options),
+      true    => merge($override_options, $replication_options),
       default => $override_options,
   }
   
