@@ -34,10 +34,8 @@ class mysql::server (
 ) inherits mysql::params {
 
   $replication_options = {
-    'mysqld' => {
-      'server-id'                             => $rep_server_id,
-      "rpl_semi_sync_${master_slave}_enabled" => '1',
-    },
+    'server-id'                             => $rep_server_id,
+    "rpl_semi_sync_${master_slave}_enabled" => '1',
   }
 
   # Deprecated parameters.
@@ -58,7 +56,7 @@ class mysql::server (
   }
 
   $custom_options = $replication_enable ? {
-      true    => merge($override_options, $replication_options),
+      true    => merge($override_options[mysqld], $replication_options),
       default => $override_options,
   }
   
