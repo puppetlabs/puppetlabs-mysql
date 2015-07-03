@@ -14,12 +14,21 @@ class mysql::server::installdb {
 
     }
 
+    exec { 'remove-replication-params':
+      command   => 'sed -i '/server-id/ d' /usr/my.cnf; sed -i '/rpl_semi_sync_/ d' /usr/my.cnf',
+      creates   => "${datadir}/mysql",
+      path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
+    }
+    
     exec { 'mysql_install_db':
       command   => "mysql_install_db ${install_db_args}",
       creates   => "${datadir}/mysql",
       logoutput => on_failure,
       path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
-      require   => Package['mysql-server'],
+      require   => [
+                    Package['mysql-server'],
+                    Exec['remove-replication-params',
+                    ],
     }
 
     if $mysql::server::restart {
