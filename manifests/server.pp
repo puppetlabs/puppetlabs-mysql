@@ -37,6 +37,7 @@ class mysql::server (
     'mysqld' => {
       'server-id'                             => $rep_server_id,
       "rpl_semi_sync_${master_slave}_enabled" => '1',
+      'log-bin'                               => 'mysql-bin',
     },
   }
 
