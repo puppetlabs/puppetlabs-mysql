@@ -5,6 +5,7 @@ Puppet::Type.newtype(:mysql_user) do
   ensurable
 
   autorequire(:file) { '/root/.my.cnf' }
+  autorequire(:class) { 'mysql::server' }
 
   newparam(:name, :namevar => true) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."

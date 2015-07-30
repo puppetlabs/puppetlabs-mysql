@@ -4,6 +4,7 @@ Puppet::Type.newtype(:mysql_database) do
   ensurable
 
   autorequire(:file) { '/root/.my.cnf' }
+  autorequire(:class) { 'mysql::server' }
 
   newparam(:name, :namevar => true) do
     desc 'The name of the MySQL database to manage.'
