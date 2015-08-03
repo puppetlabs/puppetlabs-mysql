@@ -25,8 +25,25 @@ RSpec.configure do |c|
         end
       end
 
-      on host, puppet('module install puppetlabs-stdlib --version 3.2.0'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module','install','stahnma/epel'), { :acceptable_exit_codes => [0,1] }
+      # Solaris 11 doesn't ship the SSL CA root for the forgeapi server
+      # therefore we need to use a different way to deploy the module to
+      # the host
+      if host['platform'] =~ /solaris-11/i
+        apply_manifest_on(host, 'package { "git": }')
+        # PE 3.x and 2015.2 require different locations to install modules
+        modulepath = host.puppet['modulepath']
+        modulepath = modulepath.split(':').first if modulepath
+
+        environmentpath = host.puppet['environmentpath']
+        environmentpath = environmentpath.split(':').first if environmentpath
+
+        destdir = modulepath || "#{environmentpath}/production/modules"
+        on host, "git clone https://github.com/puppetlabs/puppetlabs-stdlib #{destdir}/stdlib && cd #{destdir}/stdlib && git checkout 3.2.0"
+        on host, "git clone https://github.com/stahnma/puppet-module-epel.git #{destdir}/epel && cd #{destdir}/epel && git checkout 1.0.2"
+      else
+        on host, puppet('module','install','puppetlabs-stdlib','--version','3.2.0')
+        on host, puppet('module','install','stahnma/epel')
+      end
     end
   end
 end

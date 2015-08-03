@@ -159,7 +159,7 @@ If you already have those gems installed, make sure they are up-to-date:
 With all dependencies in place and up-to-date we can now run the tests:
 
 ```shell
-% rake spec
+% bundle exec rake spec
 ```
 
 This will execute all the [rspec tests](http://rspec-puppet.com/) tests
@@ -178,8 +178,8 @@ installed on your system.
 You can run them by issuing the following command
 
 ```shell
-% rake spec_clean
-% rspec spec/acceptance
+% bundle exec rake spec_clean
+% bundle exec rspec spec/acceptance
 ```
 
 This will now download a pre-fabricated image configured in the [default node-set](./spec/acceptance/nodesets/default.yml),
