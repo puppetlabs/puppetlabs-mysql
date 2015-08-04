@@ -37,9 +37,10 @@ class mysql::server::config {
 
   if $mysql::server::manage_config_file  {
     file { 'mysql-config-file':
-      path    => $mysql::server::config_file,
-      content => template('mysql/my.cnf.erb'),
-      mode    => '0644',
+      path                    => $mysql::server::config_file,
+      content                 => template('mysql/my.cnf.erb'),
+      mode                    => '0644',
+      selinux_ignore_defaults => true,
     }
   }
 
