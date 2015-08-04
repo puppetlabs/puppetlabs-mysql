@@ -11,7 +11,8 @@ describe 'mysql::server' do
             let(:params) {{ :override_options => { 'mysqld' => { 'socket' => '/var/lib/mysql/mysql.sock' } } }}
             it do
               is_expected.to contain_file('mysql-config-file').with({
-                :mode => '0644',
+                :mode                    => '0644',
+                :selinux_ignore_defaults => true,
               }).with_content(/socket = \/var\/lib\/mysql\/mysql.sock/)
             end
           end
