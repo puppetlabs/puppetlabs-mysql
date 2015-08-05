@@ -16,6 +16,7 @@ class mysql::backup::mysqlbackup (
   $include_routines   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
+  $prescript          = false,
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) {

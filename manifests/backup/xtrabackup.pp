@@ -17,6 +17,7 @@ class mysql::backup::xtrabackup (
   $include_routines   = false,
   $ensure             = 'present',
   $time               = ['23', '5'],
+  $prescript          = false,
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) {
@@ -27,7 +28,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-weekly':
     ensure  => $ensure,
-    command => "innobackupex ${backupdir}",
+    command => "/usr/local/sbin/xtrabackup.sh ${backupdir}",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -37,7 +38,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-daily':
     ensure  => $ensure,
-    command => "innobackupex --incremental ${backupdir}",
+    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir}",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -51,5 +52,14 @@ class mysql::backup::xtrabackup (
     mode   => $backupdirmode,
     owner  => $backupdirowner,
     group  => $backupdirgroup,
+  }
+
+  file { 'xtrabackup.sh':
+    ensure  => $ensure,
+    path    => '/usr/local/sbin/xtrabackup.sh',
+    mode    => '0700',
+    owner   => 'root',
+    group   => $mysql::params::root_group,
+    content => template('mysql/xtrabackup.sh.erb'),
   }
 }
