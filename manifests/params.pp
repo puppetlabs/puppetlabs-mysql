@@ -153,6 +153,7 @@ class mysql::params {
       $server_package_name     = 'mysql-server'
 
       $basedir                 = '/usr'
+      $config_dir	       = '/etc/mysql'
       $config_file             = '/etc/mysql/my.cnf'
       $includedir              = '/etc/mysql/conf.d'
       $datadir                 = '/var/lib/mysql'
