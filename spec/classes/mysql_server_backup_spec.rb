@@ -349,6 +349,54 @@ describe 'mysql::server::backup' do
             )
           end
         end
+
+        context 'with the xtrabackup provider' do
+          let(:params) do
+            default_params.merge({:provider => 'xtrabackup'})
+          end
+
+          it 'should contain the wrapper script' do
+            is_expected.to contain_file('xtrabackup.sh').with_content(
+              /^innobackupex\s+"\$@"/
+            )
+          end
+
+          context 'with prescript defined' do
+            let(:params) do
+              default_params.merge({
+                :provider  => 'xtrabackup',
+                :prescript => [
+                  'rsync -a /tmp backup01.local-lan:',
+                  'rsync -a /tmp backup02.local-lan:',
+                ]
+              })
+            end
+
+            it 'should contain the prescript' do
+              is_expected.to contain_file('xtrabackup.sh').with_content(
+                /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/
+              )
+            end
+          end
+
+          context 'with postscript defined' do
+            let(:params) do
+              default_params.merge({
+                :provider  => 'xtrabackup',
+                :postscript => [
+                  'rsync -a /tmp backup01.local-lan:',
+                  'rsync -a /tmp backup02.local-lan:',
+                ]
+              })
+            end
+
+            it 'should contain the prostscript' do
+              is_expected.to contain_file('xtrabackup.sh').with_content(
+                /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/
+              )
+            end
+          end
+        end
       end
     end
   end
