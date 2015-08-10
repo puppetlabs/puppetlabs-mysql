@@ -37,7 +37,7 @@ class mysql::server::service {
   # we're managing the package.
   if $mysql::server::package_manage {
     Service['mysqld'] {
-      require  => Package[$mysql::server::package_name],
+      require  => Package['mysql-server'],
     }
   }
 
