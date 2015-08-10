@@ -416,7 +416,11 @@ An array of two elements to set the backup time. Allows ['23', '5'] (i.e., 23:05
 
 #####`postscript`
 
-A script that is executed at when the backup is finished. This could be used to (r)sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
+A script that is executed when the backup is finished. This could be used to (r)sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
+
+#####`prescript`
+
+A script that is executed before the backup begins.
 
 #####`provider`
 
@@ -819,7 +823,6 @@ This module has been tested on:
 * Ubuntu 10.04, 12.04, 14.04
 * Scientific Linux 5, 6
 * SLES 11
-* Solaris 11.2, 11.3, 12.0
 
 Testing on other platforms has been minimal and cannot be guaranteed.
 

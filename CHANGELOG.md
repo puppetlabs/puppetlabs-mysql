@@ -1,3 +1,17 @@
+## 2015-08-10 - Supported Release 3.6.0
+### Summary
+This release adds the ability to use mysql::db and `mysql_*` types against unmanaged or external mysql instances.
+
+#### Features
+- Add ability to use mysql::db WITHOUT mysql::server (ie, externally)
+- Add prescript attribute to mysql::server::backup for xtrabackup
+- Add postscript ability to xtrabackup provider.
+
+#### Bugfixes
+- Fix default root passwords blocking puppet on mysql 5.8
+- Fix service dependency when package_manage is false
+- Fix selinux permissions on my.cnf
+
 ##2015-07-23 - Supported Release 3.5.0
 ###Summary
 A small release to add explicit support to newer Puppet versions and accumulated patches.
