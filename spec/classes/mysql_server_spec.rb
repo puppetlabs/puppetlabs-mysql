@@ -19,6 +19,11 @@ describe 'mysql::server' do
           it { is_expected.to contain_class('mysql::server::account_security') }
         end
 
+        context 'when not managing config file' do
+          let(:params) {{ :manage_config_file => false }}
+          it { is_expected.to compile.with_all_deps }
+        end
+
         context 'mysql::server::install' do
           it 'contains the package by default' do
             is_expected.to contain_package('mysql-server').with({
