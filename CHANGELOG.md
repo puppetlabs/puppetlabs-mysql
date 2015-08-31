@@ -1,3 +1,12 @@
+## 2015-09-08 - Supported Release 3.6.1
+### Summary
+This release fixes an incorrect function used in `mysql::server::backup` and fixes compatibility issues with PE 3.3.x.
+
+#### Bugfixes
+- Use `warning()` not `warn()`
+- Metadata had inadvertantly dropped 3.3.x support
+- Some 3.3.x compatibility issues in `mysqltuner` were corrected
+
 ## 2015-08-10 - Supported Release 3.6.0
 ### Summary
 This release adds the ability to use mysql::db and `mysql_*` types against unmanaged or external mysql instances.
