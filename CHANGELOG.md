@@ -6,6 +6,7 @@ This release fixes an incorrect function used in `mysql::server::backup` and fix
 - Use `warning()` not `warn()`
 - Metadata had inadvertantly dropped 3.3.x support
 - Some 3.3.x compatibility issues in `mysqltuner` were corrected
+- Fixes an incorrect warning in `mysql::server::backup` manifest
 
 ## 2015-08-10 - Supported Release 3.6.0
 ### Summary
