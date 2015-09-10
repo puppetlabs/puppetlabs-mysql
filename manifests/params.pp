@@ -1,5 +1,7 @@
 # Private class: See README.md.
-class mysql::params {
+class mysql::params (
+  $provider_override = undef,
+) {
 
   $manage_config_file     = true
   $purge_conf_dir         = false
@@ -34,24 +36,28 @@ class mysql::params {
 
   case $::osfamily {
     'RedHat': {
-      case $::operatingsystem {
-        'Fedora': {
-          if versioncmp($::operatingsystemrelease, '19') >= 0 or $::operatingsystemrelease == 'Rawhide' {
-            $provider = 'mariadb'
-          } else {
+      if $provider_override == undef {
+        case $::operatingsystem {
+          'Fedora': {
+            if versioncmp($::operatingsystemrelease, '19') >= 0 or $::operatingsystemrelease == 'Rawhide' {
+              $provider = 'mariadb'
+            } else {
+              $provider = 'mysql'
+            }
+          }
+          /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
+            if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
+              $provider = 'mariadb'
+            } else {
+              $provider = 'mysql'
+            }
+          }
+          default: {
             $provider = 'mysql'
           }
         }
-        /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
-          if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
-            $provider = 'mariadb'
-          } else {
-            $provider = 'mysql'
-          }
-        }
-        default: {
-          $provider = 'mysql'
-        }
+      } else {
+        $provider = $provider_override
       }
 
       if $provider == 'mariadb' {
