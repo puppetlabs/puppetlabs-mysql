@@ -14,12 +14,14 @@ class mysql::server::installdb {
 
     }
 
-    exec { 'mysql_install_db':
-      command   => "mysql_install_db ${install_db_args}",
-      creates   => "${datadir}/mysql",
-      logoutput => on_failure,
-      path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
-      require   => Package['mysql-server'],
+    unless $::osfamily == 'Windows' {
+	    exec { 'mysql_install_db':
+	      command   => "mysql_install_db ${install_db_args}",
+	      creates   => "${datadir}/mysql",
+	      logoutput => on_failure,
+	      path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
+	      require   => Package['mysql-server'],
+	    }
     }
 
     if $mysql::server::restart {

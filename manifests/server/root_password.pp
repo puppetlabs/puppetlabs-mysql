@@ -1,6 +1,13 @@
 #
 class mysql::server::root_password {
 
+  # JOE
+	if $::osfamily == 'Windows' {
+	  $exec_provider = 'cygwin'
+	} else { 
+	  $exec_provider = 'posix'
+	}
+  
   $options = $mysql::server::options
   $secret_file = $mysql::server::install_secret_file
 
@@ -15,7 +22,8 @@ class mysql::server::root_password {
   exec { 'remove install pass':
     command => $rm_pass_cmd,
     onlyif  => "test -f ${secret_file}",
-    path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin'
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
+  	provider => $exec_provider,
   }
 
   # manage root password if it is set
