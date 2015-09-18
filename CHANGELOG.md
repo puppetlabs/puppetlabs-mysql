@@ -1,12 +1,12 @@
-## 2015-09-08 - Supported Release 3.6.1
+## 2015-09-22 - Supported Release 3.6.1
 ### Summary
-This release fixes an incorrect function used in `mysql::server::backup` and fixes compatibility issues with PE 3.3.x.
+This is a security and bugfix release that fixes incorrect username truncation in the munge for the mysql_user type, incorrect function used in `mysql::server::backup` and fixes compatibility issues with PE 3.3.x.
 
 #### Bugfixes
+- Loosen the regex in mysql_user munging so the username is not unintentionally truncated.
 - Use `warning()` not `warn()`
 - Metadata had inadvertantly dropped 3.3.x support
 - Some 3.3.x compatibility issues in `mysqltuner` were corrected
-- Fixes an incorrect warning in `mysql::server::backup` manifest
 
 ## 2015-08-10 - Supported Release 3.6.0
 ### Summary
