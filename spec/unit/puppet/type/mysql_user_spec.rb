@@ -51,6 +51,16 @@ describe Puppet::Type.type(:mysql_user) do
     end
   end
 
+  context 'using foo@192.168.1.0/255.255.255.0' do
+    before :each do
+      @user = Puppet::Type.type(:mysql_user).new(:name => 'foo@192.168.1.0/255.255.255.0', :password_hash => 'pass')
+    end
+
+    it 'should create the user with the netmask' do
+      expect(@user[:name]).to eq('foo@192.168.1.0/255.255.255.0')
+    end
+  end
+
   context 'using allo_wed$char@localhost' do
     before :each do
       @user = Puppet::Type.type(:mysql_user).new(:name => 'allo_wed$char@localhost', :password_hash => 'pass')
