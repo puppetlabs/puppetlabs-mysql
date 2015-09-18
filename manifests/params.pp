@@ -33,6 +33,12 @@ class mysql::params (
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
 
+  # Validate provider_override value
+  if $provider_override != undef {
+    if ! $provider_override =~ /^(mariadb|mysql)$/ {
+      fail('Invalid provider_override value passed. Only \'mariadb\' or \'mysql\' allowed.')
+    }
+  }
 
   case $::osfamily {
     'RedHat': {
