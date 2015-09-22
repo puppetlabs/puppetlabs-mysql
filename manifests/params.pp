@@ -311,6 +311,36 @@ class mysql::params {
       $daemon_dev_package_name     = undef
     }
 
+    # Based on Debian. Needs Cygwin.
+    'Windows': {
+      warning('Experimental support for Windows.')
+      
+      $client_package_name = 'mysql-client'
+      $server_package_name = 'mysql'
+
+      $basedir             = '/usr'
+      $config_file         = '/etc/mysql/my.cnf'
+      $datadir             = 'C:/tools/mysql/current/data'
+      $log_error           = 'C:/tools/mysql/current'
+      $pidfile             = '/var/run/mysqld/mysqld.pid'
+      $root_group          = 'root'
+      $server_service_name = 'MySQL'
+      $socket              = '/var/run/mysqld/mysqld.sock'
+      $ssl_ca              = '/etc/mysql/cacert.pem'
+      $ssl_cert            = '/etc/mysql/server-cert.pem'
+      $ssl_key             = '/etc/mysql/server-key.pem'
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = 'libmysql-java'
+      $perl_package_name   = 'libdbd-mysql-perl'
+      $php_package_name    = 'php5-mysql'
+      $python_package_name = 'python-mysqldb'
+      $ruby_package_name   = $::lsbdistcodename ? {
+        'trusty'           => 'ruby-mysql',
+        default            => 'libmysql-ruby',
+      }
+    }
+
     default: {
       case $::operatingsystem {
         'Amazon': {

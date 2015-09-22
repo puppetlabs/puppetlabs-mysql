@@ -11,11 +11,19 @@ class mysql::server::config {
   }
 
   if $includedir and $includedir != '' {
-    file { $includedir:
-      ensure  => directory,
-      mode    => '0755',
-      recurse => $mysql::server::purge_conf_dir,
-      purge   => $mysql::server::purge_conf_dir,
+    unless $::osfamily == 'Windows' {
+      
+      file { '/etc/mysql':
+        ensure => directory,
+        mode   => '0755',
+      }
+      
+      file { $includedir:
+        ensure  => directory,
+        mode    => '0755',
+        recurse => $mysql::server::purge_conf_dir,
+        purge   => $mysql::server::purge_conf_dir,
+      }
     }
   }
 

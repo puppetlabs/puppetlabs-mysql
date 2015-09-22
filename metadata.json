@@ -84,6 +84,8 @@
   "description": "Mysql module",
   "dependencies": [
     {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0 < 5.0.0"},
-    {"name":"nanliu/staging","version_requirement":">= 1.0.1 < 2.0.0"}
+    {"name":"nanliu/staging","version_requirement":">= 1.0.1 < 2.0.0"},
+    {"name":"johnericson/cygwin_exec","version_requirement":">=0.1.0"},
+    {"name":"rismoney/chocolatey","version_requirement":">=0.4.0"}
   ]
 }

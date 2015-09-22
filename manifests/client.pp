@@ -22,8 +22,12 @@ class mysql::client (
 
   # Anchor pattern workaround to avoid resources of mysql::client::install to
   # "float off" outside mysql::client
+  # JOE
+  # Did this to avoid:
+  # Error: Could not apply complete catalog: Found 1 dependency cycle:
+  # (Anchor[mysql::client::end] => Class[Mysql::Client] => Anchor[mysql::db_quartz::end] => Mysql::Db[quartz] => Mysql::Db[repository] => Anchor[mysql::db_repository::begin] => Class[Mysql::Client] => Anchor[mysql::client::end])
   anchor { 'mysql::client::start': } ->
-    Class['mysql::client::install'] ->
+  #  Class['mysql::client::install'] ->
   anchor { 'mysql::client::end': }
 
 }
