@@ -13,7 +13,41 @@ class Puppet::Provider::Mysql < Puppet::Provider
       nil
     end
   end
+
+  def self.mysql_version_string
+    return @mysql_version_string unless @mysql_version_string.nil?
+    @mysql_version_string = mysql([defaults_file, '-NBe',
+      "SELECT VERSION()"].compact)
+  end
+
+  def self.mysql_major
+    a,b,c= mysql_version_string.split("\.")
+    a.to_i
+  end
+
+  def self.mysql_minor
+    a,b,c= mysql_version_string.split("\.")
+    b.to_i
+  end
+
+  def self.mysql_revision
+    a,b,c= mysql_version_string.split("\.")
+    c.to_i
+  end
   
+  
+  def mysql_major
+    self.class.mysql_major
+  end
+
+  def mysql_minor
+    self.class.mysql_minor
+  end
+
+  def mysql_revision
+    self.class.mysql_revision
+  end
+
   def defaults_file
     self.class.defaults_file
   end
