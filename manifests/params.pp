@@ -377,7 +377,7 @@ class mysql::params {
       'max_allowed_packet'    => '16M',
       'max_binlog_size'       => '100M',
       'max_connections'       => '151',
-      'myisam_recover'        => 'BACKUP',
+      'myisam-recover-options'=> 'BACKUP',
       'pid-file'              => $mysql::params::pidfile,
       'port'                  => '3306',
       'query_cache_limit'     => '1M',

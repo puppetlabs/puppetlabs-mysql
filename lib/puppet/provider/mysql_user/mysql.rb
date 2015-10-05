@@ -7,13 +7,18 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
   # Build a property_hash containing all the discovered information about MySQL
   # users.
   def self.instances
+    mysql_version = Facter.value(:mysql_version)
     users = mysql([defaults_file, '-NBe',
       "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"].compact).split("\n")
     # To reduce the number of calls to MySQL we collect all the properties in
     # one big swoop.
     users.collect do |name|
-      if mysql_major >= 5 and mysql_minor >= 7 and mysql_revision >= 6
-        query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+      unless mysql_version.nil?
+        if Puppet::Util::Package.versioncmp(mysql_version, '5.7.6') >= 0
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+        else
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+        end
       else
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       end
@@ -55,10 +60,10 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
     if !plugin.nil?
-      if password_hash.nil?
-        mysql([defaults_file, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'"].compact)
+      if plugin == 'sha256_password' and !password_hash.nil?
+        mysql([defaults_file, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'"].compact)
       else
-        mysql([defaults_file, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' BY '#{password_hash}'"].compact)
+        mysql([defaults_file, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'"].compact)
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
@@ -96,12 +101,25 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
   mk_resource_methods
 
   def password_hash=(string)
+    mysql_version = Facter.value(:mysql_version)
     merged_name = self.class.cmd_user(@resource[:name])
 
-    if mysql_major >= 5 and mysql_minor >= 7 and mysql_revision >= 6
-      mysql([defaults_file, '-e', "ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'"].compact)
-    else
+    # We have a fact for the mysql version ...
+    if mysql_version.nil?
+      # default ... if mysql_version does not work
       mysql([defaults_file, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
+    else
+      # Version >= 5.7.6 (many password related changes)
+      if Puppet::Util::Package.versioncmp(mysql_version, '5.7.6') >= 0
+        if string.match(/^\*/) 
+          mysql([defaults_file, '-e', "ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'"].compact)
+        else
+          raise ArgumentError, "Only mysql_native_password (*ABCD...XXX) hashes are supported"
+        end
+      else
+        # older versions
+        mysql([defaults_file, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
+      end
     end
 
     password_hash == string ? (return true) : (return false)

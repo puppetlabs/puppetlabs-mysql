@@ -9,14 +9,45 @@ class mysql::server::installdb {
     $basedir = $mysql::server::options['mysqld']['basedir']
     $config_file = $mysql::server::config_file
 
-    if $mysql::server::manage_config_file {
-      $install_db_args = "--basedir=${basedir} --defaults-extra-file=${config_file} --datadir=${datadir} --user=${mysqluser}"
+    # we should have a (... broken ...) fact 
+    if $::mysql_version {
+
+      if versioncmp($::mysql_version, '5.7.6') >= 0 {
+        # mysql 5.7.6 introduced mysqld --initialize-insecure (needed to manage passwords later)
+        file { "/tmp/mysql-install_validate_password_sql_file.sql":
+          ensure => "file",
+          content => "INSERT INTO mysql.plugin (name, dl) VALUES ('validate_password', 'validate_password.so');",
+          owner => $mysqluser,
+          group => root,
+          mode => 0500,
+          before => Exec['mysql_install_db'],
+        }
+
+        if $mysql::server::manage_config_file {
+          $install_db_cmd = "mysqld --defaults-extra-file='${config_file}' --initialize-insecure --basedir='${basedir}' --datadir='${datadir}' --user='${mysqluser}' --init-file='/tmp/mysql-install_validate_password_sql_file.sql'"
+        } else {
+          $install_db_cmd = "mysqld --initialize-insecure --basedir='${basedir}' --datadir='${datadir}' --user='${mysqluser}' --init-file='/tmp/mysql-install_validate_password_sql_file.sql'"
+        }
+
+      } else {
+        # older then mysql 5.7.6 
+        if $mysql::server::manage_config_file {
+          $install_db_cmd = "mysql_install_db --basedir=${basedir} --defaults-extra-file=${config_file} --datadir=${datadir} --user=${mysqluser}"
+        } else {
+          $install_db_cmd = "mysql_install_db --basedir=${basedir} --datadir=${datadir} --user=${mysqluser}"
+        }
+      }
     } else {
-      $install_db_args = "--basedir=${basedir} --datadir=${datadir} --user=${mysqluser}"
+      # Default, no Version available 
+      if $mysql::server::manage_config_file {
+        $install_db_cmd = "mysql_install_db --basedir=${basedir} --defaults-extra-file=${config_file} --datadir=${datadir} --user=${mysqluser}"
+      } else {
+        $install_db_cmd = "mysql_install_db --basedir=${basedir} --datadir=${datadir} --user=${mysqluser}"
+      }
     }
 
     exec { 'mysql_install_db':
-      command   => "mysql_install_db ${install_db_args}",
+      command   => "${install_db_cmd}",
       creates   => "${datadir}/mysql",
       logoutput => on_failure,
       path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
