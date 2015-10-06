@@ -8,10 +8,10 @@ class mysql::server::replication {
     exec { 'install-replication-plugin':
       command => "mysql -u root -e \"INSTALL PLUGIN rpl_semi_sync_${mysql::server::master_slave} SONAME 'semisync_${mysql::server::master_slave}.so';\"",
       path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
-      onlyif  => "test `grep -c rpl_semi_sync /usr/my.cnf` != 1",
+      onlyif  => 'test `grep -c rpl_semi_sync /usr/my.cnf` != 1',
     }
 
-    ini_setting { "server-id":
+    ini_setting { 'server-id':
       ensure  => present,
       path    => '/usr/my.cnf',
       section => 'mysqld',
@@ -21,7 +21,7 @@ class mysql::server::replication {
       notify  => Exec['restart-service'],
     }
     
-    ini_setting { "rpl_semi_sync_master":
+    ini_setting { 'rpl_semi_sync_master':
       ensure  => present,
       path    => '/usr/my.cnf',
       section => 'mysqld',
