@@ -13,14 +13,15 @@ class mysql::server::installdb {
     if $::mysql_version {
 
       if versioncmp($::mysql_version, '5.7.6') >= 0 {
-        # mysql 5.7.6 introduced mysqld --initialize-insecure (needed to manage passwords later)
-        file { "/tmp/mysql-install_validate_password_sql_file.sql":
-          ensure => "file",
-          content => "INSERT INTO mysql.plugin (name, dl) VALUES ('validate_password', 'validate_password.so');",
-          owner => $mysqluser,
-          group => root,
-          mode => 0500,
-          before => Exec['mysql_install_db'],
+        # mysql 5.7.6 introduced mysqld --initialize-insecure
+        # (needed to manage passwords later)
+        file { '/tmp/mysql-install_validate_password_sql_file.sql':
+          ensure  => file,
+          content => 'INSERT INTO mysql.plugin (name, dl) VALUES (\'validate_password\', \'validate_password.so\');',
+          owner   => $mysqluser,
+          group   => 'root',
+          mode    => '0500',
+          before  => Exec['mysql_install_db'],
         }
 
         if $mysql::server::manage_config_file {
@@ -47,7 +48,7 @@ class mysql::server::installdb {
     }
 
     exec { 'mysql_install_db':
-      command   => "${install_db_cmd}",
+      command   => $install_db_cmd,
       creates   => "${datadir}/mysql",
       logoutput => on_failure,
       path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
