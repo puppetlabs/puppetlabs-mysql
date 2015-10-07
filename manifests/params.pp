@@ -1,6 +1,7 @@
 # Private class: See README.md.
 class mysql::params {
 
+  $use_default_package    = true
   $manage_config_file     = true
   $purge_conf_dir         = false
   $restart                = false
@@ -43,7 +44,7 @@ class mysql::params {
           }
         }
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
-          if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
+          if versioncmp($::operatingsystemmajrelease, '7') >= 0 and $use_default_package == true {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'

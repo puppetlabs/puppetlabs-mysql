@@ -2,6 +2,7 @@
 class mysql::server (
   $config_file             = $mysql::params::config_file,
   $includedir              = $mysql::params::includedir,
+  $use_default_package     = $mysql::params::use_default_package,
   $install_options         = undef,
   $install_secret_file     = $mysql::params::install_secret_file,
   $manage_config_file      = $mysql::params::manage_config_file,
