@@ -40,7 +40,7 @@ describe 'mysql::server' do
           end
           context 'with datadir overridden' do
             let(:params) {{ :override_options => { 'mysqld' => { 'datadir' => '/tmp' }} }}
-            it { is_expected.to contain_exec('mysql_install_db') }
+            it { is_expected.to contain_mysql_datadir('/tmp') }
           end
         end
 
