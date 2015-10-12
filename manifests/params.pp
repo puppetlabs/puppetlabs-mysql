@@ -55,22 +55,24 @@ class mysql::params {
       }
 
       if $provider == 'mariadb' {
-        $client_package_name = 'mariadb'
-        $server_package_name = 'mariadb-server'
-        $server_service_name = 'mariadb'
-        $log_error           = '/var/log/mariadb/mariadb.log'
-        $config_file         = '/etc/my.cnf.d/server.cnf'
+        $client_package_name     = 'mariadb'
+        $server_package_name     = 'mariadb-server'
+        $server_service_name     = 'mariadb'
+        $log_error               = '/var/log/mariadb/mariadb.log'
+        $config_file             = '/etc/my.cnf.d/server.cnf'
         # mariadb package by default has !includedir set in my.cnf to /etc/my.cnf.d
-        $includedir          = undef
-        $pidfile             = '/var/run/mariadb/mariadb.pid'
+        $includedir              = undef
+        $pidfile                 = '/var/run/mariadb/mariadb.pid'
+        $daemon_dev_package_name = 'mariadb-devel'
       } else {
-        $client_package_name = 'mysql'
-        $server_package_name = 'mysql-server'
-        $server_service_name = 'mysqld'
-        $log_error           = '/var/log/mysqld.log'
-        $config_file         = '/etc/my.cnf'
-        $includedir          = '/etc/my.cnf.d'
-        $pidfile             = '/var/run/mysqld/mysqld.pid'
+        $client_package_name     = 'mysql'
+        $server_package_name     = 'mysql-server'
+        $server_service_name     = 'mysqld'
+        $log_error               = '/var/log/mysqld.log'
+        $config_file             = '/etc/my.cnf'
+        $includedir              = '/etc/my.cnf.d'
+        $pidfile                 = '/var/run/mysqld/mysqld.pid'
+        $daemon_dev_package_name = 'mysql-devel'
       }
 
       $basedir                 = '/usr'
@@ -89,7 +91,6 @@ class mysql::params {
       $python_package_name     = 'MySQL-python'
       $ruby_package_name       = 'ruby-mysql'
       $client_dev_package_name = undef
-      $daemon_dev_package_name = 'mysql-devel'
     }
 
     'Suse': {
