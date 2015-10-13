@@ -90,12 +90,20 @@ describe 'mysql::server' do
         describe 'when root_password set' do
           let(:params) {{:root_password => 'SET' }}
           it { is_expected.to contain_mysql_user('root@localhost') }
-          it { is_expected.to contain_file('/root/.my.cnf').that_requires('Mysql_user[root@localhost]') }
+          if Puppet.version.to_f >= 3.0
+            it { is_expected.to contain_file('/root/.my.cnf').with(:show_diff => false).that_requires('Mysql_user[root@localhost]') }
+          else
+            it { is_expected.to contain_file('/root/.my.cnf').that_requires('Mysql_user[root@localhost]') }
+          end
         end
         describe 'when root_password set, create_root_user set to false' do
           let(:params) {{ :root_password => 'SET', :create_root_user => false }}
           it { is_expected.not_to contain_mysql_user('root@localhost') }
-          it { is_expected.to contain_file('/root/.my.cnf') }
+          if Puppet.version.to_f >= 3.0
+            it { is_expected.to contain_file('/root/.my.cnf').with(:show_diff => false) }
+          else
+            it { is_expected.to contain_file('/root/.my.cnf') }
+          end
         end
         describe 'when root_password set, create_root_my_cnf set to false' do
           let(:params) {{ :root_password => 'SET', :create_root_my_cnf => false }}
