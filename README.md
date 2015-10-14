@@ -117,17 +117,18 @@ Then you can collect it on the remote DB server:
 Mysql::Db <<| tag == $domain |>>
 ~~~
 
-If you set the sql param to a file when creating a database, the file gets imported into the new database.
+If you set the sql param to a file when creating a database, the file gets imported into the new database.  To import the specified sql file only once, set $onlyif_empty to true (default is false). 
 
 For large sql files, you should raise the $import_timeout parameter, set by default to 300 seconds.
 
 ~~~
 mysql::db { 'mydb':
-  user     => 'myuser',
-  password => 'mypass',
-  host     => 'localhost',
-  grant    => ['SELECT', 'UPDATE'],
-  sql      => '/path/to/sqlfile',
+  user           => 'myuser',
+  password       => 'mypass',
+  host           => 'localhost',
+  grant          => ['SELECT', 'UPDATE'],
+  sql            => '/path/to/sqlfile',
+  onlyif_empty   => false,
   import_timeout => 900,
 }
 ~~~
