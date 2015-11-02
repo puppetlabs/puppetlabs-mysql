@@ -77,11 +77,24 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     user_string = self.class.cmd_user(user)
     priv_string = self.class.cmd_privs(privileges)
     table_string = self.class.cmd_table(table)
-    query = "GRANT #{priv_string}"
-    query << " ON #{table_string}"
-    query << " TO #{user_string}"
-    query << self.class.cmd_options(options) unless options.nil?
-    mysql([defaults_file, '-e', query].compact)
+    if table_exists?(table_string)
+      query = "GRANT #{priv_string}"
+      query << " ON #{table_string}"
+      query << " TO #{user_string}"
+      query << self.class.cmd_options(options) unless options.nil?
+      mysql([defaults_file, '-e', query].compact)
+    end
+  end
+
+  def table_exists?(table_string)
+    # table * always exists
+    if match = table_string.match(/([^*]+)\.([^*]+)/)
+      db_name, table_name = match.captures
+      query = "SHOW TABLES LIKE '#{table_name}'"
+      mysql([defaults_file, db_name, '-NBe', query].compact).eql?(table_name)
+    else
+      true
+    end
   end
 
   def create
