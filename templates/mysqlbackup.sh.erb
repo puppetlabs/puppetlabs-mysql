@@ -19,6 +19,9 @@ PASS='<%= @backuppassword %>'
 DIR=<%= @backupdir %>
 ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 
+# Set MYSQL_PWD env variable. See https://dev.mysql.com/doc/refman/5.1/en/password-security-user.html
+export MYSQL_PWD="$PASS"
+
 PREFIX=mysql_backup_
 <% if @ignore_events %>
 ADDITIONAL_OPTIONS="--ignore-table=mysql.event"
@@ -61,20 +64,20 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
-mysql -u${USER} -p${PASS} -s -r -N -e 'SHOW DATABASES' | while read dbname
+mysql -u${USER} -s -r -N -e 'SHOW DATABASES' | while read dbname
 do
-  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+  mysqldump -u${USER} --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
     ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 done
 <% else -%>
-mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+mysqldump -u${USER} --opt --flush-logs --single-transaction \
  ${ADDITIONAL_OPTIONS} \
  --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>
 <% else -%>
 <% @backupdatabases.each do |db| -%>
-mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+mysqldump -u${USER} --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
  <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>
@@ -91,3 +94,6 @@ fi
 <%= script %>
   <%- end -%>
 <% end -%>
+
+# Unset MYSQL_PWD env variable
+unset MYSQL_PWD
