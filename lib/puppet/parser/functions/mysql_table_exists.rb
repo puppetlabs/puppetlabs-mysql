@@ -10,22 +10,12 @@ module Puppet::Parser::Functions
     EOS
   ) do |args|
 
-    if args.size != 1
-      raise(Puppet::ParseError, 'mysql_table_exists(): Wrong number of arguments ' + "given (#{args.size} for 1)")
-    end
+    return raise(Puppet::ParseError, "mysql_table_exists() accept 1 argument - table string like 'database_name.table_name'") unless match = args[0].match(/(.*)\.(.*)/)
 
-    if match = args[0].match(/(.*)\.(.*)/)
-      db_name, table_name = match.captures
-      if db_name.eql?('*') or table_name.eql?('*')
-        true
-      else
-        query = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME = '#{table_name}' AND TABLE_SCHEMA = '#{db_name}';"
-
-        %x{mysql #{defaults_file} -NBe #{query}}.strip.eql?(table_name)
-      end
-    else
-      raise(Puppet::ParseError, 'mysql_table_exists() accept 1 argument - table string like \'database_name.table_name\'')
-    end
+    db_name, table_name = match.captures
+    return true if (db_name.eql?('*') or table_name.eql?('*')) ## *.* is valid table string, but we shouldn't check it for existence
+    query = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME = '#{table_name}' AND TABLE_SCHEMA = '#{db_name}';"
+    %x{mysql #{defaults_file} -NBe #{query}}.strip.eql?(table_name)
 
   end
 end
