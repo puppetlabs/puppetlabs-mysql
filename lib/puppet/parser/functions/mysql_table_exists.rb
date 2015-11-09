@@ -10,7 +10,8 @@ module Puppet::Parser::Functions
     EOS
   ) do |args|
 
-    return raise(Puppet::ParseError, "mysql_table_exists() accept 1 argument - table string like 'database_name.table_name'") unless match = args[0].match(/(.*)\.(.*)/)
+    return raise(Puppet::ParseError,
+                 "mysql_table_exists() accept 1 argument - table string like 'database_name.table_name'") unless (args.size == 1 and match = args[0].match(/(.*)\.(.*)/))
 
     db_name, table_name = match.captures
     return true if (db_name.eql?('*') or table_name.eql?('*')) ## *.* is valid table string, but we shouldn't check it for existence

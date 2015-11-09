@@ -15,8 +15,12 @@ describe 'the mysql_table_exists function' do
     expect { scope.function_mysql_table_exists([]) }.to( raise_error(Puppet::ParseError))
   end
 
+  it 'should raise a ParserError if argument doesn\'t look like database_name.table_name' do
+    expect { scope.function_mysql_table_exists(['foo_bar']) }.to( raise_error(Puppet::ParseError))
+  end
+
   it 'should raise a ParseError if there is more than 1 arguments' do
-    expect { scope.function_mysql_table_exists(%w(foo bar)) }.to( raise_error(Puppet::ParseError))
+    expect { scope.function_mysql_table_exists(%w(foo.bar foo.bar)) }.to( raise_error(Puppet::ParseError))
   end
 
 end
