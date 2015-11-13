@@ -19,8 +19,9 @@ PASS='<%= @backuppassword %>'
 DIR=<%= @backupdir %>
 ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 
-# Set MYSQL_PWD env variable. See https://dev.mysql.com/doc/refman/5.1/en/password-security-user.html
-export MYSQL_PWD="$PASS"
+# Create temporary mysql cnf file.
+TMPFILE=`mktemp /tmp/backup.XXXXXX` || exit 1
+echo -e "[client]\npassword=$PASS\nuser=$USER" > $TMPFILE
 
 PREFIX=mysql_backup_
 <% if @ignore_events %>
@@ -64,20 +65,20 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
-mysql -u${USER} -s -r -N -e 'SHOW DATABASES' | while read dbname
+mysql --defaults-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read dbname
 do
-  mysqldump -u${USER} --opt --flush-logs --single-transaction \
+  mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
     ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 done
 <% else -%>
-mysqldump -u${USER} --opt --flush-logs --single-transaction \
+mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
  ${ADDITIONAL_OPTIONS} \
  --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>
 <% else -%>
 <% @backupdatabases.each do |db| -%>
-mysqldump -u${USER} --opt --flush-logs --single-transaction \
+mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
  <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>
@@ -95,5 +96,5 @@ fi
   <%- end -%>
 <% end -%>
 
-# Unset MYSQL_PWD env variable
-unset MYSQL_PWD
+# Remove temporary file
+rm -f $TMPFILE
