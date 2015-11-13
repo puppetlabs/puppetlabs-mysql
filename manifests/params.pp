@@ -2,14 +2,18 @@
 class mysql::params {
 
   $manage_config_file     = true
-  $old_root_password      = ''
   $purge_conf_dir         = false
   $restart                = false
   $root_password          = 'UNSET'
+  $install_secret_file    = '/.mysql_secret'
   $server_package_ensure  = 'present'
+  $server_package_manage  = true
   $server_service_manage  = true
   $server_service_enabled = true
   $client_package_ensure  = 'present'
+  $client_package_manage  = true
+  $create_root_user       = true
+  $create_root_my_cnf     = true
   # mysql::bindings
   $bindings_enable             = false
   $java_package_ensure         = 'present'
@@ -32,14 +36,14 @@ class mysql::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
-          if is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 19 or $::operatingsystemrelease == 'Rawhide' {
+          if versioncmp($::operatingsystemrelease, '19') >= 0 or $::operatingsystemrelease == 'Rawhide' {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
           }
         }
-        /^(RedHat|CentOS|Scientific)$/: {
-          if $::operatingsystemmajrelease >= 7 {
+        /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
+          if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
@@ -51,27 +55,30 @@ class mysql::params {
       }
 
       if $provider == 'mariadb' {
-        $client_package_name = 'mariadb'
-        $server_package_name = 'mariadb-server'
-        $server_service_name = 'mariadb'
-        $log_error           = '/var/log/mariadb/mariadb.log'
-        $config_file         = '/etc/my.cnf.d/server.cnf'
+        $client_package_name     = 'mariadb'
+        $server_package_name     = 'mariadb-server'
+        $server_service_name     = 'mariadb'
+        $log_error               = '/var/log/mariadb/mariadb.log'
+        $config_file             = '/etc/my.cnf.d/server.cnf'
         # mariadb package by default has !includedir set in my.cnf to /etc/my.cnf.d
-        $includedir          = undef
-        $pidfile             = '/var/run/mariadb/mariadb.pid'
+        $includedir              = undef
+        $pidfile                 = '/var/run/mariadb/mariadb.pid'
+        $daemon_dev_package_name = 'mariadb-devel'
       } else {
-        $client_package_name = 'mysql'
-        $server_package_name = 'mysql-server'
-        $server_service_name = 'mysqld'
-        $log_error           = '/var/log/mysqld.log'
-        $config_file         = '/etc/my.cnf'
-        $includedir          = '/etc/my.cnf.d'
-        $pidfile             = '/var/run/mysqld/mysqld.pid'
+        $client_package_name     = 'mysql'
+        $server_package_name     = 'mysql-server'
+        $server_service_name     = 'mysqld'
+        $log_error               = '/var/log/mysqld.log'
+        $config_file             = '/etc/my.cnf'
+        $includedir              = '/etc/my.cnf.d'
+        $pidfile                 = '/var/run/mysqld/mysqld.pid'
+        $daemon_dev_package_name = 'mysql-devel'
       }
 
       $basedir                 = '/usr'
       $datadir                 = '/var/lib/mysql'
       $root_group              = 'root'
+      $mysql_group             = 'mysql'
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
@@ -84,7 +91,6 @@ class mysql::params {
       $python_package_name     = 'MySQL-python'
       $ruby_package_name       = 'ruby-mysql'
       $client_dev_package_name = undef
-      $daemon_dev_package_name = 'mysql-devel'
     }
 
     'Suse': {
@@ -102,12 +108,19 @@ class mysql::params {
             $basedir             = '/usr'
           }
         }
-        'SLES',
-        'SLED':
-        {
-          $client_package_name = 'mysql-client'
-          $server_package_name = 'mysql'
-          $basedir             = '/usr'
+        'SLES','SLED': {
+          if versioncmp($::operatingsystemrelease, '12') >= 0 {
+            $client_package_name = 'mariadb-client'
+            $server_package_name = 'mariadb'
+            $basedir             = undef
+          } else {
+            $client_package_name = 'mysql-client'
+            $server_package_name = 'mysql'
+            $basedir             = '/usr'
+          }
+        }
+        default: {
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn't support ${::operatingsystem}")
         }
       }
       $config_file         = '/etc/my.cnf'
@@ -122,6 +135,7 @@ class mysql::params {
         /(SLES|SLED)/      => '/var/lib/mysql/mysqld.pid',
       }
       $root_group          = 'root'
+      $mysql_group         = 'mysql'
       $server_service_name = 'mysql'
       $socket              = $::operatingsystem ? {
         /OpenSuSE/         => '/var/run/mysql/mysql.sock',
@@ -155,6 +169,7 @@ class mysql::params {
       $log_error               = '/var/log/mysql/error.log'
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
+      $mysql_group             = 'mysql'
       $server_service_name     = 'mysql'
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
@@ -168,6 +183,7 @@ class mysql::params {
       $python_package_name = 'python-mysqldb'
       $ruby_package_name   = $::lsbdistcodename ? {
         'trusty'           => 'ruby-mysql',
+        'jessie'           => 'ruby-mysql',
         default            => 'libmysql-ruby',
       }
       $client_dev_package_name = 'libmysqlclient-dev'
@@ -183,6 +199,7 @@ class mysql::params {
       $log_error           = '/var/log/mysqld.log'
       $pidfile             = '/var/run/mysqld/mysqld.pid'
       $root_group          = 'root'
+      $mysql_group         = 'mysql'
       $server_service_name = 'mysqld'
       $socket              = '/var/lib/mysql/mysql.sock'
       $ssl_ca              = '/etc/mysql/cacert.pem'
@@ -197,18 +214,43 @@ class mysql::params {
       $ruby_package_name   = 'mysql-ruby'
     }
 
+    'Gentoo': {
+      $client_package_name = 'virtual/mysql'
+      $server_package_name = 'virtual/mysql'
+      $basedir             = '/usr'
+      $config_file         = '/etc/mysql/my.cnf'
+      $datadir             = '/var/lib/mysql'
+      $log_error           = '/var/log/mysql/mysqld.err'
+      $pidfile             = '/run/mysqld/mysqld.pid'
+      $root_group          = 'root'
+      $mysql_group         = 'mysql'
+      $server_service_name = 'mysql'
+      $socket              = '/run/mysqld/mysqld.sock'
+      $ssl_ca              = '/etc/mysql/cacert.pem'
+      $ssl_cert            = '/etc/mysql/server-cert.pem'
+      $ssl_key             = '/etc/mysql/server-key.pem'
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = 'dev-java/jdbc-mysql'
+      $perl_package_name   = 'dev-perl/DBD-mysql'
+      $php_package_name    = undef
+      $python_package_name = 'dev-python/mysql-python'
+      $ruby_package_name   = 'dev-ruby/mysql-ruby'
+    }
+
     'FreeBSD': {
-      $client_package_name = 'databases/mysql55-client'
-      $server_package_name = 'databases/mysql55-server'
+      $client_package_name = 'databases/mysql56-client'
+      $server_package_name = 'databases/mysql56-server'
       $basedir             = '/usr/local'
-      $config_file         = '/var/db/mysql/my.cnf'
-      $includedir          = '/var/db/mysql/my.cnf.d'
+      $config_file         = '/usr/local/etc/my.cnf'
+      $includedir          = '/usr/local/etc/my.cnf.d'
       $datadir             = '/var/db/mysql'
-      $log_error           = "/var/db/mysql/${::hostname}.err"
-      $pidfile             = '/var/db/mysql/mysql.pid'
+      $log_error           = '/var/log/mysqld.log'
+      $pidfile             = '/var/run/mysql.pid'
       $root_group          = 'wheel'
+      $mysql_group         = 'mysql'
       $server_service_name = 'mysql-server'
-      $socket              = '/tmp/mysql.sock'
+      $socket              = '/var/db/mysql/mysql.sock'
       $ssl_ca              = undef
       $ssl_cert            = undef
       $ssl_key             = undef
@@ -219,6 +261,60 @@ class mysql::params {
       $php_package_name    = 'php5-mysql'
       $python_package_name = 'databases/py-MySQLdb'
       $ruby_package_name   = 'databases/ruby-mysql'
+      # The libraries installed by these packages are included in client and server packages, no installation required.
+      $client_dev_package_name     = undef
+      $daemon_dev_package_name     = undef
+    }
+
+    'OpenBSD': {
+      $client_package_name = 'mariadb-client'
+      $server_package_name = 'mariadb-server'
+      $basedir             = '/usr/local'
+      $config_file         = '/etc/my.cnf'
+      $includedir          = undef
+      $datadir             = '/var/mysql'
+      $log_error           = "/var/mysql/${::hostname}.err"
+      $pidfile             = '/var/mysql/mysql.pid'
+      $root_group          = 'wheel'
+      $mysql_group         = '_mysql'
+      $server_service_name = 'mysqld'
+      $socket              = '/var/run/mysql/mysql.sock'
+      $ssl_ca              = undef
+      $ssl_cert            = undef
+      $ssl_key             = undef
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = undef
+      $perl_package_name   = 'p5-DBD-mysql'
+      $php_package_name    = 'php-mysql'
+      $python_package_name = 'py-mysql'
+      $ruby_package_name   = 'ruby-mysql'
+      # The libraries installed by these packages are included in client and server packages, no installation required.
+      $client_dev_package_name     = undef
+      $daemon_dev_package_name     = undef
+    }
+
+    'Solaris': {
+      $client_package_name = 'database/mysql-55/client'
+      $server_package_name = 'database/mysql-55'
+      $basedir             = undef
+      $config_file         = '/etc/mysql/5.5/my.cnf'
+      $datadir             = '/var/mysql/5.5/data'
+      $log_error           = "/var/mysql/5.5/data/${::hostname}.err"
+      $pidfile             = "/var/mysql/5.5/data/${::hostname}.pid"
+      $root_group          = 'bin'
+      $server_service_name = 'application/database/mysql:version_55'
+      $socket              = '/tmp/mysql.sock'
+      $ssl_ca              = undef
+      $ssl_cert            = undef
+      $ssl_key             = undef
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = undef
+      $perl_package_name   = undef
+      $php_package_name    = 'web/php-53/extension/php-mysql'
+      $python_package_name = 'library/python/python-mysql'
+      $ruby_package_name   = undef
       # The libraries installed by these packages are included in client and server packages, no installation required.
       $client_dev_package_name     = undef
       $daemon_dev_package_name     = undef
@@ -236,6 +332,7 @@ class mysql::params {
           $log_error           = '/var/log/mysqld.log'
           $pidfile             = '/var/run/mysqld/mysqld.pid'
           $root_group          = 'root'
+          $mysql_group         = 'mysql'
           $server_service_name = 'mysqld'
           $socket              = '/var/lib/mysql/mysql.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'

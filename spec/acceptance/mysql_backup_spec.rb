@@ -1,6 +1,18 @@
 require 'spec_helper_acceptance'
+require 'puppet'
+require 'puppet/util/package'
 
 describe 'mysql::server::backup class' do
+
+  def pre_run
+    apply_manifest("class { 'mysql::server': root_password => 'password' }", :catch_failures => true)
+    @mysql_version = (on default, 'mysql --version').output.chomp.match(/\d+\.\d+\.\d+/)[0]
+  end
+
+  def version_is_greater_than(version)
+    return Puppet::Util::Package.versioncmp(@mysql_version, version) > 0
+  end
+
   context 'should work with no errors' do
     it 'when configuring mysql backups' do
       pp = <<-EOS
@@ -126,6 +138,49 @@ describe 'mysql::server::backup class' do
             end
           end
         end
+      end
+    end
+  end
+
+  context 'with triggers and routines' do
+    it 'when configuring mysql backups with triggers and routines' do
+      pre_run
+      pp = <<-EOS
+        class { 'mysql::server': root_password => 'password' }
+        mysql::db { [
+          'backup1',
+          'backup2'
+          ]:
+          user => 'backup',
+          password => 'secret',
+        }
+        package { 'bzip2':
+          ensure => present,
+        }
+        class { 'mysql::server::backup':
+          backupuser => 'myuser',
+          backuppassword => 'mypassword',
+          backupdir => '/tmp/backups',
+          backupcompress => true,
+          file_per_database => true,
+          include_triggers => #{version_is_greater_than('5.1.5')},
+          include_routines => true,
+          postscript => [
+            'rm -rf /var/tmp/mysqlbackups',
+            'rm -f /var/tmp/mysqlbackups.done',
+            'cp -r /tmp/backups /var/tmp/mysqlbackups',
+            'touch /var/tmp/mysqlbackups.done',
+          ],
+          execpath => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          require => Package['bzip2'],
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should run mysqlbackup.sh with no errors' do
+      shell("/usr/local/sbin/mysqlbackup.sh") do |r|
+        expect(r.stderr).to eq("")
       end
     end
   end

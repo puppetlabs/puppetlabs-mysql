@@ -27,12 +27,23 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
         # Match the munges we do in the type.
         munged_grant = grant.delete("'").delete("`")
         # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root')@('127.0.0.1') (WITH GRANT OPTION)
-        if match = munged_grant.match(/^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)$/)
+        if match = munged_grant.match(/^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)?$/)
           privileges, table, user, host, rest = match.captures
-          # Once we split privileges up on the , we need to make sure we
-          # shortern ALL PRIVILEGES to just all.
-          stripped_privileges = privileges.split(',').map do |priv|
-            priv == 'ALL PRIVILEGES' ? 'ALL' : priv.lstrip.rstrip
+          table.gsub!('\\\\', '\\')
+
+          # split on ',' if it is not a non-'('-containing string followed by a
+          # closing parenthesis ')'-char - e.g. only split comma separated elements not in
+          # parentheses
+          stripped_privileges = privileges.strip.split(/\s*,\s*(?![^(]*\))/).map do |priv|
+            # split and sort the column_privileges in the parentheses and rejoin
+            if priv.include?('(')
+              type, col=priv.strip.split(/\s+|\b/,2)
+              type.upcase + " (" + col.slice(1...-1).strip.split(/\s*,\s*/).sort.join(', ') + ")"
+            else
+              # Once we split privileges up on the , we need to make sure we
+              # shortern ALL PRIVILEGES to just all.
+              priv == 'ALL PRIVILEGES' ? 'ALL' : priv.strip
+            end
           end
           # Same here, but to remove OPTION leaving just GRANT.
           options = ['GRANT'] if rest.match(/WITH\sGRANT\sOPTION/)
@@ -85,18 +96,20 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     exists? ? (return true) : (return false)
   end
 
-  def revoke(user, table)
+  def revoke(user, table, revoke_privileges = ['ALL'])
     user_string = self.class.cmd_user(user)
     table_string = self.class.cmd_table(table)
-
+    priv_string = self.class.cmd_privs(revoke_privileges)
     # revoke grant option needs to be a extra query, because
     # "REVOKE ALL PRIVILEGES, GRANT OPTION [..]" is only valid mysql syntax
     # if no ON clause is used.
     # It hast to be executed before "REVOKE ALL [..]" since a GRANT has to
     # exist to be executed successfully
-    query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
-    mysql([defaults_file, '-e', query].compact)
-    query = "REVOKE ALL ON #{table_string} FROM #{user_string}"
+    if revoke_privileges.include? 'ALL'
+      query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
+      mysql([defaults_file, '-e', query].compact)
+    end
+    query = "REVOKE #{priv_string} ON #{table_string} FROM #{user_string}"
     mysql([defaults_file, '-e', query].compact)
   end
 
@@ -118,11 +131,29 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
 
   mk_resource_methods
 
-  def privileges=(privileges)
-    revoke(@property_hash[:user], @property_hash[:table])
-    grant(@property_hash[:user], @property_hash[:table], privileges, @property_hash[:options])
-    @property_hash[:privileges] = privileges
+  def diff_privileges(privileges_old, privileges_new)
+    diff = {:revoke => Array.new, :grant => Array.new}
+    if privileges_old.include? 'ALL'
+      diff[:revoke] = privileges_old
+      diff[:grant] = privileges_new
+    elsif privileges_new.include? 'ALL'
+      diff[:grant] = privileges_new
+    else
+      diff[:revoke] = privileges_old - privileges_new
+      diff[:grant] = privileges_new - privileges_old
+    end
+    return diff
+  end
 
+  def privileges=(privileges)
+    diff = diff_privileges(@property_hash[:privileges], privileges)
+    if not diff[:revoke].empty?
+      revoke(@property_hash[:user], @property_hash[:table], diff[:revoke])
+    end
+    if not diff[:grant].empty?
+      grant(@property_hash[:user], @property_hash[:table], diff[:grant], @property_hash[:options])
+    end
+    @property_hash[:privileges] = privileges
     self.privileges
   end
 

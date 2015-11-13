@@ -1,9 +1,7 @@
 $mysql_root_pw = 'password'
 
 class { 'mysql::server':
-  config_hash => {
-    root_password => 'password',
-  }
+  root_password => 'password',
 }
 
 mysql_user{ 'redmine@localhost':
@@ -20,4 +18,15 @@ mysql_user{ 'dan@localhost':
 mysql_user{ 'dan@%':
   ensure        => present,
   password_hash => mysql_password('blah'),
+}
+
+mysql_user{ 'socketplugin@%':
+  ensure => present,
+  plugin => 'unix_socket',
+}
+
+mysql_user{ 'socketplugin@%':
+  ensure        => present,
+  password_hash => mysql_password('blah'),
+  plugin        => 'mysql_native_password',
 }

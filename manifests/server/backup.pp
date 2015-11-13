@@ -1,62 +1,53 @@
 # See README.me for usage.
 class mysql::server::backup (
-  $backupuser,
-  $backuppassword,
-  $backupdir,
-  $backupdirmode = '0700',
-  $backupdirowner = 'root',
-  $backupdirgroup = 'root',
-  $backupcompress = true,
-  $backuprotate = 30,
-  $ignore_events = true,
+  $backupuser         = undef,
+  $backuppassword     = undef,
+  $backupdir          = undef,
+  $backupdirmode      = '0700',
+  $backupdirowner     = 'root',
+  $backupdirgroup     = 'root',
+  $backupcompress     = true,
+  $backuprotate       = 30,
+  $ignore_events      = true,
   $delete_before_dump = false,
-  $backupdatabases = [],
-  $file_per_database = false,
-  $ensure = 'present',
-  $time = ['23', '5'],
-  $postscript = false,
-  $execpath   = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $backupdatabases    = [],
+  $file_per_database  = false,
+  $include_routines   = false,
+  $include_triggers   = false,
+  $ensure             = 'present',
+  $time               = ['23', '5'],
+  $prescript          = false,
+  $postscript         = false,
+  $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $provider           = 'mysqldump',
 ) {
 
-  mysql_user { "${backupuser}@localhost":
-    ensure        => $ensure,
-    password_hash => mysql_password($backuppassword),
-    provider      => 'mysql',
-    require       => Class['mysql::server::root_password'],
+  if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
+    warning("The \$prescript option is not currently implemented for the ${provider} backup provider.")
   }
 
-  mysql_grant { "${backupuser}@localhost/*.*":
-    ensure     => $ensure,
-    user       => "${backupuser}@localhost",
-    table      => '*.*',
-    privileges => [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ],
-    require    => Mysql_user["${backupuser}@localhost"],
-  }
-
-  cron { 'mysql-backup':
-    ensure  => $ensure,
-    command => '/usr/local/sbin/mysqlbackup.sh',
-    user    => 'root',
-    hour    => $time[0],
-    minute  => $time[1],
-    require => File['mysqlbackup.sh'],
-  }
-
-  file { 'mysqlbackup.sh':
-    ensure  => $ensure,
-    path    => '/usr/local/sbin/mysqlbackup.sh',
-    mode    => '0700',
-    owner   => 'root',
-    group   => 'root',
-    content => template('mysql/mysqlbackup.sh.erb'),
-  }
-
-  file { 'mysqlbackupdir':
-    ensure => 'directory',
-    path   => $backupdir,
-    mode   => $backupdirmode,
-    owner  => $backupdirowner,
-    group  => $backupdirgroup,
-  }
+  create_resources('class', {
+    "mysql::backup::${provider}" => {
+      'backupuser'         => $backupuser,
+      'backuppassword'     => $backuppassword,
+      'backupdir'          => $backupdir,
+      'backupdirmode'      => $backupdirmode,
+      'backupdirowner'     => $backupdirowner,
+      'backupdirgroup'     => $backupdirgroup,
+      'backupcompress'     => $backupcompress,
+      'backuprotate'       => $backuprotate,
+      'ignore_events'      => $ignore_events,
+      'delete_before_dump' => $delete_before_dump,
+      'backupdatabases'    => $backupdatabases,
+      'file_per_database'  => $file_per_database,
+      'include_routines'   => $include_routines,
+      'include_triggers'   => $include_triggers,
+      'ensure'             => $ensure,
+      'time'               => $time,
+      'prescript'          => $prescript,
+      'postscript'         => $postscript,
+      'execpath'           => $execpath,
+    }
+  })
 
 }

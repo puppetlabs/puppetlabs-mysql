@@ -1,13 +1,14 @@
 # See README.md.
 class mysql::bindings (
+  $install_options = undef,
   # Boolean to determine if we should include the classes.
-  $java_enable   = false,
-  $perl_enable   = false,
-  $php_enable    = false,
-  $python_enable = false,
-  $ruby_enable   = false,
-  $client_dev    = false,
-  $daemon_dev    = false,
+  $java_enable     = false,
+  $perl_enable     = false,
+  $php_enable      = false,
+  $python_enable   = false,
+  $ruby_enable     = false,
+  $client_dev      = false,
+  $daemon_dev      = false,
   # Settings for the various classes.
   $java_package_ensure         = $mysql::params::java_package_ensure,
   $java_package_name           = $mysql::params::java_package_name,
@@ -34,11 +35,11 @@ class mysql::bindings (
 
   case $::osfamily {
     'Archlinux': {
-      if $java_enable   { fatal("::mysql::bindings::java cannot be managed by puppet on ${::osfamily} as it is not in official repositories. Please disable java mysql binding.") }
+      if $java_enable   { fail("::mysql::bindings::java cannot be managed by puppet on ${::osfamily} as it is not in official repositories. Please disable java mysql binding.") }
       if $perl_enable   { include '::mysql::bindings::perl' }
-      if $php_enable    { warn("::mysql::bindings::php does not need to be managed by puppet on ${::osfamily} as it is included in mysql package by default.") }
+      if $php_enable    { warning("::mysql::bindings::php does not need to be managed by puppet on ${::osfamily} as it is included in mysql package by default.") }
       if $python_enable { include '::mysql::bindings::python' }
-      if $ruby_enable   { fatal("::mysql::bindings::ruby cannot be managed by puppet on ${::osfamily} as it is not in official repositories. Please disable ruby mysql binding.") }
+      if $ruby_enable   { fail("::mysql::bindings::ruby cannot be managed by puppet on ${::osfamily} as it is not in official repositories. Please disable ruby mysql binding.") }
     }
 
     default: {

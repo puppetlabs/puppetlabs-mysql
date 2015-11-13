@@ -1,4 +1,8 @@
+<%- if @kernel == 'Linux' -%>
 #!/bin/bash
+<%- else -%>
+#!/bin/sh
+<%- end -%>
 #
 # MySQL Backup Script
 #  Dumps mysql databases to a file for another backup tool to pick up.
@@ -15,19 +19,40 @@ PASS='<%= @backuppassword %>'
 DIR=<%= @backupdir %>
 ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 
+# Create temporary mysql cnf file.
+TMPFILE=`mktemp /tmp/backup.XXXXXX` || exit 1
+echo -e "[client]\npassword=$PASS\nuser=$USER" > $TMPFILE
+
 PREFIX=mysql_backup_
 <% if @ignore_events %>
-EVENTS="--ignore-table=mysql.event"
+ADDITIONAL_OPTIONS="--ignore-table=mysql.event"
 <% else %>
-EVENTS="--events"
+ADDITIONAL_OPTIONS="--events"
 <% end %>
+<%# Only include routines or triggers if we're doing a file per database -%>
+<%# backup. This happens if we named databases, or if we explicitly set -%>
+<%# file per database mode -%>
+<% if !@backupdatabases.empty? || @file_per_database -%>
+<% if @include_triggers -%>
+ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --triggers"
+<% else -%>
+ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-triggers"
+<% end -%>
+<% if @include_routines -%>
+ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --routines"
+<% else -%>
+ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-routines"
+<% end -%>
+<% end -%>
 
 ##### STOP CONFIG ####################################################
 PATH=<%= @execpath %>
 
 
 
+<%- if @kernel == 'Linux' -%>
 set -o pipefail
+<%- end -%>
 
 cleanup()
 {
@@ -40,21 +65,21 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
-mysql -u${USER} -p${PASS} -s -r -N -e 'SHOW DATABASES' | while read dbname
+mysql --defaults-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read dbname
 do
-  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
-    ${EVENTS} \
+  mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
+    ${ADDITIONAL_OPTIONS} \
     ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 done
 <% else -%>
-mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
- ${EVENTS} \
+mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
+ ${ADDITIONAL_OPTIONS} \
  --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>
 <% else -%>
 <% @backupdatabases.each do |db| -%>
-mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
-    ${EVENTS} \
+mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
+    ${ADDITIONAL_OPTIONS} \
  <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>
 <% end -%>
@@ -70,3 +95,6 @@ fi
 <%= script %>
   <%- end -%>
 <% end -%>
+
+# Remove temporary file
+rm -f $TMPFILE

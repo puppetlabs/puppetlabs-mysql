@@ -51,5 +51,34 @@ describe 'mysql class' do
       apply_manifest(pp, :catch_changes => true)
     end
   end
-end
 
+  describe 'configuration needed for syslog' do
+    it 'should work with no errors' do
+      pp = <<-EOS
+        class { 'mysql::server':
+          override_options => { 'mysqld' => { 'log-error' => undef }, 'mysqld_safe' => { 'log-error' => false, 'syslog' => true }},
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when changing the password' do
+    let(:password) { 'THE NEW SECRET' }
+    let(:manifest) { "class { 'mysql::server': root_password => '#{password}' }" }
+
+    it 'should not display the password' do
+      result = apply_manifest(manifest, :expect_changes => true)
+      # this does not actually prove anything, as show_diff in the puppet config defaults to false.
+      expect(result.stdout).not_to match /#{password}/
+    end
+
+    it 'should be idempotent' do
+      result = apply_manifest(manifest, :catch_changes => true)
+    end
+
+  end
+
+end

@@ -4,26 +4,52 @@ Puppet::Type.newtype(:mysql_user) do
 
   ensurable
 
+  autorequire(:file) { '/root/.my.cnf' }
+  autorequire(:class) { 'mysql::server' }
+
   newparam(:name, :namevar => true) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."
     validate do |value|
-      # https://dev.mysql.com/doc/refman/5.1/en/account-names.html
-      # Regex should problably be more like this: /^[`'"]?[^`'"]*[`'"]?@[`'"]?[\w%\.]+[`'"]?$/
-      raise(ArgumentError, "Invalid database user #{value}") unless value =~ /[\w-]*@[\w%\.:]+/
-      username = value.split('@')[0]
-      if username.size > 16
-        raise ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters'
+      # http://dev.mysql.com/doc/refman/5.5/en/identifiers.html
+      # If at least one special char is used, string must be quoted
+
+      # http://stackoverflow.com/questions/8055727/negating-a-backreference-in-regular-expressions/8057827#8057827
+      if matches = /^(['`"])((?:(?!\1).)*)\1@([\w%\.:\-\/]+)$/.match(value)
+        user_part = matches[2]
+        host_part = matches[3]
+      elsif matches = /^([0-9a-zA-Z$_]*)@([\w%\.:\-\/]+)$/.match(value)
+        user_part = matches[1]
+        host_part = matches[2]
+      elsif matches = /^((?!['`"]).*[^0-9a-zA-Z$_].*)@(.+)$/.match(value)
+        user_part = matches[1]
+        host_part = matches[2]
+      else
+        raise(ArgumentError, "Invalid database user #{value}")
+      end
+
+      mysql_version = Facter.value(:mysql_version)
+      unless mysql_version.nil?
+        if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 and user_part.size > 16
+          raise(ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters')
+        elsif Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 and user_part.size > 80
+          raise(ArgumentError, 'MySQL usernames are limited to a maximum of 80 characters')
+        end
       end
     end
 
     munge do |value|
-      user_part, host_part = value.split('@')
-      "#{user_part}@#{host_part.downcase}"
+      matches = /^((['`"]?).*\2)@(.+)$/.match(value)
+      "#{matches[1]}@#{matches[3].downcase}"
     end
   end
 
   newproperty(:password_hash) do
     desc 'The password hash of the user. Use mysql_password() for creating such a hash.'
+    newvalue(/\w*/)
+  end
+
+  newproperty(:plugin) do
+    desc 'The authentication plugin of the user.'
     newvalue(/\w+/)
   end
 
