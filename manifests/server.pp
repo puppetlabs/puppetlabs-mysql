@@ -24,12 +24,23 @@ class mysql::server (
   $users                   = {},
   $grants                  = {},
   $databases               = {},
+  $replication_enable      = false,
+  $rep_server_id           = '1',
+  $master_slave            = 'master',
 
   # Deprecated parameters
   $enabled                 = undef,
   $manage_service          = undef,
   $old_root_password       = undef
 ) inherits mysql::params {
+
+  $replication_options = {
+    'mysqld' => {
+      'server-id'                             => $rep_server_id,
+      "rpl_semi_sync_${master_slave}_enabled" => '1',
+      'log-bin'                               => 'mysql-bin',
+    },
+  }
 
   # Deprecated parameters.
   if $enabled {
@@ -48,12 +59,18 @@ class mysql::server (
     warning('old_root_password is no longer used and will be removed in a future release')
   }
 
+  $custom_options = $replication_enable ? {
+      true    => mysql_deepmerge($override_options, $replication_options),
+      default => $override_options,
+  }
+  
   # Create a merged together set of options.  Rightmost hashes win over left.
-  $options = mysql_deepmerge($mysql::params::default_options, $override_options)
+  $options = mysql_deepmerge($mysql::params::default_options, $custom_options)
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
   include '::mysql::server::install'
+  include '::mysql::server::replication'
   include '::mysql::server::config'
   include '::mysql::server::installdb'
   include '::mysql::server::service'
@@ -79,6 +96,7 @@ class mysql::server (
   Class['mysql::server::config'] ->
   Class['mysql::server::installdb'] ->
   Class['mysql::server::service'] ->
+  Class['mysql::server::replication'] ->
   Class['mysql::server::root_password'] ->
   Class['mysql::server::providers'] ->
   Anchor['mysql::server::end']
