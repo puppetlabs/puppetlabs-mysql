@@ -1,3 +1,8 @@
+## Supported Release 3.6.2
+###Summary
+
+Small release for support of newer PE versions. This increments the version of PE in the metadata.json file.
+
 ## 2015-09-22 - Supported Release 3.6.1
 ### Summary
 This is a security and bugfix release that fixes incorrect username truncation in the munge for the mysql_user type, incorrect function used in `mysql::server::backup` and fixes compatibility issues with PE 3.3.x.
