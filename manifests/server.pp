@@ -14,6 +14,7 @@ class mysql::server (
   $restart                 = $mysql::params::restart,
   $root_group              = $mysql::params::root_group,
   $mysql_group             = $mysql::params::mysql_group,
+  $root_user               = $mysql::params::root_user,
   $root_password           = $mysql::params::root_password,
   $service_enabled         = $mysql::params::server_service_enabled,
   $service_manage          = $mysql::params::server_service_manage,

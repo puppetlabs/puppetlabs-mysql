@@ -25,7 +25,7 @@ The MySQL module manages both the installation and configuration of MySQL, as we
 ### Beginning with MySQL
 
 If you want a server installed with the default options you can run
-`include '::mysql::server'`. 
+`include '::mysql::server'`.
 
 If you need to customize options, such as the root
 password or `/etc/my.cnf` settings, then you must also pass in an override hash:
@@ -63,7 +63,7 @@ For items that you would traditionally represent as
 thing = X
 ~~~
 
-you can make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. Alternatively, you can pass an array, as `thing => ['value', 'value2']`, or list each `thing => value` separately on separate lines. 
+you can make an entry like `thing => true`, `thing => value`, or `thing => "` in the hash. Alternatively, you can pass an array, as `thing => ['value', 'value2']`, or list each `thing => value` separately on separate lines.
 
 MySQL doesn't care if 'thing' is alone or set to a value; it happily accepts both. To keep an option out of the my.cnf file --- e.g., when using `override_options` to revert to a default value --- you can pass `thing => undef`.
 
@@ -216,13 +216,17 @@ If set to 'true', creates `/root/.my.cnf`. Valid values are 'true', 'false'. Def
 
 `create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. This can be used for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
 
+#####  `root_user`
+
+The MySQL root user. Defaults to 'root'. Puppet attempts to set the root user and update `/root/.my.cnf` with it.
+
 #####  `root_password`
 
 The MySQL root password. Puppet attempts to set the root password and update `/root/.my.cnf` with it.
 
 This is required if `create_root_user` or `create_root_my_cnf` are 'true'. If `root_password` is 'UNSET', then `create_root_user` and `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created.
 
-Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password. 
+Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password.
 
 ##### `old_root_password`
 
@@ -306,7 +310,7 @@ The provider to use to manage the service. For Ubuntu, defaults to 'upstart'; ot
 
 ##### `users`
 
-Optional hash of users to create, which are passed to [mysql_user](#mysql_user). 
+Optional hash of users to create, which are passed to [mysql_user](#mysql_user).
 
 ~~~
 users => {
@@ -323,7 +327,7 @@ users => {
 
 ##### `grants`
 
-Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). 
+Optional hash of grants, which are passed to [mysql_grant](#mysql_grant).
 
 ~~~
 grants => {
@@ -447,7 +451,7 @@ The password to create for MySQL monitoring.
 
 ##### `mysql_monitor_hostname`
 
-The hostname from which the monitoring user requests are allowed access. 
+The hostname from which the monitoring user requests are allowed access.
 
 #### mysql::server::mysqltuner
 
@@ -502,11 +506,11 @@ Pass `install_options` array to managed package resources. You must pass the [ap
 ##### `client_dev_package_ensure`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `client_dev => true`.
- 
+
 ##### `client_dev_package_name`
 
 The name of the client_dev package to install. Only applies if `client_dev => true`.
- 
+
 ##### `client_dev_package_provider`
 
 The provider to use to install the client_dev package. Only applies if `client_dev => true`.
@@ -550,7 +554,7 @@ The provider to use to install the Perl package. Only applies if `perl_enable =>
 ##### `php_package_ensure`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `php_enable => true`.
- 
+
 ##### `php_package_name`
 
 The name of the PHP package to install. Only applies if `php_enable => true`.
@@ -620,7 +624,7 @@ mysql_database { 'mysql':
 ##### `user`
 
 The user for the database you're creating.
- 
+
 ##### `password`
 
 The password for $user for the database you're creating.
@@ -628,7 +632,7 @@ The password for $user for the database you're creating.
 ##### `dbname`
 
 The name of the database to create. Defaults to $name.
- 
+
 ##### `charset`
 
 The character set for the database. Defaults to 'utf8'.
@@ -636,7 +640,7 @@ The character set for the database. Defaults to 'utf8'.
 ##### `collate`
 
 The collation for the database. Defaults to 'utf8_general_ci'.
- 
+
 ##### `host`
 
 The host to use as part of user@host for grants. Defaults to 'localhost'.
@@ -652,10 +656,10 @@ The path to the sqlfile you want to execute. This can be single file specified a
 ##### `enforce_sql`
 
 Specify whether executing the sqlfiles should happen on every run. If set to 'false', sqlfiles only run once. Valid values are 'true', 'false'. Defaults to 'false'.
- 
+
 ##### `ensure`
 
-Specify whether to create the database. Valid values are 'present', 'absent'. Defaults to 'present'. 
+Specify whether to create the database. Valid values are 'present', 'absent'. Defaults to 'present'.
 
 ##### `import_timeout`
 
@@ -681,7 +685,7 @@ The CHARACTER SET setting for the database. Defaults to ':utf8'.
 
 ##### `collate`
 
-The COLLATE setting for the database. Defaults to ':utf8_general_ci'. 
+The COLLATE setting for the database. Defaults to ':utf8_general_ci'.
 
 #### mysql_user
 
@@ -764,7 +768,7 @@ Whether the resource is present. Valid values are 'present', 'absent'. Defaults 
 
 ##### `name`
 
-Name to describe the grant. Must in a 'user/table' format. 
+Name to describe the grant. Must in a 'user/table' format.
 
 ##### `privileges`
 
@@ -857,4 +861,3 @@ This module is based on work by David Schmitt. The following contributors have c
 * Michael Arnold
 * Chris Weyl
 * Daniël van Eeden
-
