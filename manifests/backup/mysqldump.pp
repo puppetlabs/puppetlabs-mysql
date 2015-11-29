@@ -16,7 +16,7 @@ class mysql::backup::mysqldump (
   $file_per_database  = false,
   $include_triggers   = false,
   $include_routines   = false,
-  $add_mysqldump_opts = "",
+  $add_mysqldump_opts = '',
   $ensure             = 'present',
   $time               = ['23', '5'],
   $prescript          = false,
@@ -68,7 +68,7 @@ class mysql::backup::mysqldump (
     mode    => '0700',
     owner   => 'root',
     group   => $mysql::params::root_group,
-    content => template("${template_set}"),
+    content => template(${template_set}),
   }
 
   file { 'mysqlbackup.cnf':
