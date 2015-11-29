@@ -1,8 +1,4 @@
-<%- if @kernel == 'Linux' -%>
 #!/bin/bash
-<%- else -%>
-#!/bin/sh
-<%- end -%>
 #
 # MySQL Backup Script
 #  Dumps mysql databases to a file for another backup tool to pick up.
@@ -14,87 +10,145 @@
 #
 ##### START CONFIG ###################################################
 
-USER=<%= @backupuser %>
-PASS='<%= @backuppassword %>'
-DIR=<%= @backupdir %>
-ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
+DEFAULTSFILE="<%= @backupconfig %>"
+DIR='<%= @backupdir %>'
+ROTATE='<%= [ Integer(@backuprotate) - 1, 0 ].max %>'
+PREFIX='mysql_backup_'
+IGNORE_EVENTS='<%= @ignore_events %>'
+BACKUP_DATABASES='<%= @backupdatabases.join(" ") %>'
+NOBACKUP_DATABASES='<%= @nobackupdatabases.join(" ") %>'
+FILE_PER_DATABASES='<%= @file_per_database %>'
+INCLUDE_TRIGGERS='<%= @include_triggers %>'
+INCLUDE_ROUTINES='<%= @include_routines %>'
+ADDITIONAL_OPTIONS='<%= @add_mysqldump_opts %>'
+DELETE_BEFORE_DUMP='<%= @delete_before_dump %>'
+BACKUP_COMPRESS='<%= @backupcompress %>'
+PATH='<%= @execpath %>'
+LOCK_FILE="/var/run/mysqlbackup.lock"
 
-# Create temporary mysql cnf file.
-TMPFILE=`mktemp /tmp/backup.XXXXXX` || exit 1
-echo -e "[client]\npassword=$PASS\nuser=$USER" > $TMPFILE
-
-PREFIX=mysql_backup_
-<% if @ignore_events %>
-ADDITIONAL_OPTIONS="--ignore-table=mysql.event"
-<% else %>
-ADDITIONAL_OPTIONS="--events"
-<% end %>
-<%# Only include routines or triggers if we're doing a file per database -%>
-<%# backup. This happens if we named databases, or if we explicitly set -%>
-<%# file per database mode -%>
-<% if !@backupdatabases.empty? || @file_per_database -%>
-<% if @include_triggers -%>
-ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --triggers"
-<% else -%>
-ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-triggers"
-<% end -%>
-<% if @include_routines -%>
-ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --routines"
-<% else -%>
-ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-routines"
-<% end -%>
-<% end -%>
-
-##### STOP CONFIG ####################################################
-PATH=<%= @execpath %>
-
-
-
-<%- if @kernel == 'Linux' -%>
-set -o pipefail
-<%- end -%>
+##### HELPERS ########################################################
 
 cleanup()
 {
     find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
 }
 
-<% if @delete_before_dump -%>
-cleanup
+##### MAIN ###########################################################
 
-<% end -%>
-<% if @backupdatabases.empty? -%>
-<% if @file_per_database -%>
-mysql --defaults-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read dbname
-do
-  mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
-    ${ADDITIONAL_OPTIONS} \
-    ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
-done
-<% else -%>
-mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
- ${ADDITIONAL_OPTIONS} \
- --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
-<% end -%>
-<% else -%>
-<% @backupdatabases.each do |db| -%>
-mysqldump --defaults-file=$TMPFILE --opt --flush-logs --single-transaction \
-    ${ADDITIONAL_OPTIONS} \
- <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
-<% end -%>
-<% end -%>
 
-<% unless @delete_before_dump -%>
-if [ $? -eq 0 ] ; then
+if ( ! ( set -C; : > $LOCK_FILE 2> /dev/null ) );then
+  echo "Already running"
+  exit 1
+fi
+trap "rm -f $LOCK_FILE; echo 'removed lockfile >>>$LOCK_FILE<<<'" EXIT TERM INT
+
+if [ "$IGNORE_EVENTS" == "true" ];then
+   ADDITIONAL_OPTIONS="--ignore-table=mysql.event"
+else
+   ADDITIONAL_OPTIONS="--events"
+fi
+
+# Only include routines or triggers if we're doing a file per database
+# backup. This happens if we named databases, or if we explicitly set
+# file per database mode
+if ( [ -z "$BACKUP_DATABASES" ] || [ "$FILE_PER_DATABASES" == "true" ] ) ;then
+   if [ "$INCLUDE_TRIGGERS" == "true" ];then
+      ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --triggers"
+   else
+      ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-triggers"
+   fi
+fi
+
+if [ "$INCLUDE_ROUTINES" = "true" ];then
+   ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --routines"
+else
+   ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-routines"
+fi
+
+RUNSTATUS="RUNNING"
+echo "$RUNSTATUS"
+
+# Prescripts
+<%- [@prescript].flatten.compact.each do |script|%>
+<% if script != "false" %><%= script %><% end %>
+<%- end -%>
+
+set -o pipefail
+
+if [ "$DELETE_BEFORE_DUMP" == "true" ];then
+   cleanup
+fi
+
+if [ -z "$BACKUP_DATABASES" ];then
+  while read dbname;
+  do
+    if [[ $NOBACKUP_DATABASES != *$dbname* ]]; then
+      BACKUP_DATABASES="$BACKUP_DATABASES $dbname"
+    fi
+  done < <( mysql --defaults-file=${DEFAULTSFILE} -s -r -N -e 'SHOW DATABASES')
+fi
+
+RUNSTATUS="OK"
+FAILED_BACKUPS=0
+NR_BACKUPS="0"
+
+if [ "$FILE_PER_DATABASES" == "true" ];then
+   echo "excluded databases: $NOBACKUP_DATABASES"
+   for dbname in $BACKUP_DATABASES;
+   do
+      echo "backup database $dbname"
+      if [ "$BACKUP_COMPRESS" == "true" ];then
+        mysqldump --defaults-file=${DEFAULTSFILE} --opt --flush-logs --single-transaction \
+          ${ADDITIONAL_OPTIONS} \
+          ${dbname} | bzcat -zc > "${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql.bz2"
+        RET="$?"
+      else
+        mysqldump --defaults-file=${DEFAULTSFILE} --opt --flush-logs --single-transaction \
+          ${ADDITIONAL_OPTIONS} \
+          ${dbname} > "${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql"
+        RET="$?"
+      fi
+      if [ "$RET" != "0" ];then
+         echo "backup of >>>$dbname<<< failed"
+         FAILED_BACKUPS=$(( $FAILED_BACKUPS + 1 ))
+         RUNSTATUS="ERROR"
+      else
+         echo "backup of >>>$dbname<<< successful"
+      fi
+      NR_BACKUPS=$(( $NR_BACKUPS + 1 ))
+   done
+else
+   echo "backup all databases"
+   if [ "$BACKUP_COMPRESS" == "true" ];then
+     mysqldump --defaults-file=${DEFAULTSFILE} --opt --flush-logs --single-transaction --all-databases \
+       ${ADDITIONAL_OPTIONS} \
+       ${dbname} | bzcat -zc > "${DIR}/${PREFIX}_`date +%Y%m%d-%H%M%S`.sql.bz2"
+     RET="$?"
+   else
+     mysqldump --defaults-file=${DEFAULTSFILE} --opt --flush-logs --single-transaction --all-databases\
+       ${ADDITIONAL_OPTIONS} \
+       ${dbname} > "${DIR}/${PREFIX}_`date +%Y%m%d-%H%M%S`.sql"
+     RET="$?"
+   fi
+
+   if [ "$RET" != "0" ];then
+      FAILED_BACKUPS=$(( $FAILED_BACKUPS + 1 ))
+      RUNSTATUS="ERROR"
+      echo "backup failed"
+   else
+      echo "backup successful"
+   fi
+   NR_BACKUPS=$(( $NR_BACKUPS + 1 ))
+fi
+
+if [ "$DELETE_BEFORE_DUMP" != "true" ];then
     cleanup
 fi
-<% end -%>
+DURATION="$(( $SECONDS / 60 ))"
+RUNSTATUS="$RUNSTATUS: $FAILED_BACKUPS of $NR_BACKUPS backups failed, backup took $DURATION minutes"
 
-<% if @postscript -%>
-  <%- [@postscript].flatten.compact.each do |script|%>
-<%= script %>
-  <%- end -%>
-<% end -%>
-
-# Remove temporary file
-rm -f $TMPFILE
+# Postscripts, access variables like $DURATION, $FAILED_BACKUPS and $NR_BACKUPS to execute scripts which notify your monitoring system
+# i.e. /usr/bin/zabbix_sender -vvvv -c /etc/zabbix/zabbix_agentd.conf  -k mysql.backup.globalstatus -o "$RUNSTATUS"
+<%- [@postscript].flatten.compact.each do |script|%>
+<% if script != "false" %><%= script %><% end %>
+<%- end -%>

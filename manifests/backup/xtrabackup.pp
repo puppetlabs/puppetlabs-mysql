@@ -20,7 +20,16 @@ class mysql::backup::xtrabackup (
   $prescript          = false,
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $template           = 'mysql/xtrabackup.sh.erb',
+  $template_params    = {},
 ) {
+
+  # we do not use a default value in the class variable to have the possibility to use mysql::server::backup as a facade
+  if $template {
+    $template_set = $template
+  }else{
+    $template_set = 'mysql/xtrabackup.sh.erb'
+  }
 
   package{ 'percona-xtrabackup':
     ensure  => $ensure,
@@ -28,7 +37,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-weekly':
     ensure  => $ensure,
-    command => "/usr/local/sbin/xtrabackup.sh ${backupdir}",
+    command => "/usr/local/sbin/xtrabackup.sh ${backupdir} 2>&1 | logger -t mysqlbackup # see syslog",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -38,7 +47,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-daily':
     ensure  => $ensure,
-    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir}",
+    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir} 2>&1 |  logger -t mysqlbackup # see syslog",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -60,6 +69,6 @@ class mysql::backup::xtrabackup (
     mode    => '0700',
     owner   => 'root',
     group   => $mysql::params::root_group,
-    content => template('mysql/xtrabackup.sh.erb'),
+    content => template($template_set),
   }
 }

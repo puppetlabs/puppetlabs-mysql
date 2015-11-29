@@ -20,6 +20,7 @@ class mysql::server::backup (
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
   $provider           = 'mysqldump',
+  $template           = false,
 ) {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
