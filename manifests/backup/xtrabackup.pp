@@ -37,7 +37,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-weekly':
     ensure  => $ensure,
-    command => "/usr/local/sbin/xtrabackup.sh ${backupdir} | logger -t mysqlbackup # see syslog",
+    command => "/usr/local/sbin/xtrabackup.sh ${backupdir} 2>&1 | logger -t mysqlbackup # see syslog",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -47,7 +47,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-daily':
     ensure  => $ensure,
-    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir}|  logger -t mysqlbackup # see syslog",
+    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir} 2>&1 |  logger -t mysqlbackup # see syslog",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
