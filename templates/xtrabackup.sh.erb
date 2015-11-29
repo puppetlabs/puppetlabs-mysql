@@ -1,21 +1,68 @@
-<%- if @kernel == 'Linux' -%>
 #!/bin/bash
-<%- else -%>
-#!/bin/sh
-<%- end -%>
 #
 # A wrapper for Xtrabackup
 #
-<% if @prescript -%>
-  <%- [@prescript].flatten.compact.each do |script| %>
-<%= script %>
-  <%- end -%>
-<% end -%>
+# MySQL Backup Script
+#  Dumps mysql databases to a file for another backup tool to pick up.
+#
+# MySQL code:
+# GRANT SELECT, RELOAD, LOCK TABLES ON *.* TO 'user'@'localhost'
+# IDENTIFIED BY 'password';
+# FLUSH PRIVILEGES;
+#
+##### START CONFIG ###################################################
+
+USER='<%= @backupuser %>'
+PASS='<%= @backuppassword %>'
+DIR='<%= @backupdir %>'
+ROTATE='<%= [ Integer(@backuprotate) - 1, 0 ].max %>'
+IGNORE_EVENTS='<%= @ignore_events %>'
+BACKUP_DATABASES='<%= @backupdatabases.join(" ") %>'
+FILE_PER_DATABASES='<%= @file_per_database %>'
+INCLUDE_TRIGGERS='<%= @include_triggers %>'
+INCLUDE_ROUTINES='<%= @include_routines %>'
+ADDITIONAL_OPTIONS='<%= @add_mysqldump_opts %>'
+DELETE_BEFORE_DUMP='<%= @delete_before_dump %>'
+BACKUP_COMPRESS='<%= @backupcompress %>'
+PATH='<%= @execpath %>'
+LOCK_FILE="/var/run/mysqlxtradbbackup.lock"
+
+
+##### MAIN ###########################################################
+
+
+if ( ! ( set -C; : > $LOCK_FILE 2> /dev/null ) );then
+  echo "Already running"
+  exit 1
+fi
+trap "rm -f $LOCK_FILE; echo 'removed lockfile >>>$LOCK_FILE<<<'" EXIT TERM INT
+
+RUNSTATUS="RUNNING"
+echo "$RUNSTATUS"
+# Prescripts
+<%- [@prescript].flatten.compact.each do |script|%>
+<% if script != "false" %><%= script %><% end %>
+<%- end -%>
+
+
+RUNSTATUS="OK"
+FAILED_BACKUPS=0
 
 innobackupex "$@"
+RET="$?"
 
-<% if @postscript -%>
-  <%- [@postscript].flatten.compact.each do |script| %>
-<%= script %>
-  <%- end -%>
-<% end -%>
+if [ "$RET" != "0" ];then
+   echo "innobackupex failed"
+   FAILED_BACKUPS=$(( $FAILED_BACKUPS + 1 ))
+   RUNSTATUS="ERROR"
+else
+   echo "innobackupex successful"
+fi
+
+DURATION="$(( $SECONDS / 60 ))"
+RUNSTATUS="$RUNSTATUS: backup failed, backup took $DURATION minutes"
+
+# Postscripts
+<%- [@postscript].flatten.compact.each do |script|%>
+<% if script != "false" %><%= script %><% end %>
+<%- end -%>

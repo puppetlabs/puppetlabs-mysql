@@ -1,5 +1,6 @@
 # See README.me for usage.
 class mysql::backup::mysqldump (
+  $backupconfig       = '/etc/mysql/mysqlbackup.cnf',
   $backupuser         = '',
   $backuppassword     = '',
   $backupdir          = '',
@@ -11,15 +12,26 @@ class mysql::backup::mysqldump (
   $ignore_events      = true,
   $delete_before_dump = false,
   $backupdatabases    = [],
+  $nobackupdatabases  = [],
   $file_per_database  = false,
   $include_triggers   = false,
   $include_routines   = false,
+  $add_mysqldump_opts = "",
   $ensure             = 'present',
   $time               = ['23', '5'],
   $prescript          = false,
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $template           = 'mysql/mysqlbackup.sh.erb',
+  $template_params    = {},
 ) {
+
+  # we do not use a default value in the class variable to have the possibility to use mysql::server::backup as a facade
+  if $template {
+    $template_set = $template
+  }else{
+    $template_set = 'mysql/mysqlbackup.sh.erb'
+  }
 
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
@@ -43,7 +55,7 @@ class mysql::backup::mysqldump (
 
   cron { 'mysql-backup':
     ensure  => $ensure,
-    command => '/usr/local/sbin/mysqlbackup.sh',
+    command => '/usr/local/sbin/mysqlbackup.sh 2>&1 | logger -t mysqlbackup # ',
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -56,8 +68,22 @@ class mysql::backup::mysqldump (
     mode    => '0700',
     owner   => 'root',
     group   => $mysql::params::root_group,
-    content => template('mysql/mysqlbackup.sh.erb'),
+    content => template("${template_set}"),
   }
+
+  file { 'mysqlbackup.cnf':
+    ensure  => $ensure,
+    path    => '/etc/mysql/mysqlbackup.cnf',
+    mode    => '0700',
+    owner   => 'root',
+    group   => $mysql::params::root_group,
+    content => "
+[client]
+password=${backuppassword}
+user=${backupuser}
+    "
+  }
+
 
   file { 'mysqlbackupdir':
     ensure => 'directory',
