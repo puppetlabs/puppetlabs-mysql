@@ -68,7 +68,7 @@ class mysql::backup::mysqldump (
     mode    => '0700',
     owner   => 'root',
     group   => $mysql::params::root_group,
-    content => template(${template_set}),
+    content => template($template_set),
   }
 
   file { 'mysqlbackup.cnf':
