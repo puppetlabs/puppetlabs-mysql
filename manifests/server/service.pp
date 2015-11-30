@@ -47,4 +47,18 @@ class mysql::server::service {
     File['mysql-config-file'] -> Service['mysqld']
   }
 
+  if $mysql::server::override_options and $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['socket'] {
+    $mysqlsocket = $mysql::server::override_options['mysqld']['socket']
+  } else {
+    $mysqlsocket = $options['mysqld']['socket']
+  }
+
+  exec { 'wait_for_mysql_socket_to_open':
+    command   => "test -S ${mysqlsocket}",
+    unless    => "test -S ${mysqlsocket}",
+    tries     => '3',
+    try_sleep => '10',
+    require   => Service['mysqld'],
+    path      => '/bin:/usr/bin',
+  }
 }
