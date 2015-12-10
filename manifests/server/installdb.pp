@@ -10,21 +10,21 @@ class mysql::server::installdb {
     $config_file = $mysql::server::config_file
 
     if $mysql::server::manage_config_file {
-      $install_db_args = "--basedir=${basedir} --defaults-extra-file=${config_file} --datadir=${datadir} --user=${mysqluser}"
+      $_config_file=$config_file
     } else {
-      $install_db_args = "--basedir=${basedir} --datadir=${datadir} --user=${mysqluser}"
+      $_config_file=undef
     }
 
-    exec { 'mysql_install_db':
-      command   => "mysql_install_db ${install_db_args}",
-      creates   => "${datadir}/mysql",
-      logoutput => on_failure,
-      path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
-      require   => Package['mysql-server'],
+    mysql_datadir { $datadir:
+      ensure              => 'present',
+      datadir             => $datadir,
+      basedir             => $basedir,
+      user                => $mysqluser,
+      defaults_extra_file => $_config_file,
     }
 
     if $mysql::server::restart {
-      Exec['mysql_install_db'] {
+      Mysql_datadir[$datadir] {
         notify => Class['mysql::server::service'],
       }
     }
