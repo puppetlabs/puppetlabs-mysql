@@ -85,6 +85,8 @@ replicate-do-db = base1
 replicate-do-db = base2
 ~~~
 
+To implement version specific parameters you can use [mysqld-5.5] syntax which is only read by MySQL version 5.5. This allows one config for different versions of MySQL.
+
 ### Creating a database
 
 To use `mysql::db` to create a database with a user and assign some privileges:
@@ -181,6 +183,7 @@ mysql::db { 'mydb':
 #### Private classes
 
 * `mysql::server::install`: Installs packages.
+* `mysql::server::installdb`: Implements setup of mysqld data directory (e.g. /var/lib/mysql)
 * `mysql::server::config`: Configures MYSQL.
 * `mysql::server::service`: Manages service.
 * `mysql::server::account_security`: Deletes default MySQL accounts.
@@ -804,6 +807,17 @@ The name of the MySQL plugin to manage.
 #####  `soname`
 
 The library file name.
+
+#### `mysql_datadir`
+
+Initializes the MySQL data directory with version specific code. Pre MySQL 5.7.6
+it uses mysql_install_db. After MySQL 5.7.6 it uses mysqld --initialize-insecure.
+
+Insecure initialization is needed, as mysqld version 5.7 introduced "secure by default" mode.
+This means MySQL generates a random password and writes it to STDOUT. This means puppet
+can never accesss the database server afterwards, as no credencials are available.
+
+This type is an internal type and should not be called directly.
 
 ### Facts
 
