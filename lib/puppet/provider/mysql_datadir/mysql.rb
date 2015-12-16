@@ -3,6 +3,11 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
 
   desc 'manage data directories for mysql instances'
 
+  initvars
+
+  # Make sure we find mysqld on CentOS
+  ENV['PATH']=ENV['PATH'] + ':/usr/libexec'
+
   commands :mysqld => 'mysqld'
   commands :mysql_install_db => 'mysql_install_db'
 
