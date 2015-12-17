@@ -26,11 +26,13 @@ class mysql::server::service {
     }
   }
 
-  service { 'mysqld':
-    ensure   => $service_ensure,
-    name     => $mysql::server::service_name,
-    enable   => $mysql::server::real_service_enabled,
-    provider => $mysql::server::service_provider,
+  if $mysql::server::real_service_manage {
+    service { 'mysqld':
+      ensure   => $service_ensure,
+      name     => $mysql::server::service_name,
+      enable   => $mysql::server::real_service_enabled,
+      provider => $mysql::server::service_provider,
+    }
   }
 
   # only establish ordering between service and package if

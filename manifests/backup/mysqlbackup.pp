@@ -62,7 +62,7 @@ class mysql::backup::mysqlbackup (
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
-    weekday => 0,
+    weekday => '0',
     require => Package['meb'],
   }
 
@@ -72,7 +72,7 @@ class mysql::backup::mysqlbackup (
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
-    weekday => 1-6,
+    weekday => '1-6',
     require => Package['meb'],
   }
 

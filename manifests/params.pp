@@ -55,22 +55,24 @@ class mysql::params {
       }
 
       if $provider == 'mariadb' {
-        $client_package_name = 'mariadb'
-        $server_package_name = 'mariadb-server'
-        $server_service_name = 'mariadb'
-        $log_error           = '/var/log/mariadb/mariadb.log'
-        $config_file         = '/etc/my.cnf.d/server.cnf'
+        $client_package_name     = 'mariadb'
+        $server_package_name     = 'mariadb-server'
+        $server_service_name     = 'mariadb'
+        $log_error               = '/var/log/mariadb/mariadb.log'
+        $config_file             = '/etc/my.cnf.d/server.cnf'
         # mariadb package by default has !includedir set in my.cnf to /etc/my.cnf.d
-        $includedir          = undef
-        $pidfile             = '/var/run/mariadb/mariadb.pid'
+        $includedir              = undef
+        $pidfile                 = '/var/run/mariadb/mariadb.pid'
+        $daemon_dev_package_name = 'mariadb-devel'
       } else {
-        $client_package_name = 'mysql'
-        $server_package_name = 'mysql-server'
-        $server_service_name = 'mysqld'
-        $log_error           = '/var/log/mysqld.log'
-        $config_file         = '/etc/my.cnf'
-        $includedir          = '/etc/my.cnf.d'
-        $pidfile             = '/var/run/mysqld/mysqld.pid'
+        $client_package_name     = 'mysql'
+        $server_package_name     = 'mysql-server'
+        $server_service_name     = 'mysqld'
+        $log_error               = '/var/log/mysqld.log'
+        $config_file             = '/etc/my.cnf'
+        $includedir              = '/etc/my.cnf.d'
+        $pidfile                 = '/var/run/mysqld/mysqld.pid'
+        $daemon_dev_package_name = 'mysql-devel'
       }
 
       $basedir                 = '/usr'
@@ -89,15 +91,22 @@ class mysql::params {
       $python_package_name     = 'MySQL-python'
       $ruby_package_name       = 'ruby-mysql'
       $client_dev_package_name = undef
-      $daemon_dev_package_name = 'mysql-devel'
     }
 
     'Suse': {
       case $::operatingsystem {
         'OpenSuSE': {
-          $client_package_name = 'mysql-community-server-client'
-          $server_package_name = 'mysql-community-server'
-          $basedir             = '/usr'
+          if versioncmp( $::operatingsystemmajrelease, '13' ) >= 0 {
+            $client_package_name = 'mariadb-client'
+            $server_package_name = 'mariadb'
+            # First service start fails if this is set. Runs fine without
+            # it being set, in any case. Leaving it as-is for the mysql.
+            $basedir             = undef
+          } else {
+            $client_package_name = 'mysql-community-server-client'
+            $server_package_name = 'mysql-community-server'
+            $basedir             = '/usr'
+          }
         }
         'SLES','SLED': {
           if versioncmp($::operatingsystemrelease, '12') >= 0 {
@@ -350,7 +359,11 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
-      $server_service_provider = upstart
+      if versioncmp($::operatingsystemmajrelease, '14.10') > 0 {
+        $server_service_provider = 'systemd'
+      } else {
+        $server_service_provider = 'upstart'
+      }
     }
     default: {
       $server_service_provider = undef

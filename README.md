@@ -154,6 +154,19 @@ server address and credentials. For example:
 When working with a remote server, do *not* use the
 `mysql::server` class in your Puppet manifests.
 
+### Using passwords
+
+As well as inputting passwords as plain text you can input them as hashes. For example:
+
+~~~
+mysql::db { 'mydb':
+  user     => 'myuser',
+  password => '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4',
+  host     => 'localhost',
+  grant    => ['SELECT', 'UPDATE'],
+}
+~~~
+
 ## Reference
 
 ### Classes

@@ -413,4 +413,76 @@ describe 'mysql_grant' do
     end
   end
 
+  describe 'adding privileges to specific table' do
+    # Using puppet_apply as a helper
+    it 'setup mysql server' do
+      pp = <<-EOS
+        class { 'mysql::server': override_options => { 'root_password' => 'password' } }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'creates grant on missing table will fail' do
+      pp = <<-EOS
+        mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table':
+          user       => 'test@localhost',
+          privileges => ['SELECT'],
+          table      => 'grant_spec_db.grant_spec_table',
+        }
+      EOS
+      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/Table 'grant_spec_db\.grant_spec_table' doesn't exist/)
+    end
+
+    it 'checks if table exists before grant' do
+      pp = <<-EOS
+        if mysql_table_exists('grant_spec_db.grant_spec_table') {
+          mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table':
+            user       => 'test@localhost',
+            privileges => 'ALL',
+            table      => 'grant_spec_db.grant_spec_table',
+          }
+        }
+      EOS
+      apply_manifest(pp, :catch_changes => true)
+    end
+
+    it 'creates table' do
+      pp = <<-EOS
+        file { '/tmp/grant_spec_table.sql':
+          ensure  => file,
+          content => 'CREATE TABLE grant_spec_table (id int);',
+          before  => Mysql::Db['grant_spec_db'],
+        }
+        mysql::db { 'grant_spec_db':
+          user     => 'root1',
+          password => 'password',
+          sql      => '/tmp/grant_spec_table.sql',
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should have the table' do
+      expect(shell("mysql -e 'show tables;' grant_spec_db|grep grant_spec_table").exit_code).to be_zero
+    end
+
+    it 'checks if table exists before grant' do
+      pp = <<-EOS
+        if mysql_table_exists('grant_spec_db.grant_spec_table') {
+          mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table':
+            user       => 'test@localhost',
+            privileges => ['SELECT'],
+            table      => 'grant_spec_db.grant_spec_table',
+          }
+        }
+      EOS
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+
+
+  end
+
 end
