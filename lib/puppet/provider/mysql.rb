@@ -2,6 +2,10 @@ class Puppet::Provider::Mysql < Puppet::Provider
 
   # Without initvars commands won't work.
   initvars
+
+  # Make sure we find mysqld on CentOS
+  ENV['PATH']=ENV['PATH'] + ':/usr/libexec'
+
   commands :mysql      => 'mysql'
   commands :mysqld     => 'mysqld'
   commands :mysqladmin => 'mysqladmin'
