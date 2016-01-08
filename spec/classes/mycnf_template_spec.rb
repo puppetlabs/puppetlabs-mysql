@@ -29,6 +29,11 @@ describe 'mysql::server' do
           end
         end
 
+        describe 'skip-name-resolve set to an empty string' do
+          let(:params) {{ :override_options => { 'mysqld' => { 'skip-name-resolve' => '' }}}}
+          it { is_expected.to contain_file('mysql-config-file').with_content(/^skip-name-resolve$/) }
+        end
+
         describe 'ssl set to true' do
           let(:params) {{ :override_options => { 'mysqld' => { 'ssl' => true }}}}
           it { is_expected.to contain_file('mysql-config-file').with_content(/ssl/) }
