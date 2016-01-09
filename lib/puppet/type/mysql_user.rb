@@ -7,6 +7,12 @@ Puppet::Type.newtype(:mysql_user) do
   autorequire(:file) { '/root/.my.cnf' }
   autorequire(:class) { 'mysql::server' }
 
+  validate do
+    if !self[:ssl_cipher].empty? and self[:ssl_type] != 'SPECIFIED'
+      fail ArgumentError, "Specifying a SSL cipher requires SSL-type 'SPECIFIED'"
+    end
+  end
+
   newparam(:name, :namevar => true) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."
     validate do |value|
@@ -71,6 +77,24 @@ Puppet::Type.newtype(:mysql_user) do
   newproperty(:max_updates_per_hour) do
     desc "Max updates per hour for the user. 0 means no (or global) limit."
     newvalue(/\d+/)
+  end
+
+  newproperty(:ssl_type) do
+    desc "SSL-type the user has to use to connect. Can be any of '', 'ANY', 'SPECIFIED', 'X509'."
+    newvalues('', 'ANY', 'SPECIFIED', 'X509')
+    defaultto ''
+    munge do |value|
+      String(value).upcase
+    end
+  end
+
+  newproperty(:ssl_cipher) do
+    desc "SSL-cipher the user has to use to connect. Requires ssl-type='SPECIFIED'."
+    newvalue(/\w*/)
+    defaultto ''
+    munge do |value|
+      String(value)
+    end
   end
 
 end

@@ -14,16 +14,16 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     users.collect do |name|
       if mysqld_version.nil?
         ## Default ...
-        query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+        query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD, SSL_TYPE, SSL_CIPHER /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       else
         if mysqld_type == "mysql" and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
-          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, AUTHENTICATION_STRING, SSL_TYPE, SSL_CIPHER, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
         else
-          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD, SSL_TYPE, SSL_CIPHER /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
         end
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
-      @max_updates_per_hour, @password, @plugin = mysql([defaults_file, "-NBe", query].compact).split(/\s/)
+      @max_updates_per_hour, @password, @ssl_type, @ssl_cipher, @plugin = mysql([defaults_file, "-NBe", query].compact).split(/\s/)
 
       new(:name                     => name,
           :ensure                   => :present,
@@ -32,7 +32,9 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
           :max_user_connections     => @max_user_connections,
           :max_connections_per_hour => @max_connections_per_hour,
           :max_queries_per_hour     => @max_queries_per_hour,
-          :max_updates_per_hour     => @max_updates_per_hour
+          :max_updates_per_hour     => @max_updates_per_hour,
+          :ssl_type                 => @ssl_type,
+          :ssl_cipher               => @ssl_cipher
          )
     end
   end
@@ -56,6 +58,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     max_connections_per_hour = @resource.value(:max_connections_per_hour) || 0
     max_queries_per_hour     = @resource.value(:max_queries_per_hour) || 0
     max_updates_per_hour     = @resource.value(:max_updates_per_hour) || 0
+    ssl_type                 = @resource.value(:ssl_type)
+    ssl_cipher               = @resource.value(:ssl_cipher)
 
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
@@ -72,11 +76,24 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     end
-    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}"].compact)
+    grant_require = case ssl_type
+      when 'ANY' then 'SSL'
+      when 'SPECIFIED' then 'SSL'
+      when 'X509' then 'X509'
+      when '' then 'NONE'
+      else raise Puppet::Error, "Non-supported SSL-type #{ssl_type}"
+    end
+    if !ssl_cipher.empty? 
+      grant_require << " AND CIPHER '#{ssl_cipher}'"
+    end
+    
+    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' REQUIRE #{grant_require} WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}"].compact)
     @property_hash[:max_user_connections] = max_user_connections
     @property_hash[:max_connections_per_hour] = max_connections_per_hour
     @property_hash[:max_queries_per_hour] = max_queries_per_hour
     @property_hash[:max_updates_per_hour] = max_updates_per_hour
+    @property_hash[:ssl_type] = ssl_type
+    @property_hash[:ssl_cipher] = ssl_cipher
 
     exists? ? (return true) : (return false)
   end
@@ -150,6 +167,27 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}"].compact).chomp
 
     max_updates_per_hour == int ? (return true) : (return false)
+  end
+
+  def ssl_type=(string)
+    merged_name = self.class.cmd_user(@resource[:name])
+    ssl_require = case string
+        when 'ANY' then 'SSL'
+        when 'SPECIFIED' then 'SSL'
+        when 'X509' then 'X509'
+        when '' then 'NONE'
+        else raise Puppet::Error, "Non-supported SSL-type #{string}"
+      end
+    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO #{merged_name} REQUIRE #{ssl_require}"].compact).chomp
+
+    ssl_type == string ? (return true) : (return false)
+  end
+
+  def ssl_cipher=(string)
+    merged_name = self.class.cmd_user(@resource[:name])
+    mysql([defaults_file, '-e', "GRANT USAGE ON *.* TO #{merged_name} REQUIRE CIPHER '#{string}'"].compact).chomp
+
+    ssl_cipher == string ? (return true) : (return false)
   end
 
 end
