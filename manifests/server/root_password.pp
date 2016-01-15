@@ -9,7 +9,7 @@ class mysql::server::root_password {
   # below exec will remove this default password. If the user has supplied a root
   # password it will be set further down with the mysql_user resource.
   $rm_pass_cmd = join([
-    "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' ${secret_file}) password ''",
+    "mysqladmin -u ${mysql::server::root_user} --password=\$(grep -o '[^ ]\\+\$' ${secret_file}) password ''",
     "rm -f ${secret_file}"
   ], ' && ')
   exec { 'remove install pass':
@@ -20,7 +20,7 @@ class mysql::server::root_password {
 
   # manage root password if it is set
   if $mysql::server::create_root_user == true and $mysql::server::root_password != 'UNSET' {
-    mysql_user { 'root@localhost':
+    mysql_user { "${mysql::server::root_user}@localhost":
       ensure        => present,
       password_hash => mysql_password($mysql::server::root_password),
       require       => Exec['remove install pass']
@@ -39,7 +39,7 @@ class mysql::server::root_password {
       File["${::root_home}/.my.cnf"] { show_diff => false }
     }
     if $mysql::server::create_root_user == true {
-      Mysql_user['root@localhost'] -> File["${::root_home}/.my.cnf"]
+      Mysql_user["${mysql::server::root_user}@localhost"] -> File["${::root_home}/.my.cnf"]
     }
   }
 

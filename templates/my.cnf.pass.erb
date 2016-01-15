@@ -1,7 +1,7 @@
 ### MANAGED BY PUPPET ###
 
 [client]
-user=root
+user='<%= scope.lookupvar('mysql::server::root_user') %>'
 host=localhost
 <% unless scope.lookupvar('mysql::server::root_password') == 'UNSET' -%>
 password='<%= scope.lookupvar('mysql::server::root_password') %>'
