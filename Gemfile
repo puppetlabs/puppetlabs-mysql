@@ -11,11 +11,12 @@ def location_for(place, fake_version = nil)
 end
 
 group :development, :unit_tests do
-  # rspec must be v2 for ruby 1.8.7
-  if RUBY_VERSION >= '1.8.7' and RUBY_VERSION < '1.9'
-    gem 'rspec', '~> 2.0'
+  # rspec-core 3.1.7 is the last version to support ruby 1.8
+  if RUBY_VERSION < '1.9'
+    gem 'rspec-core', '3.1.7'
   else
-    gem 'rspec-core', '3.1.7',     :require => false
+    # newer version required to avoid BKR-537
+    gem 'rspec-core', '>= 3.4'
   end
 
   gem 'puppetlabs_spec_helper',  :require => false
