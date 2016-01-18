@@ -47,3 +47,13 @@ RSpec.configure do |c|
     end
   end
 end
+
+shared_examples "a idempotent resource" do
+  it 'should apply with no errors' do
+    apply_manifest(pp, :catch_failures => true)
+  end
+
+  it 'should apply a second time without changes' do
+    apply_manifest(pp, :catch_changes => true)
+  end
+end
