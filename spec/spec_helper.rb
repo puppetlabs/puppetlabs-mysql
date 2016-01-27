@@ -1,7 +1,7 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
-require 'rspec-puppet-facts'
-include RspecPuppetFacts
 
-# The default set of platforms to test again.
-ENV['UNIT_TEST_PLATFORMS'] = 'centos-6-x86_64 ubuntu-1404-x86_64'
-PLATFORMS = ENV['UNIT_TEST_PLATFORMS'].split(' ')
+# put local configuration and setup into spec_helper_local
+begin
+  require 'spec_helper_local'
+rescue LoadError
+end
