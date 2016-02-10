@@ -30,7 +30,7 @@ describe 'mysql::user', :type => :define do
 
       it 'should use user parameter as user name instead of name' do
         params.merge!({'user' => 'realuser'})
-        is_expected.to contain_mysql_user('realuser')
+        is_expected.to contain_mysql_user('realuser@localhost').with_ensure('absent')
       end
     end
   end
