@@ -12,7 +12,8 @@ describe 'mysql::user', :type => :define do
       let(:title) { 'testuser' }
 
       let(:params) {
-        { 'password' => 'testpass',
+        { 'dbname'   => 'test_db',
+          'password' => 'testpass',
         }
       }
 
