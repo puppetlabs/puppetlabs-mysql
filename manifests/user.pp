@@ -1,8 +1,8 @@
 # See README.md for details.
 define mysql::user (
-  $user,
+  $user           = $name,
   $password,
-  $dbname         = $name,
+  $dbname,
   $charset        = 'utf8',
   $collate        = 'utf8_general_ci',
   $host           = 'localhost',
