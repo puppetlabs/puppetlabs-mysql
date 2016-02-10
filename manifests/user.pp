@@ -24,7 +24,6 @@ define mysql::user (
   $user_resource = {
     ensure        => $ensure,
     password_hash => mysql_password($password),
-#    provider      => 'mysql',
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
@@ -32,7 +31,6 @@ define mysql::user (
     mysql_grant { "${user}@${host}/${table}":
       privileges => $grant,
       options    => $grant_options,
-#      provider   => 'mysql',
       user       => "${user}@${host}",
       table      => $table,
       require    => [
