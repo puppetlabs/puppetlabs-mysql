@@ -29,8 +29,8 @@ describe 'mysql::user', :type => :define do
       end
 
       it 'should use user parameter as user name instead of name' do
-        params.merge!({'user' => 'realuser'})
-        is_expected.to contain_mysql_user('realuser@localhost').with_ensure('absent')
+        params.merge!({'user' => 'realuser', 'host' => 'localhost'})
+        is_expected.to contain_mysql_user('realuser@localhost').with_ensure('present')
       end
     end
   end
