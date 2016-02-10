@@ -134,6 +134,37 @@ mysql::db { 'mydb':
 }
 ~~~
 
+### Creating a user
+
+To use `mysql::user` to create a user and assign some privileges:
+
+~~
+mysql::user { 'myuser':
+  password => 'mypass',
+  host     => 'localhost',
+  grant    => ['SELECT', 'UPDATE'],
+}
+~~
+
+Or to use a different resource name with exported resources:
+
+~~
+ @@mysql::user { "myuser_${fqdn}":
+  user     => 'myuser',
+  password => 'mypass',
+  dbname   => 'mydb',
+  host     => ${fqdn},
+  grant    => ['SELECT', 'UPDATE'],
+  tag      => $domain,
+}
+~~
+
+Then you can collect it on the remote DB server:
+
+~~
+Mysql::User <<| tag == $domain |>>
+
+
 ### Custom Configuration
 
 To add custom MySQL configuration, drop additional files into
