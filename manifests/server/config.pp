@@ -44,6 +44,15 @@ class mysql::server::config {
     }
   }
 
+  # Issue a warning if other options are used for disabling SSL: according to
+  # the template they will be ordered before other 'ssl-*' options and in turns
+  # leads MySQL to ignore the deactivation request.
+  if (!$options['mysqld']['ssl'] or $options['mysqld']['skip-ssl'] or $options['mysqld']['disable-ssl']) {
+    notify {'warn-ineffective-disable-options':
+      message => 'Use "ssl-disable" => true to disable SSL! Other options are not respected!'
+    }
+  }
+
   if $options['mysqld']['ssl-disable'] {
     notify {'ssl-disable':
       message =>'Disabling SSL is evil! You should never ever do this except if you are forced to use a mysql version compiled without SSL support'
