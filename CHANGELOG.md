@@ -1,3 +1,50 @@
+## Supported Release 3.7.0
+###Summary
+
+A large release with several new features. Also includes a considerable amount of bugfixes, many around compatibility and improvements to current functionality.
+
+#### Features
+
+- Now uses mariadb in OpenSuSE >= 13.1.
+- Switch to rspec-puppet-facts.
+- Additional function to check if table exists before grant.
+- Add ability to input password hash directly.
+- Now checking major release instead of specific release.
+- Debian 8 support.
+
+#### Bugfixes
+
+- Minor doc update.
+- Fixes improper use of function `warn` in backup manifest of server.
+- Fixes to Compatibility with PE 3.3.
+- Fixes `when not managing config file` in `mysql_server_spec`.
+- Improved user validation and munging.
+- Fixes fetching the mysql_user password for MySQL >=5.7.6.
+- Fixes unique server_id within my.cnf, the issue were the entire mac address was not being read in to generate the id.
+- Corrects the daemon_dev_package_name for mariadb on redhat.
+- Fix version compare to properly suppress show_diff for root password.
+- Fixes to ensure compatibility with future parser.
+- Solaris removed from PE in metadata as its not supported.
+- Use MYSQL_PWD to avoid mysqldump warnings.
+- Use temp cnf file instead of env variable which creates acceptance test failures.
+- No longer hash passwords that are already hashed.
+- Fix Gemfile to work with ruby 1.8.7.
+- Fixed MySQL 5.7.6++ compatibility.
+- Fixing error when disabling service management and the service does not exist.
+- Ubuntu vivid should use systemd not upstart.
+- Fixed new mysql_datadir provider on CentOS for MySQl 5.7.6 compatibility.
+- Ensure if service restart to wait till mysql is up.
+- Move all dependencies to not have them in case of service unmanaged.
+- Re-Added the ability to set a empty string as option parameter.
+- Fixes edge-case with dropping pre-existing users with grants.
+- Fix logic for choosing rspec version.
+- Refactored main acceptance suite.
+- Skip idempotency tests on test cells that do have PUP-5016 unfixed.
+- Fix tmpdir to be shared across examples.
+- Update to current msync configs [006831f].
+- Fix mysql_grant with MySQL ANSI_QUOTES mode.
+- Generate .my.cnf for all sections.
+
 ## Supported Release 3.6.2
 ###Summary
 
