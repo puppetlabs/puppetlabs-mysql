@@ -144,7 +144,7 @@ To add custom MySQL configuration, place additional files into `includedir`. Thi
 
 To instantiate databases and users on an existing MySQL server, you need a `.my.cnf` file in `root`'s home directory. This file must specify the remote server address and credentials. For example:
 
-```puppet
+```
 [client]
 user=root
 host=localhost
@@ -232,7 +232,7 @@ This parameter no longer does anything. It exists only for backwards compatibili
 
 Specifies override options to pass into MySQL. Structured like a hash in the my.cnf file:
 
-```
+```puppet
 $override_options = {
   'section' => {
     'item'             => 'thing',
