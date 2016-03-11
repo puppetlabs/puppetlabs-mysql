@@ -9,7 +9,7 @@ class mysql::server::installdb {
     $basedir = $mysql::server::options['mysqld']['basedir']
     $config_file = $mysql::server::config_file
 
-    if $mysql::server::manage_config_file {
+    if $mysql::server::manage_config_file and $config_file != $mysql::params::config_file {
       $_config_file=$config_file
     } else {
       $_config_file=undef
