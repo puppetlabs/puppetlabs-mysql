@@ -17,6 +17,7 @@ group :development, :unit_tests do
   gem 'puppet_facts',            :require => false
   gem 'json',                    :require => false
   gem 'metadata-json-lint',      :require => false
+  gem 'rake', '~> 10.5',         :require => false
 end
 
 group :system_tests do

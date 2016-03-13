@@ -9,9 +9,10 @@ class mysql::server::installdb {
     $basedir = $mysql::server::options['mysqld']['basedir']
     $config_file = $mysql::server::config_file
 
-    if $mysql::server::manage_config_file {
+    if $mysql::server::manage_config_file and $config_file != $mysql::params::config_file {
       $install_db_args = "--basedir=${basedir} --defaults-extra-file=${config_file} --datadir=${datadir} --user=${mysqluser}"
-
+    } else {
+      $install_db_args = "--basedir=${basedir} --datadir=${datadir} --user=${mysqluser}"
     }
 
     exec { 'mysql_install_db':
