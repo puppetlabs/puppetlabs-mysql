@@ -23,6 +23,9 @@ ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 TMPFILE=`mktemp /tmp/backup.XXXXXX` || exit 1
 echo -e "[client]\npassword=$PASS\nuser=$USER" > $TMPFILE
 
+# Ensure backup directory exist.
+mkdir -p $DIR
+
 PREFIX=mysql_backup_
 <% if @ignore_events %>
 ADDITIONAL_OPTIONS="--ignore-table=mysql.event"
