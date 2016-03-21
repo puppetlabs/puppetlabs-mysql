@@ -34,6 +34,12 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
         :string => '/usr/sbin/mysqld  Ver 10.0.21-MariaDB for Linux on x86_64 (MariaDB Server)',
         :mysql_type => 'mariadb',
       },
+      'mariadb-10.0-deb8' =>
+      {
+        :version => '10.0.23',
+        :string => '/usr/sbin/mysqld (mysqld 10.0.23-MariaDB-0+deb8u1)',
+        :mysql_type => 'mariadb',
+      },
       'percona-5.5' =>
       {
         :version => '5.5.39',
