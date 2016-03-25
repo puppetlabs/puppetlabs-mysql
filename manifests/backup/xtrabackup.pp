@@ -20,7 +20,7 @@ class mysql::backup::xtrabackup (
   $prescript          = false,
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
-) {
+) inherits mysql::params {
 
   package{ 'percona-xtrabackup':
     ensure  => $ensure,

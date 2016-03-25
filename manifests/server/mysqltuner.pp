@@ -28,11 +28,11 @@ class mysql::server::mysqltuner(
     }
     # see https://tickets.puppetlabs.com/browse/ENTERPRISE-258
     if $_puppetversion and $_puppetversion =~ /Puppet Enterprise/ and versioncmp($_puppetversion, '3.8.0') < 0 {
-      class { 'staging':
+      class { '::staging':
         path => '/opt/mysql_staging',
       }
     } else {
-      class { 'staging': }
+      class { '::staging': }
     }
 
     staging::file { "mysqltuner-${_version}":
