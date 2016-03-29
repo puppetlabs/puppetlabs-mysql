@@ -434,19 +434,6 @@ describe 'mysql_grant' do
       expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/Table 'grant_spec_db\.grant_spec_table' doesn't exist/)
     end
 
-    it 'checks if table exists before grant' do
-      pp = <<-EOS
-        if mysql_table_exists('grant_spec_db.grant_spec_table') {
-          mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table':
-            user       => 'test@localhost',
-            privileges => 'ALL',
-            table      => 'grant_spec_db.grant_spec_table',
-          }
-        }
-      EOS
-      apply_manifest(pp, :catch_changes => true)
-    end
-
     it 'creates table' do
       pp = <<-EOS
         file { '/tmp/grant_spec_table.sql':
@@ -467,22 +454,5 @@ describe 'mysql_grant' do
     it 'should have the table' do
       expect(shell("mysql -e 'show tables;' grant_spec_db|grep grant_spec_table").exit_code).to be_zero
     end
-
-    it 'checks if table exists before grant' do
-      pp = <<-EOS
-        if mysql_table_exists('grant_spec_db.grant_spec_table') {
-          mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table':
-            user       => 'test@localhost',
-            privileges => ['SELECT'],
-            table      => 'grant_spec_db.grant_spec_table',
-          }
-        }
-      EOS
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
-    end
-
-
   end
-
 end
