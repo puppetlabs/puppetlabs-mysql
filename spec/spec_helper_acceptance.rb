@@ -49,6 +49,7 @@ RSpec.configure do |c|
       else
         on host, puppet('module','install','puppetlabs-stdlib','--version','3.2.0')
         on host, puppet('module','install','stahnma/epel')
+        on host, puppet('module','install','nanliu/staging')
       end
     end
   end
