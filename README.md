@@ -11,6 +11,7 @@
     * [Customize configuration](#create-custom-configuration)
     * [Work with an existing server](#work-with-an-existing-server)
     * [Specify passwords](#specify-passwords)
+    * [Install Percona server on Centos](#install-percona-server-on-centos)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -164,6 +165,80 @@ mysql::db { 'mydb':
   host     => 'localhost',
   grant    => ['SELECT', 'UPDATE'],
 }
+```
+
+### Install Percona server on Centos
+
+This example shows how to do a minimal installation of a Percona server on a
+Centos (has been tested on Puppet 4.4 / Centos 7 / Percona Server 5.7)
+including the Percona server, client and bindingsi (including perl and python ones).
+
+Of course, you will probably want to customize it a bit more. and update the
+version to the one you will want to have (trying to keep a coherence between
+those)
+
+**Note:** The installation of the yum repository is not part of this package
+and is here only to show a full example of how you can install this.
+
+```puppet
+yumrepo { 'percona':
+  descr    => 'CentOS $releasever - Percona',
+  baseurl  => 'http://repo.percona.com/centos/$releasever/os/$basearch/',
+  gpgkey   => 'http://www.percona.com/downloads/percona-release/RPM-GPG-KEY-percona',
+  enabled  => 1,
+  gpgcheck => 1,
+}
+
+class {'mysql::server':
+  package_name     => 'Percona-Server-server-57',
+  package_ensure   => '5.7.11-4.1.el7',
+  service_name     => 'mysql',
+  config_file      => '/etc/my.cnf',
+  includedir       => '/etc/my.cnf.d',
+  root_password    => 'PutYourOwnPwdHere',
+  override_options => {
+    mysqld => {
+      log-error => '/var/log/mysqld.log',
+      pid-file  => '/var/run/mysqld/mysqld.pid',
+    },
+    mysqld_safe => {
+      log-error => '/var/log/mysqld.log',
+    },
+  }
+}
+
+# Note: this is not needed  in our case as installing Percona-Server-server-57
+# also installs Percona-Server-client-57. It is only here to show how to
+# install the Percona MySQL client
+class {'mysql::client':
+  package_name   => 'Percona-Server-client-57',
+  package_ensure => '5.7.11-4.1.el7',
+}
+
+# Note: those package are normally installed along with Percona-Server-server-57
+# so it's mostly here for the example in case you need to install the bindings.
+class { 'mysql::bindings':
+  client_dev_package_name   => 'Percona-Server-shared-57',
+  client_dev_package_ensure => '5.7.11-4.1.el7',
+  client_dev                => true,
+  daemon_dev_package_name   => 'Percona-Server-devel-57',
+  daemon_dev_package_ensure => '5.7.11-4.1.el7',
+  daemon_dev                => true,
+  perl_enable               => true,
+  perl_package_name         => 'perl-DBD-MySQL',
+  python_enable             => true,
+  python_package_name       => 'MySQL-python',
+}
+
+# Dependencies definition
+Yumrepo['percona']->
+Class['mysql::server']
+
+Yumrepo['percona']->
+Class['mysql::client']
+
+Yumrepo['percona']->
+Class['mysql::bindings']
 ```
 
 ## Reference
