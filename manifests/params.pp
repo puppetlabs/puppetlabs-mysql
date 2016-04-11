@@ -96,7 +96,7 @@ class mysql::params {
     'Suse': {
       case $::operatingsystem {
         'OpenSuSE': {
-          if versioncmp( $::operatingsystemmajrelease, '13' ) >= 0 {
+          if versioncmp( $::operatingsystemmajrelease, '12' ) >= 0 {
             $client_package_name = 'mariadb-client'
             $server_package_name = 'mariadb'
             # First service start fails if this is set. Runs fine without
