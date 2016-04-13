@@ -1,10 +1,10 @@
 HOSTS:
-  ubuntu-1404-x64:
+  debian-8-x64:
     roles:
       - agent
       - default
-    platform: ubuntu-14.04-amd64
+    platform: debian-8-amd64
     hypervisor: vagrant
-    box: puppetlabs/ubuntu-14.04-64-nocm
+    box: puppetlabs/debian-8.2-64-nocm
 CONFIG:
   type: foss
