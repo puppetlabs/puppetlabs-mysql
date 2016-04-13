@@ -17,6 +17,16 @@ class mysql::server::config {
       recurse => $mysql::server::purge_conf_dir,
       purge   => $mysql::server::purge_conf_dir,
     }
+
+    # on some systems this is /etc/my.cnf.d, while Debian has /etc/mysql/conf.d and FreeBSD something in /usr/local. For the latter systems,
+    # managing this basedir is also required, to have it available before the package is installed.
+    $includeparentdir = mysql_dirname($includedir)
+    if $includeparentdir != '/' and $includeparentdir != '/etc' {
+      file { $includeparentdir:
+        ensure => directory,
+        mode   => '0755',
+      }
+    }
   }
 
   $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)
