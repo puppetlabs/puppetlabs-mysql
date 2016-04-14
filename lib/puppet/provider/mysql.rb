@@ -24,7 +24,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
     mysqld_version_string.scan(/mariadb/i) { return "mariadb" }
     mysqld_version_string.scan(/\s\(mysql/i) { return "mysql" }
     mysqld_version_string.scan(/\s\(percona/i) { return "percona" }
-    nil
+    return "mysql"
   end
 
   def mysqld_type
