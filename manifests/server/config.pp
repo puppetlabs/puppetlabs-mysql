@@ -52,6 +52,16 @@ class mysql::server::config {
       mode                    => '0644',
       selinux_ignore_defaults => true,
     }
+
+    # on mariadb systems, $includedir is not defined, but /etc/my.cnf.d has
+    # to be managed to place the server.cnf there
+    $configparentdir = mysql_dirname($mysql::server::config_file)
+    if $configparentdir != '/' and $configparentdir != '/etc' and $configparentdir != $includedir and $configparentdir != mysql_dirname($includedir) {
+      file { $configparentdir:
+        ensure => directory,
+        mode   => '0755',
+      }
+    }
   }
 
   if $options['mysqld']['ssl-disable'] {
