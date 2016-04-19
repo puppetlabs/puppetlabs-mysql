@@ -56,7 +56,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
 
   def exists?
     datadir = @resource[:datadir]
-    File.directory?("#{datadir}/mysql")
+    File.directory?("#{datadir}/mysql/servers.frm")
   end
 
   ##
