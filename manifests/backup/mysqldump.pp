@@ -21,6 +21,10 @@ class mysql::backup::mysqldump (
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) inherits mysql::params {
 
+  package { 'bzip2':
+    ensure    => $ensure,
+  }
+
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql_password($backuppassword),
@@ -47,7 +51,7 @@ class mysql::backup::mysqldump (
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
-    require => File['mysqlbackup.sh'],
+    require => [File['mysqlbackup.sh'], Package['bzip2']],
   }
 
   file { 'mysqlbackup.sh':
