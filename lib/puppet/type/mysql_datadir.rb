@@ -27,4 +27,9 @@ Puppet::Type.newtype(:mysql_datadir) do
     desc "Insecure initialization (needed for 5.7.6++)."
   end
 
+  newparam(:log_error) do
+    desc "The path to the mysqld error log file (used with the --log-error option)"
+    newvalues(/^\//)
+  end
+
 end

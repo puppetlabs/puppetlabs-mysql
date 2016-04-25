@@ -8,6 +8,7 @@ class mysql::server::installdb {
     $datadir = $mysql::server::options['mysqld']['datadir']
     $basedir = $mysql::server::options['mysqld']['basedir']
     $config_file = $mysql::server::config_file
+    $log_error = $mysql::server::options['mysqld']['log-error']
 
     if $mysql::server::manage_config_file and $config_file != $mysql::params::config_file {
       $_config_file=$config_file
@@ -20,6 +21,7 @@ class mysql::server::installdb {
       datadir             => $datadir,
       basedir             => $basedir,
       user                => $mysqluser,
+      log_error           => $log_error,
       defaults_extra_file => $_config_file,
     }
 
