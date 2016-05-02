@@ -61,6 +61,15 @@ class Puppet::Provider::Mysql < Puppet::Provider
     mysql([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"].compact).split("\n")
   end
 
+  # Optional parameter to run a statement on the MySQL system database.
+  def self.system_database
+    '--database=mysql'
+  end
+
+  def system_database
+    self.class.system_database
+  end
+
   # Take root@localhost and munge it to 'root'@'localhost'
   def self.cmd_user(user)
     "'#{user.sub('@', "'@'")}'"
