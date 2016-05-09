@@ -3,8 +3,8 @@ class Puppet::Provider::Mysql < Puppet::Provider
   # Without initvars commands won't work.
   initvars
 
-  # Make sure we find mysqld on CentOS
-  ENV['PATH']=ENV['PATH'] + ':/usr/libexec'
+  # Make sure we find mysql commands on CentOS and FreeBSD
+  ENV['PATH']=ENV['PATH'] + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
 
   commands :mysql      => 'mysql'
   commands :mysqld     => 'mysqld'
@@ -22,7 +22,6 @@ class Puppet::Provider::Mysql < Puppet::Provider
   def self.mysqld_type
     # find the mysql "dialect" like mariadb / mysql etc.
     mysqld_version_string.scan(/mariadb/i) { return "mariadb" }
-    mysqld_version_string.scan(/\s\(mysql/i) { return "mysql" }
     mysqld_version_string.scan(/\s\(percona/i) { return "percona" }
     return "mysql"
   end
