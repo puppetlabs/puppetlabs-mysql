@@ -81,7 +81,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     query << " ON #{table_string}"
     query << " TO #{user_string}"
     query << self.class.cmd_options(options) unless options.nil?
-    mysql([defaults_file, '-e', query].compact)
+    mysql([defaults_file, system_database, '-e', query].compact)
   end
 
   def create
@@ -107,10 +107,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     # exist to be executed successfully
     if revoke_privileges.include? 'ALL'
       query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
-      mysql([defaults_file, '-e', query].compact)
+      mysql([defaults_file, system_database, '-e', query].compact)
     end
     query = "REVOKE #{priv_string} ON #{table_string} FROM #{user_string}"
-    mysql([defaults_file, '-e', query].compact)
+    mysql([defaults_file, system_database, '-e', query].compact)
   end
 
   def destroy
