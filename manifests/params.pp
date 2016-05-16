@@ -169,7 +169,7 @@ class mysql::params {
       $log_error               = '/var/log/mysql/error.log'
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
-      $mysql_group             = 'mysql'
+      $mysql_group             = 'adm'
       $server_service_name     = 'mysql'
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
