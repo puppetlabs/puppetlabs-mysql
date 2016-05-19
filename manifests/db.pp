@@ -25,10 +25,6 @@ define mysql::db (
 
   include '::mysql::client'
 
-  anchor{"mysql::db_${name}::begin": }->
-  Class['::mysql::client']->
-  anchor{"mysql::db_${name}::end": }
-
   $db_resource = {
     ensure   => $ensure,
     charset  => $charset,
