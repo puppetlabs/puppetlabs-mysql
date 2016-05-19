@@ -18,14 +18,6 @@ class mysql::server::service {
     $mysqluser = $options['mysqld']['user']
   }
 
-  if $options['mysqld']['log-error'] {
-    file { $options['mysqld']['log-error']:
-      ensure => present,
-      owner  => $mysqluser,
-      group  => $::mysql::server::mysql_group,
-    }
-  }
-
   if $mysql::server::real_service_manage {
     service { 'mysqld':
       ensure   => $service_ensure,
