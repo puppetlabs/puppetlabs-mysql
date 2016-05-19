@@ -1,5 +1,6 @@
 #
 class mysql::server::installdb {
+  $options = $mysql::server::options
 
   if $mysql::server::package_manage {
 
@@ -15,6 +16,15 @@ class mysql::server::installdb {
     } else {
       $_config_file=undef
     }
+
+  if $options['mysqld']['log-error'] {
+    file { $options['mysqld']['log-error']:
+      ensure => present,
+      owner  => $mysqluser,
+      group  => $::mysql::server::mysql_group,
+      before => Mysql_datadir[ $datadir ],
+    }
+  }
 
     mysql_datadir { $datadir:
       ensure              => 'present',
