@@ -159,8 +159,19 @@ class mysql::params {
     }
 
     'Debian': {
-      $client_package_name     = 'mysql-client'
-      $server_package_name     = 'mysql-server'
+      if  $::lsbdistid == 'Debian' and $::lsbdistcodename == 'jessie' {
+        $client_package_name     = 'mariadb-client'
+        $server_package_name     = 'mariadb-server'
+
+        $client_dev_package_name = 'libmariadb-client-lgpl-dev'
+        $daemon_dev_package_name = 'libmariadb-dev'
+      } else {
+        $client_package_name     = 'mysql-client'
+        $server_package_name     = 'mysql-server'
+
+        $client_dev_package_name = 'libmysqlclient-dev'
+        $daemon_dev_package_name = 'libmysqld-dev'
+      }
 
       $basedir                 = '/usr'
       $config_file             = '/etc/mysql/my.cnf'
@@ -186,8 +197,6 @@ class mysql::params {
         'jessie'           => 'ruby-mysql',
         default            => 'libmysql-ruby',
       }
-      $client_dev_package_name = 'libmysqlclient-dev'
-      $daemon_dev_package_name = 'libmysqld-dev'
     }
 
     'Archlinux': {
