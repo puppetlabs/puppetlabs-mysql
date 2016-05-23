@@ -159,8 +159,7 @@ class mysql::params {
     }
 
     'Debian': {
-      # jessie onwards
-      if versioncmp($::operatingsystemrelease, '8') >= 0 {
+      if  $::lsbdistid == 'Debian' and $::lsbdistcodename == 'jessie' {
         $client_package_name     = 'mariadb-client'
         $server_package_name     = 'mariadb-server'
 
