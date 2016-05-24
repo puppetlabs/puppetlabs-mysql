@@ -1,6 +1,6 @@
 # See README.me for usage.
 class mysql::backup::xtrabackup (
-  $xtrabackup_package_name = 'percona-xtrabackup',
+  $xtrabackup_package_name = $mysql::params::xtrabackup_package_name,
   $backupuser              = '',
   $backuppassword          = '',
   $backupdir               = '',
