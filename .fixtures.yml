@@ -1,6 +1,6 @@
 fixtures:
   repositories:
     "stdlib": "https://github.com/puppetlabs/puppetlabs-stdlib"
-    "staging": "https://github.com/nanliu/puppet-staging"
+    "staging": "https://github.com/voxpupuli/puppet-staging"
   symlinks:
     "mysql": "#{source_dir}"

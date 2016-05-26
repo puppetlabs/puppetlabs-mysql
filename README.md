@@ -908,13 +908,15 @@ loopback interfaces. Because those nodes aren't connected to the outside world, 
 This module has been tested on:
 
 * RedHat Enterprise Linux 5, 6, 7
-* Debian 6, 7
+* Debian 6, 7, 8
 * CentOS 5, 6, 7
-* Ubuntu 10.04, 12.04, 14.04
+* Ubuntu 10.04, 12.04, 14.04, 16.04
 * Scientific Linux 5, 6
 * SLES 11
 
 Testing on other platforms has been minimal and cannot be guaranteed.
+
+**Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
 
 ## Development
 
