@@ -1,3 +1,36 @@
+## Supported Release 3.8.0
+###Summary
+This release adds Percona 5.7 support and compatibility with Ubuntu 16.04, in addition to various bugfixes.
+
+#### Features
+- Adds support for Percona 5.7
+- Adds support for Ubuntu 16.04 (Xenial)
+
+#### Known Limitations
+- The mysqlbackup.sh script will not work on MySQL 5.7.0 and up.
+
+#### Bugfixes
+- Use mysql_install_db only with uniq defaults-extra-file
+- Updates mysqlbackup.sh to ensure backup directory exist
+- Loosen MariaDB recognition to fix it on Debian 8
+- Allow mysql::backup::mysqldump to access root_group in tests
+- Fixed problem with ignoring parameters from global configs
+- Fixes ordering issue that initialized mysqld before config is set
+- (MODULES-1256) Fix parameters on OpenSUSE 12
+- Fixes install errors on Debian-based OS by configuring the base of includedir
+- Configure the configfile location for mariadb
+- Default mysqld_type return value should be 'mysql' if another type is not detected
+- Make sure that bzip2 is installed before setting up the cron tab job using mysqlbackup.sh
+- Fixes path issue on FreeBSD
+- Check that /var/lib/mysql actually contains files
+- Removes mysql regex when checking type
+- (MODULES-2111) Add the system database to user related actions
+- Updates default group for logfiles on Debian-based OS to 'adm'
+- Fixes an issue with Amazon linux major release 4 installation
+- Fixes 'mysql_install_db' script support on Gentoo
+- Removes erroneous anchors to mysql::client from mysql::db
+- Adds path to be able to find MySQL 5.5 installation on CentOS
+
 ## Supported Release 3.7.0
 ###Summary
 

@@ -11,7 +11,7 @@
     * [Customize configuration](#create-custom-configuration)
     * [Work with an existing server](#work-with-an-existing-server)
     * [Specify passwords](#specify-passwords)
-    * [Install Percona server on Centos](#install-percona-server-on-centos)
+    * [Install Percona server on CentOS](#install-percona-server-on-centos)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -167,18 +167,16 @@ mysql::db { 'mydb':
 }
 ```
 
-### Install Percona server on Centos
+### Install Percona server on CentOS
 
 This example shows how to do a minimal installation of a Percona server on a
-Centos (has been tested on Puppet 4.4 / Centos 7 / Percona Server 5.7)
-including the Percona server, client and bindingsi (including perl and python ones).
+CentOS system. 
+This sets up the Percona server, client, and bindings (including Perl and Python bindings). You can customize this usage and update the version as needed. 
 
-Of course, you will probably want to customize it a bit more. and update the
-version to the one you will want to have (trying to keep a coherence between
-those)
+This usage has been tested on Puppet 4.4 / CentOS 7 / Percona Server 5.7.
 
 **Note:** The installation of the yum repository is not part of this package
-and is here only to show a full example of how you can install this.
+and is here only to show a full example of how you can install.
 
 ```puppet
 yumrepo { 'percona':
@@ -207,16 +205,15 @@ class {'mysql::server':
   }
 }
 
-# Note: this is not needed  in our case as installing Percona-Server-server-57
-# also installs Percona-Server-client-57. It is only here to show how to
-# install the Percona MySQL client
+# Note: Installing Percona-Server-server-57 also installs Percona-Server-client-57.
+# This shows how to install the Percona MySQL client on its own
 class {'mysql::client':
   package_name   => 'Percona-Server-client-57',
   package_ensure => '5.7.11-4.1.el7',
 }
 
-# Note: those package are normally installed along with Percona-Server-server-57
-# so it's mostly here for the example in case you need to install the bindings.
+# These packages are normally installed along with Percona-Server-server-57
+# If you needed to install the bindings, however, you could do so with this code
 class { 'mysql::bindings':
   client_dev_package_name   => 'Percona-Server-shared-57',
   client_dev_package_ensure => '5.7.11-4.1.el7',
@@ -908,13 +905,15 @@ loopback interfaces. Because those nodes aren't connected to the outside world, 
 This module has been tested on:
 
 * RedHat Enterprise Linux 5, 6, 7
-* Debian 6, 7
+* Debian 6, 7, 8
 * CentOS 5, 6, 7
-* Ubuntu 10.04, 12.04, 14.04
+* Ubuntu 10.04, 12.04, 14.04, 16.04
 * Scientific Linux 5, 6
 * SLES 11
 
 Testing on other platforms has been minimal and cannot be guaranteed.
+
+**Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
 
 ## Development
 
