@@ -33,7 +33,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   def self.mysqld_version_string
     # we cache the result ...
     return @mysqld_version_string unless @mysqld_version_string.nil?
-    @mysqld_version_string = mysqld(['-V'].compact)
+    @mysqld_version_string = Facter.value(:mysqld_version)
     return @mysqld_version_string
   end
 

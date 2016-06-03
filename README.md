@@ -152,6 +152,8 @@ host=localhost
 password=secret
 ```
 
+This module uses the `mysqld_version` fact to discover the server version being used.  By default, this is set to the output of `mysqld -V`.  If you're working with a remote MySQL server, you may need to set a custom fact for `mysqld_version` to ensure correct behaviour.
+
 When working with a remote server, do *not* use the `mysql::server` class in your Puppet manifests.
 
 ### Specify passwords
