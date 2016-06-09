@@ -5,6 +5,7 @@ class mysql::params {
   $purge_conf_dir         = false
   $restart                = false
   $root_password          = 'UNSET'
+  $root_hash              = 'UNSET'
   $install_secret_file    = '/.mysql_secret'
   $server_package_ensure  = 'present'
   $server_package_manage  = true
@@ -434,5 +435,16 @@ class mysql::params {
   ## Additional graceful failures
   if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
     fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 5.0 and beyond")
+  }
+  
+  ## Fail if both root_password and root_hash are specified
+  if $root_password != 'UNSET' and $root_hash != 'UNSET' {
+    fail('Cannot set both root_password and root_hash')
+  }
+  
+  ## Do not save a .my.cnf if a root hash is requested
+  if $create_root_my_cnf and $root_hash != 'UNSET' {
+    $create_root_my_cnf = false,
+    warn('create_root_my_cnf cannot be true if a root_hash is provided')
   }
 }
