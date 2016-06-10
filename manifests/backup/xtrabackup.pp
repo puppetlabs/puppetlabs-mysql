@@ -23,9 +23,8 @@ class mysql::backup::xtrabackup (
   $execpath                = '/usr/bin:/usr/sbin:/bin:/sbin',
 ) inherits mysql::params {
 
-  package{ 'percona-xtrabackup':
+  package{ $xtrabackup_package_name:
     ensure => $ensure,
-    name   => $xtrabackup_package_name,
   }
 
   cron { 'xtrabackup-weekly':
