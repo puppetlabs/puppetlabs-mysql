@@ -444,7 +444,7 @@ class mysql::params {
   
   ## Do not save a .my.cnf if a root hash is requested
   if $create_root_my_cnf and $root_hash != 'UNSET' {
-    $create_root_my_cnf = false,
+    $create_root_my_cnf = false
     warn('create_root_my_cnf cannot be true if a root_hash is provided')
   }
 }
