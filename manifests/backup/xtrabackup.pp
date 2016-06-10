@@ -34,7 +34,7 @@ class mysql::backup::xtrabackup (
     hour    => $time[0],
     minute  => $time[1],
     weekday => '0',
-    require => Package['percona-xtrabackup'],
+    require => Package[ $xtrabackup_package_name ],
   }
 
   cron { 'xtrabackup-daily':
@@ -44,7 +44,7 @@ class mysql::backup::xtrabackup (
     hour    => $time[0],
     minute  => $time[1],
     weekday => '1-6',
-    require => Package['percona-xtrabackup'],
+    require => Package[ $xtrabackup_package_name ],
   }
 
   file { 'mysqlbackupdir':
