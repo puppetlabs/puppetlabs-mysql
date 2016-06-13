@@ -31,7 +31,6 @@ class mysql::server::installdb {
       datadir             => $datadir,
       basedir             => $basedir,
       user                => $mysqluser,
-      log_error           => $log_error,
       defaults_extra_file => $_config_file,
     }
 
