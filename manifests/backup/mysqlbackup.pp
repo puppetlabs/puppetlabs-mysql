@@ -2,6 +2,7 @@
 class mysql::backup::mysqlbackup (
   $backupuser         = '',
   $backuppassword     = '',
+  $maxallowedpacket   = '1M',
   $backupdir          = '',
   $backupdirmode      = '0700',
   $backupdirowner     = 'root',

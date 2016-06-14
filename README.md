@@ -507,6 +507,10 @@ Sets the server backup implementation. Valid values are:
 * `mysqlbackup`: Implements backups with MySQL Enterprise Backup from Oracle. Backup type: Physical. To use this type of backup, you'll need the `meb` package, which is available in RPM and TAR formats from Oracle. For Ubuntu, you can use [meb-deb](https://github.com/dveeden/meb-deb) to create a package from an official tarball.
 * `xtrabackup`: Implements backups with XtraBackup from Percona. Backup type: Physical.
 
+##### `maxallowedpacket`
+
+Define the maximum SQL statement size for the backup dump script. The default value is 1MB as this is the default Mysql Server value.
+
 #### mysql::server::monitor
 
 ##### `mysql_monitor_username`
