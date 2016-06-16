@@ -296,6 +296,14 @@ This is required if `create_root_user` or `create_root_my_cnf` are true. If `roo
 
 Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password. 
 
+##### `root_hash`
+
+The MySQL root password hash obtained using `select password('password')`. Puppet attempts to set the root password but will not update `/root/.my.cnf` with it. 
+
+This option will ignore `create_root_my_cnf` and is not compatible with `root_password`
+
+Password changes are NOT supported.
+
 ##### `old_root_password`
 
 This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter above for details on changing the root password.
