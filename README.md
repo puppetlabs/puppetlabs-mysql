@@ -12,6 +12,7 @@
     * [Work with an existing server](#work-with-an-existing-server)
     * [Specify passwords](#specify-passwords)
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
+    * [Install MariaDB on Ubuntu](#install-mariadb-on-ubuntu)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -239,6 +240,110 @@ Class['mysql::client']
 Yumrepo['percona']->
 Class['mysql::bindings']
 ```
+
+### Install MariaDB on Ubuntu
+
+#### Preliminary step: Install the MariaDB official repo (optionnal)
+
+In this example, we want the latest stable (currently 10.1) from the official
+MariaDB repository, not the one from the distro repository.
+Note that this part is totally optionnal. You can also use the package from the
+Ubuntu repository.
+
+**Note:** `sfo1.mirrors.digitalocean.com` is just one of the many mirrors
+available. You can use any other official mirror for better performance.
+
+**Important:** this example is using a MariaDB 10.1 repository. Make sure you
+are using the repository corresponding to the version you want.
+
+```
+include apt
+
+apt::source { 'mariadb':
+  location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu',
+  release  => $::lsbdistcodename,
+  repos    => 'main',
+  key      => { 
+    id     => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+    server => 'hkp://keyserver.ubuntu.com:80',
+  },
+  include => {
+    src   => false,
+    deb   => true,
+  },
+}
+```
+
+#### Installing the MariaDB server
+
+This part of the example shows how to install a MariaDB server on Ubuntu (trusty
+here). You will probably want to tweak the version and the parameters of the
+my.cnf.
+
+As a reminder, all the parameters of the my.cnf can be defined using the
+`override_options` parmeter.
+
+Of course, you need to make sure that all the custom folders you are setting
+your files into do exist as prerequisites of this code! :)
+Note that `/var/log/mysql` and `/var/run/mysqld` are created automatically.
+
+All the values set here are an example of a working minimal configuration.
+You can tweak them all! ;)
+
+**Note:** it is not mandatory to specify the version of the package you want
+(using the `package_ensure` parameter) but it's always a good practice to do
+so as it avoids some surprises...
+
+```
+class {'::mysql::server':
+  package_name     => 'mariadb-server',
+  package_ensure   => '10.1.14+maria-1~trusty',
+  service_name     => 'mysql',
+  root_password    => 'AVeryStrongPasswordUShouldEncrypt!',
+  override_options => {
+    mysqld => {
+      'log-error' => '/var/log/mysql/mariadb.log',
+      'pid-file'  => '/var/run/mysqld/mysqld.pid',
+    },
+    mysqld_safe => {
+      'log-error' => '/var/log/mysql/mariadb.log',
+    },
+  }
+}
+
+# Dependency management. Only use that part if you are installing the repository
+# as shown in the Preliminary step of this example.
+Apt::Source['mariadb'] ~>
+Class['apt::update'] ->
+Class['::mysql::server']
+
+```
+
+#### Installing the MariaDB client (can be done separately)
+
+This part of the example shows how to install the MariaDB client and
+use the `bindings_enable` to get all the bindings installed in 1 shot.
+
+This part can be used totally individually from the server installation part.
+
+**Note:** it is not mandatory to specify the version of the package you want 
+(using the `package_ensure` parameter) but it's always a good practice to do 
+so as it avoids some surprises...
+
+```
+class {'::mysql::client':
+  package_name    => 'mariadb-client',
+  package_ensure  => '10.1.14+maria-1~trusty',
+  bindings_enable => true,
+}
+
+# Dependency management. Only use that part if you are installing the repository
+# as shown in the Preliminary step of this example.
+Apt::Source['mariadb'] ~>
+Class['apt::update'] ->
+Class['::mysql::client']
+```
+
 
 ## Reference
 
