@@ -3,7 +3,9 @@ require 'puppet/type/mysql_user'
 describe Puppet::Type.type(:mysql_user) do
 
   context "On MySQL 5.x" do
-    let(:facts) {{ :mysql_version => '5.6.24' }}
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns("5.6.24")
+    end
     it 'should fail with a long user name' do
       expect {
         Puppet::Type.type(:mysql_user).new({:name => '12345678901234567@localhost', :password_hash => 'pass'})
@@ -12,11 +14,12 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context "On MariaDB 10.0.0+" do
-    let(:facts) {{ :mysql_version => '10.0.19' }}
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns("10.0.19")
+      @user = Puppet::Type.type(:mysql_user).new(:name => '12345678901234567@localhost', :password_hash => 'pass')
+    end
     it 'should succeed with a long user name on MariaDB' do
-      expect {
-        Puppet::Type.type(:mysql_user).new({:name => '12345678901234567@localhost', :password_hash => 'pass'})
-      }.to raise_error /MySQL usernames are limited to a maximum of 16 characters/
+       expect(@user[:name]).to eq('12345678901234567@localhost')
     end
   end
 
@@ -82,7 +85,6 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context 'using a quoted 16 char username' do
-    let(:facts) {{ :mysql_version => '5.6.24' }}
     before :each do
       @user = Puppet::Type.type(:mysql_user).new(:name => '"debian-sys-maint"@localhost', :password_hash => 'pass')
     end
@@ -93,7 +95,10 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context 'using a quoted username that is too long ' do
-    let(:facts) {{ :mysql_version => '5.6.24' }}
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns("5.6.24")
+    end
+
     it 'should fail with a size error' do
       expect {
         Puppet::Type.type(:mysql_user).new(:name => '"debian-sys-maint2"@localhost', :password_hash => 'pass')
