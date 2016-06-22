@@ -20,6 +20,7 @@ class mysql::server::backup (
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
   $provider           = 'mysqldump',
+  $maxallowedpacket   = '1M',
 ) {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
@@ -47,6 +48,7 @@ class mysql::server::backup (
       'prescript'          => $prescript,
       'postscript'         => $postscript,
       'execpath'           => $execpath,
+      'maxallowedpacket'   => $maxallowedpacket,
     }
   })
 

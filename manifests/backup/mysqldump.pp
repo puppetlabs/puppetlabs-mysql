@@ -3,6 +3,7 @@ class mysql::backup::mysqldump (
   $backupuser         = '',
   $backuppassword     = '',
   $backupdir          = '',
+  $maxallowedpacket   = '1M',
   $backupdirmode      = '0700',
   $backupdirowner     = 'root',
   $backupdirgroup     = $mysql::params::root_group,

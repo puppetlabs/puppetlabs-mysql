@@ -16,12 +16,13 @@
 
 USER=<%= @backupuser %>
 PASS='<%= @backuppassword %>'
+MAX_ALLOWED_PACKET=<%= @maxallowedpacket %>
 DIR=<%= @backupdir %>
 ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 
 # Create temporary mysql cnf file.
 TMPFILE=`mktemp /tmp/backup.XXXXXX` || exit 1
-echo -e "[client]\npassword=$PASS\nuser=$USER" > $TMPFILE
+echo -e "[client]\npassword=$PASS\nuser=$USER\nmax_allowed_packet=$MAX_ALLOWED_PACKET" > $TMPFILE
 
 # Ensure backup directory exist.
 mkdir -p $DIR

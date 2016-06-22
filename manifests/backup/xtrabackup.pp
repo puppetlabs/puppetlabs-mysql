@@ -3,6 +3,7 @@ class mysql::backup::xtrabackup (
   $backupuser         = '',
   $backuppassword     = '',
   $backupdir          = '',
+  $maxallowedpacket   = '1M',
   $backupmethod       = 'mysqldump',
   $backupdirmode      = '0700',
   $backupdirowner     = 'root',
