@@ -30,6 +30,7 @@ class mysql::params {
   $client_dev_package_provider = undef
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
+  $xtrabackup_package_name     = 'percona-xtrabackup'
 
 
   case $::osfamily {
