@@ -39,8 +39,6 @@ class mysql::server::config {
       file { $logbindir:
         ensure => directory,
         mode   => '0755',
-        owner  => $options['mysqld']['user'],
-        group  => $options['mysqld']['user'],
       }
     }
   }
