@@ -51,18 +51,21 @@ class mysql::server (
   # Create a merged together set of options.  Rightmost hashes win over left.
   $options = mysql_deepmerge($mysql::params::default_options, $override_options)
 
-  Class['mysql::server::root_password'] -> Mysql::Db <| |>
-
   include '::mysql::server::config'
   include '::mysql::server::install'
-  include '::mysql::server::installdb'
   include '::mysql::server::service'
-  include '::mysql::server::root_password'
-  include '::mysql::server::providers'
 
-  if $remove_default_accounts {
-    class { '::mysql::server::account_security':
-      require => Anchor['mysql::server::end'],
+  if $service_enabled {
+    include '::mysql::server::installdb'
+    include '::mysql::server::root_password'
+    include '::mysql::server::providers'
+
+    Class['mysql::server::root_password'] -> Mysql::Db <| |>
+
+    if $remove_default_accounts {
+      class { '::mysql::server::account_security':
+        require => Anchor['mysql::server::end'],
+      }
     }
   }
 
@@ -74,14 +77,21 @@ class mysql::server (
     Class['mysql::server::service']
   }
 
-  Anchor['mysql::server::start'] ->
-  Class['mysql::server::config'] ->
-  Class['mysql::server::install'] ->
-  Class['mysql::server::installdb'] ->
-  Class['mysql::server::service'] ->
-  Class['mysql::server::root_password'] ->
-  Class['mysql::server::providers'] ->
-  Anchor['mysql::server::end']
-
+  if $service_enabled {
+    Anchor['mysql::server::start'] ->
+    Class['mysql::server::config'] ->
+    Class['mysql::server::install'] ->
+    Class['mysql::server::installdb'] ->
+    Class['mysql::server::service'] ->
+    Class['mysql::server::root_password'] ->
+    Class['mysql::server::providers'] ->
+    Anchor['mysql::server::end']
+  } else {
+    Anchor['mysql::server::start'] ->
+    Class['mysql::server::config'] ->
+    Class['mysql::server::install'] ->
+    Class['mysql::server::service'] ->
+    Anchor['mysql::server::end']
+  }
 
 }
