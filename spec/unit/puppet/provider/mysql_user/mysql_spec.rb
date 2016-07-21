@@ -205,11 +205,6 @@ usvn_user@localhost
        Facter.stubs(:value).with(:mysqld_version).returns('5.6.24')
        expect(provider.mysqld_version).to eq '5.6.24'
     end
-    it 'returns nil if the mysqld_version fact is absent' do
-       provider.class.instance_variable_set(:@mysqld_version_string, nil)
-       Facter.stubs(:value).with(:mysqld_version).returns(nil)
-       expect(provider.mysqld_version).to eq nil
-    end
     it 'returns 5.7.6 for "mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))"' do
        provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))')
        expect(provider.mysqld_version).to eq '5.7.6'
