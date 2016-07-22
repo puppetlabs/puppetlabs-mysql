@@ -31,10 +31,8 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.mysqld_version_string
-    # we cache the result ...
-    return @mysqld_version_string unless @mysqld_version_string.nil?
-    @mysqld_version_string = Facter.value(:mysqld_version)
-    return @mysqld_version_string
+    # As the possibility of the mysqld being remote we need to allow the version string to be overridden, this can be done by facter.value as seen below. In the case that it has not been set and the facter value is nil we use the mysql -v command to ensure we report the correct version of mysql for later use cases.
+    @mysqld_version_string ||= Facter.value(:mysqld_version) || mysqld('-V')
   end
 
   def mysqld_version_string
