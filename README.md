@@ -1029,4 +1029,4 @@ This module is based on work by David Schmitt. The following contributors have c
 * Michael Arnold
 * Chris Weyl
 * Daniël van Eeden
-
+* Timothy Sven Nelson
