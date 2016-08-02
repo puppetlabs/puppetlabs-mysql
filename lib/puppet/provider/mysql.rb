@@ -54,8 +54,16 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.defaults_file
   end
 
+  def self.mysql(textOfSQL, type)
+    if type.eql? 'system'
+      mysql([defaults_file, '--host=', system_database, '-e', textOfSQL].compact)
+#    else
+#      mysql([defaults_file, '-NBe', textOfSQL].compact)
+    end
+  end
+
   def self.users
-    mysql([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"].compact).split("\n")
+    self.mysql("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user").split("\n")
   end
 
   # Optional parameter to run a statement on the MySQL system database.
