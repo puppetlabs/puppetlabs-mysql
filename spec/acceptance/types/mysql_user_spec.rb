@@ -16,7 +16,7 @@ describe 'mysql_user' do
       it 'should work without errors' do
         pp = <<-EOS
           mysql_user { 'ashp@localhost':
-            password_hash => '6f8c114b58f2ce9e',
+            password_hash => '*F9A8E96790775D196D12F53BCC88B8048FF62ED5',
           }
         EOS
 
@@ -37,7 +37,7 @@ describe 'mysql_user' do
       it 'should work without errors' do
         pp = <<-EOS
           mysql_user { 'ashp-dash@localhost':
-            password_hash => '6f8c114b58f2ce9e',
+            password_hash => '*F9A8E96790775D196D12F53BCC88B8048FF62ED5',
           }
         EOS
 
@@ -58,7 +58,7 @@ describe 'mysql_user' do
       it 'should work without errors' do
         pp = <<-EOS
           mysql_user { 'ashp@LocalHost':
-            password_hash => '6f8c114b58f2ce9e',
+            password_hash => '*F9A8E96790775D196D12F53BCC88B8048FF62ED5',
           }
         EOS
 
