@@ -27,6 +27,10 @@ elsif fact('osfamily') =~ /Debian/
     if fact('operatingsystemrelease') =~ /^10\.04/
       # Only available plugin is innodb which is already loaded and not unload- or reload-able
       plugin = nil
+    elsif fact('operatingsystemrelease') =~ /^16\.04/
+      # On Xenial running 5.7.12, the example plugin does not appear to be available.
+      plugin = 'validate_password'
+      plugin_lib = 'validate_password.so'
     else
       plugin     = 'example'
       plugin_lib = 'ha_example.so'
