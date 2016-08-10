@@ -15,10 +15,14 @@ describe 'mysql_grant' do
   describe 'missing privileges for user' do
     it 'should fail' do
       pp = <<-EOS
+        mysql_user { 'test1@tester': 
+          ensure => present,
+        }
         mysql_grant { 'test1@tester/test.*':
-          ensure => 'present',
-          table  => 'test.*',
-          user   => 'test1@tester',
+          ensure  => 'present',
+          table   => 'test.*',
+          user    => 'test1@tester',
+          require => Mysql_user['test1@tester'],
         }
       EOS
 
@@ -33,10 +37,14 @@ describe 'mysql_grant' do
   describe 'missing table for user' do
     it 'should fail' do
       pp = <<-EOS
+        mysql_user { 'atest@tester':
+          ensure => present,
+        }
         mysql_grant { 'atest@tester/test.*':
-          ensure => 'present',
-          user   => 'atest@tester',
+          ensure     => 'present',
+          user       => 'atest@tester',
           privileges => ['ALL'],
+          require    => Mysql_user['atest@tester'],
         }
       EOS
 
@@ -51,11 +59,15 @@ describe 'mysql_grant' do
   describe 'adding privileges' do
     it 'should work without errors' do
       pp = <<-EOS
+        mysql_user { 'test2@tester':
+          ensure => present,
+        }
         mysql_grant { 'test2@tester/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test2@tester',
           privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test2@tester'],
         }
       EOS
 
@@ -73,11 +85,15 @@ describe 'mysql_grant' do
   describe 'adding privileges with special character in name' do
     it 'should work without errors' do
       pp = <<-EOS
+        mysql_user { 'test-2@tester':
+          ensure => present,
+        }
         mysql_grant { 'test-2@tester/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test-2@tester',
           privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test-2@tester'],
         }
       EOS
 
@@ -95,11 +111,15 @@ describe 'mysql_grant' do
   describe 'adding privileges with invalid name' do
     it 'should fail' do
       pp = <<-EOS
+        mysql_user { 'test2@tester':
+          ensure => present,
+        }
         mysql_grant { 'test':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test2@tester',
           privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test2@tester'],
         }
       EOS
 
@@ -110,12 +130,16 @@ describe 'mysql_grant' do
   describe 'adding option' do
     it 'should work without errors' do
       pp = <<-EOS
+        mysql_user { 'test3@tester':
+          ensure => present,
+        }
         mysql_grant { 'test3@tester/test.*':
-          ensure  => 'present',
-          table   => 'test.*',
-          user    => 'test3@tester',
-          options => ['GRANT'],
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test3@tester',
+          options    => ['GRANT'],
           privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test3@tester'],
         }
       EOS
 
@@ -133,11 +157,15 @@ describe 'mysql_grant' do
   describe 'adding all privileges without table' do
     it 'should fail' do
       pp = <<-EOS
+        mysql_user { 'test4@tester':
+          ensure => present,
+        }
         mysql_grant { 'test4@tester/test.*':
           ensure     => 'present',
           user       => 'test4@tester',
           options    => ['GRANT'],
           privileges => ['SELECT', 'UPDATE', 'ALL'],
+          require    => Mysql_user['test4@tester'],
         }
       EOS
 
@@ -148,12 +176,16 @@ describe 'mysql_grant' do
   describe 'adding all privileges' do
     it 'should only try to apply ALL' do
       pp = <<-EOS
+        mysql_user { 'test4@tester':
+          ensure => present,
+        }
         mysql_grant { 'test4@tester/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test4@tester',
           options    => ['GRANT'],
           privileges => ['SELECT', 'UPDATE', 'ALL'],
+          require    => Mysql_user['test4@tester'],
         }
       EOS
 
@@ -172,35 +204,55 @@ describe 'mysql_grant' do
   describe 'short hostname' do
     it 'should apply' do
       pp = <<-EOS
+        mysql_user { 'test@short':
+          ensure => present,
+        }
         mysql_grant { 'test@short/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@short',
           privileges => 'ALL',
+          require    => Mysql_user['test@short'],
+        }
+        mysql_user { 'test@long.hostname.com':
+          ensure => present,
         }
         mysql_grant { 'test@long.hostname.com/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@long.hostname.com',
           privileges => 'ALL',
+          require    => Mysql_user['test@long.hostname.com'],
+        }
+        mysql_user { 'test@192.168.5.6':
+          ensure => present,
         }
         mysql_grant { 'test@192.168.5.6/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@192.168.5.6',
           privileges => 'ALL',
+          require    => Mysql_user['test@192.168.5.6'],
+        }
+        mysql_user { 'test@2607:f0d0:1002:0051:0000:0000:0000:0004':
+          ensure => present,
         }
         mysql_grant { 'test@2607:f0d0:1002:0051:0000:0000:0000:0004/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@2607:f0d0:1002:0051:0000:0000:0000:0004',
           privileges => 'ALL',
+          require    => Mysql_user['test@2607:f0d0:1002:0051:0000:0000:0000:0004'],
+        }
+        mysql_user { 'test@::1/128':
+          ensure => present,
         }
         mysql_grant { 'test@::1/128/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@::1/128',
           privileges => 'ALL',
+          require    => Mysql_user['test@::1/128'],
         }
       EOS
 
@@ -242,52 +294,80 @@ describe 'mysql_grant' do
   describe 'complex test' do
     it 'setup mysql::server' do
       pp = <<-EOS
-      $dbSubnet = '10.10.10.%'
+        $dbSubnet = '10.10.10.%'
 
-      mysql_database { 'foo':
-        ensure => present,
-      }
+        mysql_database { 'foo':
+          ensure => present,
+        }
 
-      exec { 'mysql-create-table':
-        command     => '/usr/bin/mysql -NBe "CREATE TABLE foo.bar (name VARCHAR(20))"',
-        environment => "HOME=${::root_home}",
-        unless      => '/usr/bin/mysql -NBe "SELECT 1 FROM foo.bar LIMIT 1;"',
-        require     => Mysql_database['foo'],
-      }
+        exec { 'mysql-create-table':
+          command     => '/usr/bin/mysql -NBe "CREATE TABLE foo.bar (name VARCHAR(20))"',
+          environment => "HOME=${::root_home}",
+          unless      => '/usr/bin/mysql -NBe "SELECT 1 FROM foo.bar LIMIT 1;"',
+          require     => Mysql_database['foo'],
+        }
 
-      Mysql_grant {
+        Mysql_grant {
           ensure     => present,
           options    => ['GRANT'],
           privileges => ['ALL'],
           table      => '*.*',
           require    => [ Mysql_database['foo'], Exec['mysql-create-table'] ],
-      }
+        }
 
-      mysql_grant { "user1@${dbSubnet}/*.*":
+        mysql_user { "user1@${dbSubnet}":
+          ensure => present,
+        }
+        mysql_grant { "user1@${dbSubnet}/*.*":
           user       => "user1@${dbSubnet}",
-      }
-      mysql_grant { "user2@${dbSubnet}/foo.bar":
+          require    => Mysql_user["user1@${dbSubnet}"],
+        }
+        mysql_user { "user2@${dbSubnet}":
+          ensure => present,
+        }
+        mysql_grant { "user2@${dbSubnet}/foo.bar":
           privileges => ['SELECT', 'INSERT', 'UPDATE'],
           user       => "user2@${dbSubnet}",
           table      => 'foo.bar',
-      }
-      mysql_grant { "user3@${dbSubnet}/foo.*":
+          require    => Mysql_user["user2@${dbSubnet}"],
+        }
+        mysql_user { "user3@${dbSubnet}":
+          ensure => present,
+        }
+        mysql_grant { "user3@${dbSubnet}/foo.*":
           privileges => ['SELECT', 'INSERT', 'UPDATE'],
           user       => "user3@${dbSubnet}",
           table      => 'foo.*',
-      }
-      mysql_grant { 'web@%/*.*':
+          require    => Mysql_user["user3@${dbSubnet}"],
+        }
+        mysql_user { 'web@%':
+          ensure => present,
+        }
+        mysql_grant { 'web@%/*.*':
           user       => 'web@%',
-      }
-      mysql_grant { "web@${dbSubnet}/*.*":
+          require    => Mysql_user['web@%'],
+        }
+        mysql_user { "web@${dbSubnet}":
+          ensure => present,
+        }
+        mysql_grant { "web@${dbSubnet}/*.*":
           user       => "web@${dbSubnet}",
-      }
-      mysql_grant { "web@${fqdn}/*.*":
+          require    => Mysql_user["web@${dbSubnet}"],
+        }
+        mysql_user { "web@${fqdn}":
+          ensure => present,
+        }
+        mysql_grant { "web@${fqdn}/*.*":
           user       => "web@${fqdn}",
-      }
-      mysql_grant { 'web@localhost/*.*':
+          require    => Mysql_user["web@${fqdn}"],
+        }
+        mysql_user { 'web@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'web@localhost/*.*':
           user       => 'web@localhost',
-      }
+          require    => Mysql_user['web@localhost'],
+        }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
@@ -298,11 +378,15 @@ describe 'mysql_grant' do
   describe 'lower case privileges' do
     it 'create ALL privs' do
       pp = <<-EOS
-      mysql_grant { 'lowercase@localhost/*.*':
+        mysql_user { 'lowercase@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'lowercase@localhost/*.*':
           user       => 'lowercase@localhost',
           privileges => 'ALL',
           table      => '*.*',
-      }
+          require    => Mysql_user['lowercase@localhost'],
+        }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
@@ -310,11 +394,15 @@ describe 'mysql_grant' do
 
     it 'create lowercase all privs' do
       pp = <<-EOS
-      mysql_grant { 'lowercase@localhost/*.*':
+        mysql_user { 'lowercase@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'lowercase@localhost/*.*':
           user       => 'lowercase@localhost',
           privileges => 'all',
           table      => '*.*',
-      }
+          require    => Mysql_user['lowercase@localhost'],
+        }
       EOS
 
       expect(apply_manifest(pp, :catch_failures => true).exit_code).to eq(0)
@@ -323,14 +411,18 @@ describe 'mysql_grant' do
 
   describe 'adding procedure privileges' do
     it 'should work without errors' do
-       pp = <<-EOS
-       mysql_grant { 'test2@tester/PROCEDURE test.simpleproc':
-         ensure     => 'present',
-         table      => 'PROCEDURE test.simpleproc',
-         user       => 'test2@tester',
-         privileges => ['EXECUTE'],
-       }
-       EOS
+      pp = <<-EOS
+        mysql_user { 'test2@tester':
+          ensure => present,
+        }
+        mysql_grant { 'test2@tester/PROCEDURE test.simpleproc':
+          ensure     => 'present',
+          table      => 'PROCEDURE test.simpleproc',
+          user       => 'test2@tester',
+          privileges => ['EXECUTE'],
+          require    => Mysql_user['test2@tester'],
+        }
+      EOS
 
       apply_manifest(pp, :catch_failures => true)
     end
@@ -359,17 +451,25 @@ describe 'mysql_grant' do
 
     it 'should apply' do
       pp = <<-EOS
+        mysql_user { 'test@fqdn.com':
+          ensure => present,
+        }
         mysql_grant { 'test@fqdn.com/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@fqdn.com',
           privileges => 'ALL',
+          require    => Mysql_user['test@fqdn.com'],
+        }
+        mysql_user { 'test@192.168.5.7':
+          ensure => present,
         }
         mysql_grant { 'test@192.168.5.7/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@192.168.5.7',
           privileges => 'ALL',
+          require    => Mysql_user['test@192.168.5.7'],
         }
       EOS
 
@@ -388,11 +488,15 @@ describe 'mysql_grant' do
 
     it 'should fail to execute while applying' do
       pp = <<-EOS
+        mysql_user { 'test@fqdn.com':
+          ensure => present,
+        }
         mysql_grant { 'test@fqdn.com/test.*':
           ensure     => 'present',
           table      => 'test.*',
           user       => 'test@fqdn.com',
           privileges => 'ALL',
+          require    => Mysql_user['test@fqdn.com'],
         }
       EOS
 
@@ -425,10 +529,14 @@ describe 'mysql_grant' do
 
     it 'creates grant on missing table will fail' do
       pp = <<-EOS
+        mysql_user { 'test@localhost':
+          ensure => present,
+        }
         mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table':
           user       => 'test@localhost',
           privileges => ['SELECT'],
           table      => 'grant_spec_db.grant_spec_table',
+          require    => Mysql_user['test@localhost'],
         }
       EOS
       expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/Table 'grant_spec_db\.grant_spec_table' doesn't exist/)
