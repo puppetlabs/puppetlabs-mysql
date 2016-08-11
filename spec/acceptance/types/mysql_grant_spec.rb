@@ -412,12 +412,19 @@ describe 'mysql_grant' do
   describe 'adding procedure privileges' do
     it 'should work without errors' do
       pp = <<-EOS
+        if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemmajrelease, '16.00') > 0 {
+          exec { 'simpleproc-create':
+            command => 'mysql --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
+            path    => '/usr/bin/',
+            before  => Mysql_user['test2@tester'],
+          }
+        }
         mysql_user { 'test2@tester':
           ensure => present,
         }
-        mysql_grant { 'test2@tester/PROCEDURE test.simpleproc':
+        mysql_grant { 'test2@tester/PROCEDURE mysql.simpleproc':
           ensure     => 'present',
-          table      => 'PROCEDURE test.simpleproc',
+          table      => 'PROCEDURE mysql.simpleproc',
           user       => 'test2@tester',
           privileges => ['EXECUTE'],
           require    => Mysql_user['test2@tester'],
@@ -429,7 +436,7 @@ describe 'mysql_grant' do
 
     it 'should find the user' do
       shell("mysql -NBe \"SHOW GRANTS FOR test2@tester\"") do |r|
-        expect(r.stdout).to match(/GRANT EXECUTE ON PROCEDURE `test`.`simpleproc` TO 'test2'@'tester'/)
+        expect(r.stdout).to match(/GRANT EXECUTE ON PROCEDURE `mysql`.`simpleproc` TO 'test2'@'tester'/)
         expect(r.stderr).to be_empty
       end
     end
