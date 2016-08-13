@@ -57,7 +57,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
 
   def exists?
     datadir = @resource[:datadir]
-    (File.directory?("#{datadir}/mysql")) && (Dir.entries("#{datadir}/mysql") - %w{ . .. }).any? 
+    (File.directory?("#{datadir}")) && (Dir.entries("#{datadir}") - %w{ . .. }).any?
   end
 
   ##
