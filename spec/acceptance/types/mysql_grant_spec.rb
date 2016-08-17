@@ -1,15 +1,17 @@
 require 'spec_helper_acceptance'
+require 'puppet'
+require 'puppet/util/package'
+require_relative '../mysql_helper.rb'
 
 describe 'mysql_grant' do
+  before(:all) do
+    pp = <<-EOS
+      class { 'mysql::server':
+        root_password => 'password',
+      }
+    EOS
 
-  describe 'setup' do
-    it 'setup mysql::server' do
-      pp = <<-EOS
-        class { 'mysql::server': }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-    end
+    apply_manifest(pp, :catch_failures => true)
   end
 
   describe 'missing privileges for user' do
@@ -414,7 +416,7 @@ describe 'mysql_grant' do
       pp = <<-EOS
         if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemmajrelease, '16.00') > 0 {
           exec { 'simpleproc-create':
-            command => 'mysql --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
+            command => 'mysql --user="root" --password="password" --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
             path    => '/usr/bin/',
             before  => Mysql_user['test2@tester'],
           }
@@ -484,7 +486,10 @@ describe 'mysql_grant' do
     end
 
     it 'should fail with fqdn' do
-      expect(shell("mysql -NBe \"SHOW GRANTS FOR test@fqdn.com\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'test' on host 'fqdn.com'/)
+      pre_run
+      if ! version_is_greater_than('5.7.0')
+        expect(shell("mysql -NBe \"SHOW GRANTS FOR test@fqdn.com\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'test' on host 'fqdn.com'/)
+      end
     end
     it 'finds ipv4' do
       shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.7'\"") do |r|
