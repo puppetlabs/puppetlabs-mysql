@@ -22,6 +22,7 @@ class mysql::server::installdb {
       ensure => present,
       owner  => $mysqluser,
       group  => $::mysql::server::mysql_group,
+      mode   => 'u+rw',
       before => Mysql_datadir[ $datadir ],
     }
   }
