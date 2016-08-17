@@ -2,14 +2,14 @@ require 'spec_helper_acceptance'
 
 describe 'mysql_grant' do
 
-  describe 'setup' do
-    it 'setup mysql::server' do
-      pp = <<-EOS
-        class { 'mysql::server': }
-      EOS
+  before(:all) do
+    pp = <<-EOS
+      class { 'mysql::server': 
+        root_password => 'password',
+      }
+    EOS
 
-      apply_manifest(pp, :catch_failures => true)
-    end
+    apply_manifest(pp, :catch_failures => true)
   end
 
   describe 'missing privileges for user' do
@@ -414,7 +414,7 @@ describe 'mysql_grant' do
       pp = <<-EOS
         if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemmajrelease, '16.00') > 0 {
           exec { 'simpleproc-create':
-            command => 'mysql --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
+            command => 'mysql --user="root" --password="password" --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
             path    => '/usr/bin/',
             before  => Mysql_user['test2@tester'],
           }
