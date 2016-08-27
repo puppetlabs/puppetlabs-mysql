@@ -941,6 +941,8 @@ mysql_grant { 'root@localhost/mysql.user':
 }
 ```
 
+To revoke GRANT privilege specify ['NONE'].
+
 ##### `ensure`
 
 Whether the resource is present. Valid values are 'present', 'absent'. Defaults to 'present'.
