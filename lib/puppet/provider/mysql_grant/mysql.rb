@@ -49,7 +49,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
           if rest.match(/WITH\sGRANT\sOPTION/)           
 		options = ['GRANT']
           else
-                options = ["NONE"]
+                options = ['NONE']
           end
           # fix double backslash that MySQL prints, so resources match
           table.gsub!("\\\\", "\\")
