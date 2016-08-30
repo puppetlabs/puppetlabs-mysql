@@ -16,7 +16,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
     insecure                 = @resource.value(:insecure) || true
     defaults_extra_file      = @resource.value(:defaults_extra_file)
     user                     = @resource.value(:user) || "mysql"
-    basedir                  = @resource.value(:basedir) || "/usr"
+    basedir                  = @resource.value(:basedir)
     datadir                  = @resource.value(:datadir) || @resource[:name]
     log_error                = @resource.value(:log_error) || "/var/tmp/mysqld_initialize.log"
 
@@ -34,16 +34,23 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
       initialize="--initialize"
     end
 
+    opts = [ defaults_extra_file ]
+    %w(basedir datadir user).each do |opt|
+      val = eval(opt)
+      opts<<"--#{opt}=#{val}" unless val.nil?
+    end
+
     if mysqld_version.nil?
       debug("Installing MySQL data directory with mysql_install_db #{defaults_extra_file} --basedir=#{basedir} --datadir=#{datadir} --user=#{user}")
-      mysql_install_db([defaults_extra_file, "--basedir=#{basedir}", "--datadir=#{datadir}", "--user=#{user}"].compact)
+      mysql_install_db(opts.compact)
     else
       if (mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
         debug("Initializing MySQL data directory >= 5.7.6 with 'mysqld #{defaults_extra_file} #{initialize} --basedir=#{basedir} --datadir=#{datadir} --user=#{user}'")
-        mysqld([defaults_extra_file, initialize, "--basedir=#{basedir}", "--datadir=#{datadir}", "--user=#{user}", "--log-error=#{log_error}"].compact)
+        opts<<"--log-error=#{log_error}"
+        mysqld(opts.compact)
       else
         debug("Installing MySQL data directory with mysql_install_db #{defaults_extra_file} --basedir=#{basedir} --datadir=#{datadir} --user=#{user}")
-        mysql_install_db([defaults_extra_file, "--basedir=#{basedir}", "--datadir=#{datadir}", "--user=#{user}"].compact)
+        mysql_install_db(opts.compact)
       end
     end
 
