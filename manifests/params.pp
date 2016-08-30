@@ -140,7 +140,7 @@ class mysql::params {
       $server_service_name = 'mysql'
       $socket              = $::operatingsystem ? {
         /OpenSuSE/         => '/var/run/mysql/mysql.sock',
-        /(SLES|SLED)/      => '/var/lib/mysql/mysql.sock',
+        /(SLES|SLED)/      => '/run/mysql/mysql.sock',
       }
       $ssl_ca              = '/etc/mysql/cacert.pem'
       $ssl_cert            = '/etc/mysql/server-cert.pem'
