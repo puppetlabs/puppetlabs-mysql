@@ -50,7 +50,9 @@ class mysql::params {
         $server_package_name = 'mariadb-server'
         $server_service_name = 'mariadb'
         $log_error           = '/var/log/mariadb/mariadb.log'
-        $config_file         = '/etc/my.cnf'
+        $config_file         = '/etc/my.cnf.d/server.cnf'
+        # mariadb package by default has !includedir set in my.cnf to /etc/my.cnf.d
+        $includedir          = undef
         $pidfile             = '/var/run/mariadb/mariadb.pid'
       } else {
         $client_package_name = 'mysql'
@@ -58,6 +60,7 @@ class mysql::params {
         $server_service_name = 'mysqld'
         $log_error           = '/var/log/mysqld.log'
         $config_file         = '/etc/my.cnf'
+        $includedir          = '/etc/my.cnf.d'
         $pidfile             = '/var/run/mysqld/mysqld.pid'
       }
 
@@ -88,6 +91,7 @@ class mysql::params {
       }
       $basedir             = '/usr'
       $config_file         = '/etc/my.cnf'
+      $includedir          = '/etc/my.cnf.d'
       $datadir             = '/var/lib/mysql'
       $log_error           = $::operatingsystem ? {
         /OpenSuSE/         => '/var/log/mysql/mysqld.log',
@@ -125,6 +129,7 @@ class mysql::params {
       $basedir             = '/usr'
       $config_file         = '/etc/mysql/my.cnf'
       $datadir             = '/var/lib/mysql'
+      $includedir          = '/etc/mysql/conf.d'
       $log_error           = '/var/log/mysql/error.log'
       $pidfile             = '/var/run/mysqld/mysqld.pid'
       $root_group          = 'root'
@@ -150,6 +155,7 @@ class mysql::params {
       $server_package_name = 'databases/mysql55-server'
       $basedir             = '/usr/local'
       $config_file         = '/var/db/mysql/my.cnf'
+      $includedir          = '/var/db/mysql/my.cnf.d'
       $datadir             = '/var/db/mysql'
       $log_error           = "/var/db/mysql/${::hostname}.err"
       $pidfile             = '/var/db/mysql/mysql.pid'
@@ -175,6 +181,7 @@ class mysql::params {
           $server_package_name = 'mysql-server'
           $basedir             = '/usr'
           $config_file         = '/etc/my.cnf'
+          $includedir          = '/etc/my.cnf.d'
           $datadir             = '/var/lib/mysql'
           $log_error           = '/var/log/mysqld.log'
           $pidfile             = '/var/run/mysqld/mysqld.pid'
