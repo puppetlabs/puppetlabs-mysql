@@ -93,6 +93,15 @@ describe Puppet::Type.type(:mysql_user) do
       expect(@user[:name]).to eq('"debian-sys-maint"@localhost')
     end
   end
+  context 'ensure the default \'debian-sys-main\'@localhost user can be parsed' do
+    before :each do
+      @user = Puppet::Type.type(:mysql_user).new(:name => '\'debian-sys-maint\'@localhost', :password_hash => 'pass')
+    end
+
+    it 'should accept a user name' do
+      expect(@user[:name]).to eq('\'debian-sys-maint\'@localhost')
+    end
+  end
 
   context 'using a quoted username that is too long ' do
     before :each do

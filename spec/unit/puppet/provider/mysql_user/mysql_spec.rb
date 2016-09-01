@@ -66,6 +66,8 @@ usvn_user@localhost
 
   let(:parsed_users) { %w(root@127.0.0.1 root@::1 @localhost debian-sys-maint@localhost root@localhost usvn_user@localhost @vagrant-ubuntu-raring-64) }
 
+  let(:munged_users) { %w(root@127.0.0.1 root@::1 @localhost 'debian-sys-maint'@localhost root@localhost usvn_user@localhost @vagrant-ubuntu-raring-64)}
+
   let(:resource) { Puppet::Type.type(:mysql_user).new(
       { :ensure                   => :present,
         :password_hash            => '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4',
@@ -152,8 +154,9 @@ usvn_user@localhost
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
-      expect(parsed_users).to match_array(usernames)
+      expect(munged_users).to match_array(usernames)
     end
+
   end
 
   describe 'mysql version and type detection' do
@@ -302,5 +305,4 @@ usvn_user@localhost
       end
     end
   end
-
 end
