@@ -1,6 +1,6 @@
 class mysql::python(
   $package_ensure = $mysql::params::python_package_ensure,
-  $package_name   = $mysql::params::python_package_name,
+  $package_name   = $mysql::params::python_package_name
 ) inherits mysql::params {
 
   notify { "mysql::python has been renamed to mysql::bindings::python and this
