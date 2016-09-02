@@ -138,10 +138,17 @@ class mysql::params {
       $root_group          = 'root'
       $mysql_group         = 'mysql'
       $server_service_name = 'mysql'
-      $socket              = $::operatingsystem ? {
-        /OpenSuSE/         => '/var/run/mysql/mysql.sock',
-        /(SLES|SLED)/      => '/run/mysql/mysql.sock',
+
+      if $::operatingsystem =~ /(SLES|SLED)/ {
+        if versioncmp( $::operatingsystemmajrelease, '12' ) >= 0 {
+          $socket = '/run/mysql/mysql.sock'
+        } else {
+          $socket = '/var/lib/mysql/mysql.sock'
+        }
+      } else {
+        $socket = '/var/run/mysql/mysql.sock'
       }
+
       $ssl_ca              = '/etc/mysql/cacert.pem'
       $ssl_cert            = '/etc/mysql/server-cert.pem'
       $ssl_key             = '/etc/mysql/server-key.pem'
