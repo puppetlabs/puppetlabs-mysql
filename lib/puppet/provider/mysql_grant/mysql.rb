@@ -46,7 +46,11 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
             end
           end
           # Same here, but to remove OPTION leaving just GRANT.
-          options = ['GRANT'] if rest.match(/WITH\sGRANT\sOPTION/)
+          if rest.match(/WITH\sGRANT\sOPTION/)           
+		options = ['GRANT']
+          else
+                options = ['NONE']
+          end
           # fix double backslash that MySQL prints, so resources match
           table.gsub!("\\\\", "\\")
           # We need to return an array of instances so capture these
