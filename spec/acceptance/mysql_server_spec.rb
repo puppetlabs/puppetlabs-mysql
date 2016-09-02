@@ -51,6 +51,35 @@ describe 'mysql class' do
     it_behaves_like "a idempotent resource"
   end
 
+  describe 'minimal config' do
+    before(:all) do
+      @tmpdir = default.tmpdir('mysql')
+    end
+    let(:pp) do
+      <<-EOS
+        class { 'mysql::server':
+          config_file             => '#{@tmpdir}/my.cnf',
+          includedir              => '#{@tmpdir}/include',
+          manage_config_file      => 'false',
+          override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
+          package_ensure          => 'present',
+          purge_conf_dir          => 'false',
+          remove_default_accounts => 'false',
+          restart                 => 'false',
+          root_group              => 'root',
+          root_password           => 'test',
+          service_enabled         => 'false',
+          service_manage          => 'false',
+          users                   => {},
+          grants                  => {},
+          databases               => {},
+        }
+      EOS
+    end
+
+    it_behaves_like "a idempotent resource"
+  end
+
   describe 'syslog configuration' do
     let(:pp) do
       <<-EOS
