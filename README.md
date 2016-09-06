@@ -173,8 +173,7 @@ mysql::db { 'mydb':
 ### Install Percona server on CentOS
 
 This example shows how to do a minimal installation of a Percona server on a
-CentOS system. 
-This sets up the Percona server, client, and bindings (including Perl and Python bindings). You can customize this usage and update the version as needed. 
+CentOS system. This sets up the Percona server, client, and bindings (including Perl and Python bindings). You can customize this usage and update the version as needed. 
 
 This usage has been tested on Puppet 4.4 / CentOS 7 / Percona Server 5.7.
 
@@ -243,18 +242,11 @@ Class['mysql::bindings']
 
 ### Install MariaDB on Ubuntu
 
-#### Preliminary step: Install the MariaDB official repo (optionnal)
+#### Optional: Install the MariaDB official repo
 
-In this example, we want the latest stable (currently 10.1) from the official
-MariaDB repository, not the one from the distro repository.
-Note that this part is totally optionnal. You can also use the package from the
-Ubuntu repository.
+In this example, we'll use the latest stable (currently 10.1) from the official MariaDB repository, not the one from the distro repository. You could instead use the package from the Ubuntu repository. Make sure you use the repository corresponding to the version you want.
 
-**Note:** `sfo1.mirrors.digitalocean.com` is just one of the many mirrors
-available. You can use any other official mirror for better performance.
-
-**Important:** this example is using a MariaDB 10.1 repository. Make sure you
-are using the repository corresponding to the version you want.
+**Note:** `sfo1.mirrors.digitalocean.com` is one of many mirrors available. You can use any official mirror.
 
 ```
 include apt
@@ -274,25 +266,15 @@ apt::source { 'mariadb':
 }
 ```
 
-#### Installing the MariaDB server
+#### Install the MariaDB server
 
-This part of the example shows how to install a MariaDB server on Ubuntu (trusty
-here). You will probably want to tweak the version and the parameters of the
-my.cnf.
+This example shows MariaDB server installation on Ubuntu Trusty. Adjust the version and the parameters of `my.cnf` as needed. All parameters of the `my.cnf` can be defined using the `override_options` parameter.
 
-As a reminder, all the parameters of the my.cnf can be defined using the
-`override_options` parmeter.
-
-Of course, you need to make sure that all the custom folders you are setting
-your files into do exist as prerequisites of this code! :)
-Note that `/var/log/mysql` and `/var/run/mysqld` are created automatically.
+The folders `/var/log/mysql` and `/var/run/mysqld` are created automatically, but if you are using other custom folders, they should exist as prerequisites for this code.
 
 All the values set here are an example of a working minimal configuration.
-You can tweak them all! ;)
 
-**Note:** it is not mandatory to specify the version of the package you want
-(using the `package_ensure` parameter) but it's always a good practice to do
-so as it avoids some surprises...
+Specify the version of the package you want with the `package_ensure` parameter.
 
 ```
 class {'::mysql::server':
@@ -319,16 +301,11 @@ Class['::mysql::server']
 
 ```
 
-#### Installing the MariaDB client (can be done separately)
+#### Install the MariaDB client
 
-This part of the example shows how to install the MariaDB client and
-use the `bindings_enable` to get all the bindings installed in 1 shot.
+This example shows how to install the MariaDB client and all of the bindings at once. You can do this installation separately from the server installation.
 
-This part can be used totally individually from the server installation part.
-
-**Note:** it is not mandatory to specify the version of the package you want 
-(using the `package_ensure` parameter) but it's always a good practice to do 
-so as it avoids some surprises...
+Specify the version of the package you want with the `package_ensure` parameter.
 
 ```
 class {'::mysql::client':
@@ -343,7 +320,6 @@ Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
 Class['::mysql::client']
 ```
-
 
 ## Reference
 
@@ -616,7 +592,7 @@ Sets the server backup implementation. Valid values are:
 
 ##### `maxallowedpacket`
 
-Define the maximum SQL statement size for the backup dump script. The default value is 1MB as this is the default Mysql Server value.
+Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 
 #### mysql::server::monitor
 
@@ -916,9 +892,7 @@ Maximum updates per hour for the user. Must be an integer value. A value of '0' 
 
 #### mysql_grant
 
-`mysql_grant` creates grant permissions to access databases within
-MySQL. To create grant permissions to access databases with MySQL, use it you must create the title of the resource as shown below,
-following the pattern of `username@hostname/database.table`:
+`mysql_grant` creates grant permissions to access databases within MySQL. To create grant permissions to access databases with MySQL, use it you must create the title of the resource as shown below, following the pattern of `username@hostname/database.table`:
 
 ```
 mysql_grant { 'root@localhost/*.*':
