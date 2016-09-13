@@ -17,7 +17,7 @@ describe 'mysql_grant' do
   describe 'missing privileges for user' do
     it 'should fail' do
       pp = <<-EOS
-        mysql_user { 'test1@tester': 
+        mysql_user { 'test1@tester':
           ensure => present,
         }
         mysql_grant { 'test1@tester/test.*':
@@ -129,7 +129,35 @@ describe 'mysql_grant' do
     end
   end
 
-  describe 'adding option' do
+  describe 'adding REQUIRE SSL option' do
+    it 'should work without errors' do
+      pp = <<-EOS
+        mysql_user { 'test3@tester':
+          ensure => present,
+        }
+        mysql_grant { 'test3@tester/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test3@tester',
+          options    => ['REQUIRE SSL'],
+          privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test3@tester'],
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should find the user' do
+      shell("mysql -NBe \"SHOW GRANTS FOR test3@tester\"") do |r|
+        expect(r.stdout).to match(/GRANT USAGE ON *.* TO 'test3'@'tester' REQUIRE SSL$/)
+        expect(r.stdout).to match(/GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester'$/)
+        expect(r.stderr).to be_empty
+      end
+    end
+  end
+
+  describe 'adding GRANT option' do
     it 'should work without errors' do
       pp = <<-EOS
         mysql_user { 'test3@tester':
@@ -150,6 +178,62 @@ describe 'mysql_grant' do
 
     it 'should find the user' do
       shell("mysql -NBe \"SHOW GRANTS FOR test3@tester\"") do |r|
+        expect(r.stdout).to match(/GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$/)
+        expect(r.stderr).to be_empty
+      end
+    end
+  end
+
+  describe 'adding REQUIRE X509 and GRANT option' do
+    it 'should work without errors' do
+      pp = <<-EOS
+        mysql_user { 'test3@tester':
+          ensure => present,
+        }
+        mysql_grant { 'test3@tester/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test3@tester',
+          options    => ['REQUIRE X509', 'GRANT'],
+          privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test3@tester'],
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should find the user' do
+      shell("mysql -NBe \"SHOW GRANTS FOR test3@tester\"") do |r|
+        expect(r.stdout).to match(/GRANT USAGE ON *.* TO 'test3'@'tester' REQUIRE X509$/)
+        expect(r.stdout).to match(/GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$/)
+        expect(r.stderr).to be_empty
+      end
+    end
+  end
+
+  describe 'adding GRANT and REQUIRE X509 option' do
+    it 'should work without errors' do
+      pp = <<-EOS
+        mysql_user { 'test3@tester':
+          ensure => present,
+        }
+        mysql_grant { 'test3@tester/test.*':
+          ensure     => 'present',
+          table      => 'test.*',
+          user       => 'test3@tester',
+          options    => ['GRANT', 'REQUIRE X509'],
+          privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test3@tester'],
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should find the user' do
+      shell("mysql -NBe \"SHOW GRANTS FOR test3@tester\"") do |r|
+        expect(r.stdout).to match(/GRANT USAGE ON *.* TO 'test3'@'tester' REQUIRE X509$/)
         expect(r.stdout).to match(/GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$/)
         expect(r.stderr).to be_empty
       end
