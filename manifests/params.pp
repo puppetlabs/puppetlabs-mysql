@@ -187,7 +187,10 @@ class mysql::params {
       # mysql::bindings
       $java_package_name   = 'libmysql-java'
       $perl_package_name   = 'libdbd-mysql-perl'
-      $php_package_name    = 'php5-mysql'
+      $php_package_name    = $::lsbdistcodename ? {
+        'xenial'           => 'php-mysql',
+        default            => 'php5-mysql',
+      }
       $python_package_name = 'python-mysqldb'
       $ruby_package_name   = $::lsbdistcodename ? {
         'trusty'           => 'ruby-mysql',
