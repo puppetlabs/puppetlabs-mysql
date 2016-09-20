@@ -11,6 +11,7 @@ define mysql::db (
   $enforce_sql    = false,
   $ensure         = 'present',
   $import_timeout = 300,
+  $import_cat_cmd = 'cat',
 ) {
   #input validation
   validate_re($ensure, '^(present|absent)$',
@@ -57,7 +58,7 @@ define mysql::db (
 
     if $sql {
       exec{ "${dbname}-import":
-        command     => "cat ${sql_inputs} | mysql ${dbname}",
+        command     => "${import_cat_cmd} ${sql_inputs} | mysql ${dbname}",
         logoutput   => true,
         environment => "HOME=${::root_home}",
         refreshonly => $refresh,

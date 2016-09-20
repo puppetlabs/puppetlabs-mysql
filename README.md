@@ -133,7 +133,8 @@ mysql::db { 'mydb':
   password => 'mypass',
   host     => 'localhost',
   grant    => ['SELECT', 'UPDATE'],
-  sql      => '/path/to/sqlfile',
+  sql      => '/path/to/sqlfile.gz',
+  import_cat_cmd => 'zcat',
   import_timeout => 900,
 }
 ```
@@ -820,6 +821,10 @@ Specifies whether to create the database. Valid values are 'present', 'absent'. 
 
 Timeout, in seconds, for loading the sqlfiles. Defaults to '300'.
 
+##### `import_cat_cmd`
+
+Command to read the sqlfile for importing the database. Useful for compressed sqlfiles. For example, you can use 'zcat' for .gz files. Defaults to 'cat'.
+
 ### Types
 
 #### mysql_database
@@ -1029,4 +1034,4 @@ This module is based on work by David Schmitt. The following contributors have c
 * Michael Arnold
 * Chris Weyl
 * Daniël van Eeden
-
+* Jan-Otto Kröpke

@@ -40,7 +40,13 @@ describe 'mysql::db', :type => :define do
       it 'should import sql script on creation if enforcing' do
         params.merge!({'sql' => 'test_sql', 'enforce_sql' => true})
         is_expected.to contain_exec('test_db-import').with_refreshonly(false)
-        is_expected.to contain_exec('test_db-import').with_command("cat test_sql | mysql test_db")
+        is_expected.to contain_exec('test_db-import').with_command('cat test_sql | mysql test_db')
+      end
+
+      it 'should import sql script with custom command on creation if enforcing' do
+        params.merge!({'sql' => 'test_sql', 'enforce_sql' => true, 'import_cat_cmd' => 'zcat'})
+        is_expected.to contain_exec('test_db-import').with_refreshonly(false)
+        is_expected.to contain_exec('test_db-import').with_command('zcat test_sql | mysql test_db')
       end
 
       it 'should import sql scripts when more than one is specified' do
