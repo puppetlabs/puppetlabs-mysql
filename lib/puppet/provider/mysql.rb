@@ -104,8 +104,10 @@ class Puppet::Provider::Mysql < Puppet::Provider
   # Take in potential options and build up a query string with them.
   def self.cmd_options(options)
     option_string = ''
-    options.each do |opt|
-      if opt == 'GRANT'
+    options.sort.reverse_each do |opt|
+      if op = opt.match(/^REQUIRE\s(SSL|X509)$/)
+        option_string << " #{op[0]}"
+      elsif opt == 'GRANT'
         option_string << ' WITH GRANT OPTION'
       end
     end
