@@ -31,7 +31,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
   end
 
   def create
-    mysql([defaults_file, '-NBe', "create database if not exists `#{@resource[:name]}` character set `#{@resource[:charset]}` collate `#{@resource[:collate]}`"].compact)
+    mysql([defaults_file, sql_log_bin, '-NBe', "create database if not exists `#{@resource[:name]}` character set `#{@resource[:charset]}` collate `#{@resource[:collate]}`"].compact)
 
     @property_hash[:ensure]  = :present
     @property_hash[:charset] = @resource[:charset]
@@ -41,7 +41,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
   end
 
   def destroy
-    mysql([defaults_file, '-NBe', "drop database if exists `#{@resource[:name]}`"].compact)
+    mysql([defaults_file, sql_log_bin, '-NBe', "drop database if exists `#{@resource[:name]}`"].compact)
 
     @property_hash.clear
     exists? ? (return false) : (return true)
@@ -54,15 +54,21 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
   mk_resource_methods
 
   def charset=(value)
-    mysql([defaults_file, '-NBe', "alter database `#{resource[:name]}` CHARACTER SET #{value}"].compact)
+    mysql([defaults_file, sql_log_bin, '-NBe', "alter database `#{resource[:name]}` CHARACTER SET #{value}"].compact)
     @property_hash[:charset] = value
     charset == value ? (return true) : (return false)
   end
 
   def collate=(value)
-    mysql([defaults_file, '-NBe', "alter database `#{resource[:name]}` COLLATE #{value}"].compact)
+    mysql([defaults_file, sql_log_bin, '-NBe', "alter database `#{resource[:name]}` COLLATE #{value}"].compact)
     @property_hash[:collate] = value
     collate == value ? (return true) : (return false)
+  end
+
+  def sql_log_bin
+    session_sql_log_bin = @resource.value(:session_sql_log_bin) || 1
+
+    "--init-command='SET SESSION SQL_LOG_BIN = #{session_sql_log_bin}'"
   end
 
 end

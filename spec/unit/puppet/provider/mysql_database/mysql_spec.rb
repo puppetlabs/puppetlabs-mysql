@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Puppet::Type.type(:mysql_database).provider(:mysql) do
 
   let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
+  let(:sql_log_bin) { "--init-command='SET SESSION SQL_LOG_BIN = 1'" }
 
   let(:raw_databases) do
     <<-SQL_OUTPUT
@@ -56,7 +57,7 @@ test
 
   describe 'create' do
     it 'makes a database' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', "create database if not exists `#{resource[:name]}` character set `#{resource[:charset]}` collate `#{resource[:collate]}`"])
+      provider.expects(:mysql).with([defaults_file, sql_log_bin, '-NBe', "create database if not exists `#{resource[:name]}` character set `#{resource[:charset]}` collate `#{resource[:collate]}`"])
       provider.expects(:exists?).returns(true)
       expect(provider.create).to be_truthy
     end
@@ -64,7 +65,7 @@ test
 
   describe 'destroy' do
     it 'removes a database if present' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', "drop database if exists `#{resource[:name]}`"])
+      provider.expects(:mysql).with([defaults_file, sql_log_bin, '-NBe', "drop database if exists `#{resource[:name]}`"])
       provider.expects(:exists?).returns(false)
       expect(provider.destroy).to be_truthy
     end
@@ -95,7 +96,7 @@ test
 
   describe 'charset=' do
     it 'changes the charset' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', "alter database `#{resource[:name]}` CHARACTER SET blah"]).returns('0')
+      provider.expects(:mysql).with([defaults_file, sql_log_bin, '-NBe', "alter database `#{resource[:name]}` CHARACTER SET blah"]).returns('0')
 
       provider.charset=('blah')
     end
@@ -109,7 +110,7 @@ test
 
   describe 'collate=' do
     it 'changes the collate' do
-      provider.expects(:mysql).with([defaults_file, '-NBe', "alter database `#{resource[:name]}` COLLATE blah"]).returns('0')
+      provider.expects(:mysql).with([defaults_file, sql_log_bin, '-NBe', "alter database `#{resource[:name]}` COLLATE blah"]).returns('0')
 
       provider.collate=('blah')
     end

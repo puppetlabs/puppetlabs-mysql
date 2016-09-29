@@ -61,18 +61,18 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     # This is also required if you want to specify a authentication plugin
     if !plugin.nil?
       if plugin == 'sha256_password' and !password_hash.nil?
-        mysql([defaults_file, system_database, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'"].compact)
+        mysql([defaults_file, system_database, sql_log_bin, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'"].compact)
       else
-        mysql([defaults_file, system_database, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'"].compact)
+        mysql([defaults_file, system_database, sql_log_bin, '-e', "CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'"].compact)
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
     else
-      mysql([defaults_file, system_database, '-e', "CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'"].compact)
+      mysql([defaults_file, system_database, sql_log_bin, '-e', "CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'"].compact)
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     end
-    mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}"].compact)
+    mysql([defaults_file, system_database, sql_log_bin, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}"].compact)
     @property_hash[:max_user_connections] = max_user_connections
     @property_hash[:max_connections_per_hour] = max_connections_per_hour
     @property_hash[:max_queries_per_hour] = max_queries_per_hour
@@ -83,7 +83,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
 
   def destroy
     merged_name = @resource[:name].sub('@', "'@'")
-    mysql([defaults_file, system_database, '-e', "DROP USER '#{merged_name}'"].compact)
+    mysql([defaults_file, system_database, sql_log_bin, '-e', "DROP USER '#{merged_name}'"].compact)
 
     @property_hash.clear
     exists? ? (return false) : (return true)
@@ -106,18 +106,18 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     # We have a fact for the mysql version ...
     if mysqld_version.nil?
       # default ... if mysqld_version does not work
-      mysql([defaults_file, system_database, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
+      mysql([defaults_file, system_database, sql_log_bin, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
     else
       # Version >= 5.7.6 (many password related changes)
       if (mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
         if string.match(/^\*/)
-          mysql([defaults_file, system_database, '-e', "ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'"].compact)
+          mysql([defaults_file, system_database, sql_log_bin, '-e', "ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'"].compact)
         else
           raise ArgumentError, "Only mysql_native_password (*ABCD...XXX) hashes are supported"
         end
       else
         # older versions
-        mysql([defaults_file, system_database, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
+        mysql([defaults_file, system_database, sql_log_bin, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
       end
     end
 
@@ -126,30 +126,36 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
 
   def max_user_connections=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_USER_CONNECTIONS #{int}"].compact).chomp
+    mysql([defaults_file, system_database, sql_log_bin, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_USER_CONNECTIONS #{int}"].compact).chomp
 
     max_user_connections == int ? (return true) : (return false)
   end
 
   def max_connections_per_hour=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_CONNECTIONS_PER_HOUR #{int}"].compact).chomp
+    mysql([defaults_file, system_database, sql_log_bin, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_CONNECTIONS_PER_HOUR #{int}"].compact).chomp
 
     max_connections_per_hour == int ? (return true) : (return false)
   end
 
   def max_queries_per_hour=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_QUERIES_PER_HOUR #{int}"].compact).chomp
+    mysql([defaults_file, system_database, sql_log_bin, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_QUERIES_PER_HOUR #{int}"].compact).chomp
 
     max_queries_per_hour == int ? (return true) : (return false)
   end
 
   def max_updates_per_hour=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}"].compact).chomp
+    mysql([defaults_file, system_database, sql_log_bin, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}"].compact).chomp
 
     max_updates_per_hour == int ? (return true) : (return false)
+  end
+
+  def sql_log_bin
+    session_sql_log_bin = @resource.value(:session_sql_log_bin) || 1
+
+    "--init-command='SET SESSION SQL_LOG_BIN = #{session_sql_log_bin}'"
   end
 
 end
