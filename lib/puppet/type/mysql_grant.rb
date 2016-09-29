@@ -100,4 +100,10 @@ Puppet::Type.newtype(:mysql_grant) do
     desc 'Options to grant.'
   end
 
+  newparam(:session_sql_log_bin) do
+    desc "Assign SET SESSION SQL_LOG_BIN = x for USER statements."
+    newvalues(0, 1)
+    defaultto 1
+  end
+
 end

@@ -73,6 +73,29 @@ describe 'mysql_user' do
       end
     end
   end
+
+  context 'using ashp-session@localhost' do
+    describe 'adding user' do
+      it 'should work without errors' do
+        pp = <<-EOS
+          mysql_user { 'ashp-session@localhost':
+            password_hash       => '*F9A8E96790775D196D12F53BCC88B8048FF62ED5',
+            session_sql_log_bin => 0,
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+      end
+
+      it 'should find the user' do
+        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp-session@localhost'\"") do |r|
+          expect(r.stdout).to match(/^1$/)
+          expect(r.stderr).to be_empty
+        end
+      end
+    end
+  end
+
   context 'using resource should throw no errors' do
     describe 'find users' do
       it {

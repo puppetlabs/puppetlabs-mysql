@@ -473,6 +473,7 @@ users => {
     max_updates_per_hour     => '0',
     max_user_connections     => '0',
     password_hash            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
+    session_sql_log_bin      => '1',
   },
 }
 ```
@@ -484,11 +485,12 @@ Optional hash of grants, which are passed to [mysql_grant](#mysql_grant).
 ```
 grants => {
   'someuser@localhost/somedb.*' => {
-    ensure     => 'present',
-    options    => ['GRANT'],
-    privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
-    table      => 'somedb.*',
-    user       => 'someuser@localhost',
+    ensure              => 'present',
+    options             => ['GRANT'],
+    privileges          => ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
+    table               => 'somedb.*',
+    user                => 'someuser@localhost',
+    session_sql_log_bin => '1',
   },
 }
 ```
@@ -498,10 +500,11 @@ grants => {
 Optional hash of databases to create, which are passed to [mysql_database](#mysql_database).
 
 ```
-databases   => {
-  'somedb'  => {
-    ensure  => 'present',
-    charset => 'utf8',
+databases => {
+  'somedb' => {
+    ensure              => 'present',
+    charset             => 'utf8',
+    session_sql_log_bin => '1',
   },
 }
 ```
@@ -847,6 +850,10 @@ The CHARACTER SET setting for the database. Defaults to ':utf8'.
 
 The COLLATE setting for the database. Defaults to ':utf8_general_ci'. 
 
+##### `session_sql_log_bin`
+
+Sets session level value for `SQL_LOG_BIN`. A value of '0' means changes will not replicate. Defaults to '1' which means it will replicate.
+
 #### mysql_user
 
 Creates and manages user grants within MySQL.
@@ -858,6 +865,7 @@ mysql_user { 'root@127.0.0.1':
   max_queries_per_hour     => '0',
   max_updates_per_hour     => '0',
   max_user_connections     => '0',
+  session_sql_log_bin      => '1',
 }
 ```
 
@@ -894,6 +902,9 @@ Maximum queries per hour for the user. Must be an integer value. A value of '0' 
 
 Maximum updates per hour for the user. Must be an integer value. A value of '0' specifies no (or global) limit.
 
+##### `session_sql_log_bin`
+
+Sets session level value for `SQL_LOG_BIN`. A value of '0' means changes will not replicate. Defaults to '1' which means it will replicate.
 
 #### mysql_grant
 
@@ -901,11 +912,12 @@ Maximum updates per hour for the user. Must be an integer value. A value of '0' 
 
 ```
 mysql_grant { 'root@localhost/*.*':
-  ensure     => 'present',
-  options    => ['REQUIRE SSL', 'GRANT'],
-  privileges => ['ALL'],
-  table      => '*.*',
-  user       => 'root@localhost',
+  ensure              => 'present',
+  options             => ['REQUIRE SSL','GRANT'],
+  privileges          => ['ALL'],
+  table               => '*.*',
+  user                => 'root@localhost',
+  session_sql_log_bin => '1',
 }
 ```
 
@@ -946,6 +958,10 @@ User to whom privileges are granted.
 
 Array of MySQL options to grant. Optional.
 Supported options are 'REQUIRE SSL', 'REQUIRE X509', 'GRANT'.
+
+##### `session_sql_log_bin`
+
+Sets session level value for `SQL_LOG_BIN`. A value of '0' means changes will not replicate. Defaults to '1' which means it will replicate.
 
 #### mysql_plugin
 

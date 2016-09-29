@@ -659,4 +659,31 @@ describe 'mysql_grant' do
       expect(shell("mysql -e 'show tables;' grant_spec_db|grep grant_spec_table").exit_code).to be_zero
     end
   end
+
+  describe 'adding privileges with sql_log_bin set to 0' do
+    it 'should work without errors' do
+      pp = <<-EOS
+        mysql_user { 'test-session@tester':
+          ensure => present,
+        }
+        mysql_grant { 'test-session@tester/test.*':
+          ensure              => 'present',
+          table               => 'test.*',
+          user                => 'test-session@tester',
+          privileges          => ['SELECT', 'UPDATE'],
+          require             => Mysql_user['test-session@tester'],
+          session_sql_log_bin => 0,
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    it 'should find the user' do
+      shell("mysql -NBe \"SHOW GRANTS FOR test-session@tester\"") do |r|
+        expect(r.stdout).to match(/GRANT SELECT, UPDATE.*TO 'test-session'@'tester'/)
+        expect(r.stderr).to be_empty
+      end
+    end
+  end
 end
