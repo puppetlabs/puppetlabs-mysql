@@ -902,7 +902,7 @@ Maximum updates per hour for the user. Must be an integer value. A value of '0' 
 ```
 mysql_grant { 'root@localhost/*.*':
   ensure     => 'present',
-  options    => ['REQUIRE SSL', 'GRANT'],
+  options    => ['GRANT'],
   privileges => ['ALL'],
   table      => '*.*',
   user       => 'root@localhost',
@@ -944,8 +944,7 @@ User to whom privileges are granted.
 
 ##### `options`
 
-Array of MySQL options to grant. Optional.
-Supported options are 'REQUIRE SSL', 'REQUIRE X509', 'GRANT'.
+MySQL options to grant. Optional.
 
 #### mysql_plugin
 
