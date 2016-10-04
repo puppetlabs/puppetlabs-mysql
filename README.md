@@ -473,6 +473,7 @@ users => {
     max_updates_per_hour     => '0',
     max_user_connections     => '0',
     password_hash            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
+    tls_options              => ['NONE'],
   },
 }
 ```
@@ -870,6 +871,14 @@ mysql_user{ 'myuser'@'localhost':
 }
 ```
 
+TLS options can be specified for a user.
+```
+mysql_user{ 'myuser'@'localhost':
+  ensure                   => 'present',
+  tls_options              => ['SSL'],
+}
+```
+
 ##### `name`
 
 The name of the user, as 'username@hostname' or username@hostname.
@@ -893,6 +902,10 @@ Maximum queries per hour for the user. Must be an integer value. A value of '0' 
 ##### `max_updates_per_hour`
 
 Maximum updates per hour for the user. Must be an integer value. A value of '0' specifies no (or global) limit.
+
+##### `tls_options`
+
+SSL-related options for a MySQL account, using one or more tls_option values. 'NONE' specifies that the account has no TLS options enforced, and the available options are 'SSL', 'X509', 'CIPHER *cipher*', 'ISSUER *issuer*', 'SUBJECT *subject*'; as stated in the MySQL documentation.
 
 
 #### mysql_grant
