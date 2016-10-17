@@ -14,16 +14,18 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     users.collect do |name|
       if mysqld_version.nil?
         ## Default ...
-        query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+        query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       else
         if (mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
-          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
         else
-          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
         end
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
-      @max_updates_per_hour, @password, @plugin = mysql([defaults_file, "-NBe", query].compact).split(/\s/)
+      @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
+      @password, @plugin = mysql([defaults_file, "-NBe", query].compact).split(/\s/)
+      @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
 
       new(:name                     => name,
           :ensure                   => :present,
@@ -32,7 +34,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
           :max_user_connections     => @max_user_connections,
           :max_connections_per_hour => @max_connections_per_hour,
           :max_queries_per_hour     => @max_queries_per_hour,
-          :max_updates_per_hour     => @max_updates_per_hour
+          :max_updates_per_hour     => @max_updates_per_hour,
+          :tls_options              => @tls_options,
          )
     end
   end
@@ -56,6 +59,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     max_connections_per_hour = @resource.value(:max_connections_per_hour) || 0
     max_queries_per_hour     = @resource.value(:max_queries_per_hour) || 0
     max_updates_per_hour     = @resource.value(:max_updates_per_hour) || 0
+    tls_options              = @resource.value(:tls_options) || ['NONE']
 
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
@@ -77,6 +81,15 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     @property_hash[:max_connections_per_hour] = max_connections_per_hour
     @property_hash[:max_queries_per_hour] = max_queries_per_hour
     @property_hash[:max_updates_per_hour] = max_updates_per_hour
+
+    merged_tls_options = tls_options.join(' AND ')
+    if (((mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0) or
+        (mysqld_type == 'mariadb' and Puppet::Util::Package.versioncmp(mysqld_version, '10.2.0') >= 0))
+      mysql([defaults_file, system_database, '-e', "ALTER USER '#{merged_name}' REQUIRE #{merged_tls_options}"].compact)
+    else
+      mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' REQUIRE #{merged_tls_options}"].compact)
+    end
+    @property_hash[:tls_options] = tls_options
 
     exists? ? (return true) : (return false)
   end
@@ -150,6 +163,35 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}"].compact).chomp
 
     max_updates_per_hour == int ? (return true) : (return false)
+  end
+
+  def tls_options=(array)
+    merged_name = self.class.cmd_user(@resource[:name])
+    merged_tls_options = array.join(' AND ')
+    if (((mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0) or
+        (mysqld_type == 'mariadb' and Puppet::Util::Package.versioncmp(mysqld_version, '10.2.0') >= 0))
+      mysql([defaults_file, system_database, '-e', "ALTER USER #{merged_name} REQUIRE #{merged_tls_options}"].compact)
+    else
+      mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO #{merged_name} REQUIRE #{merged_tls_options}"].compact)
+    end
+
+    tls_options == array ? (return true) : (return false)
+  end
+
+  def self.parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
+    if ssl_type == 'ANY'
+      return ['SSL']
+    elsif ssl_type == 'X509'
+      return ['X509']
+    elsif ssl_type == 'SPECIFIED'
+      options = []
+      options << "CIPHER #{ssl_cipher}" if not ssl_cipher.nil? and not ssl_cipher.empty?
+      options << "ISSUER #{x509_issuer}" if not x509_issuer.nil? and not x509_issuer.empty?
+      options << "SUBJECT #{x509_subject}" if not x509_subject.nil? and not x509_subject.empty?
+      return options
+    else
+      return ['NONE']
+    end
   end
 
 end

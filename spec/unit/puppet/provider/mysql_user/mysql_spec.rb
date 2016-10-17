@@ -88,7 +88,7 @@ usvn_user@localhost
     Puppet::Util.stubs(:which).with('mysqld').returns('/usr/sbin/mysqld')
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
     provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns('joe@localhost')
-    provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('10 10 10 10 *6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4')
+    provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('10 10 10 10     *6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4')
   end
 
   let(:instance) { provider.class.instances.first }
@@ -98,7 +98,7 @@ usvn_user@localhost
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
-        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10 ')
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
@@ -108,7 +108,7 @@ usvn_user@localhost
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
-        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10 ')
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
@@ -118,7 +118,7 @@ usvn_user@localhost
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
-        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10 ')
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
@@ -128,7 +128,7 @@ usvn_user@localhost
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
-        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10 ')
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
@@ -138,7 +138,7 @@ usvn_user@localhost
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
-        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10 ')
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
@@ -148,7 +148,7 @@ usvn_user@localhost
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
-        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10 ')
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
       end
 
       usernames = provider.class.instances.collect {|x| x.name }
@@ -180,6 +180,7 @@ usvn_user@localhost
     it 'makes a user' do
       provider.expects(:mysql).with([defaults_file, system_database, '-e', "CREATE USER 'joe'@'localhost' IDENTIFIED BY PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'"])
       provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10"])
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"])
       provider.expects(:exists?).returns(true)
       expect(provider.create).to be_truthy
     end
@@ -282,6 +283,44 @@ usvn_user@localhost
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash=('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+    end
+  end
+
+  describe 'tls_options=' do
+    it 'adds SSL option grant in mysql 5.5' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+
+      provider.expects(:tls_options).returns(['NONE'])
+      provider.tls_options=(['NONE'])
+    end
+    it 'adds SSL option grant in mysql 5.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+
+      provider.expects(:tls_options).returns(['NONE'])
+      provider.tls_options=(['NONE'])
+    end
+    it 'adds SSL option grant in mysql < 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+
+      provider.expects(:tls_options).returns(['NONE'])
+      provider.tls_options=(['NONE'])
+    end
+    it 'adds SSL option grant in mysql >= 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+
+      provider.expects(:tls_options).returns(['NONE'])
+      provider.tls_options=(['NONE'])
+    end
+    it 'adds SSL option grant in mariadb-10.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+
+      provider.expects(:tls_options).returns(['NONE'])
+      provider.tls_options=(['NONE'])
     end
   end
 
