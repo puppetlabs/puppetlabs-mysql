@@ -7,7 +7,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
   def self.instances
     self.mysql('show databases').split("\n").collect do |name|
       attributes = {}
-      self.mysql("show variables like '%_database'").split("\n").each do |line|
+      self.mysql(["show variables like '%_database'", name]).split("\n").each do |line|
         k,v = line.split(/\s/)
         attributes[k] = v
       end

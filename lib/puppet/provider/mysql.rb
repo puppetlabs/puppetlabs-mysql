@@ -56,9 +56,9 @@ class Puppet::Provider::Mysql < Puppet::Provider
 
   def self.mysql(textOfSQL, type)
     if type.eql? 'system'
-      mysql([defaults_file, '--host=', system_database, '-e', textOfSQL].compact)
-#    else
-#      mysql([defaults_file, '-NBe', textOfSQL].compact)
+      mysql([defaults_file, '--host=', system_database, '-e', textOfSQL].flatten.compact)
+    else
+      mysql([defaults_file, '-NBe', textOfSQL].flatten.compact)
     end
   end
 
