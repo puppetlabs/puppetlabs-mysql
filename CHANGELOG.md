@@ -1,3 +1,16 @@
+## Supported Release 3.10.0
+### Summary
+This release fix some bugs for Ubuntu Xenial and adds TLS options for managing
+MySQL users.
+
+#### Features
+- Add support for setting tls options for mysql_user provider.
+
+#### Bugfixes
+- (MODULES-3557) Add Ubuntu 16.04 package names for language bindings.
+- (MODULES-3907) Add MySQL/Percona 5.7 initialize on fresh deploy.
+- Fix packaging name with php-mysql on Ubuntu Xenial.
+
 ## Supported Release 3.9.0
 ### Summary
 This release adds Percona 5.7 support and compatibility with Ubuntu 16.04, in addition to various bugfixes.
