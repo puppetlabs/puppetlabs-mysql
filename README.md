@@ -1048,3 +1048,4 @@ This module is based on work by David Schmitt. The following contributors have c
 * Chris Weyl
 * Daniël van Eeden
 * Jan-Otto Kröpke
+* Timothy Sven Nelson
