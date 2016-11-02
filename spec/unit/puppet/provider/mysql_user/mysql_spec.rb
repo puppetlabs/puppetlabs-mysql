@@ -289,35 +289,35 @@ usvn_user@localhost
   describe 'tls_options=' do
     it 'adds SSL option grant in mysql 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+      provider.expects(:mysql).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options=(['NONE'])
     end
     it 'adds SSL option grant in mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+      provider.expects(:mysql).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options=(['NONE'])
     end
     it 'adds SSL option grant in mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+      provider.expects(:mysql).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options=(['NONE'])
     end
     it 'adds SSL option grant in mysql >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+      provider.expects(:mysql).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options=(['NONE'])
     end
     it 'adds SSL option grant in mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
+      provider.expects(:mysql).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options=(['NONE'])
