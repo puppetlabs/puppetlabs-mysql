@@ -2,13 +2,15 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Set grants for users in MySQL.'
 
+  commands mysql_raw: 'mysql'
+
   def self.instances
     instances = []
     users.map do |user|
       user_string = cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
       begin
-        grants = mysql([defaults_file, '-NBe', query].compact)
+        grants = self.mysql_caller(query, 'regular')
       rescue Puppet::ExecutionFailure => e
         # Silently ignore users with no grants. Can happen e.g. if user is
         # defined with fqdn and server is run with skip-name-resolve. Example:
@@ -80,7 +82,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     query << " ON #{table_string}"
     query << " TO #{user_string}"
     query << self.class.cmd_options(options) unless options.nil?
-    mysql([defaults_file, system_database, '-e', query].compact)
+    self.class.mysql_caller(query, 'system')
   end
 
   def create
@@ -106,10 +108,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     # exist to be executed successfully
     if revoke_privileges.include?('ALL') && !revoke_privileges.include?('PROXY')
       query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
-      mysql([defaults_file, system_database, '-e', query].compact)
+      self.class.mysql_caller(query, 'system')
     end
     query = "REVOKE #{priv_string} ON #{table_string} FROM #{user_string}"
-    mysql([defaults_file, system_database, '-e', query].compact)
+    self.class.mysql_caller(query, 'system')
   end
 
   def destroy
@@ -133,7 +135,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
   def flush
     @property_hash.clear
-    mysql([defaults_file, '-NBe', 'FLUSH PRIVILEGES'].compact)
+    self.class.mysql_caller('FLUSH PRIVILEGES', 'regular')
   end
 
   mk_resource_methods
