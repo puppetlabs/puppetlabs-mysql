@@ -1,3 +1,15 @@
+## Supported Release 3.10.0
+### Summary
+This release includes new features for setting TLS options on a mysql user, a new parameter to allow specifying tool to import sql files, as well as various bugfixes.
+
+#### Features
+- (MODULES-3879) Adds `import_cat_cmd` parameter to specify the command to read sql files
+- Adds support for setting `tls_options` in `mysql_user`
+
+#### Bugfixes
+- (MODULES-3557) Adds Ubuntu 16.04 package names for language bindings 
+- (MODULES-3907) Adds MySQL/Percona 5.7 initialize on fresh deploy
+
 ## Supported Release 3.9.0
 ### Summary
 This release adds Percona 5.7 support and compatibility with Ubuntu 16.04, in addition to various bugfixes.
