@@ -84,9 +84,9 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     merged_tls_options = tls_options.join(' AND ')
     if (((mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0) or
         (mysqld_type == 'mariadb' and Puppet::Util::Package.versioncmp(mysqld_version, '10.2.0') >= 0))
-      mysql([defaults_file, system_database, '-e', "ALTER USER '#{merged_name}' REQUIRE #{merged_tls_options}"].compact)
+      mysql("ALTER USER '#{merged_name}' REQUIRE #{merged_tls_options}", 'system')
     else
-      mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO '#{merged_name}' REQUIRE #{merged_tls_options}"].compact)
+      mysql("GRANT USAGE ON *.* TO '#{merged_name}' REQUIRE #{merged_tls_options}", 'system')
     end
     @property_hash[:tls_options] = tls_options
 
@@ -169,9 +169,9 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     merged_tls_options = array.join(' AND ')
     if (((mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0) or
         (mysqld_type == 'mariadb' and Puppet::Util::Package.versioncmp(mysqld_version, '10.2.0') >= 0))
-      mysql([defaults_file, system_database, '-e', "ALTER USER #{merged_name} REQUIRE #{merged_tls_options}"].compact)
+      mysql("ALTER USER #{merged_name} REQUIRE #{merged_tls_options}", 'system')
     else
-      mysql([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO #{merged_name} REQUIRE #{merged_tls_options}"].compact)
+      mysql("GRANT USAGE ON *.* TO #{merged_name} REQUIRE #{merged_tls_options}", 'system')
     end
 
     tls_options == array ? (return true) : (return false)
