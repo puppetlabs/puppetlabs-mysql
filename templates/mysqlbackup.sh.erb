@@ -91,6 +91,7 @@ mysqldump --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction
 <% unless @delete_before_dump -%>
 if [ $? -eq 0 ] ; then
     cleanup
+    touch /tmp/mysqlbackup_success
 fi
 <% end -%>
 
