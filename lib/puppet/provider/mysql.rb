@@ -57,13 +57,15 @@ class Puppet::Provider::Mysql < Puppet::Provider
   def self.mysql(textOfSQL, type)
     if type.eql? 'system'
       mysql([defaults_file, '--host=', system_database, '-e', textOfSQL].flatten.compact)
-    else
+    elsif type.eql? 'regular'
       mysql([defaults_file, '-NBe', textOfSQL].flatten.compact)
+    else
+      raise Puppet::Error, "#mysql had an error -> Unrecognised type '#type'"
     end
   end
 
   def self.users
-    self.mysql("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user").split("\n")
+    self.mysql("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
   end
 
   # Optional parameter to run a statement on the MySQL system database.

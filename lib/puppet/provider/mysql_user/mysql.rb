@@ -7,7 +7,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
   # Build a property_hash containing all the discovered information about MySQL
   # users.
   def self.instances
-    users = self.mysql("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user").split("\n")
+    users = self.mysql("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
     # To reduce the number of calls to MySQL we collect all the properties in
     # one big swoop.
     users.collect do |name|
@@ -23,7 +23,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
-      @password, @plugin = self.mysql(query).split(/\s/)
+      @password, @plugin = self.mysql(query, 'regular').split(/\s/)
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
 
       new(:name                     => name,

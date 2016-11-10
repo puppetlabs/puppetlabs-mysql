@@ -17,7 +17,7 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
     Facter.stubs(:value).with(:root_home).returns('/root')
     Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
-    provider.class.stubs(:mysql).with('show plugins').returns('auth_socket	ACTIVE	AUTHENTICATION	auth_socket.so	GPL')
+    provider.class.stubs(:mysql).with('show plugins', 'regular').returns('auth_socket	ACTIVE	AUTHENTICATION	auth_socket.so	GPL')
   end
 
   let(:instance) { provider.class.instances.first }
@@ -31,7 +31,7 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
 
   describe 'create' do
     it 'loads a plugin' do
-      provider.expects(:mysql).with("install plugin #{resource[:name]} soname '#{resource[:soname]}'")
+      provider.expects(:mysql).with("install plugin #{resource[:name]} soname '#{resource[:soname]}'", 'regular')
       provider.expects(:exists?).returns(true)
       expect(provider.create).to be_truthy
     end
@@ -39,7 +39,7 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
 
   describe 'destroy' do
     it 'unloads a plugin if present' do
-      provider.expects(:mysql).with("uninstall plugin #{resource[:name]}")
+      provider.expects(:mysql).with("uninstall plugin #{resource[:name]}", 'regular')
       provider.expects(:exists?).returns(false)
       expect(provider.destroy).to be_truthy
     end

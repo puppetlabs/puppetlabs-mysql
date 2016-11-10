@@ -5,7 +5,7 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, :parent => Puppet::Provider::My
   commands :mysql => 'mysql'
 
   def self.instances
-    self.mysql('show plugins').split("\n").collect do |line|
+    self.mysql('show plugins', 'regular').split("\n").collect do |line|
       name, status, type, library, license = line.split(/\t/)
       new(:name    => name,
           :ensure  => :present,
@@ -29,7 +29,7 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, :parent => Puppet::Provider::My
     # Use plugin_name.so as soname if it's not specified. This won't work on windows as
     # there it should be plugin_name.dll
     @resource[:soname].nil? ? (soname=@resource[:name] + '.so') : (soname=@resource[:soname])
-    self.mysql("install plugin #{@resource[:name]} soname '#{soname}'")
+    self.mysql("install plugin #{@resource[:name]} soname '#{soname}'", 'regular')
 
     @property_hash[:ensure]  = :present
     @property_hash[:soname] = @resource[:soname]
@@ -38,7 +38,7 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, :parent => Puppet::Provider::My
   end
 
   def destroy
-    self.mysql("uninstall plugin #{@resource[:name]}")
+    self.mysql("uninstall plugin #{@resource[:name]}", 'regular')
 
     @property_hash.clear
     exists? ? (return false) : (return true)
