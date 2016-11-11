@@ -1,6 +1,6 @@
 require: rubocop-rspec
 AllCops:
-  TargetRubyVersion: 1.9
+  TargetRubyVersion: 2.3
   Include:
     - ./**/*.rb
   Exclude:
@@ -505,4 +505,16 @@ RSpec/ExampleLength:
   Enabled: False
 
 RSpec/NamedSubject:
+  Enabled: False
+
+Style/FrozenStringLiteralComment:
+  Enabled: False
+
+RSpec/InstanceVariable:
+  Enabled: False
+
+Style/RegexpLiteral:
+  Enabled: False
+
+RSpec/MultipleExpectations:
   Enabled: False
