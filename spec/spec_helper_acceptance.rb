@@ -3,7 +3,7 @@ require 'beaker/puppet_install_helper'
 
 run_puppet_install_helper
 
-UNSUPPORTED_PLATFORMS = [ 'Windows', 'Solaris', 'AIX' ]
+UNSUPPORTED_PLATFORMS = %w(Windows Solaris AIX).freeze
 
 RSpec.configure do |c|
   # Project root
@@ -15,19 +15,19 @@ RSpec.configure do |c|
   # detect the situation where PUP-5016 is triggered and skip the idempotency tests in that case
   # also note how fact('puppetversion') is not available because of PUP-4359
   if fact('osfamily') == 'Debian' && fact('operatingsystemmajrelease') == '8' && shell('puppet --version').stdout =~ /^4\.2/
-    c.filter_run_excluding :skip_pup_5016 => true
+    c.filter_run_excluding skip_pup_5016: true
   end
 
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies
-    puppet_module_install(:source => proj_root, :module_name => 'mysql')
+    puppet_module_install(source: proj_root, module_name: 'mysql')
     hosts.each do |host|
       # Required for binding tests.
       if fact('osfamily') == 'RedHat'
-        version = fact("operatingsystemmajrelease")
+        version = fact('operatingsystemmajrelease')
         if fact('operatingsystemmajrelease') =~ /7/ || fact('operatingsystem') =~ /Fedora/
-          shell("yum install -y bzip2")
+          shell('yum install -y bzip2')
         end
       end
 
@@ -47,20 +47,20 @@ RSpec.configure do |c|
         on host, "git clone https://github.com/puppetlabs/puppetlabs-stdlib #{destdir}/stdlib && cd #{destdir}/stdlib && git checkout 3.2.0"
         on host, "git clone https://github.com/stahnma/puppet-module-epel.git #{destdir}/epel && cd #{destdir}/epel && git checkout 1.0.2"
       else
-        on host, puppet('module','install','puppetlabs-stdlib','--version','3.2.0')
-        on host, puppet('module','install','stahnma/epel')
-        on host, puppet('module','install','puppet/staging')
+        on host, puppet('module', 'install', 'puppetlabs-stdlib', '--version', '3.2.0')
+        on host, puppet('module', 'install', 'stahnma/epel')
+        on host, puppet('module', 'install', 'puppet/staging')
       end
     end
   end
 end
 
-shared_examples "a idempotent resource" do
-  it 'should apply with no errors' do
-    apply_manifest(pp, :catch_failures => true)
+shared_examples 'a idempotent resource' do
+  it 'applies with no errors' do
+    apply_manifest(pp, catch_failures: true)
   end
 
-  it 'should apply a second time without changes', :skip_pup_5016 do
-    apply_manifest(pp, :catch_changes => true)
+  it 'applies a second time without changes', :skip_pup_5016 do
+    apply_manifest(pp, catch_changes: true)
   end
 end

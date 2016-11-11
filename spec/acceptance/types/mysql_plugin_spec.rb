@@ -43,17 +43,17 @@ end
 describe 'mysql_plugin' do
   if plugin # if plugins are supported
     describe 'setup' do
-      it 'should work with no errors' do
+      it 'works with no errors' do
         pp = <<-EOS
           class { 'mysql::server': }
         EOS
 
-        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, catch_failures: true)
       end
     end
 
     describe 'load plugin' do
-      it 'should work without errors' do
+      it 'works without errors' do
         pp = <<-EOS
           mysql_plugin { #{plugin}:
             ensure => present,
@@ -61,10 +61,10 @@ describe 'mysql_plugin' do
           }
         EOS
 
-        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, catch_failures: true)
       end
 
-      it 'should find the plugin' do
+      it 'finds the plugin' do
         shell("mysql -NBe \"select plugin_name from information_schema.plugins where plugin_name='#{plugin}'\"") do |r|
           expect(r.stdout).to match(/^#{plugin}$/i)
           expect(r.stderr).to be_empty
@@ -72,5 +72,4 @@ describe 'mysql_plugin' do
       end
     end
   end
-
 end

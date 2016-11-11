@@ -11,7 +11,7 @@ describe 'mysql::db define' do
         }
       EOS
     end
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
 
     describe command("mysql -e 'show databases;'") do
       its(:exit_status) { is_expected.to eq 0 }
@@ -35,7 +35,7 @@ describe 'mysql::db define' do
         }
       EOS
     end
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
 
     describe command("mysql -e 'show tables;' spec2") do
       its(:exit_status) { is_expected.to eq 0 }
@@ -44,7 +44,7 @@ describe 'mysql::db define' do
   end
 
   describe 'creating a database with dbname parameter' do
-    let(:check_command) { " | grep realdb" }
+    let(:check_command) { ' | grep realdb' }
     let(:pp) do
       <<-EOS
         class { 'mysql::server': override_options => { 'root_password' => 'password' } }
@@ -55,7 +55,7 @@ describe 'mysql::db define' do
         }
       EOS
     end
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
 
     describe command("mysql -e 'show databases;'") do
       its(:exit_status) { is_expected.to eq 0 }

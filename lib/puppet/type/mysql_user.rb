@@ -7,7 +7,7 @@ Puppet::Type.newtype(:mysql_user) do
   autorequire(:file) { '/root/.my.cnf' }
   autorequire(:class) { 'mysql::server' }
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc "The name of the user. This uses the 'username@hostname' or username@hostname."
     validate do |value|
       # http://dev.mysql.com/doc/refman/5.5/en/identifiers.html
@@ -29,11 +29,11 @@ Puppet::Type.newtype(:mysql_user) do
 
       mysql_version = Facter.value(:mysql_version)
       unless mysql_version.nil?
-        if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 and user_part.size > 16
+        if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
           raise(ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters')
-        elsif Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 and user_part.size > 32
+        elsif Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
           raise(ArgumentError, 'MySQL usernames are limited to a maximum of 32 characters')
-        elsif Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 and user_part.size > 80
+        elsif Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
           raise(ArgumentError, 'MySQL usernames are limited to a maximum of 80 characters')
         end
       end
@@ -56,36 +56,36 @@ Puppet::Type.newtype(:mysql_user) do
   end
 
   newproperty(:max_user_connections) do
-    desc "Max concurrent connections for the user. 0 means no (or global) limit."
+    desc 'Max concurrent connections for the user. 0 means no (or global) limit.'
     newvalue(/\d+/)
   end
 
   newproperty(:max_connections_per_hour) do
-    desc "Max connections per hour for the user. 0 means no (or global) limit."
+    desc 'Max connections per hour for the user. 0 means no (or global) limit.'
     newvalue(/\d+/)
   end
 
   newproperty(:max_queries_per_hour) do
-    desc "Max queries per hour for the user. 0 means no (or global) limit."
+    desc 'Max queries per hour for the user. 0 means no (or global) limit.'
     newvalue(/\d+/)
   end
 
   newproperty(:max_updates_per_hour) do
-    desc "Max updates per hour for the user. 0 means no (or global) limit."
+    desc 'Max updates per hour for the user. 0 means no (or global) limit.'
     newvalue(/\d+/)
   end
 
-  newproperty(:tls_options, :array_matching => :all) do
-    desc "Options to that set the TLS-related REQUIRE attributes for the user."
+  newproperty(:tls_options, array_matching: :all) do
+    desc 'Options to that set the TLS-related REQUIRE attributes for the user.'
     validate do |value|
-      value = [value] if not value.is_a?(Array)
-      if value.include? 'NONE' or value.include? 'SSL' or value.include? 'X509'
+      value = [value] unless value.is_a?(Array)
+      if value.include?('NONE') || value.include?('SSL') || value.include?('X509')
         if value.length > 1
-          raise(ArgumentError, "REQUIRE tls options NONE, SSL and X509 cannot be used with other options, you may only use one of them.")
+          raise(ArgumentError, 'REQUIRE tls options NONE, SSL and X509 cannot be used with other options, you may only use one of them.')
         end
       else
         value.each do |opt|
-          if not o = opt.match(/^(CIPHER|ISSUER|SUBJECT)/i)
+          unless o = opt.match(/^(CIPHER|ISSUER|SUBJECT)/i)
             raise(ArgumentError, "Invalid tls option #{o}")
           end
         end
@@ -94,12 +94,11 @@ Puppet::Type.newtype(:mysql_user) do
     def insync?(is)
       # The current value may be nil and we don't
       # want to call sort on it so make sure we have arrays
-      if is.is_a?(Array) and @should.is_a?(Array)
+      if is.is_a?(Array) && @should.is_a?(Array)
         is.sort == @should.sort
       else
         is == @should
       end
     end
   end
-
 end
