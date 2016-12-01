@@ -1,7 +1,7 @@
 ---
 Gemfile:
   optional:
-    ':development, :unit_tests':
+    ':development':
       - gem: rspec-puppet-facts
 .travis.yml:
   includes:
