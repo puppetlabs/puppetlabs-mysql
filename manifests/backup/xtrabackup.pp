@@ -22,10 +22,27 @@ class mysql::backup::xtrabackup (
   $prescript               = false,
   $postscript              = false,
   $execpath                = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $optional_args           = [],
 ) inherits mysql::params {
 
   package{ $xtrabackup_package_name:
     ensure  => $ensure,
+  }
+
+  if $backupuser and $backuppassword {
+    mysql_user { "${backupuser}@localhost":
+      ensure        => $ensure,
+      password_hash => mysql_password($backuppassword),
+      require       => Class['mysql::server::root_password'],
+    }
+
+    mysql_grant { "${backupuser}@localhost/*.*":
+      ensure     => $ensure,
+      user       => "${backupuser}@localhost",
+      table      => '*.*',
+      privileges => [ 'RELOAD', 'LOCK TABLES', 'REPLICATION CLIENT' ],
+      require    => Mysql_user["${backupuser}@localhost"],
+    }
   }
 
   cron { 'xtrabackup-weekly':

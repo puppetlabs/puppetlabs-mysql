@@ -596,6 +596,10 @@ Sets the server backup implementation. Valid values are:
 
 Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 
+##### `optional_args`
+
+Specifies an array of optional arguments which should be passed through to the backup tool. (Currently only supported by the xtrabackup provider.)
+
 #### mysql::server::monitor
 
 ##### `mysql_monitor_username`
