@@ -1,21 +1,20 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
-Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::Mysql) do
+Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL databases.'
 
-  commands :mysql => 'mysql'
+  commands mysql: 'mysql'
 
   def self.instances
-    mysql([defaults_file, '-NBe', 'show databases'].compact).split("\n").collect do |name|
+    mysql([defaults_file, '-NBe', 'show databases'].compact).split("\n").map do |name|
       attributes = {}
       mysql([defaults_file, '-NBe', "show variables like '%_database'", name].compact).split("\n").each do |line|
-        k,v = line.split(/\s/)
+        k, v = line.split(/\s/)
         attributes[k] = v
       end
-      new(:name    => name,
-          :ensure  => :present,
-          :charset => attributes['character_set_database'],
-          :collate => attributes['collation_database']
-         )
+      new(name: name,
+          ensure: :present,
+          charset: attributes['character_set_database'],
+          collate: attributes['collation_database'])
     end
   end
 
@@ -64,5 +63,4 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
     @property_hash[:collate] = value
     collate == value ? (return true) : (return false)
   end
-
 end

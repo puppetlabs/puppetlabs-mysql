@@ -11,6 +11,8 @@ matrix:
   fast_finish: true
   include:
   - rvm: 2.3.1
+    script: bundle exec rubocop --format clang --color
+  - rvm: 2.3.1
     dist: trusty
     env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_set=docker/ubuntu-14.04
     script: bundle exec rake beaker

@@ -5,8 +5,8 @@ Puppet::Type.newtype(:mysql_datadir) do
 
   autorequire(:package) { 'mysql-server' }
 
-  newparam(:datadir, :namevar => true) do
-    desc "The datadir name"
+  newparam(:datadir, namevar: true) do
+    desc 'The datadir name'
   end
 
   newparam(:basedir) do
@@ -19,17 +19,16 @@ Puppet::Type.newtype(:mysql_datadir) do
   end
 
   newparam(:defaults_extra_file) do
-    desc "MySQL defaults-extra-file with absolute path (*.cnf)."
+    desc 'MySQL defaults-extra-file with absolute path (*.cnf).'
     newvalues(/^\/.*\.cnf$/)
   end
 
-  newparam(:insecure, :boolean => true) do
-    desc "Insecure initialization (needed for 5.7.6++)."
+  newparam(:insecure, boolean: true) do
+    desc 'Insecure initialization (needed for 5.7.6++).'
   end
 
   newparam(:log_error) do
-    desc "The path to the mysqld error log file (used with the --log-error option)"
+    desc 'The path to the mysqld error log file (used with the --log-error option)'
     newvalues(/^\//)
   end
-
 end

@@ -6,7 +6,7 @@ Puppet::Type.newtype(:mysql_database) do
   autorequire(:file) { '/root/.my.cnf' }
   autorequire(:class) { 'mysql::server' }
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'The name of the MySQL database to manage.'
   end
 
@@ -21,5 +21,4 @@ Puppet::Type.newtype(:mysql_database) do
     defaultto :utf8_general_ci
     newvalue(/^\S+$/)
   end
-
 end
