@@ -626,9 +626,9 @@ Ensures that the resource exists. Valid values are `present`, `absent`. Defaults
 
 The version to install from the major/MySQLTuner-perl github repository. Must be a valid tag. Defaults to 'v1.3.0'.
 
-##### `source`
+##### `environment`
 
-Specifies the source. If not specified, defaults to `https://github.com/major/MySQLTuner-perl/raw/${version}/mysqltuner.pl`
+Environment variables acive during download, e.g. to download via proxies: environment => 'https_proxy=http://proxy.example.com:80'
 
 #### mysql::bindings
 
