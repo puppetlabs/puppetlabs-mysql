@@ -37,7 +37,7 @@ class mysql::server::mysqltuner(
     }
 
     staging::file { "mysqltuner-${_version}":
-      source => $_source,
+      source      => $_source,
       environment => $environment,
     }
     file { '/usr/local/bin/mysqltuner':
