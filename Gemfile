@@ -60,6 +60,7 @@ group :system_tests do
   gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'] || '>= 3.4')     if ! supports_windows
   gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'] || '~> 5.1')     if supports_windows
   gem 'beaker-puppet_install_helper',                                            :require => false
+  gem 'beaker-module_install_helper',                                            :require => false
   gem 'master_manipulator',                                                      :require => false
   gem 'beaker-hostgenerator', *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
   gem 'beaker-abs', *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')        
