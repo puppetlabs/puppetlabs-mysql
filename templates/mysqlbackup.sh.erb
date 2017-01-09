@@ -60,7 +60,11 @@ set -o pipefail
 
 cleanup()
 {
-    find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+<%- if @kernel == 'SunOS' -%>
+	gfind "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+<%- else -%>
+	find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+<%- end -%>
 }
 
 <% if @delete_before_dump -%>
