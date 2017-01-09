@@ -22,7 +22,12 @@ ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 
 # Create temporary mysql cnf file.
 TMPFILE=`mktemp /tmp/backup.XXXXXX` || exit 1
+<%- if @kernel == 'SunOS' -%>
+echo "[client]\npassword=$PASS\nuser=$USER\nmax_allowed_packet=$MAX_ALLOWED_PACKET" > $TMPFILE
+<%- else -%>
 echo -e "[client]\npassword=$PASS\nuser=$USER\nmax_allowed_packet=$MAX_ALLOWED_PACKET" > $TMPFILE
+<%- end -%>
+
 
 # Ensure backup directory exist.
 mkdir -p $DIR
@@ -61,7 +66,7 @@ set -o pipefail
 cleanup()
 {
 <%- if @kernel == 'SunOS' -%>
-	gfind "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+	gfind "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | gxargs -0 -r rm -f
 <%- else -%>
 	find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
 <%- end -%>
