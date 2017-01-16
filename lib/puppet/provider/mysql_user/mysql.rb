@@ -2,6 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysql) do
 
   desc 'manage users for a mysql database.'
+  commands :mysql_raw  => 'mysql'
 
   # Build a property_hash containing all the discovered information about MySQL
   # users.

@@ -3,6 +3,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
 
   desc 'Set grants for users in MySQL.'
 
+  commands :mysql_raw  => 'mysql'
+
   def self.instances
     instances = []
     users.select{ |user| user =~ /.+@/ }.collect do |user|

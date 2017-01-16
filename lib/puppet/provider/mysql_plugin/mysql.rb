@@ -2,6 +2,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_plugin).provide(:mysql, :parent => Puppet::Provider::Mysql) do
   desc 'Manages MySQL plugins.'
 
+  commands :mysql_raw  => 'mysql'
+
   def self.instances
     self.mysql_caller('show plugins', 'regular').split("\n").collect do |line|
       name, status, type, library, license = line.split(/\t/)
