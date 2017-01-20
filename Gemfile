@@ -49,16 +49,13 @@ group :development do
   gem 'json_pure', '<= 2.0.1',              :require => false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
   gem 'fast_gettext', '1.1.0',              :require => false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.1.0')
   gem 'fast_gettext',                       :require => false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1.0')
-  gem 'rspec-puppet-facts',                 :require => false
+  gem 'rainbow', '< 2.2.0',                 :require => false
 end
 
 group :system_tests do
-  gem 'beaker', *location_for(ENV['BEAKER_VERSION'] || '~> 2.20')                if supports_windows
-  gem 'beaker', *location_for(ENV['BEAKER_VERSION'])                             if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0') and ! supports_windows
-  gem 'beaker', *location_for(ENV['BEAKER_VERSION'] || '< 3')                    if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.3.0') and ! supports_windows
-  gem 'beaker-pe',                                                               :require => false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0')
-  gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'] || '>= 3.4')     if ! supports_windows
-  gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'] || '~> 5.1')     if supports_windows
+  gem 'beaker', *location_for(ENV['BEAKER_VERSION'] || '>= 3')                  
+  gem 'beaker-pe',                                                               :require => false
+  gem 'beaker-rspec', *location_for(ENV['BEAKER_RSPEC_VERSION'])                
   gem 'beaker-puppet_install_helper',                                            :require => false
   gem 'beaker-module_install_helper',                                            :require => false
   gem 'master_manipulator',                                                      :require => false
