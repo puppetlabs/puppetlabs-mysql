@@ -1,5 +1,6 @@
 require 'puppet'
 require 'puppet/type/mysql_user'
+require 'spec_helper'
 describe Puppet::Type.type(:mysql_user) do
 
   context "On MySQL 5.x" do
