@@ -3,7 +3,7 @@
 sudo: false
 language: ruby
 cache: bundler
-script: "bundle exec rake validate lint spec"
+script: "bundle exec rake release_checks"
 #Inserting below due to the following issue: https://github.com/travis-ci/travis-ci/issues/3531#issuecomment-88311203
 before_install:
   - gem update bundler
@@ -24,18 +24,9 @@ matrix:
     sudo: required
   - rvm: 2.3.1
     bundler_args: --without system_tests
-    env: PUPPET_GEM_VERSION="~> 4.0" STDLIB_LOG_DEPRECATIONS="false"
-  - rvm: 2.1.9
+    env: PUPPET_GEM_VERSION="~> 4.0"
+  - rvm: 2.1.7
     bundler_args: --without system_tests
-    env: PUPPET_GEM_VERSION="~> 4.0" STDLIB_LOG_DEPRECATIONS="false"
-  - rvm: 2.1.5
-    bundler_args: --without system_tests
-    env: PUPPET_GEM_VERSION="~> 3.0" FUTURE_PARSER="yes"
-  - rvm: 2.1.5
-    bundler_args: --without system_tests
-    env: PUPPET_GEM_VERSION="~> 3.0"
-  - rvm: 1.9.3
-    bundler_args: --without system_tests
-    env: PUPPET_GEM_VERSION="~> 3.0"
+    env: PUPPET_GEM_VERSION="~> 4.0"
 notifications:
   email: false

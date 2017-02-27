@@ -596,6 +596,10 @@ Sets the server backup implementation. Valid values are:
 
 Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 
+##### `optional_args`
+
+Specifies an array of optional arguments which should be passed through to the backup tool. (Currently only supported by the xtrabackup provider.)
+
 #### mysql::server::monitor
 
 ##### `mysql_monitor_username`
@@ -622,9 +626,9 @@ Ensures that the resource exists. Valid values are `present`, `absent`. Defaults
 
 The version to install from the major/MySQLTuner-perl github repository. Must be a valid tag. Defaults to 'v1.3.0'.
 
-##### `source`
+##### `environment`
 
-Specifies the source. If not specified, defaults to `https://github.com/major/MySQLTuner-perl/raw/${version}/mysqltuner.pl`
+Environment variables acive during download, e.g. to download via proxies: environment => 'https_proxy=http://proxy.example.com:80'
 
 #### mysql::bindings
 

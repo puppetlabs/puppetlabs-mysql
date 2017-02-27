@@ -3,6 +3,7 @@ class mysql::server::mysqltuner(
   $ensure  = 'present',
   $version = 'v1.3.0',
   $source  = undef,
+  $environment = undef, # environment for staging::file
 ) {
 
   if $source {
@@ -36,7 +37,8 @@ class mysql::server::mysqltuner(
     }
 
     staging::file { "mysqltuner-${_version}":
-      source => $_source,
+      source      => $_source,
+      environment => $environment,
     }
     file { '/usr/local/bin/mysqltuner':
       ensure  => $ensure,
