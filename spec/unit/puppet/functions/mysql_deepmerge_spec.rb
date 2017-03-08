@@ -24,11 +24,6 @@ describe Puppet::Parser::Functions.function(:mysql_deepmerge) do
   end
 
   describe 'when calling mysql_deepmerge on the scope instance' do
-    it 'should require all parameters are hashes' do
-      expect { new_hash = scope.function_mysql_deepmerge([{}, '2'])}.to raise_error(Puppet::ParseError, /unexpected argument type String/)
-      expect { new_hash = scope.function_mysql_deepmerge([{}, 2])}.to raise_error(Puppet::ParseError, /unexpected argument type Fixnum/)
-    end
-
     it 'should accept empty strings as puppet undef' do
       expect { new_hash = scope.function_mysql_deepmerge([{}, ''])}.not_to raise_error
     end
