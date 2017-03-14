@@ -125,7 +125,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     else
       # Version >= 5.7.6 (many password related changes)
       if (mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
-        mysql([defaults_file, system_database, '-e', "ALTER USER #{merged_name} IDENTIFIED WITH #{self.class.cmd_user(@resource[:plugin]) || 'mysql_native_password'} AS '#{string}'"].compact)
+        mysql([defaults_file, system_database, '-e', "ALTER USER #{merged_name} IDENTIFIED WITH #{@resource[:plugin]} || 'mysql_native_password'} AS '#{string}'"].compact)
       else
         # older versions
         mysql([defaults_file, system_database, '-e', "SET PASSWORD FOR #{merged_name} = '#{string}'"].compact)
