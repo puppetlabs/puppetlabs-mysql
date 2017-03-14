@@ -1,3 +1,4 @@
+require 'base64'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysql) do
 
@@ -14,18 +15,20 @@ Puppet::Type.type(:mysql_user).provide(:mysql, :parent => Puppet::Provider::Mysq
     users.collect do |name|
       if mysqld_version.nil?
         ## Default ...
-        query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+        query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, REPLACE(TO_BASE64(PASSWORD), '\n', '') /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       else
         if (mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
-          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, REPLACE(TO_BASE64(AUTHENTICATION_STRING), '\n', ''), PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
         else
-          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
+          query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, REPLACE(TO_BASE64(PASSWORD), '\n', '') /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
         end
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
       @password, @plugin = mysql([defaults_file, "-NBe", query].compact).split(/\s/)
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
+
+      @password = Base64.decode64(@password)
 
       new(:name                     => name,
           :ensure                   => :present,
