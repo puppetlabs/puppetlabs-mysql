@@ -510,7 +510,7 @@ describe 'mysql_grant' do
         }
       EOS
 
-      expect(apply_manifest(pp, :expect_failures => true).stderror).to match(/PROXY must be the only privilege specified./)
+      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/PROXY must be the only privilege specified/)
     end
 
     it 'should not find the user' do
@@ -533,7 +533,7 @@ describe 'mysql_grant' do
         }
       EOS
 
-      expect(apply_manifest(pp, :expect_failures => true).stderror).to match(/"table" for PROXY should be specified as proxy_user@proxy_host/)
+      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/"table" for PROXY should be specified as proxy_user@proxy_host/)
     end
 
     it 'should not find the user' do
