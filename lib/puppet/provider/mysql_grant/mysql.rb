@@ -5,7 +5,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
 
   def self.instances
     instances = []
-    users.select{ |user| user =~ /.+@/ }.collect do |user|
+    users.collect do |user|
       user_string = self.cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
       begin
@@ -46,7 +46,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
             end
           end
           # Same here, but to remove OPTION leaving just GRANT.
-          if rest.match(/WITH\sGRANT\sOPTION/)           
+          if rest.match(/WITH\sGRANT\sOPTION/)
 		options = ['GRANT']
           else
                 options = ['NONE']
@@ -80,7 +80,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
   def grant(user, table, privileges, options)
     user_string = self.class.cmd_user(user)
     priv_string = self.class.cmd_privs(privileges)
-    table_string = self.class.cmd_table(table)
+    table_string = privileges.include?('PROXY') ? self.class.cmd_user(table) : self.class.cmd_table(table)
     query = "GRANT #{priv_string}"
     query << " ON #{table_string}"
     query << " TO #{user_string}"
@@ -102,14 +102,14 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
 
   def revoke(user, table, revoke_privileges = ['ALL'])
     user_string = self.class.cmd_user(user)
-    table_string = self.class.cmd_table(table)
+    table_string = revoke_privileges.include?('PROXY') ? self.class.cmd_user(table) : self.class.cmd_table(table)
     priv_string = self.class.cmd_privs(revoke_privileges)
     # revoke grant option needs to be a extra query, because
     # "REVOKE ALL PRIVILEGES, GRANT OPTION [..]" is only valid mysql syntax
     # if no ON clause is used.
     # It hast to be executed before "REVOKE ALL [..]" since a GRANT has to
     # exist to be executed successfully
-    if revoke_privileges.include? 'ALL'
+    if revoke_privileges.include? 'ALL' and !revoke_privileges.include?('PROXY')
       query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
       mysql([defaults_file, system_database, '-e', query].compact)
     end
@@ -121,7 +121,11 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, :parent => Puppet::Provider::Mys
     # if the user was dropped, it'll have been removed from the user hash
     # as the grants are alraedy removed by the DROP statement
     if self.class.users.include? @property_hash[:user]
-      revoke(@property_hash[:user], @property_hash[:table])
+      if @property_hash[:privileges].include?('PROXY')
+        revoke(@property_hash[:user], @property_hash[:table], @property_hash[:privileges])
+      else
+        revoke(@property_hash[:user], @property_hash[:table])
+      end
     end
     @property_hash.clear
 
