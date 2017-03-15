@@ -53,7 +53,7 @@ Puppet::Type.newtype(:mysql_grant) do
     desc 'Table to apply privileges to.'
 
     validate do |value|
-      if Array(@resource[:privileges]).include?('PROXY') and !/^([0-9a-zA-Z$_]*)@([\w%\.:\-\/]+)$/.match(value)
+      if Array(@resource[:privileges]).include?('PROXY') and !/^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$/.match(value)
         raise(ArgumentError, '"table" for PROXY should be specified as proxy_user@proxy_host')
       end
     end
@@ -62,7 +62,7 @@ Puppet::Type.newtype(:mysql_grant) do
       value.delete("`")
     end
 
-    newvalues(/.*\..*/,/@/)
+    newvalues(/.*\..*/,/^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$/)
   end
 
   newproperty(:user) do

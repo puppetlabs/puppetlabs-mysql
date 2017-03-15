@@ -3,13 +3,13 @@ require 'puppet/type/mysql_grant'
 describe Puppet::Type.type(:mysql_grant) do
 
   before :each do
-    @user = Puppet::Type.type(:mysql_grant).new(:name => 'foo@localhost/*.*', :privileges => ['ALL', 'PROXY'], :table => ['*.*','@'], :user => 'foo@localhost')
+    @user = Puppet::Type.type(:mysql_grant).new(:name => 'foo@localhost/*.*', :privileges => ['ALL'], :table => ['*.*'], :user => 'foo@localhost')
   end
 
   it 'should accept a grant name' do
     expect(@user[:name]).to eq('foo@localhost/*.*')
   end
-  
+
   it 'should accept ALL privileges' do
     @user[:privileges] = 'ALL'
     expect(@user[:privileges]).to eq(['ALL'])
@@ -17,24 +17,30 @@ describe Puppet::Type.type(:mysql_grant) do
 
   it 'should accept PROXY privilege' do
     @user[:privileges] = 'PROXY'
+    @user[:table]      = 'proxy_user@proxy_host'
     expect(@user[:privileges]).to eq(['PROXY'])
   end
-  
+
   it 'should accept a table' do
     @user[:table] = '*.*'
     expect(@user[:table]).to eq('*.*')
   end
-  
+
   it 'should accept @ for table' do
     @user[:table] = '@'
     expect(@user[:table]).to eq('@')
   end
-  
+
+  it 'should accept proxy user for table' do
+    @user[:table] = 'proxy_user@proxy_host'
+    expect(@user[:table]).to eq('proxy_user@proxy_host')
+  end
+
   it 'should accept a user' do
     @user[:user] = 'foo@localhost'
     expect(@user[:user]).to eq('foo@localhost')
   end
-  
+
   it 'should require a name' do
     expect {
       Puppet::Type.type(:mysql_grant).new({})
@@ -43,7 +49,7 @@ describe Puppet::Type.type(:mysql_grant) do
 
   it 'should require the name to match the user and table' do
     expect {
-      Puppet::Type.type(:mysql_grant).new(:name => 'foo', :privileges => ['ALL', 'PROXY'], :table => ['*.*','@'], :user => 'foo@localhost')
+      Puppet::Type.type(:mysql_grant).new(:name => 'foo', :privileges => ['ALL'], :table => ['*.*'], :user => 'foo@localhost')
     }.to raise_error /name must match user and table parameters/
   end
 
@@ -51,21 +57,21 @@ describe Puppet::Type.type(:mysql_grant) do
 
     it 'to just ALL' do
       @user = Puppet::Type.type(:mysql_grant).new(
-        :name => 'foo@localhost/*.*',  :table => ['*.*','@'], :user => 'foo@localhost',
-        :privileges => ['ALL', 'PROXY'] )
+        :name => 'foo@localhost/*.*',  :table => ['*.*'], :user => 'foo@localhost',
+        :privileges => ['ALL'] )
       expect(@user[:privileges]).to eq(['ALL'])
     end
 
     it 'to upcase and ordered' do
       @user = Puppet::Type.type(:mysql_grant).new(
-        :name => 'foo@localhost/*.*',  :table => ['*.*','@'], :user => 'foo@localhost',
+        :name => 'foo@localhost/*.*',  :table => ['*.*'], :user => 'foo@localhost',
         :privileges => ['select', 'Insert'] )
       expect(@user[:privileges]).to eq(['INSERT', 'SELECT'])
     end
 
     it 'ordered including column privileges' do
       @user = Puppet::Type.type(:mysql_grant).new(
-        :name => 'foo@localhost/*.*',  :table => ['*.*','@'], :user => 'foo@localhost',
+        :name => 'foo@localhost/*.*',  :table => ['*.*'], :user => 'foo@localhost',
         :privileges => ['SELECT(Host,Address)', 'Insert'] )
       expect(@user[:privileges]).to eq(['INSERT', 'SELECT (Address, Host)'])
     end
