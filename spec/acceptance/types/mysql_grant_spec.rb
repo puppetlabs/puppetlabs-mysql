@@ -443,9 +443,12 @@ describe 'mysql_grant' do
     end
   end
 
-  describe 'adding proxy privileges' do
-    it 'should work without errors' do
-      pp = <<-EOS
+  describe 'proxy privilieges' do
+    pre_run
+
+    describe 'adding proxy privileges', :if => version_is_greater_than('5.5.0') do
+      it 'should work without errors when version greater than 5.5.0' do
+        pp = <<-EOS
         mysql_user { 'proxy1@tester':
           ensure => present,
         }
@@ -456,22 +459,22 @@ describe 'mysql_grant' do
           privileges => ['PROXY'],
           require    => Mysql_user['proxy1@tester'],
         }
-      EOS
+        EOS
 
-      apply_manifest(pp, :catch_failures => true)
-    end
+        apply_manifest(pp, :catch_failures => true)
+      end
 
-    it 'should find the user' do
-      shell("mysql -NBe \"SHOW GRANTS FOR proxy1@tester\"") do |r|
-        expect(r.stdout).to match(/GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'/)
-        expect(r.stderr).to be_empty
+      it 'should find the user' do
+        shell("mysql -NBe \"SHOW GRANTS FOR proxy1@tester\"") do |r|
+          expect(r.stdout).to match(/GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'/)
+          expect(r.stderr).to be_empty
+        end
       end
     end
-  end
 
-  describe 'removing proxy privileges' do
-    it 'should work without errors' do
-      pp = <<-EOS
+    describe 'removing proxy privileges', :if => version_is_greater_than('5.5.0') do
+      it 'should work without errors' do
+        pp = <<-EOS
         mysql_user { 'proxy1@tester':
           ensure => present,
         }
@@ -482,22 +485,22 @@ describe 'mysql_grant' do
           privileges => ['PROXY'],
           require    => Mysql_user['proxy1@tester'],
         }
-      EOS
+        EOS
 
-      apply_manifest(pp, :catch_failures => true)
-    end
+        apply_manifest(pp, :catch_failures => true)
+      end
 
-    it 'should find the user' do
-      shell("mysql -NBe \"SHOW GRANTS FOR proxy1@tester\"") do |r|
-        expect(r.stdout).to_not match(/GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'/)
-        expect(r.stderr).to be_empty
+      it 'should find the user' do
+        shell("mysql -NBe \"SHOW GRANTS FOR proxy1@tester\"") do |r|
+          expect(r.stdout).to_not match(/GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'/)
+          expect(r.stderr).to be_empty
+        end
       end
     end
-  end
 
-  describe 'adding proxy privileges with other privileges' do
-    it 'should fail' do
-      pp = <<-EOS
+    describe 'adding proxy privileges with other privileges', :if => version_is_greater_than('5.5.0') do
+      it 'should fail' do
+        pp = <<-EOS
         mysql_user { 'proxy2@tester':
           ensure => present,
         }
@@ -508,19 +511,42 @@ describe 'mysql_grant' do
           privileges => ['PROXY', 'SELECT'],
           require    => Mysql_user['proxy2@tester'],
         }
-      EOS
+        EOS
 
-      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/PROXY must be the only privilege specified/)
+        expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/PROXY must be the only privilege specified/)
+      end
+
+      it 'should not find the user' do
+        expect(shell("mysql -NBe \"SHOW GRANTS FOR proxy2@tester\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'proxy2' on host 'tester'/)
+      end
     end
 
-    it 'should not find the user' do
-      expect(shell("mysql -NBe \"SHOW GRANTS FOR proxy2@tester\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'proxy2' on host 'tester'/)
-    end
-  end
+    describe 'adding proxy privileges with mysql version less than 5.5.0', :unless => version_is_greater_than('5.5.0') do
+      it 'should fail' do
+        pp = <<-EOS
+        mysql_user { 'proxy3@tester':
+          ensure => present,
+        }
+        mysql_grant { 'proxy3@tester/proxy_user@proxy_host':
+          ensure     => 'present',
+          table      => 'proxy_user@proxy_host',
+          user       => 'proxy3@tester',
+          privileges => ['PROXY', 'SELECT'],
+          require    => Mysql_user['proxy3@tester'],
+        }
+        EOS
 
-  describe 'adding proxy privileges with invalid proxy user' do
-    it 'should fail' do
-      pp = <<-EOS
+        expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/PROXY user not supported on mysql versions < 5\.5\.0/i)
+      end
+
+      it 'should not find the user' do
+        expect(shell("mysql -NBe \"SHOW GRANTS FOR proxy2@tester\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'proxy2' on host 'tester'/)
+      end
+    end
+
+    describe 'adding proxy privileges with invalid proxy user', :if => version_is_greater_than('5.5.0') do
+      it 'should fail' do
+        pp = <<-EOS
         mysql_user { 'proxy3@tester':
           ensure => present,
         }
@@ -531,14 +557,16 @@ describe 'mysql_grant' do
           privileges => ['PROXY'],
           require    => Mysql_user['proxy3@tester'],
         }
-      EOS
+        EOS
 
-      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/"table" for PROXY should be specified as proxy_user@proxy_host/)
+        expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/"table" for PROXY should be specified as proxy_user@proxy_host/)
+      end
+
+      it 'should not find the user' do
+        expect(shell("mysql -NBe \"SHOW GRANTS FOR proxy3@tester\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'proxy3' on host 'tester'/)
+      end
     end
 
-    it 'should not find the user' do
-      expect(shell("mysql -NBe \"SHOW GRANTS FOR proxy3@tester\"", { :acceptable_exit_codes => 1}).stderr).to match(/There is no such grant defined for user 'proxy3' on host 'tester'/)
-    end
   end
 
   describe 'grants with skip-name-resolve specified' do

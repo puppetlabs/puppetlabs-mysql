@@ -47,6 +47,13 @@ Puppet::Type.newtype(:mysql_grant) do
 
   newproperty(:privileges, :array_matching => :all) do
     desc 'Privileges for user'
+
+    validate do |value|
+      mysql_version = Facter.value(:mysql_version)
+      if value =~ /proxy/i and Puppet::Util::Package.versioncmp(mysql_version, '5.5.0') < 0
+        raise(ArgumentError, "PROXY user not supported on mysql versions < 5.5.0. Current version #{mysql_version}")
+      end
+    end
   end
 
   newproperty(:table) do
