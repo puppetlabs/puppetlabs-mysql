@@ -17,7 +17,7 @@ describe Facter::Util::Fact do
 
     context "node with lo only" do
       before :each do
-        Facter.fact(:ipaddress_lo).stubs(:value).returns('172.0.0.1)
+        Facter.fact(:ipaddress_lo).stubs(:value).returns('172.0.0.1')
       end
       it do
         Facter.fact(:mysql_server_id).value.to_s.should == '1515521'
