@@ -11,7 +11,7 @@ describe Facter::Util::Fact do
         Facter.fact(:ipaddress).stubs(:value).returns('192.168.1.100')
       end
       it do
-        expect(Facter.fact(:mysql_server_id).value).to eq('1739024')
+        expect(Facter.fact(:mysql_server_id).value).to eq(1739024)
       end
     end
 
@@ -20,7 +20,7 @@ describe Facter::Util::Fact do
         Facter.fact(:ipaddress_lo).stubs(:value).returns('172.0.0.1')
       end
       it do
-        expect(Facter.fact(:mysql_server_id).value).to eq('1515521')
+        expect(Facter.fact(:mysql_server_id).value).to eq(1515521)
       end
     end
   end
