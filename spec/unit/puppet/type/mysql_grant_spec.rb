@@ -1,5 +1,6 @@
 require 'puppet'
 require 'puppet/type/mysql_grant'
+require 'spec_helper'
 describe Puppet::Type.type(:mysql_grant) do
 
   before :each do
@@ -15,10 +16,28 @@ describe Puppet::Type.type(:mysql_grant) do
     expect(@user[:privileges]).to eq(['ALL'])
   end
 
-  it 'should accept PROXY privilege' do
-    @user[:privileges] = 'PROXY'
-    @user[:table]      = 'proxy_user@proxy_host'
-    expect(@user[:privileges]).to eq(['PROXY'])
+  context 'PROXY privilege with mysql greater than or equal to 5.5.0' do
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns('5.5.0')
+    end
+
+    it 'should not raise error' do
+      @user[:privileges] = 'PROXY'
+      @user[:table]      = 'proxy_user@proxy_host'
+      expect(@user[:privileges]).to eq(['PROXY'])
+    end
+  end
+
+  context 'PROXY privilege with mysql greater than or equal to 5.4.0' do
+    before :each do
+      Facter.stubs(:value).with(:mysql_version).returns('5.4.0')
+    end
+
+    it 'should raise error' do
+      expect{
+        @user[:privileges] = 'PROXY'
+      }.to raise_error(Puppet::ResourceError, /PROXY user not supported on mysql versions < 5.5.0/)
+    end
   end
 
   it 'should accept a table' do
