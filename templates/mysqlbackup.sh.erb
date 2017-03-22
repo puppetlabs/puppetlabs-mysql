@@ -54,6 +54,12 @@ ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-routines"
 <% end -%>
 <% end -%>
 
+<%- if @optional_args and @optional_args.is_a?(Array) -%>
+<%- @optional_args.each do |arg| -%>
+ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS <%= arg %>"
+<%- end -%>
+<%- end -%>
+
 ##### STOP CONFIG ####################################################
 PATH=<%= @execpath %>
 
