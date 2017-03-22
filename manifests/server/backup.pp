@@ -53,7 +53,7 @@
 # @param maxallowedpacket
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
-#   Specifies an array of optional arguments which should be passed through to the backup tool. (Currently only supported by the xtrabackup provider.)
+#   Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
 #
 class mysql::server::backup (
   $backupuser         = undef,
