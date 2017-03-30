@@ -80,6 +80,8 @@ class Puppet::Provider::Mysql < Puppet::Provider
     if table == '*.*'
       table_string << '*.*'
     # Special case also for PROCEDURES
+    elsif table.start_with?('FUNCTION ')
+      table_string << table.sub(/^FUNCTION (.*)(\..*)/, 'FUNCTION `\1`\2')
     elsif table.start_with?('PROCEDURE ')
       table_string << table.sub(/^PROCEDURE (.*)(\..*)/, 'PROCEDURE `\1`\2')
     else
