@@ -71,19 +71,17 @@ class mysql::server (
   anchor { 'mysql::server::end': }
 
   if $restart {
-    Class['mysql::server::config'] ~>
-    Class['mysql::server::service']
+    Class['mysql::server::config']
+    ~> Class['mysql::server::service']
   }
 
-  Anchor['mysql::server::start'] ->
-  Class['mysql::server::install'] ->
-  Class['mysql::server::config'] ->
-  Class['mysql::server::binarylog'] ->
-  Class['mysql::server::installdb'] ->
-  Class['mysql::server::service'] ->
-  Class['mysql::server::root_password'] ->
-  Class['mysql::server::providers'] ->
-  Anchor['mysql::server::end']
-
-
+  Anchor['mysql::server::start']
+  -> Class['mysql::server::install']
+  -> Class['mysql::server::config']
+  -> Class['mysql::server::binarylog']
+  -> Class['mysql::server::installdb']
+  -> Class['mysql::server::service']
+  -> Class['mysql::server::root_password']
+  -> Class['mysql::server::providers']
+  -> Anchor['mysql::server::end']
 }

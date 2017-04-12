@@ -31,6 +31,7 @@ Puppet::Type.newtype(:mysql_grant) do
 
   validate do
     fail('privileges parameter is required.') if self[:ensure] == :present and self[:privileges].nil?
+    fail('PROXY must be the only privilege specified.') if Array(self[:privileges]).count > 1 and Array(self[:privileges]).include?('PROXY')
     fail('table parameter is required.') if self[:ensure] == :present and self[:table].nil?
     fail('user parameter is required.') if self[:ensure] == :present and self[:user].nil?
     fail('name must match user and table parameters') if self[:name] != "#{self[:user]}/#{self[:table]}"
@@ -46,16 +47,29 @@ Puppet::Type.newtype(:mysql_grant) do
 
   newproperty(:privileges, :array_matching => :all) do
     desc 'Privileges for user'
+
+    validate do |value|
+      mysql_version = Facter.value(:mysql_version)
+      if value =~ /proxy/i and Puppet::Util::Package.versioncmp(mysql_version, '5.5.0') < 0
+        raise(ArgumentError, "PROXY user not supported on mysql versions < 5.5.0. Current version #{mysql_version}")
+      end
+    end
   end
 
   newproperty(:table) do
     desc 'Table to apply privileges to.'
 
+    validate do |value|
+      if Array(@resource[:privileges]).include?('PROXY') and !/^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$/.match(value)
+        raise(ArgumentError, '"table" for PROXY should be specified as proxy_user@proxy_host')
+      end
+    end
+
     munge do |value|
       value.delete("`")
     end
 
-    newvalues(/.*\..*/,/@/)
+    newvalues(/.*\..*/,/^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$/)
   end
 
   newproperty(:user) do

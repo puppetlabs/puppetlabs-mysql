@@ -5,8 +5,8 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
 
   initvars
 
-  # Make sure we find mysqld on CentOS and mysql_install_db on Gentoo
-  ENV['PATH']=ENV['PATH'] + ':/usr/libexec:/usr/share/mysql/scripts:/opt/rh/mysql55/root/usr/bin:/opt/rh/mysql55/root/usr/libexec'
+  # Make sure we find mysqld on CentOS and mysql_install_db on Gentoo and Solaris 11
+  ENV['PATH']=ENV['PATH'] + ':/usr/libexec:/usr/share/mysql/scripts:/opt/rh/mysql55/root/usr/bin:/opt/rh/mysql55/root/usr/libexec:/usr/mysql/5.5/bin:/usr/mysql/5.6/bin:/usr/mysql/5.7/bin'
 
   commands :mysqld => 'mysqld'
   commands :mysql_install_db => 'mysql_install_db'
@@ -41,15 +41,16 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
     end
 
     if mysqld_version.nil?
-      debug("Installing MySQL data directory with mysql_install_db #{defaults_extra_file} --basedir=#{basedir} --datadir=#{datadir} --user=#{user}")
+      debug("Installing MySQL data directory with mysql_install_db #{opts.compact.join(" ")}")
       mysql_install_db(opts.compact)
     else
       if (mysqld_type == "mysql" or mysqld_type == "percona") and Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
-        debug("Initializing MySQL data directory >= 5.7.6 with 'mysqld #{defaults_extra_file} #{initialize} --basedir=#{basedir} --datadir=#{datadir} --user=#{user}'")
         opts<<"--log-error=#{log_error}"
+        opts<<"#{initialize}"
+        debug("Initializing MySQL data directory >= 5.7.6 with mysqld: #{opts.compact.join(" ")}")
         mysqld(opts.compact)
       else
-        debug("Installing MySQL data directory with mysql_install_db #{defaults_extra_file} --basedir=#{basedir} --datadir=#{datadir} --user=#{user}")
+        debug("Installing MySQL data directory with mysql_install_db #{opts.compact.join(" ")}")
         mysql_install_db(opts.compact)
       end
     end
@@ -64,7 +65,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
 
   def exists?
     datadir = @resource[:datadir]
-    (File.directory?("#{datadir}/mysql")) && (Dir.entries("#{datadir}/mysql") - %w{ . .. }).any? 
+    (File.directory?("#{datadir}/mysql")) && (Dir.entries("#{datadir}/mysql") - %w{ . .. }).any?
   end
 
   ##
@@ -75,4 +76,3 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
   mk_resource_methods
 
 end
-

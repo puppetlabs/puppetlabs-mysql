@@ -1,3 +1,35 @@
+## Supported Release 3.10.0
+### Summary
+This release includes new features for setting TLS options on a mysql user, a new parameter to allow specifying tool to import sql files, as well as various bugfixes.
+
+#### Features
+- (MODULES-3879) Adds `import_cat_cmd` parameter to specify the command to read sql files
+- Adds support for setting `tls_options` in `mysql_user`
+
+#### Bugfixes
+- (MODULES-3557) Adds Ubuntu 16.04 package names for language bindings 
+- (MODULES-3907) Adds MySQL/Percona 5.7 initialize on fresh deploy
+
+## Supported Release 3.9.0
+### Summary
+This release adds Percona 5.7 support and compatibility with Ubuntu 16.04, in addition to various bugfixes.
+
+#### Features
+- (MODULES-3441) Adds the `mysqld_version` fact
+- (MODULES-3513) Adds a new backup dump parameter `maxallowedpacket`
+- Adds new parameter `xtrabackup_package_name` to `mysql::backup::xtrabackup` class
+- Adds ability to revoke GRANT privilege
+
+#### Bugfixes
+- Fixes a bug where `mysql_user` fails if facter cannot retrieve fqdn.
+- Fix global parameter usage in backup script
+- Adds support for `puppet-staging` version `2.0.0`
+- (MODULES-3601) Moves binary logging configuration to take place after package install
+- (MODULES-3711) Add limit to mysql server ID generated value
+- (MODULES-3698) Fixes defaults for SLES12
+- Updates user name length restrictions for MySQL version 5.7.8 and above.
+- Fixes a bug where error log is not writable by owner
+
 ## Supported Release 3.8.0
 ###Summary
 This release adds Percona 5.7 support and compatibility with Ubuntu 16.04, in addition to various bugfixes.

@@ -1,5 +1,5 @@
 ---
-Gemfile:
-  optional:
-    ':development, :unit_tests':
-      - gem: rspec-puppet-facts
+appveyor.yml:
+  delete: true
+spec/spec_helper.rb:
+  allow_deprecations: true

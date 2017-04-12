@@ -362,7 +362,7 @@ describe 'mysql::server::backup' do
 
         it 'should contain the wrapper script' do
           is_expected.to contain_file('xtrabackup.sh').with_content(
-            /^innobackupex\s+"\$@"/
+            /^innobackupex\s+.*?"\$@"/
           )
         end
 

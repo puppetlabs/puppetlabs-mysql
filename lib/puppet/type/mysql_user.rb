@@ -75,4 +75,31 @@ Puppet::Type.newtype(:mysql_user) do
     newvalue(/\d+/)
   end
 
+  newproperty(:tls_options, :array_matching => :all) do
+    desc "Options to that set the TLS-related REQUIRE attributes for the user."
+    validate do |value|
+      value = [value] if not value.is_a?(Array)
+      if value.include? 'NONE' or value.include? 'SSL' or value.include? 'X509'
+        if value.length > 1
+          raise(ArgumentError, "REQUIRE tls options NONE, SSL and X509 cannot be used with other options, you may only use one of them.")
+        end
+      else
+        value.each do |opt|
+          if not o = opt.match(/^(CIPHER|ISSUER|SUBJECT)/i)
+            raise(ArgumentError, "Invalid tls option #{o}")
+          end
+        end
+      end
+    end
+    def insync?(is)
+      # The current value may be nil and we don't
+      # want to call sort on it so make sure we have arrays
+      if is.is_a?(Array) and @should.is_a?(Array)
+        is.sort == @should.sort
+      else
+        is == @should
+      end
+    end
+  end
+
 end

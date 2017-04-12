@@ -43,7 +43,7 @@ Checklist (and a short version for the impatient)
 
       - Make sure you have a [GitHub account](https://github.com/join)
 
-      - [Create a ticket](https://tickets.puppetlabs.com/secure/CreateIssue!default.jspa), or [watch the ticket](https://tickets.puppetlabs.com/browse/) you are patching for.
+      - [Create a ticket](https://tickets.puppet.com/secure/CreateIssue!default.jspa), or [watch the ticket](https://tickets.puppet.com/browse/) you are patching for.
 
     * Preferred method:
 
@@ -215,4 +215,3 @@ Additional Resources
 * [General GitHub documentation](http://help.github.com/)
 
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-
