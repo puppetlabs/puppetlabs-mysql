@@ -50,6 +50,13 @@ class mysql::params {
             $provider = 'mysql'
           }
         }
+        'CentOS': {
+          if $::operatingsystemmajrelease >= 7 {
+            $provider = 'mariadb'
+          } else {
+            $provider = 'mysql'
+          }
+        }
         default: {
           $provider = 'mysql'
         }
