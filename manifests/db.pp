@@ -25,6 +25,7 @@ define mysql::db (
   $sql_inputs = join([$sql], ' ')
 
   include '::mysql::client'
+  include '::mysql::server'
 
   $db_resource = {
     ensure   => $ensure,
