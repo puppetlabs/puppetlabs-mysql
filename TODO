@@ -6,3 +6,5 @@ The best that I can tell is that this code traces back to David Schmitt. It has 
 4. Needs support for pre-seeding on debian
 5. the types may need to take user/password
 6. rather or not to configure /etc/.my.cnf should be configurable
+
+Devops team is updating the file
