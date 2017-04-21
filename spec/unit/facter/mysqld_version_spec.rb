@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe Facter::Util::Fact.to_s do
   before { Facter.clear }
-  before(:each) do
-    Facter.clear
-  end
 
   context 'mysqld_version' do
     before do

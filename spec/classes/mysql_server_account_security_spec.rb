@@ -43,8 +43,7 @@ describe 'mysql::server::account_security' do
 
       context 'with fqdn==localhost' do
         let(:facts) do
-          facts.merge(root_home: '/root',
-                      fqdn: 'localhost',
+          facts.merge(fqdn: 'localhost',
                       hostname: 'localhost')
         end
 
@@ -62,8 +61,7 @@ describe 'mysql::server::account_security' do
 
       context 'with fqdn==localhost.localdomain' do
         let(:facts) do
-          facts.merge(root_home: '/root',
-                      fqdn: 'localhost.localdomain',
+          facts.merge(fqdn: 'localhost.localdomain',
                       hostname: 'localhost')
         end
 
