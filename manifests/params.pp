@@ -32,7 +32,6 @@ class mysql::params {
   $daemon_dev_package_provider = undef
   $xtrabackup_package_name     = 'percona-xtrabackup'
 
-
   case $::osfamily {
     'RedHat': {
       case $::operatingsystem {
@@ -307,15 +306,15 @@ class mysql::params {
     }
 
     'Solaris': {
-      $client_package_name = 'database/mysql-55/client'
-      $server_package_name = 'database/mysql-55'
+      $client_package_name = "database/mysql-${::mysql_solaris[major_minor]}/client"
+      $server_package_name = "database/mysql-${::mysql_solaris[major_minor]}"
       $basedir             = undef
-      $config_file         = '/etc/mysql/5.5/my.cnf'
-      $datadir             = '/var/mysql/5.5/data'
-      $log_error           = "/var/mysql/5.5/data/${::hostname}.err"
-      $pidfile             = "/var/mysql/5.5/data/${::hostname}.pid"
+      $config_file         = "/etc/mysql/${::mysql_solaris[major_dot_minor]}/my.cnf"
+      $datadir             = "/var/mysql/${::mysql_solaris[major_dot_minor]}/data"
+      $log_error           = "/var/mysql/${::mysql_solaris[major_dot_minor]}/data/${::hostname}.err"
+      $pidfile             = "/var/mysql/${::mysql_solaris[major_dot_minor]}/data/${::hostname}.pid"
       $root_group          = 'bin'
-      $server_service_name = 'application/database/mysql:version_55'
+      $server_service_name = "application/database/mysql:version_${::mysql_solaris[major_minor]}"
       $socket              = '/tmp/mysql.sock'
       $ssl_ca              = undef
       $ssl_cert            = undef
