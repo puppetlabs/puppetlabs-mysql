@@ -3,11 +3,7 @@ require 'spec_helper'
 describe 'mysql::bindings' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
-      let(:facts) {
-        facts.merge({
-          :root_home => '/root',
-        })
-      }
+      let(:facts) { facts }
 
       let(:params) {{
         'java_enable'             => true,

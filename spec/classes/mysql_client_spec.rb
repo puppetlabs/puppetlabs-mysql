@@ -3,11 +3,7 @@ require 'spec_helper'
 describe 'mysql::client' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
-      let(:facts) {
-        facts.merge({
-          :root_home => '/root',
-        })
-      }
+      let(:facts) { facts }
 
       context 'with defaults' do
         it { is_expected.not_to contain_class('mysql::bindings') }

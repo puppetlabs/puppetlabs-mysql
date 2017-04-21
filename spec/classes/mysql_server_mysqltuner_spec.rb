@@ -6,7 +6,6 @@ describe 'mysql::server::mysqltuner' do
       let(:facts) {
         facts.merge({
           :staging_http_get => 'curl',
-          :root_home        => '/root',
         })
       }
 

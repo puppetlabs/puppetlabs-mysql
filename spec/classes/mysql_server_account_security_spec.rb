@@ -10,7 +10,6 @@ describe 'mysql::server::account_security' do
       context "with fqdn==myhost.mydomain" do
         let(:facts) {
           facts.merge({
-            :root_home => '/root',
             :fqdn => 'myhost.mydomain',
             :hostname => 'myhost',
           })
