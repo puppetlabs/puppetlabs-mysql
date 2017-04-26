@@ -7,7 +7,7 @@ class mysql::server::mysqltuner(
 ) {
 
   if $source {
-    $_version = $source
+    $_version = $version
     $_source  = $source
   } else {
     $_version = $version
