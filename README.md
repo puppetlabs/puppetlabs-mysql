@@ -314,8 +314,7 @@ class {'::mysql::client':
   bindings_enable => true,
 }
 
-# Dependency management. Only use that part if you are installing the repository
-# as shown in the Preliminary step of this example.
+# Dependency management. Only use that part if you are installing the repository as shown in the Preliminary step of this example.
 Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
 Class['::mysql::client']
@@ -640,9 +639,11 @@ Allows you to set a custom PATH should your MySQL installation be non-standard p
 
 An array of two elements to set the backup time. Allows ['23', '5'] (i.e., 23:05) or ['3', '45'] (i.e., 03:45) for HH:MM times.
 
+#### mysql::server::backup
+
 ##### `postscript`
 
-A script that is executed when the backup is finished. This could be used to (r)sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
+A script that is executed when the backup is finished. This could be used to sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
 
 ##### `prescript`
 
@@ -872,7 +873,7 @@ Only applies if `python_enable => true`.
 
 ##### `python_package_provider`
 
-The provider to use to install the PHP package.
+The provider to use to install the Python package.
 
 Only applies if `python_enable => true`.
 
