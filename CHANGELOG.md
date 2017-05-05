@@ -1,3 +1,20 @@
+## Supported Release 3.11.0
+### Summary
+This release includes README and metadata translations to Japanese, as well as some enhancements and bugfixes.
+
+#### Added
+- New flag for successful backups
+- Solaris support improvements
+- New parameter `optional_args` for extra innobackupex options
+- Specify environment variables (e.g. https_proxy) for MySQLTuner download.
+- Check to only install bzip2 if `$backupcompress` is `true`
+- Debian 9 compatibility
+- Japanese README
+
+#### Fixed
+- Syntax errors
+- Bug where error logs were being created before the datadir was initialized (MODULES-4743)
+
 ## Supported Release 3.10.0
 ### Summary
 This release includes new features for setting TLS options on a mysql user, a new parameter to allow specifying tool to import sql files, as well as various bugfixes.
