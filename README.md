@@ -8,7 +8,7 @@
 3. [Usage - Configuration options and additional functionality](#usage)
     * [Customize server options](#customize-server-options)
     * [Create a database](#create-a-database)
-    * [Customize configuration](#create-custom-configuration)
+    * [Customize configuration](#customize-configuration)
     * [Work with an existing server](#work-with-an-existing-server)
     * [Specify passwords](#specify-passwords)
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
