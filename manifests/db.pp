@@ -22,7 +22,8 @@ define mysql::db (
     fail('$sql must be either a string or an array.')
   }
 
-  $sql_inputs = join([$sql], ' ')
+  $sql_inputs      = join([$sql], ' ')
+  $sql_paths_exist = inline_template("<%= @sql.all? {|sql_path| File.exists?(sql_path) }%>")
 
   include '::mysql::client'
 
@@ -56,7 +57,7 @@ define mysql::db (
 
     $refresh = ! $enforce_sql
 
-    if $sql {
+    if $sql and $sql_paths_exist {
       exec{ "${dbname}-import":
         command     => "${import_cat_cmd} ${sql_inputs} | mysql ${dbname}",
         logoutput   => true,
