@@ -17,12 +17,6 @@ describe 'mysql::db', :type => :define do
         }
       }
 
-      it 'should report an error when ensure is not present or absent' do
-        params.merge!({'ensure' => 'invalid_val'})
-        expect { catalogue }.to raise_error(Puppet::Error,
-                                          /invalid_val is not supported for ensure\. Allowed values are 'present' and 'absent'\./)
-      end
-
       it 'should not notify the import sql exec if no sql script was provided' do
         is_expected.to contain_mysql_database('test_db').without_notify
       end
@@ -52,12 +46,6 @@ describe 'mysql::db', :type => :define do
       it 'should import sql scripts when more than one is specified' do
         params.merge!({'sql' => ['test_sql', 'test_2_sql']})
         is_expected.to contain_exec('test_db-import').with_command('cat test_sql test_2_sql | mysql test_db')
-      end
-
-      it 'should report an error if sql isn\'t a string or an array' do
-        params.merge!({'sql' => {'foo' => 'test_sql', 'bar' => 'test_2_sql'}})
-        expect { catalogue }.to raise_error(Puppet::Error,
-                                          /\$sql must be either a string or an array\./)
       end
 
       it 'should not create database and database user' do
