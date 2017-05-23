@@ -3,8 +3,19 @@ class Puppet::Provider::Mysql < Puppet::Provider
   # Without initvars commands won't work.
   initvars
 
-  # Make sure we find mysql commands on CentOS and FreeBSD
-  ENV['PATH']=ENV['PATH'] + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
+  # Make sure we find mysql commands on CentOS and FreeBSD Gentoo and Solaris
+  # This path is inherited by types with :parent => Puppet::Provider::Mysql
+  ENV['PATH'] = ENV['PATH'] + %w[
+    /usr/libexec
+    /usr/local/libexec
+    /usr/local/bin
+    /usr/share/mysql/scripts
+    /opt/rh/mysql55/root/usr/bin
+    /opt/rh/mysql55/root/usr/libexec
+    /usr/mysql/5.5/bin
+    /usr/mysql/5.6/bin
+    /usr/mysql/5.7/bin
+  ].join(':')
 
   commands :mysql      => 'mysql'
   commands :mysqld     => 'mysqld'
