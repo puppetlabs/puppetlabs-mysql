@@ -38,6 +38,7 @@ ADDITIONAL_OPTIONS="--ignore-table=mysql.event"
 <% else %>
 ADDITIONAL_OPTIONS="--events"
 <% end %>
+ADDITIONAL_OPTIONS="--socket=<%= @socket %> $ADDITIONAL_OPTIONS"
 <%# Only include routines or triggers if we're doing a file per database -%>
 <%# backup. This happens if we named databases, or if we explicitly set -%>
 <%# file per database mode -%>
