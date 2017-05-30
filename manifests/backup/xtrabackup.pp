@@ -40,7 +40,7 @@ class mysql::backup::xtrabackup (
       ensure     => $ensure,
       user       => "${backupuser}@localhost",
       table      => '*.*',
-      privileges => [ 'RELOAD', 'LOCK TABLES', 'REPLICATION CLIENT' ],
+      privileges => [ 'RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT' ],
       require    => Mysql_user["${backupuser}@localhost"],
     }
   }
