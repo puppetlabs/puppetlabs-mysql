@@ -385,7 +385,7 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
-      if versioncmp($::operatingsystemmajrelease, '14.10') > 0 {
+      if versioncmp("${::operatingsystemmajrelease}", '14.10') > 0 {
         $server_service_provider = 'systemd'
       } else {
         $server_service_provider = 'upstart'
