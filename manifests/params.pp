@@ -385,7 +385,9 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
+      # lint:ignore:only_variable_string
       if versioncmp("${::operatingsystemmajrelease}", '14.10') > 0 {
+      # lint:endignore
         $server_service_provider = 'systemd'
       } else {
         $server_service_provider = 'upstart'
