@@ -32,7 +32,6 @@ define mysql::db (
   $user_resource = {
     ensure        => $ensure,
     password_hash => mysql_password($password),
-    provider      => 'mysql',
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
