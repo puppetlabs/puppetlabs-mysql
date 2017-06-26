@@ -176,11 +176,13 @@ class mysql::params {
       if $provider == 'mariadb' {
         $client_package_name     = 'mariadb-client'
         $server_package_name     = 'mariadb-server'
+        $server_service_name     = 'mariadb'
         $client_dev_package_name = 'libmariadbclient-dev'
         $daemon_dev_package_name = 'libmariadbd-dev'
       } else {
         $client_package_name     = 'mysql-client'
         $server_package_name     = 'mysql-server'
+        $server_service_name     = 'mysql'
         $client_dev_package_name = 'libmysqlclient-dev'
         $daemon_dev_package_name = 'libmysqld-dev'
       }
@@ -193,7 +195,6 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'adm'
-      $server_service_name     = 'mysql'
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
