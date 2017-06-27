@@ -68,8 +68,11 @@ describe Puppet::Type.type(:mysql_grant) do
 
   it 'should require the name to match the user and table' do
     expect {
+      Puppet::Type.type(:mysql_grant).new(:name => 'foo@localhost/*.*', :privileges => ['ALL'], :table => ['*.*'], :user => 'foo@localhost')
+    }.to_not raise_error
+    expect {
       Puppet::Type.type(:mysql_grant).new(:name => 'foo', :privileges => ['ALL'], :table => ['*.*'], :user => 'foo@localhost')
-    }.to raise_error /name must match user and table parameters/
+    }.to raise_error /name must match user@host\/table format/
   end
 
   describe 'it should munge privileges' do
