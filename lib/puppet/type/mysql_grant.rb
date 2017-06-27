@@ -34,7 +34,9 @@ Puppet::Type.newtype(:mysql_grant) do
     fail('PROXY must be the only privilege specified.') if Array(self[:privileges]).count > 1 and Array(self[:privileges]).include?('PROXY')
     fail('table parameter is required.') if self[:ensure] == :present and self[:table].nil?
     fail('user parameter is required.') if self[:ensure] == :present and self[:user].nil?
-    fail('name must match user and table parameters') if self[:name] != "#{self[:user]}/#{self[:table]}"
+    if self[:user] and self[:table]
+      fail('name must match user@host/table format') if self[:name] != "#{self[:user]}/#{self[:table]}"
+    end
   end
 
   newparam(:name, :namevar => true) do
