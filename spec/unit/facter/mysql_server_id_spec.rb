@@ -6,21 +6,21 @@ describe Facter::Util::Fact do
   }
 
   describe "mysql_server_id" do
-    context "igalic's laptop" do
+    context "developer laptop" do
       before :each do
-        Facter.fact(:macaddress).stubs(:value).returns('3c:97:0e:69:fb:e1')
+        Facter.fact(:ipaddress).stubs(:value).returns('192.168.1.100')
       end
       it do
-        Facter.fact(:mysql_server_id).value.to_s.should == '4116385'
+        expect(Facter.fact(:mysql_server_id).value).to eq(1739024)
       end
     end
 
     context "node with lo only" do
       before :each do
-        Facter.fact(:macaddress).stubs(:value).returns('00:00:00:00:00:00')
+        Facter.fact(:ipaddress).stubs(:value).returns('172.0.0.1')
       end
       it do
-        Facter.fact(:mysql_server_id).value.to_s.should == '0'
+        expect(Facter.fact(:mysql_server_id).value).to eq(1515521)
       end
     end
   end
