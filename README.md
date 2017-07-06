@@ -324,7 +324,12 @@ Class['::mysql::client']
 
 ### Install MySQL Community server on CentOS
 
-This minimal example shows how to install MySQL Community Server 5.6 on Centos 7.3 using Puppet 3.8.7 using hiera with puppetlabs-mysql=3.9.0
+You can install MySQL Community Server on CentOS using the mysql module and Hiera. This example was tested with the following versions:
+
+* MySQL Community Server 5.6
+* Centos 7.3
+* Puppet 3.8.7 using hiera
+* puppetlabs-mysql module v3.9.0
 
 In Puppet:
 
