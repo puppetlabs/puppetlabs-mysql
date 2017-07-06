@@ -322,11 +322,11 @@ Class['apt::update'] ->
 Class['::mysql::client']
 ```
 
-### Install MySQL 5.6 server on CentOS
+### Install MySQL Community server on CentOS
 
 This minimal example shows how to install MySQL Community Server 5.6 on Centos 7.3 using Puppet 3.8.7 using hiera with puppetlabs-mysql=3.9.0
 
-Puppet:
+In Puppet:
 
 ```puppet
   include ::mysql::server
@@ -339,12 +339,12 @@ Puppet:
   create_resources(mysql::db, hiera('mysql::server::db', {}))
 ```
 
-Hiera entry:
+In Hiera:
 
 ```yaml
 ---
-# mysql module requies feeding it a bunch of parameters to properly install mysql, and not mariadb
-# centos 7.3
+# mysql module requires feeding it a bunch of parameters to properly install MySQL, instead of MariaDB
+# Centos 7.3
 yumrepo:
   'repo.mysql.com':
     baseurl: "http://repo.mysql.com/yum/mysql-5.6-community/el/%{::operatingsystemmajrelease}/$basearch/"
@@ -353,8 +353,8 @@ yumrepo:
     gpgcheck: true
     gpgkey: 'http://repo.mysql.com/RPM-GPG-KEY-mysql'
 
-mysql::client::package_name: "mysql-community-client" # required for proper mysql installation
-mysql::server::package_name: "mysql-community-server" # required for proper mysql installation
+mysql::client::package_name: "mysql-community-client" # required for proper MySQL installation
+mysql::server::package_name: "mysql-community-server" # required for proper MySQL installation
 mysql::server::package_ensure: 'installed' # do not specify version here, unfortunately yum fails with error that package is already installed
 mysql::server::root_password: "change_me_i_am_insecure"
 mysql::server::manage_config_file: true
@@ -362,11 +362,11 @@ mysql::server::service_name: 'mysqld' # required for puppet module
 mysql::server::override_options:
   'mysqld':
     'bind-address': '127.0.0.1'
-    'log-error': /var/log/mysqld.log' # required for proper mysql installation
+    'log-error': /var/log/mysqld.log' # required for proper MySQL installation
   'mysqld_safe':
-    'log-error': '/var/log/mysqld.log'  # required for proper mysql installation
+    'log-error': '/var/log/mysqld.log'  # required for proper MySQL installation
 
-# create database + account with access, passwords are not ecrypted
+# create database + account with access, passwords are not encrypted
 mysql::server::db:
   "dev":
     user: "dev"
