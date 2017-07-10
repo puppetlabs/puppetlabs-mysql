@@ -320,6 +320,67 @@ Class['apt::update'] ->
 Class['::mysql::client']
 ```
 
+### Install MySQL Community server on CentOS
+
+You can install MySQL Community Server on CentOS using the mysql module and Hiera. This example was tested with the following versions:
+
+* MySQL Community Server 5.6
+* Centos 7.3
+* Puppet 3.8.7 using hiera
+* puppetlabs-mysql module v3.9.0
+
+In Puppet:
+
+```puppet
+  include ::mysql::server
+
+  create_resources(yumrepo, hiera('yumrepo', {}))
+
+  Yumrepo['repo.mysql.com'] -> Anchor['mysql::server::start']
+  Yumrepo['repo.mysql.com'] -> Package['mysql_client']
+
+  create_resources(mysql::db, hiera('mysql::server::db', {}))
+```
+
+In Hiera:
+
+```yaml
+---
+# mysql module requires feeding it a bunch of parameters to properly install MySQL, instead of MariaDB
+# Centos 7.3
+yumrepo:
+  'repo.mysql.com':
+    baseurl: "http://repo.mysql.com/yum/mysql-5.6-community/el/%{::operatingsystemmajrelease}/$basearch/"
+    descr: 'repo.mysql.com'
+    enabled: 1
+    gpgcheck: true
+    gpgkey: 'http://repo.mysql.com/RPM-GPG-KEY-mysql'
+
+mysql::client::package_name: "mysql-community-client" # required for proper MySQL installation
+mysql::server::package_name: "mysql-community-server" # required for proper MySQL installation
+mysql::server::package_ensure: 'installed' # do not specify version here, unfortunately yum fails with error that package is already installed
+mysql::server::root_password: "change_me_i_am_insecure"
+mysql::server::manage_config_file: true
+mysql::server::service_name: 'mysqld' # required for puppet module
+mysql::server::override_options:
+  'mysqld':
+    'bind-address': '127.0.0.1'
+    'log-error': /var/log/mysqld.log' # required for proper MySQL installation
+  'mysqld_safe':
+    'log-error': '/var/log/mysqld.log'  # required for proper MySQL installation
+
+# create database + account with access, passwords are not encrypted
+mysql::server::db:
+  "dev":
+    user: "dev"
+    password: "devpass"
+    host: "127.0.0.1"
+    grant:
+      - "ALL"
+
+```
+
+
 ## Reference
 
 ### Classes
