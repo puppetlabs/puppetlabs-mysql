@@ -3,6 +3,10 @@ require 'spec_helper'
 describe 'mysql::server::backup' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
+      let(:pre_condition) { <<-EOF
+          class { 'mysql::server': }
+        EOF
+      }
       let(:facts) {
         facts.merge({
           :root_home => '/root',
