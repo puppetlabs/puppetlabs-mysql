@@ -1,21 +1,20 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
-Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::Mysql) do
+Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL databases.'
 
-  commands :mysql => 'mysql'
+  commands mysql: 'mysql'
 
   def self.instances
-    mysql([defaults_file, '-NBe', 'show databases'].compact).split("\n").collect do |name|
+    mysql([defaults_file, '-NBe', 'show databases'].compact).split("\n").map do |name|
       attributes = {}
       mysql([defaults_file, '-NBe', "show variables like '%_database'", name].compact).split("\n").each do |line|
-        k,v = line.split(/\s/)
+        k, v = line.split(%r{\s})
         attributes[k] = v
       end
-      new(:name    => name,
-          :ensure  => :present,
-          :charset => attributes['character_set_database'],
-          :collate => attributes['collation_database']
-         )
+      new(name: name,
+          ensure: :present,
+          charset: attributes['character_set_database'],
+          collate: attributes['collation_database'])
     end
   end
 
@@ -24,9 +23,8 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
   def self.prefetch(resources)
     databases = instances
     resources.keys.each do |database|
-      if provider = databases.find { |db| db.name == database }
-        resources[database].provider = provider
-      end
+      provider = databases.find { |db| db.name == database }
+      resources[database].provider = provider if provider
     end
   end
 
@@ -56,13 +54,12 @@ Puppet::Type.type(:mysql_database).provide(:mysql, :parent => Puppet::Provider::
   def charset=(value)
     mysql([defaults_file, '-NBe', "alter database `#{resource[:name]}` CHARACTER SET #{value}"].compact)
     @property_hash[:charset] = value
-    charset == value ? (return true) : (return false)
+    (charset == value) ? (return true) : (return false)
   end
 
   def collate=(value)
     mysql([defaults_file, '-NBe', "alter database `#{resource[:name]}` COLLATE #{value}"].compact)
     @property_hash[:collate] = value
-    collate == value ? (return true) : (return false)
+    (collate == value) ? (return true) : (return false)
   end
-
 end

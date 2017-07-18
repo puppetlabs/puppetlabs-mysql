@@ -1,16 +1,15 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
-Puppet::Type.type(:mysql_plugin).provide(:mysql, :parent => Puppet::Provider::Mysql) do
+Puppet::Type.type(:mysql_plugin).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL plugins.'
 
-  commands :mysql => 'mysql'
+  commands mysql: 'mysql'
 
   def self.instances
-    mysql([defaults_file, '-NBe', 'show plugins'].compact).split("\n").collect do |line|
-      name, status, type, library, license = line.split(/\t/)
-      new(:name    => name,
-          :ensure  => :present,
-          :soname  => library
-         )
+    mysql([defaults_file, '-NBe', 'show plugins'].compact).split("\n").map do |line|
+      name, _status, _type, library, _license = line.split(%r{\t})
+      new(name: name,
+          ensure: :present,
+          soname: library)
     end
   end
 
@@ -19,19 +18,21 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, :parent => Puppet::Provider::My
   def self.prefetch(resources)
     plugins = instances
     resources.keys.each do |plugin|
+      # rubocop:disable Lint/AssignmentInCondition
       if provider = plugins.find { |pl| pl.name == plugin }
         resources[plugin].provider = provider
       end
+      # rubocop:enable Lint/AssignmentInCondition
     end
   end
 
   def create
     # Use plugin_name.so as soname if it's not specified. This won't work on windows as
     # there it should be plugin_name.dll
-    @resource[:soname].nil? ? (soname=@resource[:name] + '.so') : (soname=@resource[:soname])
+    @resource[:soname].nil? ? (soname = @resource[:name] + '.so') : (soname = @resource[:soname])
     mysql([defaults_file, '-NBe', "install plugin #{@resource[:name]} soname '#{soname}'"].compact)
 
-    @property_hash[:ensure]  = :present
+    @property_hash[:ensure] = :present
     @property_hash[:soname] = @resource[:soname]
 
     exists? ? (return true) : (return false)
@@ -49,5 +50,4 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, :parent => Puppet::Provider::My
   end
 
   mk_resource_methods
-
 end
