@@ -760,7 +760,7 @@ Defaults to 'v1.3.0'.
 
 ##### `environment`
 
-Environment variables acive during download, e.g. to download via proxies: environment => 'https_proxy=http://proxy.example.com:80'
+Environment variables active during download, e.g. to download via proxies: environment => 'https_proxy=http://proxy.example.com:80'
 
 #### mysql::bindings
 
