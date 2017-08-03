@@ -394,14 +394,11 @@ describe 'mysql_grant' do
   describe 'adding procedure privileges' do
     it 'should work without errors' do
       pp = <<-EOS
-        if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemmajrelease, '16.00') > 0) or ($::operatingsystem == 'SLES'){
-          exec { 'simpleproc-create':
-            command => 'mysql --user="root" --password="password" --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
-            path    => '/usr/bin/',
-            before  => Mysql_user['test2@tester'],
-          }
+        exec { 'simpleproc-create':
+          command => 'mysql --user="root" --password="password" --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
+          path    => '/usr/bin/',
+          before  => Mysql_user['test2@tester'],
         }
-
         mysql_user { 'test2@tester':
           ensure => present,
         }
