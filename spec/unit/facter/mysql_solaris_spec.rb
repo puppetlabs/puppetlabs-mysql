@@ -5,8 +5,13 @@ describe Facter::Util::Fact do
     Facter.clear
     Facter.stubs(:value).with(:kernel).returns('SunOS')
     Facter.stubs(:value).with('os').returns(
+<<<<<<< HEAD
       {"name"=>"Solaris", "family"=>"Solaris", "release"=>{"major"=>"12",
       "minor"=>"0", "full"=>"12.0"}}
+=======
+      {"name"=>"Solaris", "family"=>"Solaris", "release"=>{"major"=>"5",
+      "minor"=>"11", "full"=>"5.11"}}
+>>>>>>> 3fbcfbb... (MODULES-5495) puppetlabs-mysql : the OS formerly known as Solaris 12
      )
     # Stubbed osfamily fails without stubbed 'os'
     Facter.stubs(:value).with(:osfamily).returns('Solaris')
@@ -47,17 +52,29 @@ describe Facter::Util::Fact do
       end
       context 'major_dot_minor' do
         it {
+<<<<<<< HEAD
           expect(Facter.fact(:mysql_solaris).value['major_dot_minor']).to eq('5.5')
+=======
+          expect(Facter.fact(:mysql_solaris).value['major_dot_minor']).to eq('5.7')
+>>>>>>> 3fbcfbb... (MODULES-5495) puppetlabs-mysql : the OS formerly known as Solaris 12
         }
       end
       context 'basedir' do
         it {
+<<<<<<< HEAD
           expect(Facter.fact(:mysql_solaris).value['basedir']).to eq('/usr/mysql/5.5')
+=======
+          expect(Facter.fact(:mysql_solaris).value['basedir']).to eq('/usr/mysql/5.7')
+>>>>>>> 3fbcfbb... (MODULES-5495) puppetlabs-mysql : the OS formerly known as Solaris 12
         }
       end
       context 'major_minor' do
         it {
+<<<<<<< HEAD
           expect(Facter.fact(:mysql_solaris).value['major_minor']).to eq('55')
+=======
+          expect(Facter.fact(:mysql_solaris).value['major_minor']).to eq('57')
+>>>>>>> 3fbcfbb... (MODULES-5495) puppetlabs-mysql : the OS formerly known as Solaris 12
         }
       end
     end
