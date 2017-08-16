@@ -5,10 +5,10 @@ Facter.add('mysql_solaris') do
     ver = Facter::Util::Resolution.exec('pkg mediator -H mysql').split[2]
 
     # Above exec doesn't raise an error if the command returns non-zero results
-    ver = ver.nil? ? '5.5' : ver
+    ver = ver.nil? ? '5.7' : ver
   rescue
     # Just in case this raises an error in the future
-    ver = '5.5'
+    ver = '5.7'
   end
   setcode do
     {
