@@ -112,7 +112,7 @@ describe Puppet::Type.type(:mysql_user) do
       @user = Puppet::Type.type(:mysql_user).new(:name => '`speci!al#`@localhost', :password_hash => 'pass')
     end
 
-    it 'should accept a quoted user name with special chatracters' do
+    it 'should accept a quoted user name with special characters' do
       expect(@user[:name]).to eq('`speci!al#`@localhost')
     end
   end
@@ -122,7 +122,7 @@ describe Puppet::Type.type(:mysql_user) do
       @user = Puppet::Type.type(:mysql_user).new(:name => 'in-valid@localhost', :password_hash => 'pass')
     end
 
-    it 'should accept a user name with special chatracters' do
+    it 'should accept a user name with special characters' do
       expect(@user[:name]).to eq('in-valid@localhost')
     end
   end

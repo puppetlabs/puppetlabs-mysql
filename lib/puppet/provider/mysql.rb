@@ -6,7 +6,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   # Make sure we find mysql commands on CentOS and FreeBSD
   ENV['PATH']=ENV['PATH'] + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
 
-  commands :mysql      => 'mysql'
+  commands :mysql_raw  => 'mysql'
   commands :mysqld     => 'mysqld'
   commands :mysqladmin => 'mysqladmin'
 
@@ -54,8 +54,25 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.defaults_file
   end
 
+  def self.mysql_caller(textOfSQL, type = 'undefined')
+    if type.eql? 'system'
+      mysql_raw([defaults_file, '--host=', system_database, '-e', textOfSQL].flatten.compact)
+    elsif type.eql? 'regular'
+      mysql_raw([defaults_file, '-NBe', textOfSQL].flatten.compact)
+    elsif type.eql? 'undefined'
+      begin
+        raise Puppet::Error, "#mysql had an error -> did not pass in type parameter"
+      rescue => e
+        puts "Error during processing: #{$!}"
+        puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+      end
+    else
+      raise Puppet::Error, "#mysql had an error -> Unrecognised type '#type'"
+    end
+  end
+
   def self.users
-    mysql([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"].compact).split("\n")
+    self.mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
   end
 
   # Optional parameter to run a statement on the MySQL system database.
