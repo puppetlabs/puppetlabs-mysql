@@ -39,7 +39,7 @@ module Puppet::Parser::Functions
   end
 end
 
-def normalized!(hash, key)
+def normalized?(hash, key)
   return true if hash.key?(key)
   return false unless key =~ %r{-|_}
   other_key = key.include?('-') ? key.tr('-', '_') : key.tr('_', '-')
@@ -50,7 +50,7 @@ end
 
 def overlay(hash1, hash2)
   hash2.each do |key, value|
-    if normalized!(hash1, key) && value.is_a?(Hash) && hash1[key].is_a?(Hash)
+    if normalized?(hash1, key) && value.is_a?(Hash) && hash1[key].is_a?(Hash)
       overlay(hash1[key], value)
     else
       hash1[key] = value

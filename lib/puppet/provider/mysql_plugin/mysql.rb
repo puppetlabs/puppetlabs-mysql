@@ -18,11 +18,9 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, parent: Puppet::Provider::Mysql
   def self.prefetch(resources)
     plugins = instances
     resources.keys.each do |plugin|
-      # rubocop:disable Lint/AssignmentInCondition
-      if provider = plugins.find { |pl| pl.name == plugin }
+      if provider = plugins.find { |pl| pl.name == plugin } # rubocop:disable Lint/AssignmentInCondition
         resources[plugin].provider = provider
       end
-      # rubocop:enable Lint/AssignmentInCondition
     end
   end
 

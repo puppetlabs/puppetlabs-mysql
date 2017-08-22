@@ -6,9 +6,11 @@ class Puppet::Provider::Mysql < Puppet::Provider
   # Make sure we find mysql commands on CentOS and FreeBSD
   ENV['PATH'] = ENV['PATH'] + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
 
-  commands mysql: 'mysql'
-  commands mysqld: 'mysqld'
-  commands mysqladmin: 'mysqladmin'
+  # rubocop:disable Style/HashSyntax
+  commands :mysql      => 'mysql'
+  commands :mysqld     => 'mysqld'
+  commands :mysqladmin => 'mysqladmin'
+  # rubocop:enable Style/HashSyntax
 
   # Optional defaults file
   def self.defaults_file
