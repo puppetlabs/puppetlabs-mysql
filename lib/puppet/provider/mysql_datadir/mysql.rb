@@ -9,7 +9,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, :parent => Puppet::Provider::M
   ENV['PATH']=ENV['PATH'] + ':/usr/libexec:/usr/share/mysql/scripts:/opt/rh/mysql55/root/usr/bin:/opt/rh/mysql55/root/usr/libexec:/usr/mysql/5.5/bin:/usr/mysql/5.6/bin:/usr/mysql/5.7/bin'
 
   commands :mysqld => 'mysqld'
-  commands :mysql_install_db => 'mysql_install_db'
+  optional_commands :mysql_install_db => 'mysql_install_db'
 
   def create
     name                     = @resource[:name]
