@@ -5,13 +5,12 @@ Puppet::Type.newtype(:mysql_plugin) do
 
   autorequire(:file) { '/root/.my.cnf' }
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'The name of the MySQL plugin to manage.'
   end
 
   newproperty(:soname) do
     desc 'The name of the library'
-    newvalue(/^\w+\.\w+$/)
+    newvalue(%r{^\w+\.\w+$})
   end
-
 end
