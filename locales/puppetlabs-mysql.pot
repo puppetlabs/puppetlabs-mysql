@@ -1,9 +1,10 @@
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 14:19+0100\n"
+"Report-Msgid-Bugs-To:\n"
+"POT-Creation-Date: 2017-08-30T18:39:04+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11,6 +12,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Translate Toolkit 2.0.0\n"
+
+#. ./manifests/server.pp:48
+msgid "old_root_password is no longer used and will be removed in a future release"
+msgstr ""
 
 #. metadata.json
 #: .summary
@@ -20,4 +25,56 @@ msgstr ""
 #. metadata.json
 #: .description
 msgid "MySQL module"
+msgstr ""
+
+#: ../lib/puppet/parser/functions/mysql_strip_hash.rb:11
+msgid "mysql_strip_hash(): Requires hash to work with"
+msgstr ""
+
+#: ../lib/puppet/provider/mysql_datadir/mysql.rb:59
+msgid "ERROR: Resource can not be removed"
+msgstr ""
+
+#: ../lib/puppet/provider/mysql_user/mysql.rb:125
+msgid "Only mysql_native_password (*ABCD...XXX) hashes are supported"
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:34
+msgid "privileges parameter is required."
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:35
+msgid "PROXY must be the only privilege specified."
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:36
+msgid "table parameter is required."
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:37
+msgid "user parameter is required."
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:39
+msgid "name must match user@host/table format"
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:66
+msgid "\"table\" for PROXY should be specified as proxy_user@proxy_host"
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:100 ../lib/puppet/type/mysql_user.rb:34
+msgid "MySQL usernames are limited to a maximum of 16 characters"
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:101 ../lib/puppet/type/mysql_user.rb:35
+msgid "MySQL usernames are limited to a maximum of 32 characters"
+msgstr ""
+
+#: ../lib/puppet/type/mysql_grant.rb:102 ../lib/puppet/type/mysql_user.rb:36
+msgid "MySQL usernames are limited to a maximum of 80 characters"
+msgstr ""
+
+#: ../lib/puppet/type/mysql_user.rb:82
+msgid "REQUIRE tls options NONE, SSL and X509 cannot be used with other options, you may only use one of them."
 msgstr ""

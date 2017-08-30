@@ -31,7 +31,6 @@ end
 supports_windows = false
 ruby_version_segments = Gem::Version.new(RUBY_VERSION.dup).segments
 minor_version = "#{ruby_version_segments[0]}.#{ruby_version_segments[1]}"
-
 group :development do
   gem "puppet-module-posix-default-r#{minor_version}",    :require => false, :platforms => "ruby"
   gem "puppet-module-win-default-r#{minor_version}",      :require => false, :platforms => ["mswin", "mingw", "x64_mingw"]
@@ -51,6 +50,9 @@ group :system_tests do
   gem "beaker-hostgenerator", *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
   gem "beaker-abs", *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')        
   gem "puppet-blacksmith", '~> 3.4',                                             :require => false
+  gem "puppet-lint-i18n", :git => 'https://github.com/puppetlabs/puppet-lint-i18n.git'
+#  gem "puppet_pot_generator", :git => 'https://github.com/puppetlabs/puppet_pot_generator.git' if ENV['PUPPET_GEM_VERSION'] >= '5.0'
+  gem "rubocop-i18n", :git => 'https://github.com/puppetlabs/rubocop-i18n.git'
 end
 
 gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'])
