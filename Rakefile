@@ -1,5 +1,6 @@
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
+require 'puppet_pot_generator/rake_tasks' if Bundler.rubygems.find_name('puppet_pot_generator').any?
 require 'puppet_blacksmith/rake_tasks' if Bundler.rubygems.find_name('puppet-blacksmith').any?
 
 PuppetLint.configuration.fail_on_warnings = true
