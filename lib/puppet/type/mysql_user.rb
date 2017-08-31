@@ -31,9 +31,9 @@ Puppet::Type.newtype(:mysql_user) do
       # rubocop:enable Lint/AssignmentInCondition
       # rubocop:enable Lint/UselessAssignment
       unless mysql_version.nil?
-        raise(ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters') if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
-        raise(ArgumentError, 'MySQL usernames are limited to a maximum of 32 characters') if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
-        raise(ArgumentError, 'MySQL usernames are limited to a maximum of 80 characters') if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
       end
     end
 
@@ -93,7 +93,7 @@ Puppet::Type.newtype(:mysql_user) do
       value = [value] unless value.is_a?(Array)
       if value.include?('NONE') || value.include?('SSL') || value.include?('X509')
         if value.length > 1
-          raise(ArgumentError, 'REQUIRE tls options NONE, SSL and X509 cannot be used with other options, you may only use one of them.')
+          raise(ArgumentError, _('`tls_options` `property`: The values NONE, SSL and X509 cannot be used with other options, you may only pick one of them.'))
         end
       else
         value.each do |opt|

@@ -45,7 +45,7 @@ class mysql::server (
     $real_service_manage = $service_manage
   }
   if $old_root_password {
-    warning('old_root_password is no longer used and will be removed in a future release')
+    warning(translate('The `old_root_password` attribute is no longer used and will be removed in a future release.'))
   }
 
   # Create a merged together set of options.  Rightmost hashes win over left.
