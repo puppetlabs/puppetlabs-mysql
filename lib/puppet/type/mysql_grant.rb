@@ -31,12 +31,12 @@ Puppet::Type.newtype(:mysql_grant) do
   end
   # rubocop:enable Style/MultilineBlockChain
   validate do
-    raise('privileges parameter is required.') if self[:ensure] == :present && self[:privileges].nil?
-    raise('PROXY must be the only privilege specified.') if Array(self[:privileges]).count > 1 && Array(self[:privileges]).include?('PROXY')
-    raise('table parameter is required.') if self[:ensure] == :present && self[:table].nil?
-    raise('user parameter is required.') if self[:ensure] == :present && self[:user].nil?
+    raise(_('`privileges` `parameter` is required.')) if self[:ensure] == :present && self[:privileges].nil?
+    raise(_('`privileges` `parameter`: PROXY can only be specified by itself.')) if Array(self[:privileges]).count > 1 && Array(self[:privileges]).include?('PROXY')
+    raise(_('`table` `parameter` is required.')) if self[:ensure] == :present && self[:table].nil?
+    raise(_('`user` `parameter` is required.')) if self[:ensure] == :present && self[:user].nil?
     if self[:user] && self[:table]
-      raise('name must match user@host/table format') if self[:name] != "#{self[:user]}/#{self[:table]}"
+      raise(_('`name` `parameter` must match user@host/table format.')) if self[:name] != "#{self[:user]}/#{self[:table]}"
     end
   end
 
@@ -63,7 +63,9 @@ Puppet::Type.newtype(:mysql_grant) do
     desc 'Table to apply privileges to.'
 
     validate do |value|
-      raise(ArgumentError, '"table" for PROXY should be specified as proxy_user@proxy_host') if Array(@resource[:privileges]).include?('PROXY') && !%r{^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$}.match(value)
+      if Array(@resource[:privileges]).include?('PROXY') && !%r{^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$}.match(value)
+        raise(ArgumentError, _('`table` `property` for PROXY should be specified as proxy_user@proxy_host .'))
+      end
     end
 
     munge do |value|
@@ -97,9 +99,9 @@ Puppet::Type.newtype(:mysql_grant) do
       # rubocop:enable Lint/UselessAssignment
       mysql_version = Facter.value(:mysql_version)
       unless mysql_version.nil?
-        raise(ArgumentError, 'MySQL usernames are limited to a maximum of 16 characters') if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
-        raise(ArgumentError, 'MySQL usernames are limited to a maximum of 32 characters') if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
-        raise(ArgumentError, 'MySQL usernames are limited to a maximum of 80 characters') if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
       end
     end
 
