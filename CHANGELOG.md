@@ -1,3 +1,27 @@
+## Supported Release 4.0.0
+### Summary
+This release sees the enablement of rubocop, also an update to the lib directory with rubocop fixes and several other changes and fixes. Also a bump to the Puppet version compatibility and several Puppet language updates.
+
+#### Added
+- Updated README.md with example how to install MySQL Community Server 5.6 on Centos 7.3
+- Enabled Rubocop and addition of Rubocop fixes for /lib directory.
+
+#### Removed
+- Dropped legacy tests for db.pp.
+
+#### Changed
+- Replaced validate function calls with datatypes in db.pp.
+- Bumped recommended puppet version to between 4.7.0 and 6.0.0.
+- Conditionalize name validation in mysql_grant type. ([MODULES-4604](https://tickets.puppet.com/browse/MODULES-4604))
+
+#### Fixed
+- Removal of invalid parameter provider on Mysql_user[user@localhost] in mysql::db ([MODULES-4115](https://tickets.puppet.com/browse/MODULES-4115))
+- Fixed server_service_name for Debian/stretch.
+- Spec fixes for Puppet 5.
+- Test update for fix:create procedure, then grant ([MODULES-5390](https://tickets.puppet.com/browse/MODULES-5390))
+- Fixing empty user/password issue for xtrabackup. Now defaults as undef instead of ''.
+- Remove unsupported Ubuntu versions ([MODULES-5501](https://tickets.puppet.com/browse/MODULES-5501))
+
 ## Supported Release 3.11.0
 ### Summary
 This release includes README and metadata translations to Japanese, as well as some enhancements and bugfixes.
