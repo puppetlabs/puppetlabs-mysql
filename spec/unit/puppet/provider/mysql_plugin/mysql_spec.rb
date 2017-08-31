@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
-
   let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
 
-  let(:resource) { Puppet::Type.type(:mysql_plugin).new(
-    { :ensure   => :present,
-      :soname   => 'auth_socket.so',
-      :name     => 'auth_socket',
-      :provider => described_class.name
-    }
-  )}
+  let(:resource) do
+    Puppet::Type.type(:mysql_plugin).new(
+      ensure: :present,
+      soname: 'auth_socket.so',
+      name: 'auth_socket',
+      provider: described_class.name,
+    )
+  end
   let(:provider) { resource.provider }
 
   before :each do
@@ -67,5 +67,4 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
       expect(instance.soname).to eq('auth_socket.so')
     end
   end
-
 end

@@ -5,17 +5,19 @@ describe 'mysql::bindings' do
     context "on #{os}" do
       let(:facts) { facts }
 
-      let(:params) {{
-        'java_enable'             => true,
-        'perl_enable'             => true,
-        'php_enable'              => true,
-        'python_enable'           => true,
-        'ruby_enable'             => true,
-        'client_dev'              => true,
-        'daemon_dev'              => true,
-        'client_dev_package_name' => 'libmysqlclient-devel',
-        'daemon_dev_package_name' => 'mysql-devel',
-      }}
+      let(:params) do
+        {
+          'java_enable' => true,
+          'perl_enable'             => true,
+          'php_enable'              => true,
+          'python_enable'           => true,
+          'ruby_enable'             => true,
+          'client_dev'              => true,
+          'daemon_dev'              => true,
+          'client_dev_package_name' => 'libmysqlclient-devel',
+          'daemon_dev_package_name' => 'mysql-devel',
+        }
+      end
 
       it { is_expected.to contain_package('mysql-connector-java') }
       it { is_expected.to contain_package('perl_mysql') }
