@@ -72,7 +72,7 @@ describe Puppet::Type.type(:mysql_grant) do
     }.to_not raise_error
     expect {
       Puppet::Type.type(:mysql_grant).new(:name => 'foo', :privileges => ['ALL'], :table => ['*.*'], :user => 'foo@localhost')
-    }.to raise_error /name must match user@host\/table format/
+    }.to raise_error /`name` `parameter` must match user@host\/table format/
   end
 
   describe 'it should munge privileges' do

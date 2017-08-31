@@ -56,7 +56,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
 
   def destroy
     name = @resource[:name] # rubocop:disable Lint/UselessAssignment
-    raise ArgumentError, 'ERROR: Resource can not be removed'
+    raise ArgumentError, _('ERROR: `Resource` can not be removed.')
   end
 
   def exists?
