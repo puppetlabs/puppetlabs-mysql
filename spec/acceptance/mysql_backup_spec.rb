@@ -30,26 +30,26 @@ describe 'mysql::server::backup class' do
         }
       EOS
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_failures: true)
     end
   end
 
   describe 'mysqlbackup.sh' do
-    it 'should run mysqlbackup.sh with no errors' do
+    it 'runs mysqlbackup.sh with no errors' do
       pre_run
-      if ! version_is_greater_than('5.7.0')
-        shell("/usr/local/sbin/mysqlbackup.sh") do |r|
-          expect(r.stderr).to eq("")
+      unless version_is_greater_than('5.7.0')
+        shell('/usr/local/sbin/mysqlbackup.sh') do |r|
+          expect(r.stderr).to eq('')
         end
       end
     end
 
-    it 'should dump all databases to single file' do
+    it 'dumps all databases to single file' do
       pre_run
-      if ! version_is_greater_than('5.7.0')
+      unless version_is_greater_than('5.7.0')
         shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
-          expect(r.stdout).to match(/1/)
+          expect(r.stdout).to match(%r{1})
           expect(r.exit_code).to be_zero
         end
       end
@@ -58,7 +58,7 @@ describe 'mysql::server::backup class' do
     context 'should create one file per database per run' do
       it 'executes mysqlbackup.sh a second time' do
         pre_run
-        if ! version_is_greater_than('5.7.0')
+        unless version_is_greater_than('5.7.0')
           shell('sleep 1')
           shell('/usr/local/sbin/mysqlbackup.sh')
         end
@@ -66,9 +66,9 @@ describe 'mysql::server::backup class' do
 
       it 'creates at least one backup tarball' do
         pre_run
-        if ! version_is_greater_than('5.7.0')
+        unless version_is_greater_than('5.7.0')
           shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
-            expect(r.stdout).to match(/2/)
+            expect(r.stdout).to match(%r{2})
             expect(r.exit_code).to be_zero
           end
         end
@@ -105,27 +105,27 @@ describe 'mysql::server::backup class' do
           }
         EOS
 
-        apply_manifest(pp, :catch_failures => true)
-        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_failures: true)
       end
     end
 
     describe 'mysqlbackup.sh' do
-      it 'should run mysqlbackup.sh with no errors without root credentials' do
+      it 'runs mysqlbackup.sh with no errors without root credentials' do
         pre_run
-        if ! version_is_greater_than('5.7.0')
-          shell("HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh") do |r|
-            expect(r.stderr).to eq("")
+        unless version_is_greater_than('5.7.0')
+          shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh') do |r|
+            expect(r.stderr).to eq('')
           end
         end
       end
 
-      it 'should create one file per database' do
+      it 'creates one file per database' do
         pre_run
-        if ! version_is_greater_than('5.7.0')
-          ['backup1', 'backup2'].each do |database|
+        unless version_is_greater_than('5.7.0')
+          %w[backup1 backup2].each do |database|
             shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-              expect(r.stdout).to match(/1/)
+              expect(r.stdout).to match(%r{1})
               expect(r.exit_code).to be_zero
             end
           end
@@ -135,7 +135,7 @@ describe 'mysql::server::backup class' do
       context 'should create one file per database per run' do
         it 'executes mysqlbackup.sh a second time' do
           pre_run
-          if ! version_is_greater_than('5.7.0')
+          unless version_is_greater_than('5.7.0')
             shell('sleep 1')
             shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
           end
@@ -143,10 +143,10 @@ describe 'mysql::server::backup class' do
 
         it 'has one file per database per run' do
           pre_run
-          if ! version_is_greater_than('5.7.0')
-            ['backup1', 'backup2'].each do |database|
+          unless version_is_greater_than('5.7.0')
+            %w[backup1 backup2].each do |database|
               shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-                expect(r.stdout).to match(/2/)
+                expect(r.stdout).to match(%r{2})
                 expect(r.exit_code).to be_zero
               end
             end
@@ -189,14 +189,14 @@ describe 'mysql::server::backup class' do
           require => Package['bzip2'],
         }
       EOS
-      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, catch_failures: true)
     end
 
-    it 'should run mysqlbackup.sh with no errors' do
+    it 'runs mysqlbackup.sh with no errors' do
       pre_run
-      if ! version_is_greater_than('5.7.0')
-        shell("/usr/local/sbin/mysqlbackup.sh") do |r|
-          expect(r.stderr).to eq("")
+      unless version_is_greater_than('5.7.0')
+        shell('/usr/local/sbin/mysqlbackup.sh') do |r|
+          expect(r.stderr).to eq('')
         end
       end
     end
