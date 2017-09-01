@@ -2,6 +2,7 @@ require 'puppet'
 require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
 require 'beaker/module_install_helper'
+require 'beaker/i18n_helper'
 
 run_puppet_install_helper
 install_ca_certs unless ENV['PUPPET_INSTALL_TYPE'] =~ %r{pe}i
@@ -23,6 +24,14 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     hosts.each do |host|
+      # This will be removed, this is temporary to test localisation.
+      if fact('osfamily') == 'Debian'
+        # install language pack on debian systems
+        install_language_pack(host, 'ja_JP')
+        # This will be removed, this is temporary to test localisation.
+        on(host, 'sudo mkdir /opt/puppetlabs/puppet/share/locale/ja')
+        on(host, 'sudo touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
+      end
       # Required for binding tests.
       if fact('osfamily') == 'RedHat'
         if fact('operatingsystemmajrelease') =~ %r{7} || fact('operatingsystem') =~ %r{Fedora}
