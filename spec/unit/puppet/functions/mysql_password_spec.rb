@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'the mysql_password function' do
-  before :all do # rubocop:disable RSpec/BeforeAfterAll
+  before :each do
     Puppet::Parser::Functions.autoloader.loadall
   end
 

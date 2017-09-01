@@ -1,5 +1,3 @@
-#! /usr/bin/env ruby -S rspec
-
 require 'spec_helper'
 
 describe Puppet::Parser::Functions.function(:mysql_deepmerge) do
@@ -22,10 +20,10 @@ describe Puppet::Parser::Functions.function(:mysql_deepmerge) do
       }.to raise_error(Puppet::ParseError, %r{wrong number of arguments})
     end
   end
-
+  # rubocop:disable RSpec/MultipleExpectations
   describe 'when calling mysql_deepmerge on the scope instance' do
     it 'accepts empty strings as puppet undef' do
-      expect { new_hash = scope.function_mysql_deepmerge([{}, '']) }.not_to raise_error
+      expect { scope.function_mysql_deepmerge([{}, '']) }.not_to raise_error
     end
 
     it 'is able to mysql_deepmerge two hashes' do
@@ -83,4 +81,5 @@ describe Puppet::Parser::Functions.function(:mysql_deepmerge) do
       expect(hash).not_to have_key('b_c_d')
     end
   end
+  # rubocop:enable RSpec/MultipleExpectations
 end
