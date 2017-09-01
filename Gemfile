@@ -51,7 +51,7 @@ group :system_tests do
   gem "beaker-abs", *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')        
   gem "puppet-blacksmith", '~> 3.4',                                             :require => false
   gem "puppet-lint-i18n", :git => 'https://github.com/puppetlabs/puppet-lint-i18n.git'
-#  gem "puppet_pot_generator", :git => 'https://github.com/puppetlabs/puppet_pot_generator.git' if ENV['PUPPET_GEM_VERSION'] >= '5.0'
+  gem "puppet_pot_generator", :git => 'https://github.com/puppetlabs/puppet_pot_generator.git'
   gem "rubocop-i18n", :git => 'https://github.com/puppetlabs/rubocop-i18n.git'
 end
 
