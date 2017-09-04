@@ -16,16 +16,14 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         # of myhost.mydomain.my: root@myhost.mydomain.my, when MySQL is started
         # with --skip-name-resolve.
         next if e.inspect =~ %r{There is no such grant defined for user}
-        raise Puppet::Error, "#mysql had an error ->  #{e.inspect}"
+        raise Puppet::Error, _('#mysql had an error ->  %{inspect}') % { inspect: e.inspect }
       end
       # Once we have the list of grants generate entries for each.
       grants.each_line do |grant|
         # Match the munges we do in the type.
         munged_grant = grant.delete("'").delete('`').delete('"')
         # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root')@('127.0.0.1') (WITH GRANT OPTION)
-        # rubocop:disable Lint/AssignmentInCondition
-        next unless match = munged_grant.match(%r{^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)?$})
-        # rubocop:enable Lint/AssignmentInCondition
+        next unless match = munged_grant.match(%r{^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)?$}) # rubocop:disable Lint/AssignmentInCondition
         privileges, table, user, host, rest = match.captures
         table.gsub!('\\\\', '\\')
 
