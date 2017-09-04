@@ -1,6 +1,6 @@
 ---
 require:
-# - rubocop-rspec
+ - rubocop-rspec
  - rubocop-i18n
 AllCops:
   TargetRubyVersion: '2.1'
@@ -12,9 +12,9 @@ AllCops:
   - Gemfile
   - Rakefile
   - pkg/**/*
-#  - spec/fixtures/**/*
-  - spec/**/*
+  - spec/fixtures/**/*
   - vendor/**/*
+inherit_from: .rubocop_todo.yml
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
