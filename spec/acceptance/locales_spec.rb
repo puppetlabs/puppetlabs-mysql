@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 require 'beaker/i18n_helper'
 
-describe 'mysql localization', unless: fact('operatingsystem') == 'Debian' do
+describe 'mysql localization', if: fact('osfamily') == 'Debian' do
   before :all do
     hosts.each do |host|
       on(host, "sed -i \"96i FastGettext.locale='ja'\" /opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet.rb")
@@ -30,14 +30,13 @@ describe 'mysql localization', unless: fact('operatingsystem') == 'Debian' do
     end
 
     it 'displays Japanese error' do
-      pending('waiting on japanese translation in the po file')
       apply_manifest(pp, catch_error: true) do |r|
-        expect(r.stderr).not_to match(%r{The `old_root_password` attribute is no longer used and will be removed}i)
+        expect(r.stderr).to match(%r{`old_root_password`属性は廃止予定であり、今後のリリースで廃止されます。}i)
       end
     end
   end
 
-  context 'when triggering ruby string warning' do
+  context 'when triggering ruby simple string warning' do
     let(:pp) do
       <<-EOS
       mysql::db { 'mydb':
@@ -50,9 +49,23 @@ describe 'mysql localization', unless: fact('operatingsystem') == 'Debian' do
     end
 
     it 'displays Japanese error' do
-      pending('waiting on japanese translation in the po file')
       apply_manifest(pp, expect_failures: true) do |r|
-        expect(r.stderr).not_to match(%r{MySQL usernames are limited to a maximum of 16 characters.}i)
+        expect(r.stderr).to match(%r{MySQLユーザ名は最大16文字に制限されています。}i)
+      end
+    end
+  end
+
+  context 'when triggering ruby interpolated string warning' do
+    let(:pp) do
+      <<-EOS
+      $password_hash = mysql_password('new_password', 'should not have second parameter')
+    EOS
+    end
+
+    it 'displays Japanese error' do
+      pending 'waiting on japanese translation in the po file'
+      apply_manifest(pp, catch_error: true) do |r|
+        expect(r.stderr).not_to match(%r{mysql_password(): Wrong number of arguments given (2 for 1)}i)
       end
     end
   end

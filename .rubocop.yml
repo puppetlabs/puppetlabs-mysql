@@ -14,6 +14,7 @@ AllCops:
   - pkg/**/*
   - spec/fixtures/**/*
   - vendor/**/*
+inherit_from: .rubocop_todo.yml
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
