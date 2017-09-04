@@ -8,8 +8,7 @@ module Puppet::Parser::Functions
              ) do |args|
 
     if args.size != 1
-      raise(Puppet::ParseError, 'mysql_password(): Wrong number of arguments ' \
-        "given (#{args.size} for 1)")
+      raise Puppet::ParseError, _('mysql_password(): Wrong number of arguments given (%{args_length} for 1)') % { args_length: args.length }
     end
 
     return '' if args[0].empty?
