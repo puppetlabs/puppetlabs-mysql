@@ -9,7 +9,7 @@ describe 'mysql localization', if: fact('osfamily') == 'Debian' do
     end
   end
 
-  context 'when triggering puppet string warning' do
+  context 'when triggering puppet simple string error' do
     let(:pp) do
       <<-EOS
     class { 'mysql::server':
@@ -36,7 +36,31 @@ describe 'mysql localization', if: fact('osfamily') == 'Debian' do
     end
   end
 
-  context 'when triggering ruby simple string warning' do
+  context 'when triggering puppet interpolated string failure' do
+    let(:pp) do
+      <<-EOS
+    class { 'mysql::server': root_password => 'password' }
+    class { 'mysql::server::backup':
+              backupuser     => 'myuser',
+              backuppassword => 'mypassword',
+              backupdir      => '/tmp/backups',
+              backupcompress => true,
+              prescript      => true,
+              provider       => 'mysqldump',
+              execpath       => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          }
+      EOS
+    end
+
+    it 'displays Japanese failure' do
+      pending 'waiting on japanese translation in the po file'
+      apply_manifest(pp, catch_failures: true) do |r|
+        expect(r.stderr).not_to match(%r{The 'prescript' option is not currently implemented for the mysqldump backup provider.}i)
+      end
+    end
+  end
+
+  context 'when triggering ruby simple string failure' do
     let(:pp) do
       <<-EOS
       mysql::db { 'mydb':
@@ -48,14 +72,14 @@ describe 'mysql localization', if: fact('osfamily') == 'Debian' do
     EOS
     end
 
-    it 'displays Japanese error' do
+    it 'displays Japanese failure' do
       apply_manifest(pp, expect_failures: true) do |r|
         expect(r.stderr).to match(%r{MySQLユーザ名は最大16文字に制限されています。}i)
       end
     end
   end
 
-  context 'when triggering ruby interpolated string warning' do
+  context 'when triggering ruby interpolated string error' do
     let(:pp) do
       <<-EOS
       $password_hash = mysql_password('new_password', 'should not have second parameter')
