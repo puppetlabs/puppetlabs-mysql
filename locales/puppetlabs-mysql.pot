@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To:\n"
-"POT-Creation-Date: 2017-08-30T18:39:04+01:00\n"
+"POT-Creation-Date: 2017-09-06T16:20:13+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,6 +12,56 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Translate Toolkit 2.0.0\n"
+
+#. ./manifests/bindings/client_dev.pp:12
+msgid "No MySQL client development package configured for %{os}."
+msgstr ""
+
+#. ./manifests/bindings/daemon_dev.pp:12
+msgid "No MySQL daemon development package configured for %{os}."
+msgstr ""
+
+#. ./manifests/bindings.pp:38
+msgid ""
+"::mysql::bindings::java cannot be managed by puppet on %{osfamily} as it is no"
+"t in official repositories. Please disable java mysql binding."
+msgstr ""
+
+#. ./manifests/bindings.pp:40
+msgid ""
+"::mysql::bindings::php does not need to be managed by puppet on %{osfamily} as"
+" it is included in mysql package by default."
+msgstr ""
+
+#. ./manifests/bindings.pp:42
+msgid ""
+"::mysql::bindings::ruby cannot be managed by puppet on %{osfamily} as it is no"
+"t in official repositories. Please disable ruby mysql binding."
+msgstr ""
+
+#. ./manifests/params.pp:124
+msgid ""
+"Unsupported platform: puppetlabs-%{module_name} currently doesn't support %{os"
+"}"
+msgstr ""
+
+#. ./manifests/params.pp:381
+msgid ""
+"Unsupported platform: puppetlabs-%{module_name} currently doesn't support %{"
+"osfamily} or %{os}"
+msgstr ""
+
+#. ./manifests/params.pp:465
+msgid ""
+"Unsupported platform: puppetlabs-%{module_name} only supports RedHat 5.0 and b"
+"eyond"
+msgstr ""
+
+#. ./manifests/server/backup.pp:28
+msgid ""
+"The 'prescript' option is not currently implemented for the %{provider} backup"
+" provider."
+msgstr ""
 
 #. ./manifests/server.pp:48
 msgid ""
@@ -29,16 +79,44 @@ msgstr ""
 msgid "MySQL module"
 msgstr ""
 
+#: ./lib/puppet/parser/functions/mysql_deepmerge.rb:22
+msgid ""
+"mysql_deepmerge(): wrong number of arguments (%{args_length}; must be at least"
+" 2)"
+msgstr ""
+
+#: ./lib/puppet/parser/functions/mysql_deepmerge.rb:30
+msgid ""
+"mysql_deepmerge: unexpected argument type %{arg_class}, only expects hash argu"
+"ments"
+msgstr ""
+
+#: ./lib/puppet/parser/functions/mysql_dirname.rb:9
+msgid "mysql_dirname(): Wrong number of arguments given (%{args_length} for 1)"
+msgstr ""
+
+#: ./lib/puppet/parser/functions/mysql_password.rb:11
+msgid "mysql_password(): Wrong number of arguments given (%{args_length} for 1)"
+msgstr ""
+
 #: ./lib/puppet/parser/functions/mysql_strip_hash.rb:11
 msgid "mysql_strip_hash(): Requires a hash to work."
+msgstr ""
+
+#: ./lib/puppet/provider/mysql_datadir/mysql.rb:24
+msgid "Defaults-extra-file %{file} is missing"
 msgstr ""
 
 #: ./lib/puppet/provider/mysql_datadir/mysql.rb:59
 msgid "ERROR: `Resource` can not be removed."
 msgstr ""
 
+#: ./lib/puppet/provider/mysql_grant/mysql.rb:19
+msgid "#mysql had an error ->  %{inspect}"
+msgstr ""
+
 #: ./lib/puppet/provider/mysql_user/mysql.rb:125
-msgid "Only mysql_native_password (*ABCD...XXX) hashes are supported."
+msgid "Only mysql_native_password (*ABCD..XXX) hashes are supported."
 msgstr ""
 
 #: ./lib/puppet/type/mysql_grant.rb:34
@@ -61,8 +139,16 @@ msgstr ""
 msgid "`name` `parameter` must match user@host/table format."
 msgstr ""
 
+#: ./lib/puppet/type/mysql_grant.rb:57
+msgid "PROXY user not supported on mysql versions < 5.5.0. Current version %{version}"
+msgstr ""
+
 #: ./lib/puppet/type/mysql_grant.rb:67
 msgid "`table` `property` for PROXY should be specified as proxy_user@proxy_host ."
+msgstr ""
+
+#: ./lib/puppet/type/mysql_grant.rb:96 ./lib/puppet/type/mysql_user.rb:29
+msgid "Invalid database user %{user}"
 msgstr ""
 
 #: ./lib/puppet/type/mysql_grant.rb:102 ./lib/puppet/type/mysql_user.rb:34
@@ -81,4 +167,8 @@ msgstr ""
 msgid ""
 "`tls_options` `property`: The values NONE, SSL and X509 cannot be used with ot"
 "her options, you may only pick one of them."
+msgstr ""
+
+#: ./lib/puppet/type/mysql_user.rb:87
+msgid "Invalid tls option %{option}"
 msgstr ""
