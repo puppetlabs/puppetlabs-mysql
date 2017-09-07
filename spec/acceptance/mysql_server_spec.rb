@@ -2,14 +2,9 @@ require 'spec_helper_acceptance'
 
 describe 'mysql class' do
   describe 'advanced config' do
-    before(:all) do
-      @tmpdir = default.tmpdir('mysql')
-    end
     let(:pp) do
       <<-EOS
         class { 'mysql::server':
-          config_file             => '#{@tmpdir}/my.cnf',
-          includedir              => '#{@tmpdir}/include',
           manage_config_file      => 'true',
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
@@ -58,8 +53,6 @@ describe 'mysql class' do
     let(:pp) do
       <<-EOS
         class { 'mysql::server':
-          config_file             => '#{@tmpdir}/my.cnf',
-          includedir              => '#{@tmpdir}/include',
           manage_config_file      => 'false',
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
