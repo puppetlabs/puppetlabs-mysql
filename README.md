@@ -326,20 +326,20 @@ You can install MySQL Community Server on CentOS using the mysql module and Hier
 
 * MySQL Community Server 5.6
 * Centos 7.3
-* Puppet 3.8.7 using hiera
+* Puppet 3.8.7 using Hiera
 * puppetlabs-mysql module v3.9.0
 
 In Puppet:
 
 ```puppet
-  include ::mysql::server
+include ::mysql::server
 
-  create_resources(yumrepo, hiera('yumrepo', {}))
+create_resources(yumrepo, hiera('yumrepo', {}))
 
-  Yumrepo['repo.mysql.com'] -> Anchor['mysql::server::start']
-  Yumrepo['repo.mysql.com'] -> Package['mysql_client']
+Yumrepo['repo.mysql.com'] -> Anchor['mysql::server::start']
+Yumrepo['repo.mysql.com'] -> Package['mysql_client']
 
-  create_resources(mysql::db, hiera('mysql::server::db', {}))
+create_resources(mysql::db, hiera('mysql::server::db', {}))
 ```
 
 In Hiera:
