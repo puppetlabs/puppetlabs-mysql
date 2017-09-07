@@ -52,6 +52,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
   let(:newhash) { '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5' }
 
   let(:raw_users) do
+    # rubocop:disable Layout/IndentHeredoc
     <<-SQL_OUTPUT
 root@127.0.0.1
 root@::1
@@ -61,6 +62,7 @@ root@localhost
 usvn_user@localhost
 @vagrant-ubuntu-raring-64
     SQL_OUTPUT
+    # rubocop:enable Layout/IndentHeredoc
   end
 
   let(:parsed_users) { %w[root@127.0.0.1 root@::1 @localhost debian-sys-maint@localhost root@localhost usvn_user@localhost @vagrant-ubuntu-raring-64] }
@@ -78,6 +80,7 @@ usvn_user@localhost
     )
   end
   let(:provider) { resource.provider }
+  let(:instance) { provider.class.instances.first }
 
   before :each do
     # Set up the stubs for an instances call.
@@ -91,67 +94,93 @@ usvn_user@localhost
     provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('10 10 10 10     *6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Metrics/LineLength
   end
 
-  let(:instance) { provider.class.instances.first }
-
-  describe 'self.instances' do
-    it 'returns an array of users MySQL 5.5' do
+  describe 'MySQL 5.5' do
+    let(:usernames) do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ') # rubocop:disable Metrics/LineLength
       end
+      provider.class.instances.map { |x| x.name }
+    end
 
-      usernames = provider.class.instances.map { |x| x.name }
+    it 'returns an array of users MySQL 5.5' do
       expect(parsed_users).to match_array(usernames)
     end
-    it 'returns an array of users MySQL 5.6' do
+  end
+
+  describe 'MySQL 5.6' do
+    let(:usernames) do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ') # rubocop:disable Metrics/LineLength
       end
+      provider.class.instances.map { |x| x.name }
+    end
 
-      usernames = provider.class.instances.map { |x| x.name }
+    it 'returns an array of users MySQL 5.6' do
       expect(parsed_users).to match_array(usernames)
     end
-    it 'returns an array of users MySQL >= 5.7.0 < 5.7.6' do
+  end
+
+  describe 'MySQL >= 5.7.0 < 5.7.6' do
+    let(:usernames) do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ') # rubocop:disable Metrics/LineLength
       end
 
-      usernames = provider.class.instances.map { |x| x.name }
+      provider.class.instances.map { |x| x.name }
+    end
+
+    it 'returns an array of users MySQL >= 5.7.0 < 5.7.6' do
       expect(parsed_users).to match_array(usernames)
     end
-    it 'returns an array of users MySQL >= 5.7.6' do
+  end
+
+  describe 'MySQL >= 5.7.6' do
+    let(:usernames) do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ') # rubocop:disable Metrics/LineLength
       end
+      provider.class.instances.map { |x| x.name }
+    end
 
-      usernames = provider.class.instances.map { |x| x.name }
+    it 'returns an array of users MySQL >= 5.7.6' do
       expect(parsed_users).to match_array(usernames)
     end
-    it 'returns an array of users mariadb 10.0' do
+  end
+
+  describe 'mariadb 10.0' do
+    let(:usernames) do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ') # rubocop:disable Metrics/LineLength
       end
+      provider.class.instances.map { |x| x.name }
+    end
 
-      usernames = provider.class.instances.map { |x| x.name }
+    it 'returns an array of users mariadb 10.0' do
       expect(parsed_users).to match_array(usernames)
     end
-    it 'returns an array of users percona 5.5' do
+  end
+
+  describe 'percona 5.5' do
+    let(:usernames) do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
       parsed_users.each do |user|
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ') # rubocop:disable Metrics/LineLength
       end
+      provider.class.instances.map { |x| x.name }
+    end
 
-      usernames = provider.class.instances.map { |x| x.name }
+    it 'returns an array of users percona 5.5' do
       expect(parsed_users).to match_array(usernames)
     end
   end
@@ -161,7 +190,7 @@ usvn_user@localhost
       version = line[:version]
       string = line[:string]
       mysql_type = line[:mysql_type]
-      it "detects type '#{mysql_type}' with version '#{version}'" do
+      it "detects type '#{mysql_type}' with version '#{version}'" do # rubocop:disable RSpec/MultipleExpectations
         provider.class.instance_variable_set(:@mysqld_version_string, string)
         expect(provider.mysqld_version).to eq(version)
         expect(provider.mysqld_type).to eq(mysql_type)

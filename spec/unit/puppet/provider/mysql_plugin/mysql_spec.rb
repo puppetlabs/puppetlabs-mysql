@@ -12,6 +12,7 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
     )
   end
   let(:provider) { resource.provider }
+  let(:instance) { provider.class.instances.first }
 
   before :each do
     Facter.stubs(:value).with(:root_home).returns('/root')
@@ -19,8 +20,6 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
     provider.class.stubs(:mysql).with([defaults_file, '-NBe', 'show plugins']).returns('auth_socket	ACTIVE	AUTHENTICATION	auth_socket.so	GPL')
   end
-
-  let(:instance) { provider.class.instances.first }
 
   describe 'self.prefetch' do
     it 'exists' do

@@ -4,72 +4,63 @@ require_relative './mysql_helper.rb'
 
 describe 'mysql::server::backup class' do
   context 'should work with no errors' do
+    let(:pp) do
+      <<-EOS
+      class { 'mysql::server': root_password => 'password' }
+      mysql::db { [
+        'backup1',
+        'backup2'
+      ]:
+        user     => 'backup',
+        password => 'secret',
+      }
+
+      class { 'mysql::server::backup':
+        backupuser     => 'myuser',
+        backuppassword => 'mypassword',
+        backupdir      => '/tmp/backups',
+        backupcompress => true,
+        postscript     => [
+          'rm -rf /var/tmp/mysqlbackups',
+          'rm -f /var/tmp/mysqlbackups.done',
+          'cp -r /tmp/backups /var/tmp/mysqlbackups',
+          'touch /var/tmp/mysqlbackups.done',
+        ],
+        execpath      => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+      }
+    EOS
+    end
+
     it 'when configuring mysql backups' do
-      pp = <<-EOS
-        class { 'mysql::server': root_password => 'password' }
-        mysql::db { [
-          'backup1',
-          'backup2'
-        ]:
-          user     => 'backup',
-          password => 'secret',
-        }
-
-        class { 'mysql::server::backup':
-          backupuser     => 'myuser',
-          backuppassword => 'mypassword',
-          backupdir      => '/tmp/backups',
-          backupcompress => true,
-          postscript     => [
-            'rm -rf /var/tmp/mysqlbackups',
-            'rm -f /var/tmp/mysqlbackups.done',
-            'cp -r /tmp/backups /var/tmp/mysqlbackups',
-            'touch /var/tmp/mysqlbackups.done',
-          ],
-          execpath      => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
-        }
-      EOS
-
       apply_manifest(pp, catch_failures: true)
       apply_manifest(pp, catch_failures: true)
     end
   end
 
   describe 'mysqlbackup.sh' do
-    it 'runs mysqlbackup.sh with no errors' do
-      pre_run
-      unless version_is_greater_than('5.7.0')
+    pre_run
+    unless version_is_greater_than('5.7.0')
+      it 'runs mysqlbackup.sh with no errors' do
         shell('/usr/local/sbin/mysqlbackup.sh') do |r|
           expect(r.stderr).to eq('')
         end
       end
-    end
 
-    it 'dumps all databases to single file' do
-      pre_run
-      unless version_is_greater_than('5.7.0')
+      it 'dumps all databases to single file' do
         shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
-          expect(r.stdout).to match(%r{1})
-          expect(r.exit_code).to be_zero
+          check_script_output(result: r, match: 1)
         end
       end
-    end
 
-    context 'should create one file per database per run' do
-      it 'executes mysqlbackup.sh a second time' do
-        pre_run
-        unless version_is_greater_than('5.7.0')
+      context 'should create one file per database per run' do
+        it 'executes mysqlbackup.sh a second time' do
           shell('sleep 1')
           shell('/usr/local/sbin/mysqlbackup.sh')
         end
-      end
 
-      it 'creates at least one backup tarball' do
-        pre_run
-        unless version_is_greater_than('5.7.0')
+        it 'creates at least one backup tarball' do
           shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
-            expect(r.stdout).to match(%r{2})
-            expect(r.exit_code).to be_zero
+            check_script_output(result: r, match: 2)
           end
         end
       end
@@ -78,8 +69,8 @@ describe 'mysql::server::backup class' do
 
   context 'with one file per database' do
     context 'should work with no errors' do
-      it 'when configuring mysql backups' do
-        pp = <<-EOS
+      let(:pp) do
+        <<-EOS
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
             'backup1',
@@ -104,51 +95,40 @@ describe 'mysql::server::backup class' do
             execpath          => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
           }
         EOS
+      end
 
+      it 'when configuring mysql backups' do
         apply_manifest(pp, catch_failures: true)
         apply_manifest(pp, catch_failures: true)
       end
     end
 
     describe 'mysqlbackup.sh' do
-      it 'runs mysqlbackup.sh with no errors without root credentials' do
-        pre_run
-        unless version_is_greater_than('5.7.0')
+      pre_run
+      unless version_is_greater_than('5.7.0')
+        it 'runs mysqlbackup.sh with no errors without root credentials' do
           shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh') do |r|
             expect(r.stderr).to eq('')
           end
         end
-      end
 
-      it 'creates one file per database' do
-        pre_run
-        unless version_is_greater_than('5.7.0')
+        it 'creates one file per database' do
           %w[backup1 backup2].each do |database|
             shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-              expect(r.stdout).to match(%r{1})
-              expect(r.exit_code).to be_zero
+              check_script_output(result: r, match: 1)
             end
           end
         end
-      end
 
-      context 'should create one file per database per run' do
         it 'executes mysqlbackup.sh a second time' do
-          pre_run
-          unless version_is_greater_than('5.7.0')
-            shell('sleep 1')
-            shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
-          end
+          shell('sleep 1')
+          shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
         end
 
         it 'has one file per database per run' do
-          pre_run
-          unless version_is_greater_than('5.7.0')
-            %w[backup1 backup2].each do |database|
-              shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-                expect(r.stdout).to match(%r{2})
-                expect(r.exit_code).to be_zero
-              end
+          %w[backup1 backup2].each do |database|
+            shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
+              check_script_output(result: r, match: 2)
             end
           end
         end
@@ -157,9 +137,8 @@ describe 'mysql::server::backup class' do
   end
 
   context 'with triggers and routines' do
-    it 'when configuring mysql backups with triggers and routines' do
-      pre_run
-      pp = <<-EOS
+    let(:pp) do
+      <<-EOS
         class { 'mysql::server': root_password => 'password' }
         mysql::db { [
           'backup1',
@@ -189,12 +168,16 @@ describe 'mysql::server::backup class' do
           require => Package['bzip2'],
         }
       EOS
+    end
+
+    it 'when configuring mysql backups with triggers and routines' do
+      pre_run
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'runs mysqlbackup.sh with no errors' do
-      pre_run
-      unless version_is_greater_than('5.7.0')
+    pre_run
+    unless version_is_greater_than('5.7.0')
+      it 'runs mysqlbackup.sh with no errors' do
         shell('/usr/local/sbin/mysqlbackup.sh') do |r|
           expect(r.stderr).to eq('')
         end

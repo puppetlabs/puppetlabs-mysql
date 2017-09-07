@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:mysql_database).provider(:mysql) do
   let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
-
   let(:raw_databases) do
+    # rubocop:disable Layout/IndentHeredoc
     <<-SQL_OUTPUT
 information_schema
 mydb
@@ -11,10 +11,9 @@ mysql
 performance_schema
 test
     SQL_OUTPUT
+    # rubocop:enable Layout/IndentHeredoc
   end
-
   let(:parsed_databases) { %w[information_schema mydb mysql performance_schema test] }
-
   let(:resource) do
     Puppet::Type.type(:mysql_database).new(
       ensure: :present,
@@ -25,6 +24,7 @@ test
     )
   end
   let(:provider) { resource.provider }
+  let(:instance) { provider.class.instances.first }
 
   before :each do
     Facter.stubs(:value).with(:root_home).returns('/root')
@@ -34,15 +34,16 @@ test
     provider.class.stubs(:mysql).with([defaults_file, '-NBe', "show variables like '%_database'", 'new_database']).returns("character_set_database latin1\ncollation_database latin1_swedish_ci\nskip_show_database OFF") # rubocop:disable Metrics/LineLength
   end
 
-  let(:instance) { provider.class.instances.first }
-
   describe 'self.instances' do
-    it 'returns an array of databases' do
+    let(:databases) do
       provider.class.stubs(:mysql).with([defaults_file, '-NBe', 'show databases']).returns(raw_databases)
       raw_databases.each_line do |db|
         provider.class.stubs(:mysql).with([defaults_file, '-NBe', "show variables like '%_database'", db.chomp]).returns("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Metrics/LineLength
       end
-      databases = provider.class.instances.map { |x| x.name }
+      provider.class.instances.map { |x| x.name }
+    end
+
+    it 'returns an array of databases' do
       expect(parsed_databases).to match_array(databases)
     end
   end

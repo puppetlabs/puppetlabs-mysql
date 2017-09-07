@@ -1,4 +1,5 @@
 require 'spec_helper_acceptance'
+require_relative '../mysql_helper.rb'
 
 # Different operating systems (and therefore different versions/forks
 # of mysql) have varying levels of support for plugins and have
@@ -53,18 +54,20 @@ describe 'mysql_plugin' do
     end
 
     describe 'load plugin' do
-      it 'works without errors' do
-        pp = <<-EOS
+      let(:pp) do
+        <<-EOS
           mysql_plugin { #{plugin}:
             ensure => present,
             soname => '#{plugin_lib}',
           }
         EOS
+      end
 
+      it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
 
-      it 'finds the plugin' do
+      it 'finds the plugin' do # rubocop:disable RSpec/MultipleExpectations
         shell("mysql -NBe \"select plugin_name from information_schema.plugins where plugin_name='#{plugin}'\"") do |r|
           expect(r.stdout).to match(%r{^#{plugin}$}i)
           expect(r.stderr).to be_empty
