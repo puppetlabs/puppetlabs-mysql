@@ -15,7 +15,6 @@ describe 'mysql::server::backup' do
       let(:default_params) do
         { 'backupuser'         => 'testuser',
           'backuppassword'     => 'testpass',
-          'maxallowedpacket'   => '1M',
           'backupdir'          => '/tmp',
           'backuprotate'       => '25',
           'delete_before_dump' => true,
