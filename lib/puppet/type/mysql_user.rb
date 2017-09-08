@@ -16,10 +16,10 @@ Puppet::Type.newtype(:mysql_user) do
       mysql_version = Facter.value(:mysql_version)
       # rubocop:disable Lint/AssignmentInCondition
       # rubocop:disable Lint/UselessAssignment
-      if matches = %r{^(['`"])((?:(?!\1).)*)\1@([\w%\.:\-\/]+)$}.match(value)
+      if matches = %r{^(['`"])((?:(?!\1).)*)\1@([\w%\.:\-/]+)$}.match(value)
         user_part = matches[2]
         host_part = matches[3]
-      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%\.:\-\/]+)$}.match(value)
+      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%\.:\-/]+)$}.match(value)
         user_part = matches[1]
         host_part = matches[2]
       elsif matches = %r{^((?!['`"]).*[^0-9a-zA-Z$_].*)@(.+)$}.match(value)
