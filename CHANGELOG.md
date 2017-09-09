@@ -1,3 +1,11 @@
+## Supported Release 4.0.1
+### Summary
+This is a small bugfix release that makes `mysql_install_db` optional and fixes some regular expression issues.
+
+#### Bugfixes
+- ([MODULES-5528](https://tickets.puppet.com/browse/MODULES-5528)) Fixes the `mysql_install_db` command so that it is optional
+- ([MODULES-5602](https://tickets.puppet.com/browse/MODULES-5602)) Removes superfluous backslashes in some regular expressions that were causing instability
+
 ## Supported Release 4.0.0
 ### Summary
 This release sees the enablement of rubocop, also an update to the lib directory with rubocop fixes and several other changes and fixes. Also a bump to the Puppet version compatibility and several Puppet language updates.
