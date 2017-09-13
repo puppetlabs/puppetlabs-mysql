@@ -46,6 +46,22 @@ Puppet::Type.newtype(:mysql_user) do
   newproperty(:password_hash) do
     desc 'The password hash of the user. Use mysql_password() for creating such a hash.'
     newvalue(%r{\w*})
+
+    def change_to_s(currentvalue, newvalue)
+      if currentvalue == :absent
+        return "created password"
+      else
+        return "changed password"
+      end
+    end
+
+    def is_to_s(currentvalue)
+      return '[old password hash redacted]'
+    end
+
+    def should_to_s(newvalue)
+      return '[new password hash redacted]'
+    end
   end
 
   newproperty(:plugin) do
