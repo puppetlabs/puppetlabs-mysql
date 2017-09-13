@@ -48,7 +48,7 @@ Puppet::Type.newtype(:mysql_user) do
     newvalue(%r{\w*})
 
     def change_to_s(currentvalue, _newvalue)
-      currentvalue == :absent ? 'created password' : 'changed password'
+      (currentvalue == :absent) ? 'created password' : 'changed password'
     end
 
     def is_to_s(_currentvalue)
