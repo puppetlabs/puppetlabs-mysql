@@ -54,7 +54,7 @@ Puppet::Type.newtype(:mysql_grant) do
     validate do |value|
       mysql_version = Facter.value(:mysql_version)
       if value =~ %r{proxy}i && Puppet::Util::Package.versioncmp(mysql_version, '5.5.0') < 0
-        raise(ArgumentError, _('PROXY user not supported on mysql versions < 5.5.0. Current version %{version}') % { version: mysql_version })
+        raise(ArgumentError, _('PROXY user not supported on mysql versions < 5.5.0. Current version %{version}.') % { version: mysql_version })
       end
     end
   end
@@ -64,7 +64,7 @@ Puppet::Type.newtype(:mysql_grant) do
 
     validate do |value|
       if Array(@resource[:privileges]).include?('PROXY') && !%r{^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$}.match(value)
-        raise(ArgumentError, _('`table` `property` for PROXY should be specified as proxy_user@proxy_host .'))
+        raise(ArgumentError, _('`table` `property` for PROXY should be specified as proxy_user@proxy_host.'))
       end
     end
 
@@ -93,7 +93,7 @@ Puppet::Type.newtype(:mysql_grant) do
         user_part = matches[1]
         host_part = matches[2]
       else
-        raise(ArgumentError, _('Invalid database user %{user}') % { user: value })
+        raise(ArgumentError, _('Invalid database user %{user}.') % { user: value })
       end
       # rubocop:enable Lint/AssignmentInCondition
       # rubocop:enable Lint/UselessAssignment

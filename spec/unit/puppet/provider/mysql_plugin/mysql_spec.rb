@@ -47,7 +47,7 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
 
   describe 'exists?' do
     it 'checks if plugin exists' do
-      expect(instance.exists?).to be_truthy
+      expect(instance).to be_exists
     end
   end
 

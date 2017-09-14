@@ -72,7 +72,7 @@ test
 
   describe 'exists?' do
     it 'checks if database exists' do
-      expect(instance.exists?).to be_truthy
+      expect(instance).to be_exists
     end
   end
 
