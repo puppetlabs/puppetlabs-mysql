@@ -538,7 +538,7 @@ describe 'mysql_grant' do
         }
         EOS
 
-        expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host .})
+        expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
       end
 
       it 'does not find the user' do

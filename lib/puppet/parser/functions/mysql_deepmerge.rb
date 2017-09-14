@@ -27,7 +27,7 @@ module Puppet::Parser::Functions
       next if arg.is_a?(String) && arg.empty? # empty string is synonym for puppet's undef
       # If the argument was not a hash, skip it.
       unless arg.is_a?(Hash)
-        raise Puppet::ParseError, _('mysql_deepmerge: unexpected argument type %{arg_class}, only expects hash arguments') % { args_class: args.class }
+        raise Puppet::ParseError, _('mysql_deepmerge: unexpected argument type %{arg_class}, only expects hash arguments.') % { args_class: args.class }
       end
 
       # Now we have to traverse our hash assigning our non-hash values
