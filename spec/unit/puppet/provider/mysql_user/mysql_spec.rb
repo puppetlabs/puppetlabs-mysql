@@ -196,7 +196,7 @@ usvn_user@localhost
 
   describe 'exists?' do
     it 'checks if user exists' do
-      expect(instance.exists?).to be_truthy
+      expect(instance).to be_exists
     end
   end
 

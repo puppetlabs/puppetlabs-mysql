@@ -26,7 +26,7 @@ Puppet::Type.newtype(:mysql_user) do
         user_part = matches[1]
         host_part = matches[2]
       else
-        raise ArgumentError, _('Invalid database user %{user}') % { user: value }
+        raise ArgumentError, _('Invalid database user %{user}.') % { user: value }
       end
       # rubocop:enable Lint/AssignmentInCondition
       # rubocop:enable Lint/UselessAssignment
@@ -98,7 +98,7 @@ Puppet::Type.newtype(:mysql_user) do
       else
         value.each do |opt|
           o = opt.match(%r{^(CIPHER|ISSUER|SUBJECT)}i)
-          raise(ArgumentError, _('Invalid tls option %{option}') % { option: o }) unless o
+          raise(ArgumentError, _('Invalid tls option %{option}.') % { option: o }) unless o
         end
       end
     end

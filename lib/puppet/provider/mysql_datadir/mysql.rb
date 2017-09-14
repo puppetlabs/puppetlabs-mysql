@@ -21,7 +21,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     # rubocop:enable Lint/UselessAssignment
     unless defaults_extra_file.nil?
       unless File.exist?(defaults_extra_file)
-        raise ArgumentError, _('Defaults-extra-file %{file} is missing') % { file: defaults_extra_file }
+        raise ArgumentError, _('Defaults-extra-file %{file} is missing.') % { file: defaults_extra_file }
       end
       defaults_extra_file = "--defaults-extra-file=#{defaults_extra_file}"
     end
