@@ -27,7 +27,7 @@ RSpec.configure do |c|
       # This will be removed, this is temporary to test localisation.
       if fact('osfamily') == 'Debian'
         # install language pack on debian systems
-        install_language_pack(host, 'ja_JP')
+        install_language_pack_on(host, 'ja_JP')
         # This will be removed, this is temporary to test localisation.
         on(host, 'sudo mkdir /opt/puppetlabs/puppet/share/locale/ja')
         on(host, 'sudo touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
