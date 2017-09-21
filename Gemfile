@@ -50,10 +50,10 @@ group :system_tests do
   gem "beaker-hostgenerator", *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'])
   gem "beaker-abs", *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')        
   gem "puppet-blacksmith", '~> 3.4',                                             :require => false
-  gem "puppet-lint-i18n", :git => 'https://github.com/puppetlabs/puppet-lint-i18n.git'
-  gem "puppet_pot_generator", :git => 'https://github.com/puppetlabs/puppet_pot_generator.git'
+  gem "puppet-lint-i18n"
+  gem "puppet_pot_generator"
   gem "rubocop-i18n", '~> 1.0'
-  gem "beaker-i18n_helper", :git => 'https://github.com/eputnam/beaker-i18n_helper.git'
+  gem "beaker-i18n_helper"
 end
 
 gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'])
