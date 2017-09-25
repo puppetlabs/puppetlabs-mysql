@@ -64,7 +64,7 @@ describe 'mysql localization', if: fact('osfamily') == 'Debian' do
     let(:pp) do
       <<-EOS
       mysql::db { 'mydb':
-        user     => 'thisisalongusernametestfortoday',
+        user     => 'thisisalongusernametestfortodayandtomorrowandthenextday',
         password => 'mypass',
         host     => 'localhost',
         grant    => ['SELECT', 'UPDATE'],
@@ -74,7 +74,7 @@ describe 'mysql localization', if: fact('osfamily') == 'Debian' do
 
     it 'displays Japanese failure' do
       apply_manifest(pp, expect_failures: true) do |r|
-        expect(r.stderr).to match(%r{MySQLユーザ名は最大16文字に制限されています。}i)
+        expect(r.stderr).to match(%r{MySQLユーザ名は最大\d{2}文字に制限されています。}i)
       end
     end
   end
