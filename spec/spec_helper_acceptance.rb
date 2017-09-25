@@ -26,11 +26,11 @@ RSpec.configure do |c|
     hosts.each do |host|
       # This will be removed, this is temporary to test localisation.
       if fact('osfamily') == 'Debian'
-        # install language pack on debian systems
-        install_language_pack_on(host, 'ja_JP.utf-8')
+        # install language on debian systems
+        install_language_on(host, 'ja_JP.utf-8') if not_controller(host)
         # This will be removed, this is temporary to test localisation.
-        on(host, 'sudo mkdir /opt/puppetlabs/puppet/share/locale/ja')
-        on(host, 'sudo touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
+        on(host, 'mkdir /opt/puppetlabs/puppet/share/locale/ja')
+        on(host, 'touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
       end
       # Required for binding tests.
       if fact('osfamily') == 'RedHat'
