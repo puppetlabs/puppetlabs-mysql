@@ -11,6 +11,10 @@ install_module_dependencies_on(hosts)
 
 UNSUPPORTED_PLATFORMS = %w[Windows Solaris AIX].freeze
 
+def puppet_version
+  (on default, puppet('--version')).output.chomp
+end
+
 RSpec.configure do |c|
   # Readable test descriptions
   c.formatter = :documentation
