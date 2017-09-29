@@ -29,12 +29,14 @@ RSpec.configure do |c|
   c.before :suite do
     hosts.each do |host|
       # This will be removed, this is temporary to test localisation.
+      if (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && (puppet_version >= '4.10.5' && puppet_version < '5.2.0')
+        on(host, 'mkdir /opt/puppetlabs/puppet/share/locale/ja')
+        on(host, 'touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
+      end
       if fact('osfamily') == 'Debian'
         # install language on debian systems
         install_language_on(host, 'ja_JP.utf-8') if not_controller(host)
         # This will be removed, this is temporary to test localisation.
-        on(host, 'mkdir /opt/puppetlabs/puppet/share/locale/ja')
-        on(host, 'touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
       end
       # Required for binding tests.
       if fact('osfamily') == 'RedHat'
@@ -42,7 +44,6 @@ RSpec.configure do |c|
           shell('yum install -y bzip2')
         end
       end
-
       on host, puppet('module', 'install', 'stahnma/epel')
     end
   end
