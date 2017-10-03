@@ -286,6 +286,52 @@ usvn_user@localhost
     end
   end
 
+  describe 'plugin=' do
+    context 'auth_socket' do
+      context 'MySQL < 5.7.6' do
+        it 'changes the authentication plugin' do
+          provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+          provider.expects(:mysql).with([defaults_file, system_database, '-e', "UPDATE mysql.user SET plugin = 'auth_socket', password = '' WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('0')
+
+          provider.expects(:plugin).returns('auth_socket')
+          provider.plugin = 'auth_socket'
+        end
+      end
+
+      context 'MySQL >= 5.7.6' do
+        it 'changes the authentication plugin' do
+          provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+          provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'auth_socket'"]).returns('0')
+
+          provider.expects(:plugin).returns('auth_socket')
+          provider.plugin = 'auth_socket'
+        end
+      end
+    end
+
+    context 'mysql_native_password' do
+      context 'MySQL < 5.7.6' do
+        it 'changes the authentication plugin' do
+          provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+          provider.expects(:mysql).with([defaults_file, system_database, '-e', "UPDATE mysql.user SET plugin = 'mysql_native_password', password = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('0')
+
+          provider.expects(:plugin).returns('mysql_native_password')
+          provider.plugin = 'mysql_native_password'
+        end
+      end
+
+      context 'MySQL >= 5.7.6' do
+        it 'changes the authentication plugin' do
+          provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+          provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'"]).returns('0')
+
+          provider.expects(:plugin).returns('mysql_native_password')
+          provider.plugin = 'mysql_native_password'
+        end
+      end
+    end
+  end
+
   describe 'tls_options=' do
     it 'adds SSL option grant in mysql 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
