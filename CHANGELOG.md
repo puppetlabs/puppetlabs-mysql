@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org).
 
+## Supported Release [5.1.0]
+### Summary
+This release adds Tasks to the Mysql module.
+
+#### Added
+- Adds the execute sql task.
+
 ## Supported Release [5.0.0]
 ### Summary
 This is a major release that adds support for string translation. Currently the only supported language besides
