@@ -422,6 +422,38 @@ describe 'mysql_grant' do
     end
   end
 
+  describe 'adding function privileges' do
+    it 'works without errors' do
+      pp = <<-EOS
+        exec { 'simplefunc-create':
+          command => '/usr/bin/mysql --user="root" --password="password" --database=mysql -NBe "CREATE FUNCTION simplefunc (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT(\\'Hello, \\', s, \\'!\\')"',
+          before  => Mysql_user['test3@tester'],
+        }
+
+        mysql_user { 'test3@tester':
+          ensure => 'present',
+        }
+
+        mysql_grant { 'test3@tester/FUNCTION mysql.simplefunc':
+          ensure     => 'present',
+          table      => 'FUNCTION mysql.simplefunc',
+          user       => 'test3@tester',
+          privileges => ['EXECUTE'],
+          require    => Mysql_user['test3@tester'],
+        }
+      EOS
+
+      apply_manifest(pp, catch_failures: true)
+    end
+
+    it 'finds the user' do
+      shell('mysql -NBe "SHOW GRANTS FOR test3@tester"') do |r|
+        expect(r.stdout).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO 'test3'@'tester'})
+        expect(r.stderr).to be_empty
+      end
+    end
+  end
+
   describe 'proxy privilieges' do
     pre_run
 
