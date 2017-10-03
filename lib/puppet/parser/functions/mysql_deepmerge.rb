@@ -19,7 +19,7 @@ module Puppet::Parser::Functions
     ENDHEREDOC
 
     if args.length < 2
-      raise Puppet::ParseError, "mysql_deepmerge(): wrong number of arguments (#{args.length}; must be at least 2)"
+      raise Puppet::ParseError, _('mysql_deepmerge(): wrong number of arguments (%{args_length}; must be at least 2)') % { args_length: args.length }
     end
 
     result = {}
@@ -27,7 +27,7 @@ module Puppet::Parser::Functions
       next if arg.is_a?(String) && arg.empty? # empty string is synonym for puppet's undef
       # If the argument was not a hash, skip it.
       unless arg.is_a?(Hash)
-        raise Puppet::ParseError, "mysql_deepmerge: unexpected argument type #{arg.class}, only expects hash arguments"
+        raise Puppet::ParseError, _('mysql_deepmerge: unexpected argument type %{arg_class}, only expects hash arguments.') % { args_class: args.class }
       end
 
       # Now we have to traverse our hash assigning our non-hash values

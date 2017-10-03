@@ -6,13 +6,10 @@ module Puppet::Parser::Functions
              ) do |arguments|
 
     if arguments.empty?
-      raise(Puppet::ParseError, 'mysql_dirname(): Wrong number of arguments ' \
-        "given (#{arguments.size} for 1)")
+      raise Puppet::ParseError, _('mysql_dirname(): Wrong number of arguments given (%{args_length} for 1)') % { args_length: args.length }
     end
 
     path = arguments[0]
     return File.dirname(path)
   end
 end
-
-# vim: set ts=2 sw=2 et :

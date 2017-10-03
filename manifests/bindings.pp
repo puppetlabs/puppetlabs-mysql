@@ -35,11 +35,11 @@ class mysql::bindings (
 
   case $::osfamily {
     'Archlinux': {
-      if $java_enable   { fail("::mysql::bindings::java cannot be managed by puppet on ${::osfamily} as it is not in official repositories. Please disable java mysql binding.") }
+      if $java_enable   { fail(translate('::mysql::bindings::java cannot be managed by puppet on %{osfamily} as it is not in official repositories. Please disable java mysql binding.', {'osfamily' => $::osfamily })) }
       if $perl_enable   { include '::mysql::bindings::perl' }
-      if $php_enable    { warning("::mysql::bindings::php does not need to be managed by puppet on ${::osfamily} as it is included in mysql package by default.") }
+      if $php_enable    { warning(translate('::mysql::bindings::php does not need to be managed by puppet on %{osfamily} as it is included in mysql package by default.', {'osfamily' => $::osfamily })) }
       if $python_enable { include '::mysql::bindings::python' }
-      if $ruby_enable   { fail("::mysql::bindings::ruby cannot be managed by puppet on ${::osfamily} as it is not in official repositories. Please disable ruby mysql binding.") }
+      if $ruby_enable   { fail(translate('::mysql::bindings::ruby cannot be managed by puppet on %{osfamily} as it is not in official repositories. Please disable ruby mysql binding.', {'osfamily' => $::osfamily } )) }
     }
 
     default: {

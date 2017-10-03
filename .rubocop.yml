@@ -1,5 +1,7 @@
 ---
-require: rubocop-rspec
+require:
+ - rubocop-rspec
+ - rubocop-i18n
 AllCops:
   TargetRubyVersion: '2.1'
   Include:
@@ -12,6 +14,7 @@ AllCops:
   - pkg/**/*
   - spec/fixtures/**/*
   - vendor/**/*
+inherit_from: .rubocop_todo.yml
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
@@ -94,3 +97,7 @@ Style/IfUnlessModifier:
   Enabled: false
 Style/SymbolProc:
   Enabled: false
+GetText/DecorateString:
+  Enabled: false
+GetText/DecorateFunctionMessage:
+  Enabled: true

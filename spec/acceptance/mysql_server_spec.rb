@@ -48,7 +48,7 @@ describe 'mysql class' do
       EOS
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
 
   describe 'minimal config' do
@@ -77,7 +77,7 @@ describe 'mysql class' do
       EOS
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
 
   describe 'syslog configuration' do
@@ -89,19 +89,19 @@ describe 'mysql class' do
       EOS
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
 
   context 'when changing the password' do
     let(:password) { 'THE NEW SECRET' }
     let(:pp) { "class { 'mysql::server': root_password => '#{password}' }" }
 
-    it 'should not display the password' do
-      result = apply_manifest(pp, :catch_failures => true)
+    it 'does not display the password' do
+      result = apply_manifest(pp, catch_failures: true)
       # this does not actually prove anything, as show_diff in the puppet config defaults to false.
-      expect(result.stdout).not_to match /#{password}/
+      expect(result.stdout).not_to match %r{#{password}}
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
 end

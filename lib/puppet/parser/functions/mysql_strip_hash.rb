@@ -8,7 +8,7 @@ EOS
 
     hash = args[0]
     unless hash.is_a?(Hash)
-      raise(Puppet::ParseError, 'mysql_strip_hash(): Requires hash to work with')
+      raise(Puppet::ParseError, _('mysql_strip_hash(): Requires a hash to work.'))
     end
 
     # Filter out all the top level blanks.

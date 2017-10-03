@@ -21,7 +21,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     # rubocop:enable Lint/UselessAssignment
     unless defaults_extra_file.nil?
       unless File.exist?(defaults_extra_file)
-        raise ArgumentError, "Defaults-extra-file #{defaults_extra_file} is missing"
+        raise ArgumentError, _('Defaults-extra-file %{file} is missing.') % { file: defaults_extra_file }
       end
       defaults_extra_file = "--defaults-extra-file=#{defaults_extra_file}"
     end
@@ -56,7 +56,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
 
   def destroy
     name = @resource[:name] # rubocop:disable Lint/UselessAssignment
-    raise ArgumentError, 'ERROR: Resource can not be removed'
+    raise ArgumentError, _('ERROR: `Resource` can not be removed.')
   end
 
   def exists?
