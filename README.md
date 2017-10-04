@@ -346,7 +346,7 @@ In Hiera:
 
 ```yaml
 ---
-# mysql module requires feeding it a bunch of parameters to properly install MySQL, instead of MariaDB
+
 # Centos 7.3
 yumrepo:
   'repo.mysql.com':
