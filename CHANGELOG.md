@@ -1,3 +1,21 @@
+# Change log
+
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org).
+
+## Supported Release [5.0.0]
+### Summary
+This is a major release that adds support for string translation. Currently the only supported language besides
+English is Japanese.
+
+#### Added
+- Several gem dependencies required for translation.
+- Wrapping of strings that require translation. Strings in ruby code are now wrapped with `_()` and strings in puppet code with `translate()`.
+- Debian 9 support
+
+#### Changed
+- The default php_package_name for Debian and Ubuntu to `php-mysql`
+
 ## Supported Release 4.0.1
 ### Summary
 This is a small bugfix release that makes `mysql_install_db` optional and fixes some regular expression issues.
@@ -817,3 +835,6 @@ configuration variables.
 
 ## 2011-06-03 - Dan Bode <dan@puppetlabs.com> - 0.0.1
 * initial commit
+
+
+[5.0.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/4.0.1...5.0.0
