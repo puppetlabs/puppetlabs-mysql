@@ -49,13 +49,13 @@ msgstr ""
 #. ./manifests/params.pp:124
 msgid ""
 "Unsupported platform: puppetlabs-%{module_name} currently doesn't support "
-"%{os}"
+"%{os}."
 msgstr "サポート対象外のプラットフォーム: puppetlabs-%{module_name}は、現在%{os}をサポートしていません"
 
 #. ./manifests/params.pp:381
 msgid ""
 "Unsupported platform: puppetlabs-%{module_name} currently doesn't support "
-"%{osfamily} or %{os}"
+"%{osfamily} or %{os}."
 msgstr ""
 "サポート対象外のプラットフォーム: "
 "puppetlabs-%{module_name}は、現在%{osfamily}または%{os}をサポートしていません"
@@ -63,7 +63,7 @@ msgstr ""
 #. ./manifests/params.pp:465
 msgid ""
 "Unsupported platform: puppetlabs-%{module_name} only supports RedHat 5.0 and"
-" beyond"
+" beyond."
 msgstr "サポート対象外のプラットフォーム: puppetlabs-%{module_name}は、RedHat 5.0以降のみをサポートしています"
 
 #. ./manifests/server/backup.pp:28
@@ -97,7 +97,7 @@ msgstr "mysql_deepmerge(): 引数の数が正しくありません(%{args_length
 #: ./lib/puppet/parser/functions/mysql_deepmerge.rb:30
 msgid ""
 "mysql_deepmerge: unexpected argument type %{arg_class}, only expects hash "
-"arguments"
+"arguments."
 msgstr "mysql_deepmerge: 予期せぬ引数タイプ%{arg_class}です。想定される引数はハッシュ引数のみです。"
 
 #: ./lib/puppet/parser/functions/mysql_dirname.rb:9
@@ -115,7 +115,7 @@ msgid "mysql_strip_hash(): Requires a hash to work."
 msgstr "mysql_strip_hash(): 動作するにはハッシュが必要です。"
 
 #: ./lib/puppet/provider/mysql_datadir/mysql.rb:24
-msgid "Defaults-extra-file %{file} is missing"
+msgid "Defaults-extra-file %{file} is missing."
 msgstr "Defaults-extra-file %{file}が見つかりません"
 
 #: ./lib/puppet/provider/mysql_datadir/mysql.rb:59
@@ -153,16 +153,16 @@ msgstr "`name` `parameter`はuser@host/tableの形式と一致している必要
 #: ./lib/puppet/type/mysql_grant.rb:57
 msgid ""
 "PROXY user not supported on mysql versions < 5.5.0. Current version "
-"%{version}"
+"%{version}."
 msgstr "PROXYユーザはmysql 5.5.0以前のバージョンではサポートされていません。現在のバージョン%{version}"
 
 #: ./lib/puppet/type/mysql_grant.rb:67
 msgid ""
-"`table` `property` for PROXY should be specified as proxy_user@proxy_host ."
+"`table` `property` for PROXY should be specified as proxy_user@proxy_host."
 msgstr "PROXYの`table` `property`はproxy_user@proxy_hostとして指定されている必要があります。"
 
 #: ./lib/puppet/type/mysql_grant.rb:96 ./lib/puppet/type/mysql_user.rb:29
-msgid "Invalid database user %{user}"
+msgid "Invalid database user %{user}."
 msgstr "無効なデータベースのユーザ%{user}"
 
 #: ./lib/puppet/type/mysql_grant.rb:102 ./lib/puppet/type/mysql_user.rb:34
@@ -186,5 +186,5 @@ msgstr ""
 "NONE、SSL、X509は他のオプションと同時に使用することはできません。いずれか1つのみ選択可能です。"
 
 #: ./lib/puppet/type/mysql_user.rb:87
-msgid "Invalid tls option %{option}"
+msgid "Invalid tls option %{option}."
 msgstr "無効なtlsオプション%{option}"
