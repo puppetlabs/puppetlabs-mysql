@@ -53,9 +53,8 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese failure' do
-      pending 'waiting on japanese translation in the po file'
       apply_manifest(pp, catch_failures: true) do |r|
-        expect(r.stderr).not_to match(%r{The 'prescript' option is not currently implemented for the mysqldump backup provider.}i)
+        expect(r.stderr).to match(%r{'prescript'オプションは、現在、mysqldumpバックアッププロバイダ向けには実装されていません。}i)
       end
     end
   end
@@ -82,17 +81,36 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
   context 'when triggering ruby interpolated string error' do
     let(:pp) do
       <<-EOS
-      $password_hash = mysql_password('new_password', 'should not have second parameter')
+      mysql_user{ 'user@localhost':
+        ensure                   => 'present',
+        tls_options              => ['dlhfds'],
+      }
     EOS
     end
 
     it 'displays Japanese error' do
-      pending 'waiting on japanese translation in the po file'
       apply_manifest(pp, catch_error: true) do |r|
-        expect(r.stderr).not_to match(%r{mysql_password(): Wrong number of arguments given (2 for 1)}i)
+        expect(r.stderr).to match(%r{無効なtlsオプション}i)
       end
     end
   end
+
+  context 'when triggering ruby interpolated string error' do
+  let(:pp) do
+    <<-EOS
+    mysql_user{'user@localost':
+    ensure => present,
+    tls_options => ['random_option']
+  }
+  EOS
+  end
+
+  it 'displays Japanese error' do
+    apply_manifest(pp, catch_error: true) do |r|
+      expect(r.stderr).to match(%r{無効なtlsオプションrandom_option}i)
+    end
+  end
+end
 
   after :all do
     hosts.each do |host|
