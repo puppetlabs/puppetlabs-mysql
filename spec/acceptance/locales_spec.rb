@@ -4,7 +4,6 @@ require 'beaker/i18n_helper'
 describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && puppet_version =~ %r{(^4\.10\.[56789]|5\.\d\.\d)} do
   before :all do
     hosts.each do |host|
-      on(host, "sed -i \"96i FastGettext.locale='ja'\" /opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet.rb")
       change_locale_on(host, 'ja_JP.utf-8')
     end
   end
@@ -96,7 +95,6 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
 
   after :all do
     hosts.each do |host|
-      on(host, 'sed -i "96d" /opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet.rb')
       change_locale_on(host, 'en_US')
     end
   end
