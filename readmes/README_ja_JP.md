@@ -12,7 +12,7 @@
     * [既存のサーバに対する操作](#既存のサーバに対する操作)
     * [パスワードの指定](#パスワードの指定)
     * [CentOSへのPerconaサーバのインストール](#centosへのperconaサーバのインストール)
-    * [UbuntuへのMariaDBのインストール](#ubuntuへのmariadbのインストール)
+    *[UbuntuへのMariaDBのインストール](#ubuntuへのmariadbのインストール)
 4. [参考 - モジュールの機能と動作について](#参考)
 5. [制約事項 - OSの互換性など](#制約事項)
 6. [開発 - モジュール貢献についてのガイドライン](#開発)
@@ -319,6 +319,67 @@ Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
 Class['::mysql::client']
 ```
+
+### CentOSへのMySQL Communityサーバのインストール
+
+MySQLモジュールおよびHieraを使用して、MySQL CommunityサーバーをCentOSにインストールすることができます。この例は以下のバージョンでテスト済みです。
+
+* MySQL Community Server 5.6
+* Centos 7.3
+* Hieraを使用したPuppet 3.8.7 
+* puppetlabs-mysqlモジュールv3.9.0
+
+Puppetで：
+
+```puppet
+  include ::mysql::server
+
+  create_resources(yumrepo, hiera('yumrepo', {}))
+
+  Yumrepo['repo.mysql.com'] -> Anchor['mysql::server::start']
+  Yumrepo['repo.mysql.com'] -> Package['mysql_client']
+
+  create_resources(mysql::db, hiera('mysql::server::db', {}))
+```
+
+Hieraで：
+
+```yaml
+---
+# mysqlモジュールはMySQLを正しく導入するために、MariaDBの代わりに多くのパラメータのフィードを必要とします。
+# Centos 7.3
+yumrepo:
+  'repo.mysql.com':
+    baseurl: "http://repo.mysql.com/yum/mysql-5.6-community/el/%{::operatingsystemmajrelease}/$basearch/"
+    descr: 'repo.mysql.com'
+    enabled: 1
+    gpgcheck: true
+    gpgkey: 'http://repo.mysql.com/RPM-GPG-KEY-mysql'
+
+mysql::client::package_name: "mysql-community-client" # 適切なMySQL導入のために必要
+mysql::server::package_name: "mysql-community-server" #適切なMySQL導入のために必要
+mysql::server::package_ensure: 'installed' #ここではバージョンを指定しないでください。残念ながら、パッケージがインストールされているエラーでyumは失敗しました。
+mysql::server::root_password: "change_me_i_am_insecure"
+mysql::server::manage_config_file: true
+mysql::server::service_name: 'mysqld' # Puppetモジュールに必要
+mysql::server::override_options:
+  'mysqld':
+    'bind-address': '127.0.0.1'
+    'log-error': /var/log/mysqld.log' # 適切なMySQL導入のために必要
+  'mysqld_safe':
+    'log-error': '/var/log/mysqld.log'  # 適切なMySQL導入のために必要 
+
+# データベース+アクセスできるアカウント、暗号化されていないパスワードを作成
+mysql::server::db:
+  "dev":
+    user: "dev"
+    password: "devpass"
+    host: "127.0.0.1"
+    grant:
+      - "ALL"
+
+```
+
 
 ## 参考
 
