@@ -114,7 +114,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
   def destroy
     # if the user was dropped, it'll have been removed from the user hash
-    # as the grants are alraedy removed by the DROP statement
+    # as the grants are already removed by the DROP statement
     if self.class.users.include? @property_hash[:user]
       if @property_hash[:privileges].include?('PROXY')
         revoke(@property_hash[:user], @property_hash[:table], @property_hash[:privileges])
