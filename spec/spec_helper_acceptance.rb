@@ -3,6 +3,8 @@ require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
 require 'beaker/module_install_helper'
 require 'beaker/i18n_helper'
+require 'beaker/testmode_switcher'
+require 'beaker/testmode_switcher/dsl'
 
 run_puppet_install_helper
 install_ca_certs unless ENV['PUPPET_INSTALL_TYPE'] =~ %r{pe}i
