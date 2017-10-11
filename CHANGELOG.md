@@ -843,5 +843,5 @@ configuration variables.
 ## 2011-06-03 - Dan Bode <dan@puppetlabs.com> - 0.0.1
 * initial commit
 
-
+[5.1.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.0.0...5.1.0
 [5.0.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/4.0.1...5.0.0
