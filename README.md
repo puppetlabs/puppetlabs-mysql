@@ -1282,6 +1282,10 @@ Determines the MySQL version by parsing the output from `mysql --version`
 
 Generates a unique id, based on the node's MAC address, which can be used as `server_id`. This fact will *always* return `0` on nodes that have only loopback interfaces. Because those nodes aren't connected to the outside world, this shouldn't cause any conflicts.
 
+### Tasks
+
+The MySQL module has an example task that allows a user to execute arbitary SQL against a database. Please refer to to the [PE documentation](https://puppet.com/docs/pe/2017.3/orchestrator/running_tasks.html) or [Bolt documentation](https://puppet.com/docs/bolt/latest/bolt.html) on how to execute a task.
+
 ## Limitations
 
 This module has been tested on:
