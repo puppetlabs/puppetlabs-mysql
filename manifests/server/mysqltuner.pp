@@ -8,7 +8,7 @@ class mysql::server::mysqltuner(
 
   if $source {
     $_version = $source
-    $_source  = $source
+    $_source  = regsubst($source,'[:/]','_','G')
   } else {
     $_version = $version
     $_source  = "https://github.com/major/MySQLTuner-perl/raw/${version}/mysqltuner.pl"
