@@ -106,4 +106,15 @@ class Puppet::Provider::Mysql < Puppet::Provider
     end
     option_string
   end
+
+  def self.merge_tls_options(tls_options)
+    # issuer and subject may contain spaces
+    tls_options.map! { |item|
+      parts = item.split(' ', 2)
+      next if parts.length < 2
+      item = "#{parts[0]} '#{parts[1]}'"
+    }
+
+    merged_tls_options = tls_options.join(' AND ')
+  end
 end
