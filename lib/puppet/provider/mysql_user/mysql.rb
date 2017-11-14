@@ -22,7 +22,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
-      @password, @plugin = mysql([defaults_file, '-NBe', query].compact).split(%r{\s})
+      @password, @plugin = mysql([defaults_file, '--delimiter=\t', '-NBe', query].compact).split(%r{\t})
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
       # rubocop:enable Metrics/LineLength
       new(name: name,
@@ -161,6 +161,14 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
 
   def tls_options=(array)
     merged_name = self.class.cmd_user(@resource[:name])
+
+    # issuer and subject may contain spaces
+    array.map! { |item|
+      parts = item.split(' ', 2)
+      next if parts.length < 2
+      item = "#{parts[0]} '#{parts[1]}'"
+    }
+
     merged_tls_options = array.join(' AND ')
     if ((mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0) ||
        (mysqld_type == 'mariadb' && Puppet::Util::Package.versioncmp(mysqld_version, '10.2.0') >= 0)
