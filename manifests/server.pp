@@ -59,6 +59,7 @@ class mysql::server (
   include '::mysql::server::installdb'
   include '::mysql::server::service'
   include '::mysql::server::root_password'
+  include '::mysql::server::monitor'
   include '::mysql::server::providers'
 
   if $remove_default_accounts {
@@ -82,6 +83,7 @@ class mysql::server (
   -> Class['mysql::server::installdb']
   -> Class['mysql::server::service']
   -> Class['mysql::server::root_password']
+  -> Class['mysql::server::monitor']
   -> Class['mysql::server::providers']
   -> Anchor['mysql::server::end']
 
