@@ -43,7 +43,7 @@ def run_task(task_name:, params: nil, password: DEFAULT_PASSWORD)
 end
 
 def run_bolt_task(task_name:, params: nil, password: DEFAULT_PASSWORD)
-  on(master, "/opt/puppetlabs/puppet/bin/bolt task run #{task_name} --modules /etc/puppetlabs/code/modules/service --nodes localhost --password #{password} #{params}", acceptable_exit_codes: [0, 1]).stdout # rubocop:disable Metrics/LineLength
+  on(master, "/opt/puppetlabs/puppet/bin/bolt task run #{task_name} --modulepath /etc/puppetlabs/code/modules/service --nodes localhost --password #{password} #{params}", acceptable_exit_codes: [0, 1]).stdout # rubocop:disable Metrics/LineLength
 end
 
 def run_puppet_task(task_name:, params: nil)
