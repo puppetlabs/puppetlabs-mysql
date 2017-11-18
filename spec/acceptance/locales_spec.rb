@@ -94,6 +94,23 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
   end
 
+  context 'when triggering ruby interpolated string error' unless pe_install? do
+    let(:pp) do
+      <<-EOS
+      mysql_user{ 'name@localhost':
+        ensure => 'present',
+        tls_options => ['invalid_option'],
+       }
+      EOS
+    end
+
+    it 'displays Japanese error' do
+      execute_manifest(pp, expect_failures: true) do |r|
+        expect(r.stderr).to match(%r{無効なtlsオプション}i)
+      end
+    end
+  end
+
   after :all do
     hosts.each do |host|
       on(host, 'sed -i "96d" /opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet.rb')

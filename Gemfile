@@ -54,6 +54,7 @@ group :system_tests do
   gem "puppet_pot_generator"
   gem "rubocop-i18n", '~> 1.0'
   gem "beaker-i18n_helper"
+  gem "beaker-testmode_switcher"
 end
 
 gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'])

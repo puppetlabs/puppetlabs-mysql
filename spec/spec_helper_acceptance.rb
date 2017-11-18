@@ -3,6 +3,8 @@ require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
 require 'beaker/module_install_helper'
 require 'beaker/i18n_helper'
+require 'beaker/testmode_switcher'
+require 'beaker/testmode_switcher/dsl'
 
 def install_bolt_on(hosts)
   on(hosts, "/opt/puppetlabs/puppet/bin/gem install --source http://rubygems.delivery.puppetlabs.net bolt -v '> 0.0.1'", acceptable_exit_codes: [0, 1]).stdout
