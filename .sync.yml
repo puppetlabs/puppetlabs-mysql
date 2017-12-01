@@ -7,3 +7,7 @@ spec/spec_helper.rb:
   extras:
   - rvm: 2.1.9
     script: bundle exec rake rubocop
+.rubocop.yml:
+  unmanaged: true
+.rubocop_todo.yml:
+  unmanaged: true
