@@ -11,7 +11,7 @@ describe 'mysql tasks' do
         }
     EOS
 
-    it "sets up a mysql instance" do
+    it 'sets up a mysql instance' do
       apply_manifest(pp, catch_failures: true)
     end
 
