@@ -68,7 +68,7 @@ RSpec.configure do |c|
 
   # Configure all nodes in nodeset
   c.before :suite do
-    run_puppet_access_login(user: 'admin') if pe_install?
+    run_puppet_access_login(user: 'admin') if pe_install? && puppet_version =~ %r{(5\.\d\.\d)}
     hosts.each do |host|
       # This will be removed, this is temporary to test localisation.
       if (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && (puppet_version >= '4.10.5' && puppet_version < '5.2.0')
