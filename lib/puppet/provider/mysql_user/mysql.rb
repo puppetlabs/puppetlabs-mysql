@@ -6,7 +6,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   # Build a property_hash containing all the discovered information about MySQL
   # users.
   def self.instances
-    users = self.mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
+    users = mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
     # To reduce the number of calls to MySQL we collect all the properties in
     # one big swoop.
     users.map do |name|
@@ -21,7 +21,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
-      @password, @plugin = self.mysql_caller(query, 'regular').split(%r{\s})
+      @password, @plugin = mysql_caller(query, 'regular').split(%r{\s})
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
       # rubocop:enable Metrics/LineLength
       new(name: name,
