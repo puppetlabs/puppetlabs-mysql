@@ -54,25 +54,18 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.defaults_file
   end
 
-  def self.mysql_caller(textOfSQL, type = 'undefined')
+  def self.mysql_caller(text_of_sql, type)
     if type.eql? 'system'
-      mysql_raw([defaults_file, '--host=', system_database, '-e', textOfSQL].flatten.compact)
+      mysql_raw([defaults_file, '--host=', system_database, '-e', text_of_sql].flatten.compact)
     elsif type.eql? 'regular'
-      mysql_raw([defaults_file, '-NBe', textOfSQL].flatten.compact)
-    elsif type.eql? 'undefined'
-      begin
-        raise Puppet::Error, "#mysql had an error -> did not pass in type parameter"
-      rescue => e
-        puts "Error during processing: #{$!}"
-        puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
-      end
+      mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact)
     else
-      raise Puppet::Error, "#mysql had an error -> Unrecognised type '#type'"
+      raise Puppet::Error, _("#mysql_caller: Unrecognised type '%{type}'" % { type: type })
     end
   end
 
   def self.users
-    self.mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
+    mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
   end
 
   # Optional parameter to run a statement on the MySQL system database.

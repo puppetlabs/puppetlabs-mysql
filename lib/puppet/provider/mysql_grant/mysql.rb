@@ -10,7 +10,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
       user_string = cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
       begin
-        grants = self.mysql_caller(query, 'regular')
+        grants = mysql_caller(query, 'regular')
       rescue Puppet::ExecutionFailure => e
         # Silently ignore users with no grants. Can happen e.g. if user is
         # defined with fqdn and server is run with skip-name-resolve. Example:

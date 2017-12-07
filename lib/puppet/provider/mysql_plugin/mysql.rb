@@ -5,7 +5,7 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, parent: Puppet::Provider::Mysql
   commands mysql_raw: 'mysql'
 
   def self.instances
-    self.mysql_caller('show plugins', 'regular').split("\n").map do |line|
+    mysql_caller('show plugins', 'regular').split("\n").map do |line|
       name, _status, _type, library, _license = line.split(%r{\t})
       new(name: name,
           ensure: :present,
