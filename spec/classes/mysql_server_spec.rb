@@ -98,19 +98,17 @@ describe 'mysql::server' do
           it { is_expected.to contain_file('/tmp/error.log') }
         end
         context 'default bind-address' do
-          let(:params) {  }
-
-          it { is_expected.to contain_file('mysql-config-file').with_content(/^bind-address = 127.0.0.1/) }
+          it { is_expected.to contain_file('mysql-config-file').with_content(%r{^bind-address = 127.0.0.1}) }
         end
         context 'with defined bind-address' do
           let(:params) { { override_options: { 'mysqld' => { 'bind-address' => '1.1.1.1' } } } }
 
-          it { is_expected.to contain_file('mysql-config-file').with_content(/^bind-address = 1.1.1.1/) }
+          it { is_expected.to contain_file('mysql-config-file').with_content(%r{^bind-address = 1.1.1.1}) }
         end
         context 'without bind-address' do
           let(:params) { { override_options: { 'mysqld' => { 'bind-address' => :undef } } } }
 
-          it { is_expected.to contain_file('mysql-config-file').without_content(/^bind-address/) }
+          it { is_expected.to contain_file('mysql-config-file').without_content(%r{^bind-address}) }
         end
       end
 
