@@ -649,7 +649,7 @@ describe 'mysql_grant' do
 
       mysql_cmd = shell('which mysql').stdout.chomp
       shell("mv #{mysql_cmd} #{mysql_cmd}.bak")
-      expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{Command mysql is missing})
+      expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{Could not find a suitable provider for mysql_grant})
       shell("mv #{mysql_cmd}.bak #{mysql_cmd}")
     end
 
