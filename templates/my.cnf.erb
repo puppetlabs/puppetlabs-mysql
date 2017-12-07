@@ -6,8 +6,6 @@
 <%     v.sort.map do |ki, vi| -%>
 <%       if ki == 'ssl-disable' or (ki =~ /^ssl/ and v['ssl-disable'] == true) -%>
 <%         next %>
-<%       elsif ki == 'bind-address' and vi == :undef -%>
-<%         next %>
 <%       elsif vi == true or vi == '' -%>
 <%=        ki %>
 <%       elsif vi.is_a?(Array) -%>
