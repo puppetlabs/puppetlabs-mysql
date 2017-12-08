@@ -5,7 +5,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
   initvars
 
   # Make sure we find mysqld on CentOS and mysql_install_db on Gentoo and Solaris 11
-  ENV['PATH'] = ENV['PATH'] + ':/usr/libexec:/usr/share/mysql/scripts:/opt/rh/mysql55/root/usr/bin:/opt/rh/mysql55/root/usr/libexec:/usr/mysql/5.5/bin:/usr/mysql/5.6/bin:/usr/mysql/5.7/bin'
+  ENV['PATH'] = ENV['PATH'] + ':/usr/libexec:/usr/share/mysql/scripts:/opt/rh/*{mariadb,mysql}*/root/usr/bin:/opt/rh/*{mariadb,mysql}*/root/usr/libexec:/usr/mysql/5.5/bin:/usr/mysql/5.6/bin:/usr/mysql/5.7/bin'
 
   commands mysqld: 'mysqld'
   optional_commands mysql_install_db: 'mysql_install_db'
