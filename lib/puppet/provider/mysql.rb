@@ -7,7 +7,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   ENV['PATH'] = ENV['PATH'] + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
 
   # rubocop:disable Style/HashSyntax
-  commands :mysql      => 'mysql'
+  commands :mysql_raw  => 'mysql'
   commands :mysqld     => 'mysqld'
   commands :mysqladmin => 'mysqladmin'
   # rubocop:enable Style/HashSyntax
@@ -54,8 +54,18 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.defaults_file
   end
 
+  def self.mysql_caller(text_of_sql, type)
+    if type.eql? 'system'
+      mysql_raw([defaults_file, '--host=', system_database, '-e', text_of_sql].flatten.compact)
+    elsif type.eql? 'regular'
+      mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact)
+    else
+      raise Puppet::Error, _("#mysql_caller: Unrecognised type '%{type}'" % { type: type })
+    end
+  end
+
   def self.users
-    mysql([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"].compact).split("\n")
+    mysql_caller("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').split("\n")
   end
 
   # Optional parameter to run a statement on the MySQL system database.
