@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'mysql::server::backup' do
+  # rubocop:disable RSpec/NestedGroups
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:pre_condition) do
@@ -113,11 +114,9 @@ describe 'mysql::server::backup' do
 
         it {
           is_expected.to contain_file('mysqlbackupdir').with(
-            path: '/tmp',
-            ensure: 'directory',
-            mode: '0750',
-            owner: 'testuser',
-            group: 'testgrp',
+            path: '/tmp', ensure: 'directory',
+            mode: '0750', owner: 'testuser',
+            group: 'testgrp'
           )
         }
       end
@@ -257,13 +256,11 @@ describe 'mysql::server::backup' do
             default_params.merge(file_per_database: true, backupcompress: false)
           end
 
-          it 'loops through backup all databases without compression' do
-            is_expected.to contain_file('mysqlbackup.sh').with_content(
-              %r{.*SHOW DATABASES.*},
-            )
-            is_expected.to contain_file('mysqlbackup.sh').without_content(
-              %r{.*bzcat -zc.*},
-            )
+          it 'loops through backup all databases without compression #show databases' do
+            is_expected.to contain_file('mysqlbackup.sh').with_content(%r{.*SHOW DATABASES.*})
+          end
+          it 'loops through backup all databases without compression #bzcat' do
+            is_expected.to contain_file('mysqlbackup.sh').without_content(%r{.*bzcat -zc.*})
           end
         end
 
@@ -339,7 +336,7 @@ describe 'mysql::server::backup' do
 
         it 'is add postscript' do
           is_expected.to contain_file('mysqlbackup.sh').with_content(
-            /rsync -a \/tmp backup01.local-lan:/,
+            %r{rsync -a \/tmp backup01.local-lan:},
           )
         end
       end
@@ -354,7 +351,7 @@ describe 'mysql::server::backup' do
 
         it 'is add postscript' do
           is_expected.to contain_file('mysqlbackup.sh').with_content(
-            /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/,
+            %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
           )
         end
       end
@@ -381,7 +378,7 @@ describe 'mysql::server::backup' do
 
           it 'contains the prescript' do
             is_expected.to contain_file('xtrabackup.sh').with_content(
-              /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/,
+              %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
             )
           end
         end
@@ -397,11 +394,12 @@ describe 'mysql::server::backup' do
 
           it 'contains the prostscript' do
             is_expected.to contain_file('xtrabackup.sh').with_content(
-              /.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*/,
+              %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
             )
           end
         end
       end
     end
   end
+  # rubocop:enable RSpec/NestedGroups
 end

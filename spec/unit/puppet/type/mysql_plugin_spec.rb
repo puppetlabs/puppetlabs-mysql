@@ -1,17 +1,15 @@
 require 'puppet'
 require 'puppet/type/mysql_plugin'
 describe Puppet::Type.type(:mysql_plugin) do
-  before :each do
-    @plugin = Puppet::Type.type(:mysql_plugin).new(name: 'test', soname: 'test.so')
-  end
+  let(:plugin) { Puppet::Type.type(:mysql_plugin).new(name: 'test', soname: 'test.so') }
 
   it 'accepts a plugin name' do
-    expect(@plugin[:name]).to eq('test')
+    expect(plugin[:name]).to eq('test')
   end
 
   it 'accepts a library name' do
-    @plugin[:soname] = 'test.so'
-    expect(@plugin[:soname]).to eq('test.so')
+    plugin[:soname] = 'test.so'
+    expect(plugin[:soname]).to eq('test.so')
   end
 
   it 'requires a name' do
