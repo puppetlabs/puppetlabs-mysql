@@ -28,15 +28,21 @@ describe 'mysql::db', type: :define do
         is_expected.to contain_exec('test_db-import').with_refreshonly(true)
       end
 
-      it 'imports sql script on creation if enforcing' do
+      it 'imports sql script on creation if enforcing #refreshonly' do
         params.merge!('sql' => 'test_sql', 'enforce_sql' => true)
         is_expected.to contain_exec('test_db-import').with_refreshonly(false)
+      end
+      it 'imports sql script on creation if enforcing #command' do
+        params.merge!('sql' => 'test_sql', 'enforce_sql' => true)
         is_expected.to contain_exec('test_db-import').with_command('cat test_sql | mysql test_db')
       end
 
-      it 'imports sql script with custom command on creation if enforcing' do
+      it 'imports sql script with custom command on creation if enforcing #refreshonly' do
         params.merge!('sql' => 'test_sql', 'enforce_sql' => true, 'import_cat_cmd' => 'zcat')
         is_expected.to contain_exec('test_db-import').with_refreshonly(false)
+      end
+      it 'imports sql script with custom command on creation if enforcing #command' do
+        params.merge!('sql' => 'test_sql', 'enforce_sql' => true, 'import_cat_cmd' => 'zcat')
         is_expected.to contain_exec('test_db-import').with_command('zcat test_sql | mysql test_db')
       end
 
@@ -45,9 +51,12 @@ describe 'mysql::db', type: :define do
         is_expected.to contain_exec('test_db-import').with_command('cat test_sql test_2_sql | mysql test_db')
       end
 
-      it 'does not create database and database user' do
+      it 'does not create database' do
         params.merge!('ensure' => 'absent', 'host' => 'localhost')
         is_expected.to contain_mysql_database('test_db').with_ensure('absent')
+      end
+      it 'does not create database user' do
+        params.merge!('ensure' => 'absent', 'host' => 'localhost')
         is_expected.to contain_mysql_user('testuser@localhost').with_ensure('absent')
       end
 

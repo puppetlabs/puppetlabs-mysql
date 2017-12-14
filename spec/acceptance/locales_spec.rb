@@ -11,7 +11,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
 
   context 'when triggering puppet simple string error' do
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
     class { 'mysql::server':
             config_file             => '/tmp/mysql.sFlJdV/my.cnf',
             includedir              => '/tmp/mysql.sFlJdV/include',
@@ -26,7 +26,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
             old_root_password       => 'kittensnmittens',
             service_enabled         => 'false'
           }
-      EOS
+      MANIFEST
     end
 
     it 'displays Japanese error' do
@@ -38,7 +38,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
 
   context 'when triggering puppet interpolated string failure' do
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
     class { 'mysql::server': root_password => 'password' }
     class { 'mysql::server::backup':
               backupuser     => 'myuser',
@@ -49,7 +49,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
               provider       => 'mysqldump',
               execpath       => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
           }
-      EOS
+      MANIFEST
     end
 
     it 'displays Japanese failure' do
@@ -61,14 +61,14 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
 
   context 'when triggering ruby simple string failure' do
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
       mysql::db { 'mydb':
         user     => 'thisisalongusernametestfortodayandtomorrowandthenextday',
         password => 'mypass',
         host     => 'localhost',
         grant    => ['SELECT', 'UPDATE'],
       }
-    EOS
+    MANIFEST
     end
 
     it 'displays Japanese failure' do
@@ -80,11 +80,11 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
 
   context 'when triggering ruby interpolated string error' do
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
       mysql_user{ '"name@localhost':
         ensure => 'present',
        }
-      EOS
+      MANIFEST
     end
 
     it 'displays Japanese error' do

@@ -1,12 +1,13 @@
 require 'spec_helper_acceptance'
 
 describe 'mysql class' do
+  # rubocop:disable RSpec/InstanceVariable
   describe 'advanced config' do
     before(:all) do
       @tmpdir = default.tmpdir('mysql')
     end
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
         class { 'mysql::server':
           config_file             => '#{@tmpdir}/my.cnf',
           includedir              => '#{@tmpdir}/include',
@@ -45,7 +46,7 @@ describe 'mysql class' do
             },
           }
         }
-      EOS
+      MANIFEST
     end
 
     it_behaves_like 'a idempotent resource'
@@ -56,7 +57,7 @@ describe 'mysql class' do
       @tmpdir = default.tmpdir('mysql')
     end
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
         class { 'mysql::server':
           config_file             => '#{@tmpdir}/my.cnf',
           includedir              => '#{@tmpdir}/include',
@@ -74,19 +75,20 @@ describe 'mysql class' do
           grants                  => {},
           databases               => {},
         }
-      EOS
+      MANIFEST
     end
 
     it_behaves_like 'a idempotent resource'
   end
+  # rubocop:enable RSpec/InstanceVariable
 
   describe 'syslog configuration' do
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
         class { 'mysql::server':
           override_options => { 'mysqld' => { 'log-error' => undef }, 'mysqld_safe' => { 'log-error' => false, 'syslog' => true }},
         }
-      EOS
+      MANIFEST
     end
 
     it_behaves_like 'a idempotent resource'
