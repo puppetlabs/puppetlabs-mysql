@@ -6,6 +6,7 @@ describe Puppet::Type.type(:mysql_user) do
     before :each do
       Facter.stubs(:value).with(:mysql_version).returns('5.6.24')
     end
+
     it 'fails with a long user name' do
       expect {
         Puppet::Type.type(:mysql_user).new(name: '12345678901234567@localhost', password_hash: 'pass')
@@ -14,12 +15,14 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context 'On MariaDB 10.0.0+' do
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: '12345678901234567@localhost', password_hash: 'pass') }
+
     before :each do
       Facter.stubs(:value).with(:mysql_version).returns('10.0.19')
-      @user = Puppet::Type.type(:mysql_user).new(name: '12345678901234567@localhost', password_hash: 'pass')
     end
+
     it 'succeeds with a long user name on MariaDB' do
-      expect(@user[:name]).to eq('12345678901234567@localhost')
+      expect(user[:name]).to eq('12345678901234567@localhost')
     end
   end
 
@@ -30,67 +33,55 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context 'using foo@localhost' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: 'foo@localhost', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: 'foo@localhost', password_hash: 'pass') }
 
     it 'accepts a user name' do
-      expect(@user[:name]).to eq('foo@localhost')
+      expect(user[:name]).to eq('foo@localhost')
     end
 
     it 'accepts a password' do
-      @user[:password_hash] = 'foo'
-      expect(@user[:password_hash]).to eq('foo')
+      user[:password_hash] = 'foo'
+      expect(user[:password_hash]).to eq('foo')
     end
   end
 
   context 'using foo@LocalHost' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: 'foo@LocalHost', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: 'foo@LocalHost', password_hash: 'pass') }
 
     it 'lowercases the user name' do
-      expect(@user[:name]).to eq('foo@localhost')
+      expect(user[:name]).to eq('foo@localhost')
     end
   end
 
   context 'using foo@192.168.1.0/255.255.255.0' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: 'foo@192.168.1.0/255.255.255.0', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: 'foo@192.168.1.0/255.255.255.0', password_hash: 'pass') }
 
     it 'creates the user with the netmask' do
-      expect(@user[:name]).to eq('foo@192.168.1.0/255.255.255.0')
+      expect(user[:name]).to eq('foo@192.168.1.0/255.255.255.0')
     end
   end
 
   context 'using allo_wed$char@localhost' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: 'allo_wed$char@localhost', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: 'allo_wed$char@localhost', password_hash: 'pass') }
 
     it 'accepts a user name' do
-      expect(@user[:name]).to eq('allo_wed$char@localhost')
+      expect(user[:name]).to eq('allo_wed$char@localhost')
     end
   end
 
   context 'ensure the default \'debian-sys-main\'@localhost user can be parsed' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: '\'debian-sys-maint\'@localhost', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: '\'debian-sys-maint\'@localhost', password_hash: 'pass') }
 
     it 'accepts a user name' do
-      expect(@user[:name]).to eq('\'debian-sys-maint\'@localhost')
+      expect(user[:name]).to eq('\'debian-sys-maint\'@localhost')
     end
   end
 
   context 'using a quoted 16 char username' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: '"debian-sys-maint"@localhost', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: '"debian-sys-maint"@localhost', password_hash: 'pass') }
 
     it 'accepts a user name' do
-      expect(@user[:name]).to eq('"debian-sys-maint"@localhost')
+      expect(user[:name]).to eq('"debian-sys-maint"@localhost')
     end
   end
 
@@ -107,22 +98,18 @@ describe Puppet::Type.type(:mysql_user) do
   end
 
   context 'using `speci!al#`@localhost' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: '`speci!al#`@localhost', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: '`speci!al#`@localhost', password_hash: 'pass') }
 
     it 'accepts a quoted user name with special chatracters' do
-      expect(@user[:name]).to eq('`speci!al#`@localhost')
+      expect(user[:name]).to eq('`speci!al#`@localhost')
     end
   end
 
   context 'using in-valid@localhost' do
-    before :each do
-      @user = Puppet::Type.type(:mysql_user).new(name: 'in-valid@localhost', password_hash: 'pass')
-    end
+    let(:user) { Puppet::Type.type(:mysql_user).new(name: 'in-valid@localhost', password_hash: 'pass') }
 
     it 'accepts a user name with special chatracters' do
-      expect(@user[:name]).to eq('in-valid@localhost')
+      expect(user[:name]).to eq('in-valid@localhost')
     end
   end
 

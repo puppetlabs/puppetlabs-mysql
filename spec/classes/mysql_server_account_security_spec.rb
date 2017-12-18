@@ -22,7 +22,7 @@ describe 'mysql::server::account_security' do
          '@myhost.mydomain',
          '@localhost',
          '@%'].each do |user|
-          it "removes Mysql_User[#{user}]" do
+          it "removes Mysql_User[#{user}]" do # rubocop:disable RSpec/RepeatedExample
             is_expected.to contain_mysql_user(user).with_ensure('absent')
           end
         end
@@ -31,7 +31,7 @@ describe 'mysql::server::account_security' do
         # We don't need to test the inverse as when they match they are
         # covered by the above list.
         ['root@myhost', '@myhost'].each do |user|
-          it "removes Mysql_User[#{user}]" do
+          it "removes Mysql_User[#{user}]" do # rubocop:disable RSpec/RepeatedExample
             is_expected.to contain_mysql_user(user).with_ensure('absent')
           end
         end

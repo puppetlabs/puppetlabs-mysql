@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Facter::Util::Fact do
+describe Facter::Util::Fact.to_s do
   before(:each) do
     Facter.clear
   end

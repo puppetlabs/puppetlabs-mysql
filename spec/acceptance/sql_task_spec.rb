@@ -3,13 +3,13 @@ require 'spec_helper_acceptance'
 
 describe 'mysql tasks' do
   describe 'execute some sql', if: pe_install? && puppet_version =~ %r{(5\.\d\.\d)} do
-    pp = <<-EOS
+    pp = <<-MANIFEST
         class { 'mysql::server': root_password => 'password' }
         mysql::db { 'spec1':
           user     => 'root1',
           password => 'password',
         }
-    EOS
+    MANIFEST
 
     it 'sets up a mysql instance' do
       apply_manifest(pp, catch_failures: true)

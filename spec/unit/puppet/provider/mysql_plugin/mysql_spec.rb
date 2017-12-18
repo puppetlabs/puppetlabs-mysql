@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
   let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
-
+  let(:provider) { resource.provider }
+  let(:instance) { provider.class.instances.first }
   let(:resource) do
     Puppet::Type.type(:mysql_plugin).new(
       ensure: :present,
@@ -11,7 +12,6 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
       provider: described_class.name,
     )
   end
-  let(:provider) { resource.provider }
 
   before :each do
     Facter.stubs(:value).with(:root_home).returns('/root')
@@ -19,8 +19,6 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
     provider.class.stubs(:mysql_caller).with('show plugins', 'regular').returns('auth_socket	ACTIVE	AUTHENTICATION	auth_socket.so	GPL')
   end
-
-  let(:instance) { provider.class.instances.first }
 
   describe 'self.prefetch' do
     it 'exists' do
