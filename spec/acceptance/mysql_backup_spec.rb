@@ -48,7 +48,7 @@ describe 'mysql::server::backup class' do
     end
 
     it 'dumps all databases to single file #stdout' do
-      if version_is_greater_than('5.7.0')
+      unless version_is_greater_than('5.7.0')
         shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
           expect(r.stdout).to match(%r{1})
         end
