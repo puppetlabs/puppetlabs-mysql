@@ -33,7 +33,7 @@ class mysql::backup::xtrabackup (
   if $backupuser and $backuppassword {
     mysql_user { "${backupuser}@localhost":
       ensure        => $ensure,
-      password_hash => mysql_password($backuppassword),
+      password_hash => mysql::password($backuppassword),
       require       => Class['mysql::server::root_password'],
     }
 

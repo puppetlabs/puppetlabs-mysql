@@ -22,7 +22,7 @@ class mysql::server::root_password {
   if $mysql::server::create_root_user == true and $mysql::server::root_password != 'UNSET' {
     mysql_user { 'root@localhost':
       ensure        => present,
-      password_hash => mysql_password($mysql::server::root_password),
+      password_hash => mysql::password($mysql::server::root_password),
       require       => Exec['remove install pass']
     }
   }

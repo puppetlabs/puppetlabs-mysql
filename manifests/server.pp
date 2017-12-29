@@ -49,7 +49,7 @@ class mysql::server (
   }
 
   # Create a merged together set of options.  Rightmost hashes win over left.
-  $options = mysql_deepmerge($mysql::params::default_options, $override_options)
+  $options = mysql::deepmerge($mysql::params::default_options, $override_options)
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
