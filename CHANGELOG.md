@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org).
 
+## Supported Release [5.2.0]
+
+### Added
+- Compatibility for puppet-staging 3.0.0
+
+### Fixed
+- Centralize all mysql command calls for providers
+- Add paths to `mysql_datadir` provider for RedHat Software Collections
+
 ## Supported Release [5.1.0]
 ### Summary
 This release adds Tasks to the Mysql module.
@@ -843,5 +852,6 @@ configuration variables.
 ## 2011-06-03 - Dan Bode <dan@puppetlabs.com> - 0.0.1
 * initial commit
 
+[5.2.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.1.0...5.2.0
 [5.1.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.0.0...5.1.0
 [5.0.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/4.0.1...5.0.0

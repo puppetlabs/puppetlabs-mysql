@@ -1301,6 +1301,8 @@ Testing on other platforms has been minimal and cannot be guaranteed.
 
 **Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
 
+Debian 9 compatibility has not been fully verified.
+
 ## Development
 
 Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
