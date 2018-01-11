@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "author": "Puppet Labs",
   "summary": "Installs, configures, and manages the MySQL service.",
   "license": "Apache-2.0",
@@ -63,7 +63,8 @@
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
         "7",
-        "8"
+        "8",
+        "9"
       ]
     },
     {
