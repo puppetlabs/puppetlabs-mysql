@@ -4,18 +4,17 @@ require_relative '../mysql_helper.rb'
 
 describe 'mysql_grant' do
   before(:all) do
-    pp = <<-EOS
+    pp = <<-MANIFEST
       class { 'mysql::server':
         root_password => 'password',
       }
-    EOS
+    MANIFEST
 
     apply_manifest(pp, catch_failures: true)
   end
 
   describe 'missing privileges for user' do
-    it 'fails' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'test1@tester':
           ensure => present,
         }
@@ -25,8 +24,8 @@ describe 'mysql_grant' do
           user    => 'test1@tester',
           require => Mysql_user['test1@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'fails' do
       expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`privileges` `parameter` is required})
     end
 
@@ -36,8 +35,7 @@ describe 'mysql_grant' do
   end
 
   describe 'missing table for user' do
-    it 'fails' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'atest@tester':
           ensure => present,
         }
@@ -47,8 +45,8 @@ describe 'mysql_grant' do
           privileges => ['ALL'],
           require    => Mysql_user['atest@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'fails' do
       apply_manifest(pp, expect_failures: true)
     end
 
@@ -58,8 +56,7 @@ describe 'mysql_grant' do
   end
 
   describe 'adding privileges' do
-    it 'works without errors' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'test2@tester':
           ensure => present,
         }
@@ -70,22 +67,25 @@ describe 'mysql_grant' do
           privileges => ['SELECT', 'UPDATE'],
           require    => Mysql_user['test2@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'works without errors' do
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'finds the user' do
+    it 'finds the user #stdout' do
       shell('mysql -NBe "SHOW GRANTS FOR test2@tester"') do |r|
         expect(r.stdout).to match(%r{GRANT SELECT, UPDATE.*TO 'test2'@'tester'})
+      end
+    end
+    it 'finds the user #stderr' do
+      shell('mysql -NBe "SHOW GRANTS FOR test2@tester"') do |r|
         expect(r.stderr).to be_empty
       end
     end
   end
 
   describe 'adding privileges with special character in name' do
-    it 'works without errors' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'test-2@tester':
           ensure => present,
         }
@@ -96,22 +96,25 @@ describe 'mysql_grant' do
           privileges => ['SELECT', 'UPDATE'],
           require    => Mysql_user['test-2@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'works without errors' do
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'finds the user' do
+    it 'finds the user #stdout' do
       shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"") do |r|
         expect(r.stdout).to match(%r{GRANT SELECT, UPDATE.*TO 'test-2'@'tester'})
+      end
+    end
+    it 'finds the user #stderr' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
   end
 
   describe 'adding option' do
-    it 'works without errors' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'test3@tester':
           ensure => present,
         }
@@ -123,22 +126,25 @@ describe 'mysql_grant' do
           privileges => ['SELECT', 'UPDATE'],
           require    => Mysql_user['test3@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'works without errors' do
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'finds the user' do
+    it 'finds the user #stdout' do
       shell('mysql -NBe "SHOW GRANTS FOR test3@tester"') do |r|
         expect(r.stdout).to match(%r{GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$})
+      end
+    end
+    it 'finds the user #stderr' do
+      shell('mysql -NBe "SHOW GRANTS FOR test3@tester"') do |r|
         expect(r.stderr).to be_empty
       end
     end
   end
 
   describe 'adding all privileges without table' do
-    it 'fails' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'test4@tester':
           ensure => present,
         }
@@ -149,15 +155,14 @@ describe 'mysql_grant' do
           privileges => ['SELECT', 'UPDATE', 'ALL'],
           require    => Mysql_user['test4@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'fails' do
       expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `parameter` is required.})
     end
   end
 
   describe 'adding all privileges' do
-    it 'onlies try to apply ALL' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'test4@tester':
           ensure => present,
         }
@@ -169,14 +174,18 @@ describe 'mysql_grant' do
           privileges => ['SELECT', 'UPDATE', 'ALL'],
           require    => Mysql_user['test4@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'onlies try to apply ALL' do
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'finds the user' do
+    it 'finds the user #stdout' do
       shell('mysql -NBe "SHOW GRANTS FOR test4@tester"') do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test4'@'tester' WITH GRANT OPTION})
+      end
+    end
+    it 'finds the user #stderr' do
+      shell('mysql -NBe "SHOW GRANTS FOR test4@tester"') do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -184,8 +193,7 @@ describe 'mysql_grant' do
 
   # Test combinations of user@host to ensure all cases work.
   describe 'short hostname' do
-    it 'applies' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         mysql_user { 'test@short':
           ensure => present,
         }
@@ -236,46 +244,69 @@ describe 'mysql_grant' do
           privileges => 'ALL',
           require    => Mysql_user['test@::1/128'],
         }
-      EOS
-
+    MANIFEST
+    it 'applies' do
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'finds short hostname' do
+    it 'finds short hostname #stdout' do
       shell('mysql -NBe "SHOW GRANTS FOR test@short"') do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'short'})
+      end
+    end
+    it 'finds short hostname #stderr' do
+      shell('mysql -NBe "SHOW GRANTS FOR test@short"') do |r|
         expect(r.stderr).to be_empty
       end
     end
-    it 'finds long hostname' do
+
+    it 'finds long hostname #stdout' do
       shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'long.hostname.com'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'long.hostname.com'})
+      end
+    end
+    it 'finds long hostname #stderr' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'long.hostname.com'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
-    it 'finds ipv4' do
+
+    it 'finds ipv4 #stdout' do
       shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.6'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.6'})
+      end
+    end
+    it 'finds ipv4 #stderr' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.6'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
-    it 'finds ipv6' do
+
+    it 'finds ipv6 #stdout' do
       shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'})
+      end
+    end
+    it 'finds ipv6 #stderr' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
-    it 'finds short ipv6' do
+
+    it 'finds short ipv6 #stdout' do
       shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
-        expect(r.stdout).to match(/GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'::1\/128'/)
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'::1\/128'})
+      end
+    end
+    it 'finds short ipv6 @stderr' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
   end
 
   describe 'complex test' do
-    it 'setup mysql::server' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         $dbSubnet = '10.10.10.%'
 
         mysql_database { 'foo':
@@ -350,16 +381,15 @@ describe 'mysql_grant' do
           user       => 'web@localhost',
           require    => Mysql_user['web@localhost'],
         }
-      EOS
-
+    MANIFEST
+    it 'setup mysql::server' do
       apply_manifest(pp, catch_failures: true)
       apply_manifest(pp, catch_changes: true)
     end
   end
 
   describe 'lower case privileges' do
-    it 'create ALL privs' do
-      pp = <<-EOS
+    pp_one = <<-MANIFEST
         mysql_user { 'lowercase@localhost':
           ensure => present,
         }
@@ -369,13 +399,12 @@ describe 'mysql_grant' do
           table      => '*.*',
           require    => Mysql_user['lowercase@localhost'],
         }
-      EOS
-
-      apply_manifest(pp, catch_failures: true)
+    MANIFEST
+    it 'create ALL privs' do
+      apply_manifest(pp_one, catch_failures: true)
     end
 
-    it 'create lowercase all privs' do
-      pp = <<-EOS
+    pp_two = <<-MANIFEST
         mysql_user { 'lowercase@localhost':
           ensure => present,
         }
@@ -385,15 +414,14 @@ describe 'mysql_grant' do
           table      => '*.*',
           require    => Mysql_user['lowercase@localhost'],
         }
-      EOS
-
-      expect(apply_manifest(pp, catch_failures: true).exit_code).to eq(0)
+    MANIFEST
+    it 'create lowercase all privs' do
+      expect(apply_manifest(pp_two, catch_failures: true).exit_code).to eq(0)
     end
   end
 
   describe 'adding procedure privileges' do
-    it 'works without errors' do
-      pp = <<-EOS
+    pp = <<-MANIFEST
         exec { 'simpleproc-create':
           command => 'mysql --user="root" --password="password" --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
           path    => '/usr/bin/',
@@ -409,14 +437,18 @@ describe 'mysql_grant' do
           privileges => ['EXECUTE'],
           require    => Mysql_user['test2@tester'],
         }
-      EOS
-
+    MANIFEST
+    it 'works without errors' do
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'finds the user' do
+    it 'finds the user #stdout' do
       shell('mysql -NBe "SHOW GRANTS FOR test2@tester"') do |r|
         expect(r.stdout).to match(%r{GRANT EXECUTE ON PROCEDURE `mysql`.`simpleproc` TO 'test2'@'tester'})
+      end
+    end
+    it 'finds the user #stderr' do
+      shell('mysql -NBe "SHOW GRANTS FOR test2@tester"') do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -426,8 +458,7 @@ describe 'mysql_grant' do
     pre_run
 
     describe 'adding proxy privileges', if: version_is_greater_than('5.5.0') do
-      it 'works without errors when version greater than 5.5.0' do
-        pp = <<-EOS
+      pp = <<-MANIFEST
         mysql_user { 'proxy1@tester':
           ensure => present,
         }
@@ -438,22 +469,25 @@ describe 'mysql_grant' do
           privileges => ['PROXY'],
           require    => Mysql_user['proxy1@tester'],
         }
-        EOS
-
+      MANIFEST
+      it 'works without errors when version greater than 5.5.0' do
         apply_manifest(pp, catch_failures: true)
       end
 
-      it 'finds the user' do
+      it 'finds the user #stdout' do
         shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stdout).to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'})
+        end
+      end
+      it 'finds the user #stderr' do
+        shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stderr).to be_empty
         end
       end
     end
 
     describe 'removing proxy privileges', if: version_is_greater_than('5.5.0') do
-      it 'works without errors' do
-        pp = <<-EOS
+      pp = <<-MANIFEST
         mysql_user { 'proxy1@tester':
           ensure => present,
         }
@@ -464,22 +498,25 @@ describe 'mysql_grant' do
           privileges => ['PROXY'],
           require    => Mysql_user['proxy1@tester'],
         }
-        EOS
-
+      MANIFEST
+      it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
 
-      it 'finds the user' do
+      it 'finds the user #stdout' do
         shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stdout).not_to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'})
+        end
+      end
+      it 'finds the user #stderr' do
+        shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stderr).to be_empty
         end
       end
     end
 
     describe 'adding proxy privileges with other privileges', if: version_is_greater_than('5.5.0') do
-      it 'fails' do
-        pp = <<-EOS
+      pp = <<-MANIFEST
         mysql_user { 'proxy2@tester':
           ensure => present,
         }
@@ -490,8 +527,8 @@ describe 'mysql_grant' do
           privileges => ['PROXY', 'SELECT'],
           require    => Mysql_user['proxy2@tester'],
         }
-        EOS
-
+      MANIFEST
+      it 'fails' do
         expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`privileges` `parameter`: PROXY can only be specified by itself})
       end
 
@@ -501,8 +538,7 @@ describe 'mysql_grant' do
     end
 
     describe 'adding proxy privileges with mysql version less than 5.5.0', unless: version_is_greater_than('5.5.0') do
-      it 'fails' do
-        pp = <<-EOS
+      pp = <<-MANIFEST
         mysql_user { 'proxy3@tester':
           ensure => present,
         }
@@ -513,8 +549,8 @@ describe 'mysql_grant' do
           privileges => ['PROXY', 'SELECT'],
           require    => Mysql_user['proxy3@tester'],
         }
-        EOS
-
+      MANIFEST
+      it 'fails' do
         expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{PROXY user not supported on mysql versions < 5\.5\.0}i)
       end
 
@@ -524,8 +560,7 @@ describe 'mysql_grant' do
     end
 
     describe 'adding proxy privileges with invalid proxy user', if: version_is_greater_than('5.5.0') do
-      it 'fails' do
-        pp = <<-EOS
+      pp = <<-MANIFEST
         mysql_user { 'proxy3@tester':
           ensure => present,
         }
@@ -536,8 +571,8 @@ describe 'mysql_grant' do
           privileges => ['PROXY'],
           require    => Mysql_user['proxy3@tester'],
         }
-        EOS
-
+      MANIFEST
+      it 'fails' do
         expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
       end
 
@@ -548,21 +583,19 @@ describe 'mysql_grant' do
   end
 
   describe 'grants with skip-name-resolve specified' do
-    it 'setup mysql::server' do
-      pp = <<-EOS
+    pp_one = <<-MANIFEST
         class { 'mysql::server':
           override_options => {
             'mysqld' => {'skip-name-resolve' => true}
           },
           restart          => true,
         }
-      EOS
-
-      apply_manifest(pp, catch_failures: true)
+    MANIFEST
+    it 'setup mysql::server' do
+      apply_manifest(pp_one, catch_failures: true)
     end
 
-    it 'applies' do
-      pp = <<-EOS
+    pp_two = <<-MANIFEST
         mysql_user { 'test@fqdn.com':
           ensure => present,
         }
@@ -583,9 +616,9 @@ describe 'mysql_grant' do
           privileges => 'ALL',
           require    => Mysql_user['test@192.168.5.7'],
         }
-      EOS
-
-      apply_manifest(pp, catch_failures: true)
+    MANIFEST
+    it 'applies' do
+      apply_manifest(pp_two, catch_failures: true)
     end
 
     it 'fails with fqdn' do
@@ -594,15 +627,19 @@ describe 'mysql_grant' do
         expect(shell('mysql -NBe "SHOW GRANTS FOR test@fqdn.com"', acceptable_exit_codes: 1).stderr).to match(%r{There is no such grant defined for user 'test' on host 'fqdn.com'})
       end
     end
-    it 'finds ipv4' do
+
+    it 'finds ipv4 #stdout' do
       shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.7'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.7'})
+      end
+    end
+    it 'finds ipv4 #stderr' do
+      shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.7'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
 
-    it 'fails to execute while applying' do
-      pp = <<-EOS
+    pp_three = <<-MANIFEST
         mysql_user { 'test@fqdn.com':
           ensure => present,
         }
@@ -613,37 +650,34 @@ describe 'mysql_grant' do
           privileges => 'ALL',
           require    => Mysql_user['test@fqdn.com'],
         }
-      EOS
-
+    MANIFEST
+    it 'fails to execute while applying' do
       mysql_cmd = shell('which mysql').stdout.chomp
       shell("mv #{mysql_cmd} #{mysql_cmd}.bak")
-      expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{Command mysql is missing})
+      expect(apply_manifest(pp_three, expect_failures: true).stderr).to match(%r{Could not find a suitable provider for mysql_grant})
       shell("mv #{mysql_cmd}.bak #{mysql_cmd}")
     end
 
-    it 'reset mysql::server config' do
-      pp = <<-EOS
+    pp_four = <<-MANIFEST
         class { 'mysql::server':
           restart          => true,
         }
-      EOS
-
-      apply_manifest(pp, catch_failures: true)
+    MANIFEST
+    it 'reset mysql::server config' do
+      apply_manifest(pp_four, catch_failures: true)
     end
   end
 
   describe 'adding privileges to specific table' do
     # Using puppet_apply as a helper
-    it 'setup mysql server' do
-      pp = <<-EOS
+    pp_one = <<-MANIFEST
         class { 'mysql::server': override_options => { 'root_password' => 'password' } }
-      EOS
-
-      apply_manifest(pp, catch_failures: true)
+    MANIFEST
+    it 'setup mysql server' do
+      apply_manifest(pp_one, catch_failures: true)
     end
 
-    it 'creates grant on missing table will fail' do
-      pp = <<-EOS
+    pp_two = <<-MANIFEST
         mysql_user { 'test@localhost':
           ensure => present,
         }
@@ -653,12 +687,12 @@ describe 'mysql_grant' do
           table      => 'grant_spec_db.grant_spec_table',
           require    => Mysql_user['test@localhost'],
         }
-      EOS
-      expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{Table 'grant_spec_db\.grant_spec_table' doesn't exist})
+    MANIFEST
+    it 'creates grant on missing table will fail' do
+      expect(apply_manifest(pp_two, expect_failures: true).stderr).to match(%r{Table 'grant_spec_db\.grant_spec_table' doesn't exist})
     end
 
-    it 'creates table' do
-      pp = <<-EOS
+    pp_three = <<-MANIFEST
         file { '/tmp/grant_spec_table.sql':
           ensure  => file,
           content => 'CREATE TABLE grant_spec_table (id int);',
@@ -669,9 +703,9 @@ describe 'mysql_grant' do
           password => 'password',
           sql      => '/tmp/grant_spec_table.sql',
         }
-      EOS
-
-      apply_manifest(pp, catch_failures: true)
+    MANIFEST
+    it 'creates table' do
+      apply_manifest(pp_three, catch_failures: true)
     end
 
     it 'has the table' do

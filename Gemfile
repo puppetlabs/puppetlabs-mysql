@@ -28,9 +28,18 @@ def location_for(place_or_version, fake_version = nil)
 end
 
 # Used for gem conditionals
-supports_windows = false
 ruby_version_segments = Gem::Version.new(RUBY_VERSION.dup).segments
 minor_version = "#{ruby_version_segments[0]}.#{ruby_version_segments[1]}"
+
+# The following gems are not included by default as they require DevKit on Windows.
+# You should probably include them in a Gemfile.local or a ~/.gemfile
+#gem 'pry' #this may already be included in the gemfile
+#gem 'pry-stack_explorer', :require => false
+#if RUBY_VERSION =~ /^2/
+#  gem 'pry-byebug'
+#else
+#  gem 'pry-debugger'
+#end
 
 group :development do
   gem "puppet-module-posix-default-r#{minor_version}",    :require => false, :platforms => "ruby"
@@ -61,7 +70,6 @@ gem 'puppet', *location_for(ENV['PUPPET_GEM_VERSION'])
 # to `1` and then run bundle install.
 gem 'facter', *location_for(ENV['FACTER_GEM_VERSION']) if ENV['FACTER_GEM_VERSION']
 gem 'hiera', *location_for(ENV['HIERA_GEM_VERSION']) if ENV['HIERA_GEM_VERSION']
-
 
 # Evaluate Gemfile.local if it exists
 if File.exists? "#{__FILE__}.local"
