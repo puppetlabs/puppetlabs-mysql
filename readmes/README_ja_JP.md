@@ -332,21 +332,21 @@ MySQLモジュールおよびHieraを使用して、MySQL Communityサーバー�
 Puppetで：
 
 ```puppet
-  include ::mysql::server
+include ::mysql::server
 
-  create_resources(yumrepo, hiera('yumrepo', {}))
+create_resources(yumrepo, hiera('yumrepo', {}))
 
-  Yumrepo['repo.mysql.com'] -> Anchor['mysql::server::start']
-  Yumrepo['repo.mysql.com'] -> Package['mysql_client']
+Yumrepo['repo.mysql.com'] -> Anchor['mysql::server::start']
+Yumrepo['repo.mysql.com'] -> Package['mysql_client']
 
-  create_resources(mysql::db, hiera('mysql::server::db', {}))
+create_resources(mysql::db, hiera('mysql::server::db', {}))
 ```
 
 Hieraで：
 
 ```yaml
 ---
-# mysqlモジュールはMySQLを正しく導入するために、MariaDBの代わりに多くのパラメータのフィードを必要とします。
+
 # Centos 7.3
 yumrepo:
   'repo.mysql.com':
@@ -1282,6 +1282,10 @@ mysql_plugin { 'auth_socket':
 
 ノードのMACアドレスに基づいて、`server_id`として使用可能な一意なIDを作成します。ループバックインターフェイスしかないノードでは、このファクトは*常に*`0`を返します。これらのノードは外部に接続されていないため、これが衝突の原因になる可能性はありません。
 
+### タスク
+
+MySQLモジュールにはサンプルタスクがあり、ユーザはデータベースに対して任意のSQLを実行できます。[Puppet Enterpriseマニュアル](https://puppet.com/docs/pe/2017.3/orchestrator/running_tasks.html)または[Boltマニュアル](https://puppet.com/docs/bolt/latest/bolt.html)で、タスクを実行する方法に関する情報を参照してください。
+
 ## 制約事項
 
 このモジュールは以下のプラットフォームでテストされています。
@@ -1296,6 +1300,8 @@ mysql_plugin { 'auth_socket':
 他のプラットフォームでは最小限のテストしか行っていないため、保証はできません。
 
 **注意：** mysqlbackup.shは、MySQL 5.7以降では動作せず、サポートされていません。
+
+Debian 9の互換性は完全には検証されていません。
 
 ## 開発
 
@@ -1320,3 +1326,4 @@ Puppet Forge上のPuppetモジュールはオープンプロジェクトであ�
 * Chris Weyl
 * Daniël van Eeden
 * Jan-Otto Kröpke
+* Timothy Sven Nelson
