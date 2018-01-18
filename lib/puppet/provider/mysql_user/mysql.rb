@@ -158,6 +158,23 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     (max_updates_per_hour == int) ? (return true) : (return false)
   end
 
+  def plugin=(string)
+    merged_name = self.class.cmd_user(@resource[:name])
+
+    if (mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
+      sql = "ALTER USER #{merged_name} IDENTIFIED WITH '#{string}'"
+      sql << " AS '#{@resource[:password_hash]}'" if string == 'mysql_native_password'
+    else
+      # See https://bugs.mysql.com/bug.php?id=67449
+      sql = "UPDATE mysql.user SET plugin = '#{string}'"
+      sql << ((string == 'mysql_native_password') ? ", password = '#{@resource[:password_hash]}'" : ", password = ''")
+      sql << " WHERE CONCAT(user, '@', host) = '#{@resource[:name]}'"
+    end
+
+    mysql([defaults_file, system_database, '-e', sql].compact)
+    (plugin == string) ? (return true) : (return false)
+  end
+
   def tls_options=(array)
     merged_name = self.class.cmd_user(@resource[:name])
     merged_tls_options = array.join(' AND ')

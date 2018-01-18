@@ -43,6 +43,32 @@ describe 'mysql_user' do
         end
       end
     end
+
+    describe 'changing authentication plugin' do
+      it 'should work without errors' do
+        pp = <<-EOS
+          mysql_user { 'ashp@localhost':
+            plugin => 'auth_socket',
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+      end
+
+      it 'should have correct plugin' do
+        shell("mysql -NBe \"select plugin from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+          expect(r.stdout.rstrip).to eq('auth_socket')
+          expect(r.stderr).to be_empty
+        end
+      end
+
+      it 'should not have a password' do
+        shell("mysql -NBe \"select password from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+          expect(r.stdout.rstrip).to be_empty
+          expect(r.stderr).to be_empty
+        end
+      end
+    end
   end
 
   context 'using ashp-dash@localhost' do
