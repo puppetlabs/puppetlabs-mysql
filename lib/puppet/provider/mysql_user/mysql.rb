@@ -171,7 +171,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       sql << " WHERE CONCAT(user, '@', host) = '#{@resource[:name]}'"
     end
 
-    mysql([defaults_file, system_database, '-e', sql].compact)
+    self.class.mysql_caller(sql, 'system')
     (plugin == string) ? (return true) : (return false)
   end
 
