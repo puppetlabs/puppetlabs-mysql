@@ -282,7 +282,7 @@ usvn_user@localhost
       context 'MySQL < 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-          provider.expects(:mysql).with([defaults_file, system_database, '-e', "UPDATE mysql.user SET plugin = 'auth_socket', password = '' WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('0')
+          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET plugin = 'auth_socket', password = '' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').returns('0')
 
           provider.expects(:plugin).returns('auth_socket')
           provider.plugin = 'auth_socket'
@@ -292,7 +292,7 @@ usvn_user@localhost
       context 'MySQL >= 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-          provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'auth_socket'"]).returns('0')
+          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'auth_socket'", 'system').returns('0')
 
           provider.expects(:plugin).returns('auth_socket')
           provider.plugin = 'auth_socket'
@@ -304,7 +304,7 @@ usvn_user@localhost
       context 'MySQL < 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-          provider.expects(:mysql).with([defaults_file, system_database, '-e', "UPDATE mysql.user SET plugin = 'mysql_native_password', password = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WHERE CONCAT(user, '@', host) = 'joe@localhost'"]).returns('0')
+          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET plugin = 'mysql_native_password', password = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').returns('0')
 
           provider.expects(:plugin).returns('mysql_native_password')
           provider.plugin = 'mysql_native_password'
@@ -314,7 +314,7 @@ usvn_user@localhost
       context 'MySQL >= 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-          provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'"]).returns('0')
+          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system').returns('0')
 
           provider.expects(:plugin).returns('mysql_native_password')
           provider.plugin = 'mysql_native_password'
