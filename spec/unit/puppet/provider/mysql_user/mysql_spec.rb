@@ -278,6 +278,7 @@ usvn_user@localhost
   end
 
   describe 'plugin=' do
+    # rubocop:disable RSpec/NestedGroups
     context 'auth_socket' do
       context 'MySQL < 5.7.6' do
         it 'changes the authentication plugin' do
@@ -304,7 +305,7 @@ usvn_user@localhost
       context 'MySQL < 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET plugin = 'mysql_native_password', password = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').returns('0')
+          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET plugin = 'mysql_native_password', password = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').returns('0') # rubocop:disable Metrics/LineLength
 
           provider.expects(:plugin).returns('mysql_native_password')
           provider.plugin = 'mysql_native_password'
@@ -314,13 +315,14 @@ usvn_user@localhost
       context 'MySQL >= 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system').returns('0')
+          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system').returns('0') # rubocop:disable Metrics/LineLength
 
           provider.expects(:plugin).returns('mysql_native_password')
           provider.plugin = 'mysql_native_password'
         end
       end
     end
+    # rubocop:enable RSpec/NestedGroups
   end
 
   describe 'tls_options=' do
