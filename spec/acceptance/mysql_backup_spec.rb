@@ -35,7 +35,8 @@ describe 'mysql::server::backup class' do
   end
 
   describe 'mysqlbackup.sh' do
-    before(:each) do
+    # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength
+    before(:all) do
       pre_run
     end
 
@@ -47,16 +48,10 @@ describe 'mysql::server::backup class' do
       end
     end
 
-    it 'dumps all databases to single file #stdout' do
+    it 'dumps all databases to single file' do
       unless version_is_greater_than('5.7.0')
         shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
           expect(r.stdout).to match(%r{1})
-        end
-      end
-    end
-    it 'dumps all databases to single file #exit code' do
-      if version_is_greater_than('5.7.0')
-        shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
           expect(r.exit_code).to be_zero
         end
       end
@@ -70,21 +65,16 @@ describe 'mysql::server::backup class' do
         end
       end
 
-      it 'creates at least one backup tarball #stdout' do
+      it 'creates at least one backup tarball' do
         unless version_is_greater_than('5.7.0')
           shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
             expect(r.stdout).to match(%r{2})
-          end
-        end
-      end
-      it 'creates at least one backup tarball #exit code' do
-        unless version_is_greater_than('5.7.0')
-          shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
             expect(r.exit_code).to be_zero
           end
         end
       end
     end
+    # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
   end
 
   context 'with one file per database' do
@@ -121,7 +111,8 @@ describe 'mysql::server::backup class' do
     end
 
     describe 'mysqlbackup.sh' do
-      before(:each) do
+      # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength
+      before(:all) do
         pre_run
       end
 
@@ -133,17 +124,11 @@ describe 'mysql::server::backup class' do
         end
       end
 
-      %w[backup1 backup2].each do |database|
-        it 'creates one file per database #stdout' do
-          unless version_is_greater_than('5.7.0')
+      it 'creates one file per database' do
+        unless version_is_greater_than('5.7.0')
+          %w[backup1 backup2].each do |database|
             shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
               expect(r.stdout).to match(%r{1})
-            end
-          end
-        end
-        it 'wcreates one file per database #exit code' do # rubocop:disable RSpec/RepeatedExample
-          unless version_is_greater_than('5.7.0')
-            shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
               expect(r.exit_code).to be_zero
             end
           end
@@ -157,22 +142,17 @@ describe 'mysql::server::backup class' do
         end
       end
 
-      %w[backup1 backup2].each do |database|
-        it 'has one file per database per run #stdout' do
-          unless version_is_greater_than('5.7.0')
+      it 'has one file per database per run' do
+        unless version_is_greater_than('5.7.0')
+          %w[backup1 backup2].each do |database|
             shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
               expect(r.stdout).to match(%r{2})
-            end
-          end
-        end
-        it 'has one file per database per run #exit code' do # rubocop:disable RSpec/RepeatedExample
-          unless version_is_greater_than('5.7.0')
-            shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
               expect(r.exit_code).to be_zero
             end
           end
         end
       end
+      # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
     end
   end
 
