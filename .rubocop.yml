@@ -1,8 +1,9 @@
 ---
 require:
- - rubocop-rspec
- - rubocop-i18n
+- rubocop-i18n
+- rubocop-rspec
 AllCops:
+  DisplayCopNames: true
   TargetRubyVersion: '2.1'
   Include:
   - "./**/*.rb"
@@ -14,7 +15,6 @@ AllCops:
   - pkg/**/*
   - spec/fixtures/**/*
   - vendor/**/*
-inherit_from: .rubocop_todo.yml
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
@@ -65,12 +65,15 @@ Style/TrailingCommaInLiteral:
 Style/SymbolArray:
   Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
+inherit_from: ".rubocop_todo.yml"
 Style/CollectionMethods:
   Enabled: true
 Style/MethodCalledOnDoEndBlock:
   Enabled: true
 Style/StringMethods:
   Enabled: true
+Layout/EndOfLine:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
@@ -89,7 +92,13 @@ Metrics/PerceivedComplexity:
   Enabled: false
 RSpec/DescribeClass:
   Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
 RSpec/MessageExpectation:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/NestedGroups:
   Enabled: false
 Style/AsciiComments:
   Enabled: false
@@ -97,7 +106,3 @@ Style/IfUnlessModifier:
   Enabled: false
 Style/SymbolProc:
   Enabled: false
-GetText/DecorateString:
-  Enabled: false
-GetText/DecorateFunctionMessage:
-  Enabled: true
