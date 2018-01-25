@@ -121,7 +121,8 @@ class mysql::params {
           }
         }
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{os}.', {'module_name' => $module_name, 'os' => $::operatingsystem }))
+          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{os}.',
+              {'module_name' => $module_name, 'os' => $::operatingsystem }))
         }
       }
       $config_file         = '/etc/my.cnf'
@@ -380,7 +381,8 @@ class mysql::params {
         }
 
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{osfamily} or %{os}.', {'module_name' => $module_name, 'os' => $::operatingsystem, 'osfamily' => $::osfamily}))
+          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{osfamily} or %{os}.',
+              {'module_name' => $module_name, 'os' => $::operatingsystem, 'osfamily' => $::osfamily}))
         }
       }
     }

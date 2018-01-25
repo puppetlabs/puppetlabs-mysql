@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe 'mysql::server::backup' do
-  # rubocop:disable RSpec/NestedGroups
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:pre_condition) do

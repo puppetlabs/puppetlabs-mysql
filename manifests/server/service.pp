@@ -12,7 +12,8 @@ class mysql::server::service {
     $service_ensure = undef
   }
 
-  if $mysql::server::override_options and $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['user'] {
+  if $mysql::server::override_options and $mysql::server::override_options['mysqld']
+      and $mysql::server::override_options['mysqld']['user'] {
     $mysqluser = $mysql::server::override_options['mysqld']['user']
   } else {
     $mysqluser = $options['mysqld']['user']
@@ -40,7 +41,8 @@ class mysql::server::service {
       File['mysql-config-file'] -> Service['mysqld']
     }
 
-    if $mysql::server::override_options and $mysql::server::override_options['mysqld'] and $mysql::server::override_options['mysqld']['socket'] {
+    if $mysql::server::override_options and $mysql::server::override_options['mysqld']
+        and $mysql::server::override_options['mysqld']['socket'] {
       $mysqlsocket = $mysql::server::override_options['mysqld']['socket']
     } else {
       $mysqlsocket = $options['mysqld']['socket']

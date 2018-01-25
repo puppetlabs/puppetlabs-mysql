@@ -455,7 +455,6 @@ describe 'mysql_grant' do
   end
 
   describe 'adding function privileges' do
-    # rubocop:disable RSpec/ExampleLength
     it 'works without errors' do
       pp = <<-EOS
         exec { 'simplefunc-create':
@@ -479,8 +478,6 @@ describe 'mysql_grant' do
       apply_manifest(pp, catch_failures: true)
     end
     # rubocop:enable RSpec/ExampleLength
-
-    # rubocop:disable RSpec/MultipleExpectations
     it 'finds the user' do
       shell('mysql -NBe "SHOW GRANTS FOR test3@tester"') do |r|
         expect(r.stdout).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO 'test3'@'tester'})

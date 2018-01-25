@@ -25,7 +25,8 @@ class mysql::server::backup (
 ) {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
-    warning(translate("The 'prescript' option is not currently implemented for the %{provider} backup provider.", {'provider' => $provider}))
+    warning(translate("The 'prescript' option is not currently implemented for the %{provider} backup provider.",
+            {'provider' => $provider}))
   }
 
   create_resources('class', {

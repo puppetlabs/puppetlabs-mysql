@@ -46,8 +46,6 @@ describe 'mysql_user' do
     end
 
     pre_run
-
-    # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
     describe 'changing authentication plugin', if: version_is_greater_than('5.5.0') do
       it 'works without errors' do
         pp = <<-EOS
