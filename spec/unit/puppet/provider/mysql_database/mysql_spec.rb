@@ -33,7 +33,7 @@ test
   end
 
   describe 'self.instances' do
-    it 'returns an array of databases' do # rubocop:disable RSpec/ExampleLength
+    it 'returns an array of databases' do
       provider.class.stubs(:mysql_caller).with('show databases', 'regular').returns(raw_databases)
       raw_databases.each_line do |db|
         provider.class.stubs(:mysql_caller).with(["show variables like '%_database'", db.chomp], 'regular').returns("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Metrics/LineLength

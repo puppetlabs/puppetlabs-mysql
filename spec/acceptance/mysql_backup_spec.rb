@@ -35,7 +35,6 @@ describe 'mysql::server::backup class' do
   end
 
   describe 'mysqlbackup.sh' do
-    # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength
     before(:all) do
       pre_run
     end
@@ -111,7 +110,6 @@ describe 'mysql::server::backup class' do
     end
 
     describe 'mysqlbackup.sh' do
-      # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength
       before(:all) do
         pre_run
       end
@@ -192,7 +190,7 @@ describe 'mysql::server::backup class' do
       apply_manifest(pp, catch_failures: true)
     end
 
-    it 'runs mysqlbackup.sh with no errors' do # rubocop:disable RSpec/ExampleLength
+    it 'runs mysqlbackup.sh with no errors' do
       pre_run
       unless version_is_greater_than('5.7.0')
         shell('/usr/local/sbin/mysqlbackup.sh') do |r|
