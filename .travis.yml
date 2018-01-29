@@ -7,7 +7,6 @@ before_install:
   - bundle -v
   - rm Gemfile.lock || true
   - gem update --system
-  - gem update bundler
   - gem --version
   - bundle -v
 script:
