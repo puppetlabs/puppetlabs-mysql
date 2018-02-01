@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org).
 
+## Supported Release [5.2.1]
+### Summary
+This release fixes CVE-2018-6508 which is a potential arbitrary code execution via tasks.
+
+### Fixed
+- Fix export and mysql tasks for arbitrary remote code
+
 ## Supported Release [5.2.0]
 
 ### Added
