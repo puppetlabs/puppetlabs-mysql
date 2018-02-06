@@ -4,11 +4,11 @@ require 'open3'
 require 'puppet'
 
 def get(sql, database, user, password)
-  cmd_string = "mysql -e \"#{sql}\""
-  cmd_string << " --database=#{database}" unless database.nil?
-  cmd_string << " --user=#{user}" unless user.nil?
-  cmd_string << " --password=#{password}" unless password.nil?
-  stdout, _stderr, status = Open3.capture3(cmd_string)
+  cmd = ['mysql', '-e', "#{sql} "]
+  cmd << "--database=#{database}" unless database.nil?
+  cmd << "--user=#{user}" unless user.nil?
+  cmd << "--password=#{password}" unless password.nil?
+  stdout, stderr, status = Open3.capture3(*cmd) # rubocop:disable Lint/UselessAssignment
   raise Puppet::Error, _("stderr: ' %{stderr}') % { stderr: stderr }") if status != 0
   { status: stdout.strip }
 end
