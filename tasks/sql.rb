@@ -8,7 +8,7 @@ def get(sql, database, user, password)
   cmd << "--database=#{database}" unless database.nil?
   cmd << "--user=#{user}" unless user.nil?
   cmd << "--password=#{password}" unless password.nil?
-  stdout, stderr, status = Open3.capture3(*cmd)
+  stdout, stderr, status = Open3.capture3(*cmd) # rubocop:disable Lint/UselessAssignment
   raise Puppet::Error, _("stderr: ' %{stderr}') % { stderr: stderr }") if status != 0
   { status: stdout.strip }
 end
