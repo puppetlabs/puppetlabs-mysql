@@ -441,7 +441,7 @@ Also fixes a bunch of tests on various platforms.
 - key_buffer renamed to key_buffer_size.
 - log_error renamed to log-error.
 - pid_file renamed to pid-file.
-- Ensure mysql::server:root_password runs before mysql::server::backup
+- Ensure mysql::server::root_password runs before mysql::server::backup
 - Fix options_override -> override_options in the README.
 - Extensively rewrite the README to be accurate and awesome.
 - Move to requiring stdlib 3.2.0, shipped in PE3.0
