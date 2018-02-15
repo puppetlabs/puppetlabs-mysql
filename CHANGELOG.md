@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org).
 
+## Supported Release [5.3.0]
+### Summary
+This release uses the PDK convert functionality which in return makes the module PDK compliant. It also includes a roll up of maintenance changes, a new task and support for `GRANTS FUNCTION`.
+
+### Added
+- Add support for `GRANTS FUNCTION` ([MODULES-2075](https://tickets.puppet.com/browse/MODULES-2075)).
+- Add Export database task.
+- PDK Convert mysql ([MODULES-6454](https://tickets.puppet.com/browse/MODULES-6454)).
+
+### Changed
+- Allow authentication plugin to be changed.
+- Update mysql_user provider.
+- Plugins don't exist before 5.5; password field name changed
+- Fix helpful rubocops and disable hurtful cops.
+- Addressing puppet-lint and rubocop errors
+- Remove update bundler and add ignore .DS_Store
+- Skip rubocop warning in task.
+- Fix a typo in a classname in the changelog.
+
 ## Supported Release [5.2.1]
 ### Summary
 This release fixes CVE-2018-6508 which is a potential arbitrary code execution via tasks.
@@ -97,7 +116,7 @@ This release includes new features for setting TLS options on a mysql user, a ne
 - Adds support for setting `tls_options` in `mysql_user`
 
 #### Bugfixes
-- (MODULES-3557) Adds Ubuntu 16.04 package names for language bindings 
+- (MODULES-3557) Adds Ubuntu 16.04 package names for language bindings
 - (MODULES-3907) Adds MySQL/Percona 5.7 initialize on fresh deploy
 
 ## Supported Release 3.9.0
@@ -859,6 +878,8 @@ configuration variables.
 ## 2011-06-03 - Dan Bode <dan@puppetlabs.com> - 0.0.1
 * initial commit
 
+[5.3.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.2.1...5.3.0
+[5.2.1]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.2.0...5.2.1
 [5.2.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.1.0...5.2.0
 [5.1.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.0.0...5.1.0
 [5.0.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/4.0.1...5.0.0
