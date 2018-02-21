@@ -57,7 +57,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-daily':
     ensure  => $ensure,
-    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir}",
+    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir} --incremental-basedir ${backupdir}/$(ls -1rt ${backupdir} | tail -1)",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
