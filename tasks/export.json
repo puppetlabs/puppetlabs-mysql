@@ -14,7 +14,7 @@
       "description": "The password",
       "type": "Optional[String[1]]"
     },
-     "sql": {
+     "file": {
       "description": "Path to file you want backup to",
       "type": "String[1]"
     }
