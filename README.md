@@ -8,7 +8,7 @@
 3. [Usage - Configuration options and additional functionality](#usage)
     * [Customize server options](#customize-server-options)
     * [Create a database](#create-a-database)
-    * [Customize configuration](#create-custom-configuration)
+    * [Customize configuration](#customize-configuration)
     * [Work with an existing server](#work-with-an-existing-server)
     * [Specify passwords](#specify-passwords)
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
@@ -314,12 +314,72 @@ class {'::mysql::client':
   bindings_enable => true,
 }
 
-# Dependency management. Only use that part if you are installing the repository
-# as shown in the Preliminary step of this example.
+# Dependency management. Only use that part if you are installing the repository as shown in the Preliminary step of this example.
 Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
 Class['::mysql::client']
 ```
+
+### Install MySQL Community server on CentOS
+
+You can install MySQL Community Server on CentOS using the mysql module and Hiera. This example was tested with the following versions:
+
+* MySQL Community Server 5.6
+* Centos 7.3
+* Puppet 3.8.7 using Hiera
+* puppetlabs-mysql module v3.9.0
+
+In Puppet:
+
+```puppet
+include ::mysql::server
+
+create_resources(yumrepo, hiera('yumrepo', {}))
+
+Yumrepo['repo.mysql.com'] -> Anchor['mysql::server::start']
+Yumrepo['repo.mysql.com'] -> Package['mysql_client']
+
+create_resources(mysql::db, hiera('mysql::server::db', {}))
+```
+
+In Hiera:
+
+```yaml
+---
+
+# Centos 7.3
+yumrepo:
+  'repo.mysql.com':
+    baseurl: "http://repo.mysql.com/yum/mysql-5.6-community/el/%{::operatingsystemmajrelease}/$basearch/"
+    descr: 'repo.mysql.com'
+    enabled: 1
+    gpgcheck: true
+    gpgkey: 'http://repo.mysql.com/RPM-GPG-KEY-mysql'
+
+mysql::client::package_name: "mysql-community-client" # required for proper MySQL installation
+mysql::server::package_name: "mysql-community-server" # required for proper MySQL installation
+mysql::server::package_ensure: 'installed' # do not specify version here, unfortunately yum fails with error that package is already installed
+mysql::server::root_password: "change_me_i_am_insecure"
+mysql::server::manage_config_file: true
+mysql::server::service_name: 'mysqld' # required for puppet module
+mysql::server::override_options:
+  'mysqld':
+    'bind-address': '127.0.0.1'
+    'log-error': /var/log/mysqld.log' # required for proper MySQL installation
+  'mysqld_safe':
+    'log-error': '/var/log/mysqld.log'  # required for proper MySQL installation
+
+# create database + account with access, passwords are not encrypted
+mysql::server::db:
+  "dev":
+    user: "dev"
+    password: "devpass"
+    host: "127.0.0.1"
+    grant:
+      - "ALL"
+
+```
+
 
 ## Reference
 
@@ -640,9 +700,11 @@ Allows you to set a custom PATH should your MySQL installation be non-standard p
 
 An array of two elements to set the backup time. Allows ['23', '5'] (i.e., 23:05) or ['3', '45'] (i.e., 03:45) for HH:MM times.
 
+#### mysql::server::backup
+
 ##### `postscript`
 
-A script that is executed when the backup is finished. This could be used to (r)sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
+A script that is executed when the backup is finished. This could be used to sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
 
 ##### `prescript`
 
@@ -698,7 +760,7 @@ Defaults to 'v1.3.0'.
 
 ##### `environment`
 
-Environment variables acive during download, e.g. to download via proxies: environment => 'https_proxy=http://proxy.example.com:80'
+Environment variables active during download, e.g. to download via proxies: environment => 'https_proxy=http://proxy.example.com:80'
 
 #### mysql::bindings
 
@@ -872,7 +934,7 @@ Only applies if `python_enable => true`.
 
 ##### `python_package_provider`
 
-The provider to use to install the PHP package.
+The provider to use to install the Python package.
 
 Only applies if `python_enable => true`.
 
@@ -1220,6 +1282,10 @@ Determines the MySQL version by parsing the output from `mysql --version`
 
 Generates a unique id, based on the node's MAC address, which can be used as `server_id`. This fact will *always* return `0` on nodes that have only loopback interfaces. Because those nodes aren't connected to the outside world, this shouldn't cause any conflicts.
 
+### Tasks
+
+The MySQL module has an example task that allows a user to execute arbitary SQL against a database. Please refer to to the [PE documentation](https://puppet.com/docs/pe/2017.3/orchestrator/running_tasks.html) or [Bolt documentation](https://puppet.com/docs/bolt/latest/bolt.html) on how to execute a task.
+
 ## Limitations
 
 This module has been tested on:
@@ -1234,6 +1300,8 @@ This module has been tested on:
 Testing on other platforms has been minimal and cannot be guaranteed.
 
 **Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
+
+Debian 9 compatibility has not been fully verified.
 
 ## Development
 
@@ -1258,3 +1326,4 @@ This module is based on work by David Schmitt. The following contributors have c
 * Chris Weyl
 * Daniël van Eeden
 * Jan-Otto Kröpke
+* Timothy Sven Nelson

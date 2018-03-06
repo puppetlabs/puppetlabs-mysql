@@ -1,37 +1,36 @@
 require 'spec_helper'
 
 describe 'the mysql_password function' do
-  before :all do
+  before :all do # rubocop:disable RSpec/BeforeAfterAll
     Puppet::Parser::Functions.autoloader.loadall
   end
 
   let(:scope) { PuppetlabsSpec::PuppetInternals.scope }
 
-  it 'should exist' do
+  it 'exists' do
     expect(Puppet::Parser::Functions.function('mysql_password')).to eq('function_mysql_password')
   end
 
-  it 'should raise a ParseError if there is less than 1 arguments' do
-    expect { scope.function_mysql_password([]) }.to( raise_error(Puppet::ParseError))
+  it 'raises a ParseError if there is less than 1 arguments' do
+    expect { scope.function_mysql_password([]) }.to(raise_error(Puppet::ParseError))
   end
 
-  it 'should raise a ParseError if there is more than 1 arguments' do
-    expect { scope.function_mysql_password(%w(foo bar)) }.to( raise_error(Puppet::ParseError))
+  it 'raises a ParseError if there is more than 1 arguments' do
+    expect { scope.function_mysql_password(%w[foo bar]) }.to(raise_error(Puppet::ParseError))
   end
 
-  it 'should convert password into a hash' do
-    result = scope.function_mysql_password(%w(password))
+  it 'converts password into a hash' do
+    result = scope.function_mysql_password(%w[password])
     expect(result).to(eq('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
   end
-  
-  it 'should convert an empty password into a empty string' do
-    result = scope.function_mysql_password([""])
+
+  it 'converts an empty password into a empty string' do
+    result = scope.function_mysql_password([''])
     expect(result).to(eq(''))
   end
 
-  it 'should not convert a password that is already a hash' do
+  it 'does not convert a password that is already a hash' do
     result = scope.function_mysql_password(['*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'])
     expect(result).to(eq('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
   end
-
 end

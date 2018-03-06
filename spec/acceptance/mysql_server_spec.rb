@@ -1,15 +1,11 @@
 require 'spec_helper_acceptance'
 
 describe 'mysql class' do
+  # rubocop:disable RSpec/InstanceVariable
   describe 'advanced config' do
-    before(:all) do
-      @tmpdir = default.tmpdir('mysql')
-    end
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
         class { 'mysql::server':
-          config_file             => '#{@tmpdir}/my.cnf',
-          includedir              => '#{@tmpdir}/include',
           manage_config_file      => 'true',
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
@@ -45,10 +41,10 @@ describe 'mysql class' do
             },
           }
         }
-      EOS
+      MANIFEST
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
 
   describe 'minimal config' do
@@ -56,10 +52,8 @@ describe 'mysql class' do
       @tmpdir = default.tmpdir('mysql')
     end
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
         class { 'mysql::server':
-          config_file             => '#{@tmpdir}/my.cnf',
-          includedir              => '#{@tmpdir}/include',
           manage_config_file      => 'false',
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
@@ -74,34 +68,35 @@ describe 'mysql class' do
           grants                  => {},
           databases               => {},
         }
-      EOS
+      MANIFEST
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
+  # rubocop:enable RSpec/InstanceVariable
 
   describe 'syslog configuration' do
     let(:pp) do
-      <<-EOS
+      <<-MANIFEST
         class { 'mysql::server':
           override_options => { 'mysqld' => { 'log-error' => undef }, 'mysqld_safe' => { 'log-error' => false, 'syslog' => true }},
         }
-      EOS
+      MANIFEST
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
 
   context 'when changing the password' do
     let(:password) { 'THE NEW SECRET' }
     let(:pp) { "class { 'mysql::server': root_password => '#{password}' }" }
 
-    it 'should not display the password' do
-      result = apply_manifest(pp, :catch_failures => true)
+    it 'does not display the password' do
+      result = apply_manifest(pp, catch_failures: true)
       # this does not actually prove anything, as show_diff in the puppet config defaults to false.
-      expect(result.stdout).not_to match /#{password}/
+      expect(result.stdout).not_to match %r{#{password}}
     end
 
-    it_behaves_like "a idempotent resource"
+    it_behaves_like 'a idempotent resource'
   end
 end

@@ -1,6 +1,6 @@
-require "spec_helper"
+require 'spec_helper'
 
-describe Facter::Util::Fact do
+describe Facter::Util::Fact.to_s do
   {
     'mysql-5.5' =>
     {
@@ -64,5 +64,4 @@ describe Facter::Util::Fact do
       end
     end
   end
-
 end

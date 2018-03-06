@@ -121,7 +121,8 @@ class mysql::params {
           }
         }
         default: {
-          fail("Unsupported platform: puppetlabs-${module_name} currently doesn't support ${::operatingsystem}")
+          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{os}.',
+              {'module_name' => $module_name, 'os' => $::operatingsystem }))
         }
       }
       $config_file         = '/etc/my.cnf'
@@ -176,11 +177,13 @@ class mysql::params {
       if $provider == 'mariadb' {
         $client_package_name     = 'mariadb-client'
         $server_package_name     = 'mariadb-server'
+        $server_service_name     = 'mariadb'
         $client_dev_package_name = 'libmariadbclient-dev'
         $daemon_dev_package_name = 'libmariadbd-dev'
       } else {
         $client_package_name     = 'mysql-client'
         $server_package_name     = 'mysql-server'
+        $server_service_name     = 'mysql'
         $client_dev_package_name = 'libmysqlclient-dev'
         $daemon_dev_package_name = 'libmysqld-dev'
       }
@@ -193,7 +196,6 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'adm'
-      $server_service_name     = 'mysql'
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
@@ -202,9 +204,11 @@ class mysql::params {
       # mysql::bindings
       $java_package_name   = 'libmysql-java'
       $perl_package_name   = 'libdbd-mysql-perl'
-      $php_package_name    = $::lsbdistcodename ? {
-        'xenial'           => 'php-mysql',
-        default            => 'php5-mysql',
+      if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') >= 0) or
+          ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9') >= 0) {
+        $php_package_name = 'php-mysql'
+      } else {
+        $php_package_name = 'php5-mysql'
       }
       $python_package_name = 'python-mysqldb'
       $ruby_package_name   = $::lsbdistcodename ? {
@@ -348,6 +352,30 @@ class mysql::params {
 
     default: {
       case $::operatingsystem {
+        'Alpine': {
+          $client_package_name = 'mariadb-client'
+          $server_package_name = 'mariadb'
+          $basedir             = '/usr'
+          $config_file         = '/etc/mysql/my.cnf'
+          $datadir             = '/var/lib/mysql'
+          $log_error           = '/var/log/mysqld.log'
+          $pidfile             = '/run/mysqld/mysqld.pid'
+          $root_group          = 'root'
+          $mysql_group         = 'mysql'
+          $server_service_name = 'mariadb'
+          $socket              = '/run/mysqld/mysqld.sock'
+          $ssl_ca              = '/etc/mysql/cacert.pem'
+          $ssl_cert            = '/etc/mysql/server-cert.pem'
+          $ssl_key             = '/etc/mysql/server-key.pem'
+          $tmpdir              = '/tmp'
+          $java_package_name   = undef
+          $perl_package_name   = 'perl-dbd-mysql'
+          $php_package_name    = 'php7-mysqlnd'
+          $python_package_name = 'py-mysqldb'
+          $ruby_package_name   = undef
+          $client_dev_package_name     = undef
+          $daemon_dev_package_name     = undef
+        }
         'Amazon': {
           $client_package_name = 'mysql'
           $server_package_name = 'mysql-server'
@@ -377,7 +405,8 @@ class mysql::params {
         }
 
         default: {
-          fail("Unsupported platform: puppetlabs-${module_name} currently doesn't support ${::osfamily} or ${::operatingsystem}")
+          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{osfamily} or %{os}.',
+              {'module_name' => $module_name, 'os' => $::operatingsystem, 'osfamily' => $::osfamily}))
         }
       }
     }
@@ -385,11 +414,16 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
-      if versioncmp($::operatingsystemmajrelease, '14.10') > 0 {
+      # lint:ignore:only_variable_string
+      if versioncmp("${::operatingsystemmajrelease}", '14.10') > 0 {
+      # lint:endignore
         $server_service_provider = 'systemd'
       } else {
         $server_service_provider = 'upstart'
       }
+    }
+    'Alpine': {
+      $server_service_provider = 'rc-service'
     }
     default: {
       $server_service_provider = undef
@@ -459,6 +493,6 @@ class mysql::params {
 
   ## Additional graceful failures
   if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
-    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 5.0 and beyond")
+    fail(translate('Unsupported platform: puppetlabs-%{module_name} only supports RedHat 5.0 and beyond.', {'module_name' => $module_name}))
   }
 }

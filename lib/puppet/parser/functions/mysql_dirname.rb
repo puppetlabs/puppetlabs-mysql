@@ -1,15 +1,15 @@
+# Returns the dirname of a path.
 module Puppet::Parser::Functions
-  newfunction(:mysql_dirname, :type => :rvalue, :doc => <<-EOS
+  newfunction(:mysql_dirname, type: :rvalue, doc: <<-EOS
     Returns the dirname of a path.
     EOS
-  ) do |arguments|
+             ) do |arguments|
 
-    raise(Puppet::ParseError, "mysql_dirname(): Wrong number of arguments " +
-      "given (#{arguments.size} for 1)") if arguments.size < 1
+    if arguments.empty?
+      raise Puppet::ParseError, _('mysql_dirname(): Wrong number of arguments given (%{args_length} for 1)') % { args_length: args.length }
+    end
 
     path = arguments[0]
     return File.dirname(path)
   end
 end
-
-# vim: set ts=2 sw=2 et :

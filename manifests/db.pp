@@ -2,25 +2,19 @@
 define mysql::db (
   $user,
   $password,
-  $dbname         = $name,
-  $charset        = 'utf8',
-  $collate        = 'utf8_general_ci',
-  $host           = 'localhost',
-  $grant          = 'ALL',
-  $sql            = undef,
-  $enforce_sql    = false,
-  $ensure         = 'present',
-  $import_timeout = 300,
-  $import_cat_cmd = 'cat',
+  $dbname                                     = $name,
+  $charset                                    = 'utf8',
+  $collate                                    = 'utf8_general_ci',
+  $host                                       = 'localhost',
+  $grant                                      = 'ALL',
+  Optional[Variant[Array, Hash, String]] $sql = undef,
+  $enforce_sql                                = false,
+  Enum['absent', 'present'] $ensure           = 'present',
+  $import_timeout                             = 300,
+  $import_cat_cmd                             = 'cat',
 ) {
   #input validation
-  validate_re($ensure, '^(present|absent)$',
-  "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
   $table = "${dbname}.*"
-
-  if !(is_array($sql) or is_string($sql)) {
-    fail('$sql must be either a string or an array.')
-  }
 
   $sql_inputs = join([$sql], ' ')
 
@@ -38,7 +32,6 @@ define mysql::db (
   $user_resource = {
     ensure        => $ensure,
     password_hash => mysql_password($password),
-    provider      => 'mysql',
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 

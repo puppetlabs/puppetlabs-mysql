@@ -1,3 +1,112 @@
+# Change log
+
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org).
+
+## Supported Release [5.3.0]
+### Summary
+This release uses the PDK convert functionality which in return makes the module PDK compliant. It also includes a roll up of maintenance changes, a new task and support for `GRANTS FUNCTION`.
+
+### Added
+- Add support for `GRANTS FUNCTION` ([MODULES-2075](https://tickets.puppet.com/browse/MODULES-2075)).
+- Add Export database task.
+- PDK Convert mysql ([MODULES-6454](https://tickets.puppet.com/browse/MODULES-6454)).
+
+### Changed
+- Allow authentication plugin to be changed.
+- Update mysql_user provider.
+- Plugins don't exist before 5.5; password field name changed
+- Fix helpful rubocops and disable hurtful cops.
+- Addressing puppet-lint and rubocop errors
+- Remove update bundler and add ignore .DS_Store
+- Skip rubocop warning in task.
+- Fix a typo in a classname in the changelog.
+
+## Supported Release [5.2.1]
+### Summary
+This release fixes CVE-2018-6508 which is a potential arbitrary code execution via tasks.
+
+### Fixed
+- Fix export and mysql tasks for arbitrary remote code
+
+## Supported Release [5.2.0]
+
+### Added
+- Compatibility for puppet-staging 3.0.0
+
+### Fixed
+- Centralize all mysql command calls for providers
+- Add paths to `mysql_datadir` provider for RedHat Software Collections
+
+## Supported Release [5.1.0]
+### Summary
+This release adds Tasks to the Mysql module.
+
+#### Added
+- Adds the execute sql task.
+
+## Supported Release [5.0.0]
+### Summary
+This is a major release that adds support for string translation. Currently the only supported language besides
+English is Japanese.
+
+#### Added
+- Several gem dependencies required for translation.
+- Wrapping of strings that require translation. Strings in ruby code are now wrapped with `_()` and strings in puppet code with `translate()`.
+- Debian 9 support
+
+#### Changed
+- The default php_package_name for Debian and Ubuntu to `php-mysql`
+
+## Supported Release 4.0.1
+### Summary
+This is a small bugfix release that makes `mysql_install_db` optional and fixes some regular expression issues.
+
+#### Bugfixes
+- ([MODULES-5528](https://tickets.puppet.com/browse/MODULES-5528)) Fixes the `mysql_install_db` command so that it is optional
+- ([MODULES-5602](https://tickets.puppet.com/browse/MODULES-5602)) Removes superfluous backslashes in some regular expressions that were causing instability
+
+## Supported Release 4.0.0
+### Summary
+This release sees the enablement of rubocop, also an update to the lib directory with rubocop fixes and several other changes and fixes. Also a bump to the Puppet version compatibility and several Puppet language updates.
+
+#### Added
+- Updated README.md with example how to install MySQL Community Server 5.6 on Centos 7.3
+- Enabled Rubocop and addition of Rubocop fixes for /lib directory.
+
+#### Removed
+- Dropped legacy tests for db.pp.
+
+#### Changed
+- Replaced validate function calls with datatypes in db.pp.
+- Bumped recommended puppet version to between 4.7.0 and 6.0.0.
+- Conditionalize name validation in mysql_grant type. ([MODULES-4604](https://tickets.puppet.com/browse/MODULES-4604))
+
+#### Fixed
+- Removal of invalid parameter provider on Mysql_user[user@localhost] in mysql::db ([MODULES-4115](https://tickets.puppet.com/browse/MODULES-4115))
+- Fixed server_service_name for Debian/stretch.
+- Spec fixes for Puppet 5.
+- Test update for fix:create procedure, then grant ([MODULES-5390](https://tickets.puppet.com/browse/MODULES-5390))
+- Fixing empty user/password issue for xtrabackup. Now defaults as undef instead of ''.
+- Remove unsupported Ubuntu versions ([MODULES-5501](https://tickets.puppet.com/browse/MODULES-5501))
+
+## Supported Release 3.11.0
+### Summary
+This release includes README and metadata translations to Japanese, as well as some enhancements and bugfixes.
+
+#### Added
+- New flag for successful backups
+- Solaris support improvements
+- New parameter `optional_args` for extra innobackupex options
+- Specify environment variables (e.g. https_proxy) for MySQLTuner download.
+- Check to only install bzip2 if `$backupcompress` is `true`
+- Debian 9 compatibility
+- Japanese README
+
+#### Fixed
+- Syntax errors
+- Bug where error logs were being created before the datadir was initialized (MODULES-4743)
+
 ## Supported Release 3.10.0
 ### Summary
 This release includes new features for setting TLS options on a mysql user, a new parameter to allow specifying tool to import sql files, as well as various bugfixes.
@@ -7,7 +116,7 @@ This release includes new features for setting TLS options on a mysql user, a ne
 - Adds support for setting `tls_options` in `mysql_user`
 
 #### Bugfixes
-- (MODULES-3557) Adds Ubuntu 16.04 package names for language bindings 
+- (MODULES-3557) Adds Ubuntu 16.04 package names for language bindings
 - (MODULES-3907) Adds MySQL/Percona 5.7 initialize on fresh deploy
 
 ## Supported Release 3.9.0
@@ -351,7 +460,7 @@ Also fixes a bunch of tests on various platforms.
 - key_buffer renamed to key_buffer_size.
 - log_error renamed to log-error.
 - pid_file renamed to pid-file.
-- Ensure mysql::server:root_password runs before mysql::server::backup
+- Ensure mysql::server::root_password runs before mysql::server::backup
 - Fix options_override -> override_options in the README.
 - Extensively rewrite the README to be accurate and awesome.
 - Move to requiring stdlib 3.2.0, shipped in PE3.0
@@ -768,3 +877,9 @@ configuration variables.
 
 ## 2011-06-03 - Dan Bode <dan@puppetlabs.com> - 0.0.1
 * initial commit
+
+[5.3.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.2.1...5.3.0
+[5.2.1]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.2.0...5.2.1
+[5.2.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.1.0...5.2.0
+[5.1.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.0.0...5.1.0
+[5.0.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/4.0.1...5.0.0
