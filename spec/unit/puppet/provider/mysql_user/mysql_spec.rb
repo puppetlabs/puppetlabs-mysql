@@ -183,6 +183,12 @@ usvn_user@localhost
       provider.expects(:exists?).returns(false)
       expect(provider.destroy).to be_truthy
     end
+    it 'removes a user using IF EXISTS' do
+      provider.class.instance_variable_set(:@mysqld_version_string, '5.7.1')
+
+      provider.class.expects(:mysql_caller).with("DROP USER IF EXISTS 'joe'@'localhost'", 'system')
+      expect(provider.destroy).to be_truthy
+    end
   end
 
   describe 'exists?' do
