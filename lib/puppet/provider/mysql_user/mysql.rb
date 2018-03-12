@@ -21,7 +21,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
-      @password, @plugin = mysql_caller(query, 'regular').split(%r{\s})
+      @password, @plugin = mysql_caller(query, 'regular').strip.split("\t")
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
       # rubocop:enable Metrics/LineLength
       new(name: name,
@@ -82,7 +82,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     @property_hash[:max_queries_per_hour] = max_queries_per_hour
     @property_hash[:max_updates_per_hour] = max_updates_per_hour
 
-    merged_tls_options = tls_options.join(' AND ')
+    merged_tls_options = self.class.merge_tls_options(tls_options)
     if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       self.class.mysql_caller("ALTER USER '#{merged_name}' REQUIRE #{merged_tls_options}", 'system')
     else
@@ -182,7 +182,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
 
   def tls_options=(array)
     merged_name = self.class.cmd_user(@resource[:name])
-    merged_tls_options = array.join(' AND ')
+    merged_tls_options = self.class.merge_tls_options(array)
     if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       self.class.mysql_caller("ALTER USER #{merged_name} REQUIRE #{merged_tls_options}", 'system')
     else

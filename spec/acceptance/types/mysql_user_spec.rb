@@ -342,7 +342,7 @@ describe 'mysql_user' do
           expect(r.stdout).to match(%r{^/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com})
         end
       end
-      it 'shows correct x509_issuer #stdout' do
+      it 'shows correct x509_issuer #stderr' do
         shell("mysql -NBe \"select X509_ISSUER from mysql.user where CONCAT(user, '@', host) = 'someone@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
