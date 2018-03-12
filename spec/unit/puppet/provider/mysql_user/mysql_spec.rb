@@ -366,6 +366,150 @@ usvn_user@localhost
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options = ['NONE']
     end
+
+    it 'adds SSL option issuer in mysql 5.5' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option issuer in mysql 5.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option issuer in mysql < 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option issuer in mysql >= 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option issuer in mariadb-10.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+
+    it 'adds SSL option subject in mysql 5.5' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option subject in mysql 5.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option subject in mysql < 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option subject in mysql >= 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+    it 'adds SSL option subject in mariadb-10.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'']
+    end
+
+    it 'adds SSL option cipher in mysql 5.5' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['\'CIPHER SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL option cipher in mysql 5.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['CIPHER SHA-DES-CBC3-EDH-RSA'])
+      provider.tls_options = ['CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL option cipher in mysql < 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL option cipher in mysql >= 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL option cipher in mariadb-10.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+
+    it 'adds SSL options subject, issuer, cipher in mysql 5.5' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL options subject, issuer, cipher in mysql 5.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL options subject, issuer, cipher in mysql < 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL options subject, issuer, cipher in mysql >= 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
+    it 'adds SSL options subject, issuer, cipher in mariadb-10.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE SUBJECT '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND ISSUER '/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com' AND CIPHER 'SHA-DES-CBC3-EDH-RSA'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\''])
+      provider.tls_options = ['SUBJECT \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'ISSUER \'/C=FI/ST=Somewhere/L=City/ O=Some Company/CN=Peter Parker/emailAddress=p.parker@marvel.com\'', 'CIPHER \'SHA-DES-CBC3-EDH-RSA\'']
+    end
   end
 
   ['max_user_connections', 'max_connections_per_hour', 'max_queries_per_hour', 'max_updates_per_hour'].each do |property|
