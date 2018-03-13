@@ -365,7 +365,7 @@ mysql::server::service_name: 'mysqld' # Puppetモジュールに必要
 mysql::server::override_options:
   'mysqld':
     'bind-address': '127.0.0.1'
-    'log-error': /var/log/mysqld.log' # 適切なMySQL導入のために必要
+    'log-error': '/var/log/mysqld.log' # 適切なMySQL導入のために必要
   'mysqld_safe':
     'log-error': '/var/log/mysqld.log'  # 適切なMySQL導入のために必要 
 
