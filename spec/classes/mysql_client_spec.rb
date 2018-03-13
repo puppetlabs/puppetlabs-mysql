@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'mysql::client' do
   on_supported_os.each do |os, facts|
+    next if facts[:osfamily] == 'Archlinux'
     context "on #{os}" do
       let(:facts) do
         facts.merge(root_home: '/root')
