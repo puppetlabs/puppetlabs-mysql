@@ -86,6 +86,8 @@ class mysql::server (
   $service_provider        = $mysql::params::server_service_provider,
   $create_root_user        = $mysql::params::create_root_user,
   $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
+  $create_root_login_file  = $mysql::params::create_root_login_file,
+  $login_file              = $mysql::params::login_file,
   $users                   = {},
   $grants                  = {},
   $databases               = {},
