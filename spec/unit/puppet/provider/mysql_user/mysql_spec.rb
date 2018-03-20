@@ -129,7 +129,7 @@ usvn_user@localhost
     it 'returns an array of users mariadb 10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
