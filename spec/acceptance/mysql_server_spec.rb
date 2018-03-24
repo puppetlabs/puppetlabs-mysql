@@ -1,7 +1,6 @@
 require 'spec_helper_acceptance'
 
 describe 'mysql class' do
-  # rubocop:disable RSpec/InstanceVariable
   describe 'advanced config' do
     let(:pp) do
       <<-MANIFEST
