@@ -17,8 +17,8 @@
       "version_requirement": ">= 3.2.0 < 5.0.0"
     },
     {
-      "name": "puppet/staging",
-      "version_requirement": ">= 1.0.1 < 4.0.0"
+      "name": "puppet/archive",
+      "version_requirement": ">= 2.3.0 < 3.0.0"
     }
   ],
   "operatingsystem_support": [
