@@ -1,9 +1,12 @@
 require 'digest/sha1'
-# Returns the mysql password hash from the clear text password.
-# Hash a string as mysql's "PASSWORD()" function would do it
 module Puppet::Parser::Functions
   newfunction(:mysql_password, type: :rvalue, doc: <<-EOS
-    Returns the mysql password hash from the clear text password.
+    @summary
+      Hash a string as mysql's "PASSWORD()" function would do it
+
+    @param [String] password Plain text password.
+
+    @return [String] the mysql password hash from the clear text password.
     EOS
              ) do |args|
 

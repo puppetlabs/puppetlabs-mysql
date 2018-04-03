@@ -1,4 +1,7 @@
-# See README.me for usage.
+# @summary
+#   "Provider" for Percona XtraBackup
+# @api private
+#
 class mysql::backup::xtrabackup (
   $xtrabackup_package_name = $mysql::params::xtrabackup_package_name,
   $backupuser              = undef,

@@ -1,4 +1,8 @@
-# Private class: See README.md.
+# @summary
+#   Params class.
+#
+# @api private
+#
 class mysql::params {
 
   $manage_config_file     = true

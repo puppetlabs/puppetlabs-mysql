@@ -1,4 +1,8 @@
-# Binary log configuration requires the mysql user to be present. This must be done after package install
+# @summary
+#   Binary log configuration requires the mysql user to be present. This must be done after package install
+#
+# @api private
+#
 class mysql::server::binarylog {
 
   $options = $mysql::server::options

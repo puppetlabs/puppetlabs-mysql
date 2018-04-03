@@ -1,4 +1,8 @@
-# See README.me for options.
+# @summary
+#   Private class for MySQL server configuration.
+#
+# @api private
+#
 class mysql::server::config {
 
   $options = $mysql::server::options

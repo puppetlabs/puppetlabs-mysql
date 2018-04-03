@@ -1,5 +1,14 @@
 Puppet::Type.newtype(:mysql_plugin) do
-  @doc = 'Manage MySQL plugins.'
+  @doc = <<-PUPPET
+    @summary
+      Manage MySQL plugins.
+
+    @example
+      mysql_plugin { 'some_plugin':
+        soname => 'some_pluginlib.so',
+      }
+
+  PUPPET
 
   ensurable
 

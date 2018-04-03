@@ -1,3 +1,14 @@
+# @summary
+#   Manage the MySQLTuner package.
+#
+# @param ensure
+#   Ensures that the resource exists. Valid values are 'present', 'absent'. Defaults to 'present'.
+# @param version
+#   The version to install from the major/MySQLTuner-perl github repository. Must be a valid tag. Defaults to 'v1.3.0'.
+# @param source
+#   Source path for the mysqltuner package.
+# @param environment
+#   Environment variables active during download, e.g. to download via proxies: environment => 'https_proxy=http://proxy.example.com:80'
 #
 class mysql::server::mysqltuner(
   $ensure  = 'present',

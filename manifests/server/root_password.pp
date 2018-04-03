@@ -1,3 +1,7 @@
+# @summary 
+#   Private class for managing the root password
+#
+# @api private
 #
 class mysql::server::root_password {
 

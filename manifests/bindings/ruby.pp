@@ -1,4 +1,8 @@
-# Private class
+# @summary
+#   Private class for installing ruby language bindings
+#
+# @api private
+#
 class mysql::bindings::ruby {
 
   package{ 'ruby_mysql':

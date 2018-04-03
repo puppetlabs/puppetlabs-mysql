@@ -1,21 +1,20 @@
-# Recursively merges two or more hashes together and returns the resulting hash.
 module Puppet::Parser::Functions
   newfunction(:mysql_deepmerge, type: :rvalue, doc: <<-'ENDHEREDOC') do |args|
-    Recursively merges two or more hashes together and returns the resulting hash.
+    @summary Recursively merges two or more hashes together and returns the resulting hash.
 
-    For example:
-
+    @example
         $hash1 = {'one' => 1, 'two' => 2, 'three' => { 'four' => 4 } }
         $hash2 = {'two' => 'dos', 'three' => { 'five' => 5 } }
         $merged_hash = mysql_deepmerge($hash1, $hash2)
         # The resulting hash is equivalent to:
         # $merged_hash = { 'one' => 1, 'two' => 'dos', 'three' => { 'four' => 4, 'five' => 5 } }
 
-    When there is a duplicate key that is a hash, they are recursively merged.
-    When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
-    When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate),
+    - When there is a duplicate key that is a hash, they are recursively merged.
+    - When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
+    - When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate),
       the rightmost style will win.
 
+    @return [Hash]
     ENDHEREDOC
 
     if args.length < 2

@@ -1,7 +1,13 @@
-# Returns the dirname of a path.
 module Puppet::Parser::Functions
   newfunction(:mysql_dirname, type: :rvalue, doc: <<-EOS
-    Returns the dirname of a path.
+    @summary
+      Returns the dirname of a path
+
+    @param [String] path
+      Path to find the dirname for.
+
+    @return [String]
+      Directory name of path.
     EOS
              ) do |arguments|
 

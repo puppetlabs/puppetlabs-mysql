@@ -1,5 +1,10 @@
 Puppet::Type.newtype(:mysql_database) do
-  @doc = 'Manage MySQL databases.'
+  @doc = <<-PUPPET
+    @summary
+      Manage a MySQL database.
+
+    @api private
+  PUPPET
 
   ensurable
 
