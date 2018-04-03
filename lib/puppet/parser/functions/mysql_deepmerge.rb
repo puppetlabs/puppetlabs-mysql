@@ -18,6 +18,8 @@ module Puppet::Parser::Functions
 
     ENDHEREDOC
 
+    warning('Deprecation: mysql_deepmerge() is deprecated, please use mysql::deepmerge() instead.')
+
     if args.length < 2
       raise Puppet::ParseError, _('mysql_deepmerge(): wrong number of arguments (%{args_length}; must be at least 2)') % { args_length: args.length }
     end

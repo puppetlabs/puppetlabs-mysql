@@ -5,6 +5,8 @@ module Puppet::Parser::Functions
     EOS
              ) do |arguments|
 
+    warning('Deprecation: mysql_dirname() is deprecated, please use mysql::dirname() instead.')
+
     if arguments.empty?
       raise Puppet::ParseError, _('mysql_dirname(): Wrong number of arguments given (%{args_length} for 1)') % { args_length: args.length }
     end

@@ -6,6 +6,8 @@ module Puppet::Parser::Functions
 EOS
              ) do |args|
 
+    warning('Deprecation: mysql_strip_hash() is deprecated, please use mysql::strip_hash() instead.')
+
     hash = args[0]
     unless hash.is_a?(Hash)
       raise(Puppet::ParseError, _('mysql_strip_hash(): Requires a hash to work.'))

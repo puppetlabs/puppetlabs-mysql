@@ -7,6 +7,8 @@ module Puppet::Parser::Functions
     EOS
              ) do |args|
 
+    warning('Deprecation: mysql_password() is deprecated, please use mysql::password() instead.')
+
     if args.size != 1
       raise Puppet::ParseError, _('mysql_password(): Wrong number of arguments given (%{args_length} for 1)') % { args_length: args.length }
     end
