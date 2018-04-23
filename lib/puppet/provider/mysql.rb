@@ -56,7 +56,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
 
   def self.mysql_caller(text_of_sql, type)
     if type.eql? 'system'
-      mysql_raw([defaults_file, '--host=', system_database, '-e', text_of_sql].flatten.compact)
+      mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact)
     elsif type.eql? 'regular'
       mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact)
     else
