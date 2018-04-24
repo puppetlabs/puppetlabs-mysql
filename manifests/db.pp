@@ -13,6 +13,8 @@
 #   The user for the database you're creating.
 # @param password
 #   The password for $user for the database you're creating.
+# @param tls_options
+#   The tls_options for $user for the database you're creating.
 # @param dbname
 #   The name of the database to create.
 # @param charset
@@ -23,6 +25,8 @@
 #   The host to use as part of user@host for grants.
 # @param grant
 #   The privileges to be granted for user@host on the database.
+# @param grant_options
+#   The grant_options for the grant for user@host on the database.
 # @param sql
 #   The path to the sqlfile you want to execute. This can be single file specified as string, or it can be an array of strings.
 # @param enforce_sql
@@ -37,18 +41,20 @@
 define mysql::db (
   $user,
   $password,
+  $tls_options                                = undef,
   $dbname                                     = $name,
   $charset                                    = 'utf8',
   $collate                                    = 'utf8_general_ci',
   $host                                       = 'localhost',
   $grant                                      = 'ALL',
+  $grant_options                              = undef,
   Optional[Variant[Array, Hash, String]] $sql = undef,
   $enforce_sql                                = false,
   Enum['absent', 'present'] $ensure           = 'present',
   $import_timeout                             = 300,
   $import_cat_cmd                             = 'cat',
 ) {
-  #input validation
+
   $table = "${dbname}.*"
 
   $sql_inputs = join([$sql], ' ')
@@ -67,6 +73,7 @@ define mysql::db (
   $user_resource = {
     ensure        => $ensure,
     password_hash => mysql::password($password),
+    tls_options   => $tls_options,
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
@@ -76,6 +83,7 @@ define mysql::db (
       provider   => 'mysql',
       user       => "${user}@${host}",
       table      => $table,
+      options    => $grant_options,
       require    => [
         Mysql_database[$dbname],
         Mysql_user["${user}@${host}"],
