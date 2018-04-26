@@ -5,8 +5,9 @@ language: ruby
 cache: bundler
 before_install:
   - bundle -v
-  - rm Gemfile.lock || true
+  - rm -f Gemfile.lock
   - gem update --system
+  - gem update bundler
   - gem --version
   - bundle -v
 script:
@@ -14,9 +15,7 @@ script:
 bundler_args: --without system_tests
 rvm:
   - 2.4.1
-  - 2.1.9
 env:
-  - PUPPET_GEM_VERSION="~> 4.0" CHECK=spec
   - PUPPET_GEM_VERSION="~> 5.0" CHECK=spec
 matrix:
   fast_finish: true
@@ -44,8 +43,12 @@ matrix:
     -
       env: CHECK=metadata_lint
     -
+      env: CHECK=release_checks
+    -
+      env: CHECK=spec
+    -
+      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=spec
       rvm: 2.1.9
-      script: "bundle exec rake release_checks"
 branches:
   only:
     - master
