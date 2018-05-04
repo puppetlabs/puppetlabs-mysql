@@ -1,4 +1,4 @@
-module Puppet::Parser::Functions
+module Puppet::Parser::Functions # rubocop:disable Style/Documentation
   newfunction(:mysql_deepmerge, type: :rvalue, doc: <<-'ENDHEREDOC') do |args|
     @summary Recursively merges two or more hashes together and returns the resulting hash.
 
