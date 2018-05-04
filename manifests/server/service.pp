@@ -1,3 +1,7 @@
+# @summary 
+#   Private class for managing the MySQL service
+#
+# @api private
 #
 class mysql::server::service {
   $options = $mysql::server::options

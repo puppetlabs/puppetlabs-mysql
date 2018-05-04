@@ -1,6 +1,10 @@
-# This has to be a separate type to enable collecting
 Puppet::Type.newtype(:mysql_grant) do
-  @doc = "Manage a MySQL user's rights."
+  @doc = <<-PUPPET
+    @summary
+      Manage a MySQL user's rights.
+
+    @api private
+    PUPPET
   ensurable
 
   autorequire(:file) { '/root/.my.cnf' }

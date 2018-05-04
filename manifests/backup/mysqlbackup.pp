@@ -1,4 +1,8 @@
-# See README.me for usage.
+# @summary
+#   Manage the mysqlbackup client.
+#
+# @api private
+#
 class mysql::backup::mysqlbackup (
   $backupuser         = '',
   $backuppassword     = '',

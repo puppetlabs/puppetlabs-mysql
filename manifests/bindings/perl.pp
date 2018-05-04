@@ -1,4 +1,8 @@
-# Private class
+# @summary
+#   Private class for installing perl language bindings.
+#
+# @api private
+#
 class mysql::bindings::perl {
 
   package{ 'perl_mysql':

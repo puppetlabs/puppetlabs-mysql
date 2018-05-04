@@ -1,4 +1,8 @@
-# Private class
+# @summary
+#   Private class for installing daemon development bindings
+#
+# @api private
+#
 class mysql::bindings::daemon_dev {
 
   if $mysql::bindings::daemon_dev_package_name {

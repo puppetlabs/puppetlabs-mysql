@@ -1,3 +1,7 @@
+# @summary 
+#   Builds initial databases on installation.
+#
+# @api private
 #
 class mysql::server::installdb {
   $options = $mysql::server::options

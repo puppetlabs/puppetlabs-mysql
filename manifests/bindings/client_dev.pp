@@ -1,4 +1,8 @@
-# Private class
+# @summary
+#   Private class for installing client development bindings
+#
+# @api private
+#
 class mysql::bindings::client_dev {
 
   if $mysql::bindings::client_dev_package_name {
