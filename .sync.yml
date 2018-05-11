@@ -50,3 +50,6 @@ spec/spec_helper.rb:
     require:
       - rubocop-i18n
       - rubocop-rspec
+
+.gitlab-ci.yml:
+  unmanaged: true
