@@ -65,7 +65,7 @@ usvn_user@localhost
     # rubocop:enable Layout/IndentHeredoc
   end
 
-  let(:parsed_users) { %w[root@127.0.0.1 root@::1 @localhost debian-sys-maint@localhost root@localhost usvn_user@localhost @vagrant-ubuntu-raring-64] }
+  let(:parsed_users) { ['root@127.0.0.1', 'root@::1', '@localhost', 'debian-sys-maint@localhost', 'root@localhost', 'usvn_user@localhost', '@vagrant-ubuntu-raring-64'] }
   let(:provider) { resource.provider }
   let(:instance) { provider.class.instances.first }
   let(:resource) do
@@ -362,9 +362,7 @@ usvn_user@localhost
     end
   end
 
-  %w[max_user_connections max_connections_per_hour max_queries_per_hour
-     max_updates_per_hour].each do |property|
-
+  ['max_user_connections', 'max_connections_per_hour', 'max_queries_per_hour', 'max_updates_per_hour'].each do |property|
     describe property do
       it "returns #{property}" do
         expect(instance.send(property.to_s.to_sym)).to eq('10')

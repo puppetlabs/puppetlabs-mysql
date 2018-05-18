@@ -52,7 +52,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
                  end
 
     opts = [defaults_extra_file]
-    %w[basedir datadir user].each do |opt|
+    ['basedir', 'datadir', 'user'].each do |opt|
       val = eval(opt) # rubocop:disable Security/Eval
       opts << "--#{opt}=#{val}" unless val.nil?
     end
@@ -80,7 +80,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
 
   def exists?
     datadir = @resource[:datadir]
-    File.directory?("#{datadir}/mysql") && (Dir.entries("#{datadir}/mysql") - %w[. ..]).any?
+    File.directory?("#{datadir}/mysql") && (Dir.entries("#{datadir}/mysql") - ['.', '..']).any?
   end
 
   ##

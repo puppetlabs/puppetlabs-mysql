@@ -16,11 +16,11 @@ describe 'the mysql_password function' do
   end
 
   it 'raises a ParseError if there is more than 1 arguments' do
-    expect { scope.function_mysql_password(%w[foo bar]) }.to(raise_error(Puppet::ParseError))
+    expect { scope.function_mysql_password(['foo', 'bar']) }.to(raise_error(Puppet::ParseError))
   end
 
   it 'converts password into a hash' do
-    result = scope.function_mysql_password(%w[password])
+    result = scope.function_mysql_password(['password'])
     expect(result).to(eq('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
   end
 

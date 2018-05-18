@@ -27,7 +27,7 @@ describe 'mysql::server::monitor' do
       it {
         is_expected.to contain_mysql_grant('monitoruser@monitorhost/*.*').with(
           ensure: 'present', user: 'monitoruser@monitorhost',
-          table: '*.*', privileges: %w[PROCESS SUPER],
+          table: '*.*', privileges: ['PROCESS', 'SUPER'],
           require: 'Mysql_user[monitoruser@monitorhost]'
         )
       }

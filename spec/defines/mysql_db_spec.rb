@@ -47,7 +47,7 @@ describe 'mysql::db', type: :define do
       end
 
       it 'imports sql scripts when more than one is specified' do
-        params['sql'] = %w[test_sql test_2_sql]
+        params['sql'] = ['test_sql', 'test_2_sql']
         is_expected.to contain_exec('test_db-import').with_command('cat test_sql test_2_sql | mysql test_db')
       end
 

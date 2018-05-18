@@ -205,7 +205,7 @@ describe 'mysql::server' do
               'foo@localhost/somedb.*' => {
                 'user'       => 'foo@localhost',
                 'table'      => 'somedb.*',
-                'privileges' => %w[SELECT UPDATE],
+                'privileges' => ['SELECT', 'UPDATE'],
                 'options'    => ['GRANT'],
               },
               'foo2@localhost/*.*' => {
@@ -219,7 +219,7 @@ describe 'mysql::server' do
           it {
             is_expected.to contain_mysql_grant('foo@localhost/somedb.*').with(
               user: 'foo@localhost', table: 'somedb.*',
-              privileges: %w[SELECT UPDATE], options: ['GRANT']
+              privileges: ['SELECT', 'UPDATE'], options: ['GRANT']
             )
           }
           it {
