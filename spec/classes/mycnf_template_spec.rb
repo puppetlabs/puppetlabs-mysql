@@ -17,7 +17,7 @@ describe 'mysql::server' do
       end
 
       describe 'array entry' do
-        let(:params) { { override_options: { 'mysqld' => { 'replicate-do-db' => %w[base1 base2] } } } }
+        let(:params) { { override_options: { 'mysqld' => { 'replicate-do-db' => ['base1', 'base2'] } } } }
 
         it do
           is_expected.to contain_file('mysql-config-file').with_content(

@@ -1,5 +1,5 @@
 require 'digest/sha1'
-module Puppet::Parser::Functions # rubocop:disable Style/Documentation
+module Puppet::Parser::Functions
   newfunction(:mysql_password, type: :rvalue, doc: <<-EOS
     @summary
       Hash a string as mysql's "PASSWORD()" function would do it

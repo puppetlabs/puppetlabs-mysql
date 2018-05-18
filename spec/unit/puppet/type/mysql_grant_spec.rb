@@ -86,9 +86,9 @@ describe Puppet::Type.type(:mysql_grant) do
     it 'to upcase and ordered' do
       user = Puppet::Type.type(:mysql_grant).new(
         name: 'foo@localhost/*.*', table: ['*.*'], user: 'foo@localhost',
-        privileges: %w[select Insert]
+        privileges: ['select', 'Insert']
       )
-      expect(user[:privileges]).to eq(%w[INSERT SELECT])
+      expect(user[:privileges]).to eq(['INSERT', 'SELECT'])
     end
 
     it 'ordered including column privileges' do

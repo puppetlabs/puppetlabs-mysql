@@ -1,4 +1,4 @@
-module Puppet::Parser::Functions # rubocop:disable Style/Documentation
+module Puppet::Parser::Functions
   newfunction(:mysql_dirname, type: :rvalue, doc: <<-EOS
     @summary
       Returns the dirname of a path
