@@ -1,4 +1,4 @@
-# Change log
+# Changelog
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
@@ -6,14 +6,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 
-- \(PDOC-210\) add Puppet Strings documentation [\#1068](https://github.com/puppetlabs/puppetlabs-mysql/pull/1068) ([hunner](https://github.com/hunner))
+- \(PDOC-210\) Puppet Strings documentation [\#1068](https://github.com/puppetlabs/puppetlabs-mysql/pull/1068) ([hunner](https://github.com/hunner))
 - Compatibility for Alpine linux [\#1049](https://github.com/puppetlabs/puppetlabs-mysql/pull/1049) ([cisco87](https://github.com/cisco87))
 
 ### Fixed
 
-- \(MODULES-6627\) Removes unused --host flag from mysqlcaller [\#1064](https://github.com/puppetlabs/puppetlabs-mysql/pull/1064) ([HelenCampbell](https://github.com/HelenCampbell))
-- fix archlinux compatibility [\#1057](https://github.com/puppetlabs/puppetlabs-mysql/pull/1057) ([bastelfreak](https://github.com/bastelfreak))
-- changed input param option in export.json from sql to file [\#1054](https://github.com/puppetlabs/puppetlabs-mysql/pull/1054) ([cgoswami](https://github.com/cgoswami))
+- \(MODULES-6627\) Removed unused --host flag from mysqlcaller [\#1064](https://github.com/puppetlabs/puppetlabs-mysql/pull/1064) ([HelenCampbell](https://github.com/HelenCampbell))
+- Fixed archlinux compatibility [\#1057](https://github.com/puppetlabs/puppetlabs-mysql/pull/1057) ([bastelfreak](https://github.com/bastelfreak))
+- Changed input param option in export.json from sql to file [\#1054](https://github.com/puppetlabs/puppetlabs-mysql/pull/1054) ([cgoswami](https://github.com/cgoswami))
 
 ## Supported Release [5.3.0]
 ### Summary
