@@ -2,26 +2,26 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:mysql_user).provider(:mysql) do
   # Output of mysqld -V
-  mysql_version_string_hash = {
-    'mysql-5.5' =>
-    {
-      version: '5.5.46',
-      string: '/usr/sbin/mysqld  Ver 5.5.46-log for Linux on x86_64 (MySQL Community Server (GPL))',
-      mysql_type: 'mysql',
-    },
-    'mysql-5.6' =>
+  $mysql_version_string_hash = {
+      'mysql-5.5' =>
+      {
+        :version => '5.5.46',
+        :string => '/usr/sbin/mysqld  Ver 5.5.46-log for Linux on x86_64 (MySQL Community Server (GPL))',
+        :mysql_type => 'mysql',
+      },
+      'mysql-5.6' =>
       {
         version: '5.6.27',
         string: '/usr/sbin/mysqld  Ver 5.6.27 for Linux on x86_64 (MySQL Community Server (GPL))',
         mysql_type: 'mysql',
       },
-    'mysql-5.7.1' =>
+      'mysql-5.7.1' =>
       {
         version: '5.7.1',
         string: '/usr/sbin/mysqld  Ver 5.7.1 for Linux on x86_64 (MySQL Community Server (GPL))',
         mysql_type: 'mysql',
       },
-    'mysql-5.7.6' =>
+      'mysql-5.7.6' =>
       {
         version: '5.7.8',
         string: '/usr/sbin/mysqld  Ver 5.7.8-rc for Linux on x86_64 (MySQL Community Server (GPL))',
@@ -46,6 +46,15 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
         mysql_type: 'percona',
       },
   }
+
+  def mysql_version_facts(ver)
+    Facter.stubs(:value).with(:mysqld_version_string).returns($mysql_version_string_hash[ver][:string])
+    Facter.stubs(:value).with(:mysqld_version).returns($mysql_version_string_hash[ver][:version])
+    Facter.stubs(:value).with(:mysql_version).returns($mysql_version_string_hash[ver][:version])
+    Facter.stubs(:value).with(:mysqld_type).returns($mysql_version_string_hash[ver][:mysql_type])
+    # overwrite memoized version
+    #provider.class.instance_variable_set(:@mysqld_version, $mysql_version_string_hash[ver][:version])
+  end
 
   let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }
   let(:system_database) { '--database=mysql' }
@@ -84,8 +93,7 @@ usvn_user@localhost
   before :each do
     # Set up the stubs for an instances call.
     Facter.stubs(:value).with(:root_home).returns('/root')
-    Facter.stubs(:value).with(:mysql_version).returns('5.6.24')
-    provider.class.instance_variable_set(:@mysqld_version_string, '5.6.24')
+    mysql_version_facts('mysql-5.6')
     Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     Puppet::Util.stubs(:which).with('mysqld').returns('/usr/sbin/mysqld')
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
@@ -94,69 +102,62 @@ usvn_user@localhost
   end
 
   describe 'self.instances' do
+    before :each do
+      provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user"]).returns(raw_users)
+    end
     it 'returns an array of users MySQL 5.5' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+      mysql_version_facts('mysql-5.5')
+      parsed_users.each do |user|
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
+      end
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users MySQL 5.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+      mysql_version_facts('mysql-5.6')
+      parsed_users.each do |user|
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
+      end
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users MySQL >= 5.7.0 < 5.7.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+      mysql_version_facts('mysql-5.7.1')
+      parsed_users.each do |user|
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
+      end
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users MySQL >= 5.7.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+      mysql_version_facts('mysql-5.7.6')
+      parsed_users.each do |user|
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
+      end
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users mariadb 10.0' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+      mysql_version_facts('mariadb-10.0')
+      parsed_users.each do |user|
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
+      end
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users percona 5.5' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+      mysql_version_facts('percona-5.5')
+      parsed_users.each do |user|
+        provider.class.stubs(:mysql).with([defaults_file, '-NBe', "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'"]).returns('10 10 10 10     ')
+      end
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
-    end
-  end
-
-  describe 'mysql version and type detection' do
-    mysql_version_string_hash.each do |_name, line|
-      version = line[:version]
-      string = line[:string]
-      mysql_type = line[:mysql_type]
-      it "detects version '#{version}'" do
-        provider.class.instance_variable_set(:@mysqld_version_string, string)
-        expect(provider.mysqld_version).to eq(version)
-      end
-      it "detects type '#{mysql_type}'" do
-        provider.class.instance_variable_set(:@mysqld_version_string, string)
-        expect(provider.mysqld_type).to eq(mysql_type)
-      end
     end
   end
 
@@ -198,26 +199,17 @@ usvn_user@localhost
   end
 
   describe 'self.mysqld_version' do
-    it 'uses the mysqld_version fact if unset' do
-      provider.class.instance_variable_set(:@mysqld_version_string, nil)
-      Facter.stubs(:value).with(:mysqld_version).returns('5.6.24')
-      expect(provider.mysqld_version).to eq '5.6.24'
+    it 'uses the mysqld_version fact' do
+       Facter.stubs(:value).with(:mysqld_version).returns('5.6.24')
+       expect(provider.mysqld_version).to eq '5.6.24'
     end
-    it 'returns 5.7.6 for "mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))"' do
-      provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))')
-      expect(provider.mysqld_version).to eq '5.7.6'
-    end
-    it 'returns 5.7.6 for "mysqld  Ver 5.7.6-rc for Linux on x86_64 (MySQL Community Server (GPL))"' do
-      provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.6-rc for Linux on x86_64 (MySQL Community Server (GPL))')
-      expect(provider.mysqld_version).to eq '5.7.6'
-    end
-    it 'detects >= 5.7.6 for 5.7.7-log' do
-      provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.7-log for Linux on x86_64 (MySQL Community Server (GPL))')
-      expect(Puppet::Util::Package.versioncmp(provider.mysqld_version, '5.7.6')).to be >= 0
-    end
-    it 'detects < 5.7.6 for 5.7.5-log' do
-      provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.5-log for Linux on x86_64 (MySQL Community Server (GPL))')
-      expect(Puppet::Util::Package.versioncmp(provider.mysqld_version, '5.7.6')).to be < 0
+  end
+
+    describe 'self.mysqld_version_string' do
+    it 'uses the mysqld_version_string fact' do
+       val = '/usr/sbin/mysqld  Ver 5.5.46-log for Linux on x86_64 (MySQL Community Server (GPL))'
+       Facter.stubs(:value).with(:mysqld_version_string).returns(val)
+       expect(provider.mysqld_version_string).to eq val
     end
   end
 
@@ -240,43 +232,43 @@ usvn_user@localhost
 
   describe 'password_hash=' do
     it 'changes the hash mysql 5.5' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      mysql_version_facts('mysql-5.5')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"]).returns('0')
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash mysql 5.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      mysql_version_facts('mysql-5.6')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"]).returns('0')
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash mysql < 5.7.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      mysql_version_facts('mysql-5.7.1')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"]).returns('0')
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash MySQL >= 5.7.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+      mysql_version_facts('mysql-5.7.6')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"]).returns('0')
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash mariadb-10.0' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      mysql_version_facts('mariadb-10.0')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"]).returns('0')
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash percona-5.5' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      mysql_version_facts('percona-5.5')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'"]).returns('0')
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
@@ -332,36 +324,36 @@ usvn_user@localhost
 
   describe 'tls_options=' do
     it 'adds SSL option grant in mysql 5.5' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      mysql_version_facts('mysql-5.5')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mysql 5.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      mysql_version_facts('mysql-5.6')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mysql < 5.7.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      mysql_version_facts('mysql-5.7.1')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mysql >= 5.7.6' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      mysql_version_facts('mysql-5.7.6')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "ALTER USER 'joe'@'localhost' REQUIRE NONE"]).returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mariadb-10.0' do
-      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      mysql_version_facts('mariadb-10.0')
+      provider.expects(:mysql).with([defaults_file, system_database, '-e', "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]).returns('0')
 
       provider.expects(:tls_options).returns(['NONE'])
       provider.tls_options = ['NONE']

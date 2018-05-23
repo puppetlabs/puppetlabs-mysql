@@ -7,6 +7,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   ENV['PATH'] = ENV['PATH'] + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
 
   # rubocop:disable Style/HashSyntax
+  commands :mysql      => 'mysql'
   commands :mysql_raw  => 'mysql'
   commands :mysqld     => 'mysqld'
   commands :mysqladmin => 'mysqladmin'
@@ -18,10 +19,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.mysqld_type
-    # find the mysql "dialect" like mariadb / mysql etc.
-    mysqld_version_string.scan(%r{mariadb}i) { return 'mariadb' }
-    mysqld_version_string.scan(%r{\s\(percona}i) { return 'percona' }
-    'mysql'
+    Facter.value(:mysqld_type)
   end
 
   def mysqld_type
@@ -29,10 +27,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.mysqld_version_string
-    # As the possibility of the mysqld being remote we need to allow the version string to be overridden,
-    # this can be done by facter.value as seen below. In the case that it has not been set and the facter
-    # value is nil we use the mysql -v command to ensure we report the correct version of mysql for later use cases.
-    @mysqld_version_string ||= Facter.value(:mysqld_version) || mysqld('-V')
+    Facter.value(:mysqld_version_string)
   end
 
   def mysqld_version_string
@@ -40,10 +35,9 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.mysqld_version
-    # note: be prepared for '5.7.6-rc-log' etc results
-    #       versioncmp detects 5.7.6-log to be newer then 5.7.6
-    #       this is why we need the trimming.
-    mysqld_version_string.scan(%r{\d+\.\d+\.\d+}).first unless mysqld_version_string.nil?
+    # As the possibility of the mysqld being remote we need to allow the version
+    # to be overridden, this can be done by facter.value as seen below.
+    Facter.value(:mysqld_version)
   end
 
   def mysqld_version
