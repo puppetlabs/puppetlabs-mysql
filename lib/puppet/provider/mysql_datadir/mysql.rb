@@ -60,7 +60,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     if mysqld_version.nil?
       debug("Installing MySQL data directory with mysql_install_db #{opts.compact.join(' ')}")
       mysql_install_db(opts.compact)
-    elsif (mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       opts << "--log-error=#{log_error}"
       opts << initialize.to_s
       debug("Initializing MySQL data directory >= 5.7.6 with mysqld: #{opts.compact.join(' ')}")

@@ -50,6 +50,14 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.mysqld_version
   end
 
+  def self.newer_than(forks_versions)
+    forks_versions.keys.include?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) >= 0
+  end
+
+  def newer_than(forks_versions)
+    self.class.newer_than(forks_versions)
+  end
+
   def defaults_file
     self.class.defaults_file
   end
