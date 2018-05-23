@@ -14,8 +14,6 @@ class mysql::server::monitor (
   $mysql_monitor_hostname = ''
 ) {
 
-  Anchor['mysql::server::end'] -> Class['mysql::server::monitor']
-
   mysql_user { "${mysql_monitor_username}@${mysql_monitor_hostname}":
     ensure        => present,
     password_hash => mysql_password($mysql_monitor_password),
