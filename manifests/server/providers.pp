@@ -1,6 +1,5 @@
 # @summary
-#   Convenience class to call each of the three providers with the corresponding
-#   hashes provided in mysql::server.
+#   Convenience class to call each of the three providers with the corresponding hashes provided in mysql::server.
 #
 # @api private
 #
