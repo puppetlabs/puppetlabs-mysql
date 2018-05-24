@@ -66,7 +66,7 @@ define mysql::db (
 
   $user_resource = {
     ensure        => $ensure,
-    password_hash => mysql_password($password),
+    password_hash => mysql::password($password),
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 

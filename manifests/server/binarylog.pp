@@ -11,7 +11,7 @@ class mysql::server::binarylog {
   $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)
 
   if $logbin {
-    $logbindir = mysql_dirname($logbin)
+    $logbindir = mysql::dirname($logbin)
 
     #Stop puppet from managing directory if just a filename/prefix is specified
     if $logbindir != '.' {
