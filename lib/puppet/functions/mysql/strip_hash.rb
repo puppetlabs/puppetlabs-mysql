@@ -1,5 +1,10 @@
-# When given a hash this function strips out all blank entries.
+# @summary
+#   When given a hash this function strips out all blank entries.
+#
 Puppet::Functions.create_function(:'mysql::strip_hash') do
+  # @param hash
+  #   Hash to be stripped
+  #
   dispatch :strip_hash do
     required_param 'Hash', :hash
     return_type 'Hash'

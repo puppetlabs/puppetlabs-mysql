@@ -1,7 +1,13 @@
 require 'digest/sha1'
-# Returns the mysql password hash from the clear text password.
-# Hash a string as mysql's "PASSWORD()" function would do it
+# @summary
+#   Hash a string as mysql's "PASSWORD()" function would do it
+#
 Puppet::Functions.create_function(:'mysql::password') do
+  # @param password
+  #   Plain text password.
+  #
+  # @return the mysql password hash from the clear text password.
+  #
   dispatch :password do
     required_param 'String', :password
     return_type 'String'

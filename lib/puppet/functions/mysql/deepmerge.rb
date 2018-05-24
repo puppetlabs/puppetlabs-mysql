@@ -1,16 +1,16 @@
-# Recursively merges two or more hashes together and returns the resulting hash.
-#    For example:
+# @summary Recursively merges two or more hashes together and returns the resulting hash.
 #
-#        $hash1 = {'one' => 1, 'two' => 2, 'three' => { 'four' => 4 } }
-#        $hash2 = {'two' => 'dos', 'three' => { 'five' => 5 } }
-#        $merged_hash = mysql::deepmerge($hash1, $hash2)
-#        # The resulting hash is equivalent to:
-#        # $merged_hash = { 'one' => 1, 'two' => 'dos', 'three' => { 'four' => 4, 'five' => 5 } }
+# @example
+#   $hash1 = {'one' => 1, 'two' => 2, 'three' => { 'four' => 4 } }
+#   $hash2 = {'two' => 'dos', 'three' => { 'five' => 5 } }
+#   $merged_hash = mysql_deepmerge($hash1, $hash2)
+#   # The resulting hash is equivalent to:
+#   # $merged_hash = { 'one' => 1, 'two' => 'dos', 'three' => { 'four' => 4, 'five' => 5 } }
 #
-#    When there is a duplicate key that is a hash, they are recursively merged.
-#    When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
-#    When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate),
-#      the rightmost style will win.
+# - When there is a duplicate key that is a hash, they are recursively merged.
+# - When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
+# - When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate), the rightmost style will win.
+#
 Puppet::Functions.create_function(:'mysql::deepmerge') do
   def deepmerge(*args)
     if args.length < 2
