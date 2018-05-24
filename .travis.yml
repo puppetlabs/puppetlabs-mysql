@@ -7,7 +7,6 @@ before_install:
   - bundle -v
   - rm -f Gemfile.lock
   - gem update --system
-  - gem update bundler
   - gem --version
   - bundle -v
 script:
@@ -38,13 +37,7 @@ matrix:
       services: docker
       sudo: required
     -
-      env: CHECK=rubocop
-    -
-      env: CHECK="syntax lint"
-    -
-      env: CHECK=metadata_lint
-    -
-      env: CHECK="check:symlinks check:git_ignore check:dot_underscore check:test_file"
+      env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
     -
       env: CHECK=parallel_spec
     -

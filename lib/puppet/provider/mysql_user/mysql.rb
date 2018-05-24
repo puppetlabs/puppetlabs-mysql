@@ -14,7 +14,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
         ## Default ...
         # rubocop:disable Metrics/LineLength
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
-      elsif (mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
+      elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       else
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
@@ -83,8 +83,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     @property_hash[:max_updates_per_hour] = max_updates_per_hour
 
     merged_tls_options = tls_options.join(' AND ')
-    if ((mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0) ||
-       (mysqld_type == 'mariadb' && Puppet::Util::Package.versioncmp(mysqld_version, '10.2.0') >= 0)
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       self.class.mysql_caller("ALTER USER '#{merged_name}' REQUIRE #{merged_tls_options}", 'system')
     else
       self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' REQUIRE #{merged_tls_options}", 'system')
@@ -96,7 +95,13 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
 
   def destroy
     merged_name = @resource[:name].sub('@', "'@'")
-    self.class.mysql_caller("DROP USER '#{merged_name}'", 'system')
+    if_exists = if newer_than('mysql' => '5.7', 'percona' => '5.7', 'mariadb' => '10.1.3')
+                  'IF EXISTS '
+                else
+                  ''
+                end
+
+    self.class.mysql_caller("DROP USER #{if_exists}'#{merged_name}'", 'system')
 
     @property_hash.clear
     exists? ? (return false) : (return true)
@@ -120,7 +125,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     if mysqld_version.nil?
       # default ... if mysqld_version does not work
       self.class.mysql_caller("SET PASSWORD FOR #{merged_name} = '#{string}'", 'system')
-    elsif (mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       raise ArgumentError, _('Only mysql_native_password (*ABCD...XXX) hashes are supported.') unless string =~ %r{^\*|^$}
       self.class.mysql_caller("ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'", 'system')
     else
@@ -161,7 +166,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   def plugin=(string)
     merged_name = self.class.cmd_user(@resource[:name])
 
-    if (mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       sql = "ALTER USER #{merged_name} IDENTIFIED WITH '#{string}'"
       sql << " AS '#{@resource[:password_hash]}'" if string == 'mysql_native_password'
     else
@@ -178,8 +183,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   def tls_options=(array)
     merged_name = self.class.cmd_user(@resource[:name])
     merged_tls_options = array.join(' AND ')
-    if ((mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0) ||
-       (mysqld_type == 'mariadb' && Puppet::Util::Package.versioncmp(mysqld_version, '10.2.0') >= 0)
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       self.class.mysql_caller("ALTER USER #{merged_name} REQUIRE #{merged_tls_options}", 'system')
     else
       self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} REQUIRE #{merged_tls_options}", 'system')

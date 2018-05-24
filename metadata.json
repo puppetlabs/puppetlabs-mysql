@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "5.3.0",
+  "version": "5.4.0",
   "author": "Puppet Labs",
   "summary": "Installs, configures, and manages the MySQL service.",
   "license": "Apache-2.0",
@@ -85,6 +85,6 @@
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates",
-  "template-ref": "heads/master-0-gfe44b98",
+  "template-ref": "heads/master-0-g34e3266",
   "pdk-version": "1.5.0"
 }

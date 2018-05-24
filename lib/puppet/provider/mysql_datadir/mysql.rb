@@ -52,7 +52,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
                  end
 
     opts = [defaults_extra_file]
-    %w[basedir datadir user].each do |opt|
+    ['basedir', 'datadir', 'user'].each do |opt|
       val = eval(opt) # rubocop:disable Security/Eval
       opts << "--#{opt}=#{val}" unless val.nil?
     end
@@ -60,7 +60,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     if mysqld_version.nil?
       debug("Installing MySQL data directory with mysql_install_db #{opts.compact.join(' ')}")
       mysql_install_db(opts.compact)
-    elsif (mysqld_type == 'mysql' || mysqld_type == 'percona') && Puppet::Util::Package.versioncmp(mysqld_version, '5.7.6') >= 0
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       opts << "--log-error=#{log_error}"
       opts << initialize.to_s
       debug("Initializing MySQL data directory >= 5.7.6 with mysqld: #{opts.compact.join(' ')}")
@@ -80,7 +80,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
 
   def exists?
     datadir = @resource[:datadir]
-    File.directory?("#{datadir}/mysql") && (Dir.entries("#{datadir}/mysql") - %w[. ..]).any?
+    File.directory?("#{datadir}/mysql") && (Dir.entries("#{datadir}/mysql") - ['.', '..']).any?
   end
 
   ##

@@ -28,6 +28,11 @@ echo "[client]\npassword=$PASS\nuser=$USER\nmax_allowed_packet=$MAX_ALLOWED_PACK
 echo -e "[client]\npassword=$PASS\nuser=$USER\nmax_allowed_packet=$MAX_ALLOWED_PACKET" > $TMPFILE
 <%- end -%>
 
+<% if @prescript -%>
+<%- [@prescript].flatten.compact.each do |script|%>
+<%= script %>
+<%- end -%>
+<% end -%>
 
 # Ensure backup directory exist.
 mkdir -p $DIR
@@ -53,6 +58,12 @@ ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --routines"
 ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-routines"
 <% end -%>
 <% end -%>
+
+<%- if @optional_args and @optional_args.is_a?(Array) -%>
+<%- @optional_args.each do |arg| -%>
+ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS <%= arg %>"
+<%- end -%>
+<%- end -%>
 
 ##### STOP CONFIG ####################################################
 PATH=<%= @execpath %>
