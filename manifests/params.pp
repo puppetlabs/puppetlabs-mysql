@@ -13,6 +13,7 @@ class mysql::params {
   $server_package_ensure  = 'present'
   $server_package_manage  = true
   $server_service_manage  = true
+  $manage_binlog_dir      = true
   $server_service_enabled = true
   $client_package_ensure  = 'present'
   $client_package_manage  = true
