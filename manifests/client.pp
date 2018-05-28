@@ -25,6 +25,7 @@ class mysql::client (
   $package_ensure  = $mysql::params::client_package_ensure,
   $package_manage  = $mysql::params::client_package_manage,
   $package_name    = $mysql::params::client_package_name,
+  $safe_updates    = $mysql::params::safe_updates,
 ) inherits mysql::params {
 
   include '::mysql::client::install'

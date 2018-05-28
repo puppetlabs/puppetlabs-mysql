@@ -4,6 +4,9 @@
 [<%= section -%>]
 user=root
 host=localhost
+<% if section == 'client' and scope.lookupvar('mysql::client::safe_updates') != 'UNSET' -%>
+safe-updates=<%= scope.lookupvar('mysql::client::safe_updates') ? 1 : 0 %>
+<% end -%>
 <% unless scope.lookupvar('mysql::server::root_password') == 'UNSET' -%>
 password='<%= scope.lookupvar('mysql::server::root_password') %>'
 <% end -%>
