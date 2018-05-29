@@ -20,10 +20,10 @@ describe 'mysql::deepmerge' do
   end
 
   # rubocop:disable RSpec/NamedSubject
-  index_values = %w[one two three]
-  expected_values_one = %w[1 2 2]
+  index_values = ['one', 'two', 'three']
+  expected_values_one = [1, 2, 2]
   it 'is able to mysql_deepmerge two hashes' do
-    new_hash = subject.execute({ 'one' => '1', 'two' => '1' }, 'two' => '2', 'three' => '2')
+    new_hash = subject.execute({ 'one' => 1, 'two' => 1 }, 'two' => 2, 'three' => 2)
     index_values.each_with_index do |index, expected|
       expect(new_hash[index]).to eq(expected_values_one[expected])
     end
@@ -59,7 +59,7 @@ describe 'mysql::deepmerge' do
     end
   end
 
-  index_values_two = %w[key1 key2]
+  index_values_two = ['key1', 'key2']
   expected_values_four = [{ 'a' => 1, 'b' => 99 }, 'c' => 3]
   it 'appends to subhashes 3' do
     hash = subject.execute({ 'key1' => { 'a' => 1, 'b' => 2 }, 'key2' => { 'c' => 3 } }, 'key1' => { 'b' => 99 })
