@@ -15,19 +15,8 @@ if fact('osfamily') =~ %r{RedHat}
     plugin_lib = 'auth_pam.so'
   end
 elsif fact('osfamily') =~ %r{Debian}
-  if fact('operatingsystem') =~ %r{Debian}
-    if fact('operatingsystemrelease') =~ %r{^6\.}
-      # Only available plugin is innodb which is already loaded and not unload- or reload-able
-      plugin = nil
-    elsif fact('operatingsystemrelease') =~ %r{^7\.}
-      plugin     = 'example'
-      plugin_lib = 'ha_example.so'
-    end
-  elsif fact('operatingsystem') =~ %r{Ubuntu}
-    if fact('operatingsystemrelease') =~ %r{^10\.04}
-      # Only available plugin is innodb which is already loaded and not unload- or reload-able
-      plugin = nil
-    elsif fact('operatingsystemrelease') =~ %r{^16\.04}
+  if fact('operatingsystem') =~ %r{Ubuntu}
+    if fact('operatingsystemrelease') =~ %r{^16\.04}
       # On Xenial running 5.7.12, the example plugin does not appear to be available.
       plugin = 'validate_password'
       plugin_lib = 'validate_password.so'
