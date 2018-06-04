@@ -29,9 +29,7 @@ class mysql::backup::xtrabackup (
   $additional_cron_args    = ''
 ) inherits mysql::params {
 
-  package{ $xtrabackup_package_name:
-    ensure  => $ensure,
-  }
+  ensure_packages($xtrabackup_package_name)
 
   if $backupuser and $backuppassword {
     mysql_user { "${backupuser}@localhost":
