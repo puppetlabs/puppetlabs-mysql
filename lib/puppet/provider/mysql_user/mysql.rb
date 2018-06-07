@@ -63,14 +63,14 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     # This is also required if you want to specify a authentication plugin
     if !plugin.nil?
       if plugin == 'sha256_password' && !password_hash.nil?
-        self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'", 'system')
+        self.class.mysql_caller("CREATE USER IF NOT EXISTS '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'", 'system')
       else
-        self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'", 'system')
+        self.class.mysql_caller("CREATE USER IF NOT EXISTS '#{merged_name}' IDENTIFIED WITH '#{plugin}'", 'system')
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
     else
-      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'", 'system')
+      self.class.mysql_caller("CREATE USER IF NOT EXISTS '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'", 'system')
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     end
