@@ -50,10 +50,18 @@ describe 'mysql class' do
     before(:all) do
       @tmpdir = default.tmpdir('mysql')
     end
+    # 'manage_config_file' being set to false can cause random failures in Debian 9
+    let(:manage_config_file) do
+      if fact('operatingsystem') == 'Debian' && fact('operatingsystemrelease') == '9'
+        'true'
+      else
+        'false'
+      end
+    end
     let(:pp) do
       <<-MANIFEST
         class { 'mysql::server':
-          manage_config_file      => 'false',
+          manage_config_file      => '#{manage_config_file}',
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
           purge_conf_dir          => 'false',
@@ -72,7 +80,6 @@ describe 'mysql class' do
 
     it_behaves_like 'a idempotent resource'
   end
-  # rubocop:enable RSpec/InstanceVariable
 
   describe 'syslog configuration' do
     let(:pp) do
