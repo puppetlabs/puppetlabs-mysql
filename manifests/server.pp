@@ -52,11 +52,11 @@
 # @param create_root_my_cnf
 #   Whether to create `/root/.my.cnf`. Valid values are `true`, `false`. Defaults to `true`. `create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. You can use this for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
 # @param users
-#   Optional hash of users to create, which are passed to [mysql_user](#mysql_user). 
+#   Optional hash of users to create, which are passed to [mysql_user](#mysql_user).
 # @param grants
-#   Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). 
+#   Optional hash of grants, which are passed to [mysql_grant](#mysql_grant).
 # @param databases
-#   Optional hash of databases to create, which are passed to [mysql_database](#mysql_database). 
+#   Optional hash of databases to create, which are passed to [mysql_database](#mysql_database).
 # @param enabled
 #   _Deprecated_
 # @param manage_service
@@ -114,7 +114,7 @@ class mysql::server (
   }
 
   # Create a merged together set of options.  Rightmost hashes win over left.
-  $options = mysql::deepmerge($mysql::params::default_options, $override_options)
+  $options = mysql::deepmerge($mysql::params::default_options, $override_options, hiera_hash('mysql::server::override_options', {}))
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
