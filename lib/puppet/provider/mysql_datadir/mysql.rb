@@ -8,6 +8,8 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
   ENV['PATH'] = [
     ENV['PATH'],
     '/usr/libexec',
+    '/usr/local/libexec',
+    '/usr/local/bin',
     '/usr/share/mysql/scripts',
     '/opt/rh/rh-mysql57/root/usr/bin',
     '/opt/rh/rh-mysql57/root/usr/libexec',
