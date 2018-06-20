@@ -41,6 +41,14 @@ class { '::mysql::server':
 }
 ```
 
+Or add overrides within your hiera by addin `mysql::server::override_options` eg
+
+```yaml
+mysql::server::override_options:
+  mysqld:
+    pid-file:  '/tmp/mysql.pid'
+```
+
 See [**Customize Server Options**](#customize-server-options) below for examples of the hash structure for $override_options.
 
 ## Usage
@@ -49,7 +57,11 @@ All interaction for the server is done via `mysql::server`. To install the clien
 
 ### Customize server options
 
-To define server options, structure a hash structure of overrides in `mysql::server`. This hash resembles a hash in the my.cnf file:
+To define server options, either structure a hash structure of overrides in `mysql::server` or pass in options via the `mysql::server::override_options` hiera values. The override options are merged together in the order of the default options, override_options hash and finally the `mysql::server::override_options` hiera values. The rightmost values always win.
+
+The `mysql::server::override_options` hiera hash is structured the same as the `mysql::server` override_options hash.
+
+The `mysql::server` hash resembles a hash in the my.cnf file:
 
 ```puppet
 $override_options = {
