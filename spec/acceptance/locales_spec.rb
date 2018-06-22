@@ -63,7 +63,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     let(:pp) do
       <<-MANIFEST
       mysql::db { 'mydb':
-        user     => 'thisisalongusernametestfortodayandtomorrowandthenextday',
+        user     => 'thisisalongusernametestfortodayandtomorrowandthenextdayandthedayafteeeeeeerrrrrrrrrrrrrrr',
         password => 'mypass',
         host     => 'localhost',
         grant    => ['SELECT', 'UPDATE'],
