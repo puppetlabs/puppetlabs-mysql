@@ -18,7 +18,7 @@ class mysql::server::mysqltuner(
 ) {
 
   if $source {
-    $_version = $source
+    $_version = regsubst($source,'[:/]','_','G')
     $_source  = $source
   } else {
     $_version = $version
