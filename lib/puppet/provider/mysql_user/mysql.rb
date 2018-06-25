@@ -69,7 +69,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
-	elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH 'mysql_native_password' AS '#{password_hash}'", 'system')
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
@@ -79,7 +79,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       @property_hash[:password_hash] = password_hash
     end
     # rubocop:disable Metrics/LineLength
-	if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       self.class.mysql_caller("ALTER USER IF EXISTS '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
     else
       self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
