@@ -1,5 +1,6 @@
 require 'spec_helper_acceptance'
 require 'beaker/i18n_helper'
+require 'pry-byebug'
 
 describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && puppet_version =~ %r{(^4\.10\.[56789]|5\.\d\.\d)} do
   before :all do
@@ -10,42 +11,36 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
   end
 
  
-  context 'when triggering puppet simple string error' do
-    # 'service_enabled' being set to false can cause random failures in Debian 9
-    let(:service_enabled) do
-      if fact('operatingsystem') == 'Debian' && fact('operatingsystemrelease') == '9'
-        'true'
-      else
-        'false'
-      end
-    end
-    let(:pp) do
-      <<-MANIFEST
-    class { 'mysql::server':
-            config_file             => '/tmp/mysql.sFlJdV/my.cnf',
-            includedir              => '/tmp/mysql.sFlJdV/include',
-            manage_config_file      => 'true',
-            override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
-            package_ensure          => 'present',
-            purge_conf_dir          => 'true',
-            remove_default_accounts => 'true',
-            restart                 => 'true',
-            root_group              => 'root',
-            root_password           => 'test',
-            old_root_password       => 'kittensnmittens',
-            service_enabled         => '#{service_enabled}'
-          }
-      MANIFEST
-    end
+  # context 'when triggering puppet simple string error' do
+  #   let(:pp) do
+  #     <<-MANIFEST
+  #   class { 'mysql::server':
+  #           config_file             => '/tmp/mysql.sFlJdV/my.cnf',
+  #           includedir              => '/tmp/mysql.sFlJdV/include',
+  #           manage_config_file      => 'true',
+  #           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
+  #           package_ensure          => 'present',
+  #           purge_conf_dir          => 'true',
+  #           remove_default_accounts => 'true',
+  #           restart                 => 'true',
+  #           root_group              => 'root',
+  #           root_password           => 'test',
+  #           old_root_password       => 'kittensnmittens',
+  #           service_enabled         => 'false'
+  #         }
+  #     MANIFEST
+  #   end
 
-    it 'displays Japanese error' do
-      apply_manifest(pp, catch_error: true) do |r|
-        expect(r.stderr).to match(%r{`old_root_password`属性は廃止予定であり、今後のリリースで廃止されます。}i)
-      end
-    end
-  end
+  #   it 'displays Japanese error' do
+  #     binding.pry
+  #     apply_manifest(pp, catch_error: true) do |r|
+  #       expect(r.stderr).to match(%r{`old_root_password`属性は廃止予定であり、今後のリリースで廃止されます。}i)
+  #     end
+  #   end
+  # end
 
   context 'when triggering puppet interpolated string failure' do
+    #TODO: This test causes mariadb to crash on debian 9
     let(:pp) do
       <<-MANIFEST
     class { 'mysql::server': root_password => 'password' }
@@ -62,6 +57,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese failure' do
+      # binding.pry
       apply_manifest(pp, catch_failures: true) do |r|
         expect(r.stderr).to match(%r{'prescript'オプションは、現在、mysqldumpバックアッププロバイダ向けには実装されていません。}i)
       end
@@ -81,6 +77,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese failure' do
+      # binding.pry
       apply_manifest(pp, expect_failures: true) do |r|
         expect(r.stderr).to match(%r{MySQLユーザ名は最大\d{2}文字に制限されています。}i)
       end
@@ -97,6 +94,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese error' do
+      # binding.pry
       apply_manifest(pp, expect_failures: true) do |r|
         expect(r.stderr).to match(%r{無効なデータベースのユーザ"name@localhost}i)
       end
