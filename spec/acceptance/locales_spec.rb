@@ -10,7 +10,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
   end
 
  
-  context 'when triggering puppet simple string error' 
+  context 'when triggering puppet simple string error' do
     # 'service_enabled' being set to false can cause random failures in Debian 9
     let(:service_enabled) do
       if fact('operatingsystem') == 'Debian' && fact('operatingsystemrelease') == '9'
@@ -33,7 +33,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
             root_group              => 'root',
             root_password           => 'test',
             old_root_password       => 'kittensnmittens',
-            service_enabled         => '#{service_enabled}',
+            service_enabled         => '#{service_enabled}'
           }
       MANIFEST
     end
