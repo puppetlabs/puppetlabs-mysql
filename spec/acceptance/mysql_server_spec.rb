@@ -58,6 +58,14 @@ describe 'mysql class' do
         'false'
       end
     end
+    # 'service_enabled' being set to false can cause random failures in Debian 9
+    let(:service_enabled) do
+      if fact('operatingsystem') == 'Debian' && fact('operatingsystemrelease') == '9'
+        'true'
+      else
+        'false'
+      end
+    end
     let(:pp) do
       <<-MANIFEST
         class { 'mysql::server':
@@ -69,7 +77,7 @@ describe 'mysql class' do
           restart                 => 'false',
           root_group              => 'root',
           root_password           => 'test',
-          service_enabled         => 'false',
+          service_enabled         => '#{service_enabled}',
           service_manage          => 'false',
           users                   => {},
           grants                  => {},
