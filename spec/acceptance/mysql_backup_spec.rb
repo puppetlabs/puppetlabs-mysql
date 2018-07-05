@@ -29,8 +29,8 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups' do
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
   end
 
@@ -104,8 +104,8 @@ describe 'mysql::server::backup class' do
           }
       MANIFEST
       it 'when configuring mysql backups' do
-        apply_manifest(pp, catch_failures: true)
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
     end
 
@@ -187,7 +187,7 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups with triggers and routines' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'runs mysqlbackup.sh with no errors' do

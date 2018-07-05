@@ -38,7 +38,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese error' do
-      apply_manifest(pp, catch_error: true) do |r|
+      execute_manifest(pp, catch_error: true) do |r|
         expect(r.stderr).to match(%r{`old_root_password`属性は廃止予定であり、今後のリリースで廃止されます。}i)
       end
     end
@@ -61,7 +61,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese failure' do
-      apply_manifest(pp, catch_failures: true) do |r|
+      execute_manifest(pp, catch_failures: true) do |r|
         expect(r.stderr).to match(%r{'prescript'オプションは、現在、mysqldumpバックアッププロバイダ向けには実装されていません。}i)
       end
     end
@@ -80,7 +80,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese failure' do
-      apply_manifest(pp, expect_failures: true) do |r|
+      execute_manifest(pp, expect_failures: true) do |r|
         expect(r.stderr).to match(%r{MySQLユーザ名は最大\d{2}文字に制限されています。}i)
       end
     end
@@ -96,7 +96,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese error' do
-      apply_manifest(pp, expect_failures: true) do |r|
+      execute_manifest(pp, expect_failures: true) do |r|
         expect(r.stderr).to match(%r{無効なデータベースのユーザ"name@localhost}i)
       end
     end

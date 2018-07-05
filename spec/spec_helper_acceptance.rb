@@ -4,6 +4,8 @@ require 'beaker/puppet_install_helper'
 require 'beaker/module_install_helper'
 require 'beaker/i18n_helper'
 require 'beaker-task_helper'
+require 'beaker/testmode_switcher'
+require 'beaker/testmode_switcher/dsl'
 
 run_puppet_install_helper
 install_ca_certs unless pe_install?
@@ -48,10 +50,10 @@ end
 
 shared_examples 'a idempotent resource' do
   it 'applies with no errors' do
-    apply_manifest(pp, catch_failures: true)
+    execute_manifest(pp, catch_failures: true)
   end
 
   it 'applies a second time without changes', :skip_pup_5016 do
-    apply_manifest(pp, catch_changes: true)
+    execute_manifest(pp, catch_changes: true)
   end
 end

@@ -6,7 +6,7 @@ describe 'mysql_database' do
         class { 'mysql::server': }
     MANIFEST
     it 'works with no errors' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
   end
 
@@ -17,7 +17,7 @@ describe 'mysql_database' do
         }
     MANIFEST
     it 'works without errors' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'finds the database #stdout' do
@@ -44,8 +44,8 @@ describe 'mysql_database' do
         }
     MANIFEST
     it 'creates two db of different types idempotently' do
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      execute_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_changes: true)
     end
 
     it 'finds latin1 db #stdout' do

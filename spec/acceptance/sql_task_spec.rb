@@ -12,7 +12,7 @@ describe 'mysql tasks', if: puppet_version =~ %r{(5\.\d\.\d)} && fact('operating
     MANIFEST
 
     it 'sets up a mysql instance' do
-      apply_manifest_on(hosts, pp, catch_failures: true)
+      execute_manifest_on(hosts, pp, catch_failures: true)
     end
 
     it 'execute arbitary sql' do

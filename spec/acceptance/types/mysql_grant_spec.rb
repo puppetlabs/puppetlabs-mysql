@@ -10,7 +10,7 @@ describe 'mysql_grant' do
       }
     MANIFEST
 
-    apply_manifest(pp, catch_failures: true)
+    execute_manifest(pp, catch_failures: true)
   end
 
   describe 'missing privileges for user' do
@@ -26,7 +26,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'fails' do
-      expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`privileges` `parameter` is required})
+      expect(execute_manifest(pp, expect_failures: true).stderr).to match(%r{`privileges` `parameter` is required})
     end
 
     it 'does not find the user' do
@@ -47,7 +47,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'fails' do
-      apply_manifest(pp, expect_failures: true)
+      execute_manifest(pp, expect_failures: true)
     end
 
     it 'does not find the user' do
@@ -69,7 +69,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'works without errors' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'finds the user #stdout' do
@@ -98,7 +98,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'works without errors' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'finds the user #stdout' do
@@ -128,7 +128,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'works without errors' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'finds the user #stdout' do
@@ -157,7 +157,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'fails' do
-      expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `parameter` is required.})
+      expect(execute_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `parameter` is required.})
     end
   end
 
@@ -176,7 +176,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'onlies try to apply ALL' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'finds the user #stdout' do
@@ -246,7 +246,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'applies' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'finds short hostname #stdout' do
@@ -383,8 +383,8 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'setup mysql::server' do
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      execute_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_changes: true)
     end
   end
 
@@ -401,7 +401,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'create ALL privs' do
-      apply_manifest(pp_one, catch_failures: true)
+      execute_manifest(pp_one, catch_failures: true)
     end
 
     pp_two = <<-MANIFEST
@@ -416,7 +416,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'create lowercase all privs' do
-      expect(apply_manifest(pp_two, catch_failures: true).exit_code).to eq(0)
+      expect(execute_manifest(pp_two, catch_failures: true).exit_code).to eq(0)
     end
   end
 
@@ -439,7 +439,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'works without errors' do
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
 
     it 'finds the user #stdout' do
@@ -475,7 +475,7 @@ describe 'mysql_grant' do
         }
       EOS
 
-      apply_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
     # rubocop:enable RSpec/ExampleLength
     it 'finds the user' do
@@ -504,7 +504,7 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'works without errors when version greater than 5.5.0' do
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
@@ -533,7 +533,7 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
@@ -562,7 +562,7 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'fails' do
-        expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`privileges` `parameter`: PROXY can only be specified by itself})
+        expect(execute_manifest(pp, expect_failures: true).stderr).to match(%r{`privileges` `parameter`: PROXY can only be specified by itself})
       end
 
       it 'does not find the user' do
@@ -584,7 +584,7 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'fails' do
-        expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{PROXY user not supported on mysql versions < 5\.5\.0}i)
+        expect(execute_manifest(pp, expect_failures: true).stderr).to match(%r{PROXY user not supported on mysql versions < 5\.5\.0}i)
       end
 
       it 'does not find the user' do
@@ -606,7 +606,7 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'fails' do
-        expect(apply_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
+        expect(execute_manifest(pp, expect_failures: true).stderr).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
       end
 
       it 'does not find the user' do
@@ -625,7 +625,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'setup mysql::server' do
-      apply_manifest(pp_one, catch_failures: true)
+      execute_manifest(pp_one, catch_failures: true)
     end
 
     pp_two = <<-MANIFEST
@@ -651,7 +651,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'applies' do
-      apply_manifest(pp_two, catch_failures: true)
+      execute_manifest(pp_two, catch_failures: true)
     end
 
     it 'fails with fqdn' do
@@ -687,7 +687,7 @@ describe 'mysql_grant' do
     it 'fails to execute while applying' do
       mysql_cmd = shell('which mysql').stdout.chomp
       shell("mv #{mysql_cmd} #{mysql_cmd}.bak")
-      expect(apply_manifest(pp_three, expect_failures: true).stderr).to match(%r{Could not find a suitable provider for mysql_grant})
+      expect(execute_manifest(pp_three, expect_failures: true).stderr).to match(%r{Could not find a suitable provider for mysql_grant})
       shell("mv #{mysql_cmd}.bak #{mysql_cmd}")
     end
 
@@ -697,7 +697,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'reset mysql::server config' do
-      apply_manifest(pp_four, catch_failures: true)
+      execute_manifest(pp_four, catch_failures: true)
     end
   end
 
@@ -707,7 +707,7 @@ describe 'mysql_grant' do
         class { 'mysql::server': override_options => { 'root_password' => 'password' } }
     MANIFEST
     it 'setup mysql server' do
-      apply_manifest(pp_one, catch_failures: true)
+      execute_manifest(pp_one, catch_failures: true)
     end
 
     pp_two = <<-MANIFEST
@@ -722,7 +722,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'creates grant on missing table will fail' do
-      expect(apply_manifest(pp_two, expect_failures: true).stderr).to match(%r{Table 'grant_spec_db\.grant_spec_table' doesn't exist})
+      expect(execute_manifest(pp_two, expect_failures: true).stderr).to match(%r{Table 'grant_spec_db\.grant_spec_table' doesn't exist})
     end
 
     pp_three = <<-MANIFEST
@@ -738,7 +738,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'creates table' do
-      apply_manifest(pp_three, catch_failures: true)
+      execute_manifest(pp_three, catch_failures: true)
     end
 
     it 'has the table' do

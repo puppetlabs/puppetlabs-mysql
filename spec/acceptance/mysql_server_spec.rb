@@ -98,7 +98,7 @@ describe 'mysql class' do
     let(:pp) { "class { 'mysql::server': root_password => '#{password}' }" }
 
     it 'does not display the password' do
-      result = apply_manifest(pp, catch_failures: true)
+      result = execute_manifest(pp, catch_failures: true)
       # this does not actually prove anything, as show_diff in the puppet config defaults to false.
       expect(result.stdout).not_to match %r{#{password}}
     end
