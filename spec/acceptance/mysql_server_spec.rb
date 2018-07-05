@@ -47,40 +47,40 @@ describe 'mysql class' do
     it_behaves_like 'a idempotent resource'
   end
 
-  # describe 'minimal config' do
-  #   before(:all) do
-  #     @tmpdir = default.tmpdir('mysql')
-  #   end
-  #   # 'manage_config_file' being set to false can cause random failures in Debian 9
-  #   let(:manage_config_file) do
-  #     if fact('operatingsystem') == 'Debian' && fact('operatingsystemrelease') == '9'
-  #       'true'
-  #     else
-  #       'false'
-  #     end
-  #   end
-  #   let(:pp) do
-  #     <<-MANIFEST
-  #       class { 'mysql::server':
-  #         manage_config_file      => '#{manage_config_file}',
-  #         override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
-  #         package_ensure          => 'present',
-  #         purge_conf_dir          => 'false',
-  #         remove_default_accounts => 'false',
-  #         restart                 => 'false',
-  #         root_group              => 'root',
-  #         root_password           => 'test',
-  #         service_enabled         => 'false',
-  #         service_manage          => 'false',
-  #         users                   => {},
-  #         grants                  => {},
-  #         databases               => {},
-  #       }
-  #     MANIFEST
-  #   end
+  describe 'minimal config' do
+    before(:all) do
+      @tmpdir = default.tmpdir('mysql')
+    end
+    # 'manage_config_file'/'service_enabled' being set to false can cause random failures in Debian 9
+    let(:os_varient) do
+      if fact('operatingsystem') =~ %r{Debian} && fact('operatingsystemrelease') =~ %r{^9\.}
+        'true'
+      else
+        'false'
+      end
+    end
+    let(:pp) do
+      <<-MANIFEST
+        class { 'mysql::server':
+          manage_config_file      => '#{os_varient}',
+          override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
+          package_ensure          => 'present',
+          purge_conf_dir          => 'false',
+          remove_default_accounts => 'false',
+          restart                 => 'false',
+          root_group              => 'root',
+          root_password           => 'test',
+          service_enabled         => '#{os_varient}',
+          service_manage          => 'false',
+          users                   => {},
+          grants                  => {},
+          databases               => {},
+        }
+      MANIFEST
+    end
 
-  #   it_behaves_like 'a idempotent resource'
-  # end
+    it_behaves_like 'a idempotent resource'
+  end
 
   describe 'syslog configuration' do
     let(:pp) do

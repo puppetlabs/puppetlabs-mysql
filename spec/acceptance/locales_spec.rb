@@ -11,33 +11,40 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
   end
 
  
-  # context 'when triggering puppet simple string error' do
-  #   let(:pp) do
-  #     <<-MANIFEST
-  #   class { 'mysql::server':
-  #           config_file             => '/tmp/mysql.sFlJdV/my.cnf',
-  #           includedir              => '/tmp/mysql.sFlJdV/include',
-  #           manage_config_file      => 'true',
-  #           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
-  #           package_ensure          => 'present',
-  #           purge_conf_dir          => 'true',
-  #           remove_default_accounts => 'true',
-  #           restart                 => 'true',
-  #           root_group              => 'root',
-  #           root_password           => 'test',
-  #           old_root_password       => 'kittensnmittens',
-  #           service_enabled         => 'false'
-  #         }
-  #     MANIFEST
-  #   end
+  context 'when triggering puppet simple string error' do
+    # 'service_enabled' being set to false can cause random failures in Debian 9
+    let(:os_varient) do
+      if fact('operatingsystem') =~ %r{Debian} && fact('operatingsystemrelease') =~ %r{^9\.}
+        'true'
+      else
+        'false'
+      end
+    end
+    let(:pp) do
+      <<-MANIFEST
+    class { 'mysql::server':
+            config_file             => '/tmp/mysql.sFlJdV/my.cnf',
+            includedir              => '/tmp/mysql.sFlJdV/include',
+            manage_config_file      => 'true',
+            override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
+            package_ensure          => 'present',
+            purge_conf_dir          => 'true',
+            remove_default_accounts => 'true',
+            restart                 => 'true',
+            root_group              => 'root',
+            root_password           => 'test',
+            old_root_password       => 'kittensnmittens',
+            service_enabled         => '#{os_varient}',
+          }
+      MANIFEST
+    end
 
-  #   it 'displays Japanese error' do
-  #     binding.pry
-  #     apply_manifest(pp, catch_error: true) do |r|
-  #       expect(r.stderr).to match(%r{`old_root_password`属性は廃止予定であり、今後のリリースで廃止されます。}i)
-  #     end
-  #   end
-  # end
+    it 'displays Japanese error' do
+      apply_manifest(pp, catch_error: true) do |r|
+        expect(r.stderr).to match(%r{`old_root_password`属性は廃止予定であり、今後のリリースで廃止されます。}i)
+      end
+    end
+  end
 
   context 'when triggering puppet interpolated string failure' do
     #TODO: This test causes mariadb to crash on debian 9
