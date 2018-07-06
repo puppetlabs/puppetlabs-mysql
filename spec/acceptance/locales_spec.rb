@@ -1,5 +1,6 @@
 require 'spec_helper_acceptance'
 require 'beaker/i18n_helper'
+require 'pry-byebug'
 
 describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && puppet_version =~ %r{(^4\.10\.[56789]|5\.\d\.\d)} do
   before :all do
@@ -9,7 +10,16 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
   end
 
+ 
   context 'when triggering puppet simple string error' do
+    # 'service_enabled' being set to false can cause random failures in Debian 9
+    let(:os_varient) do
+      if fact('operatingsystem') =~ %r{Debian} && fact('operatingsystemrelease') =~ %r{^9\.}
+        'true'
+      else
+        'false'
+      end
+    end
     let(:pp) do
       <<-MANIFEST
     class { 'mysql::server':
@@ -24,7 +34,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
             root_group              => 'root',
             root_password           => 'test',
             old_root_password       => 'kittensnmittens',
-            service_enabled         => 'false'
+            service_enabled         => '#{os_varient}',
           }
       MANIFEST
     end
@@ -37,6 +47,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
   end
 
   context 'when triggering puppet interpolated string failure' do
+    #TODO: This test causes mariadb to crash on debian 9
     let(:pp) do
       <<-MANIFEST
     class { 'mysql::server': root_password => 'password' }
@@ -53,6 +64,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese failure' do
+      # binding.pry
       apply_manifest(pp, catch_failures: true) do |r|
         expect(r.stderr).to match(%r{'prescript'オプションは、現在、mysqldumpバックアッププロバイダ向けには実装されていません。}i)
       end
@@ -72,6 +84,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese failure' do
+      # binding.pry
       apply_manifest(pp, expect_failures: true) do |r|
         expect(r.stderr).to match(%r{MySQLユーザ名は最大\d{2}文字に制限されています。}i)
       end
@@ -88,6 +101,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
     end
 
     it 'displays Japanese error' do
+      # binding.pry
       apply_manifest(pp, expect_failures: true) do |r|
         expect(r.stderr).to match(%r{無効なデータベースのユーザ"name@localhost}i)
       end

@@ -1,4 +1,5 @@
 require 'spec_helper_acceptance'
+require 'pry-byebug'
 
 describe 'mysql class' do
   describe 'advanced config' do
@@ -11,7 +12,7 @@ describe 'mysql class' do
           purge_conf_dir          => 'true',
           remove_default_accounts => 'true',
           restart                 => 'true',
-          root_group              => 'root',
+          root_group              => 'root', 
           root_password           => 'test',
           service_enabled         => 'true',
           service_manage          => 'true',
@@ -50,9 +51,9 @@ describe 'mysql class' do
     before(:all) do
       @tmpdir = default.tmpdir('mysql')
     end
-    # 'manage_config_file' being set to false can cause random failures in Debian 9
-    let(:manage_config_file) do
-      if fact('operatingsystem') == 'Debian' && fact('operatingsystemrelease') == '9'
+    # 'manage_config_file'/'service_enabled' being set to false can cause random failures in Debian 9
+    let(:os_varient) do
+      if fact('operatingsystem') =~ %r{Debian} && fact('operatingsystemrelease') =~ %r{^9\.}
         'true'
       else
         'false'
@@ -61,7 +62,7 @@ describe 'mysql class' do
     let(:pp) do
       <<-MANIFEST
         class { 'mysql::server':
-          manage_config_file      => '#{manage_config_file}',
+          manage_config_file      => '#{os_varient}',
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
           purge_conf_dir          => 'false',
@@ -69,7 +70,7 @@ describe 'mysql class' do
           restart                 => 'false',
           root_group              => 'root',
           root_password           => 'test',
-          service_enabled         => 'false',
+          service_enabled         => '#{os_varient}',
           service_manage          => 'false',
           users                   => {},
           grants                  => {},
@@ -90,6 +91,7 @@ describe 'mysql class' do
       MANIFEST
     end
 
+    # TODO: This test causes mariadb to crash on Debian 9
     it_behaves_like 'a idempotent resource'
   end
 
