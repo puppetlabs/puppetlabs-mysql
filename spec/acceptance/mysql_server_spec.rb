@@ -50,9 +50,9 @@ describe 'mysql class' do
     before(:all) do
       @tmpdir = default.tmpdir('mysql')
     end
-    # 'manage_config_file' being set to false can cause random failures in Debian 9
-    let(:manage_config_file) do
-      if fact('operatingsystem') == 'Debian' && fact('operatingsystemrelease') == '9'
+    # 'manage_config_file'/'service_enabled' being set to false can cause random failures in Debian 9
+    let(:os_variant) do
+      if fact('operatingsystem') =~ %r{Debian} && fact('operatingsystemrelease') =~ %r{^9\.}
         'true'
       else
         'false'
@@ -61,7 +61,7 @@ describe 'mysql class' do
     let(:pp) do
       <<-MANIFEST
         class { 'mysql::server':
-          manage_config_file      => '#{manage_config_file}',
+          manage_config_file      => '#{os_variant}',
           override_options        => { 'mysqld' => { 'key_buffer_size' => '32M' }},
           package_ensure          => 'present',
           purge_conf_dir          => 'false',
@@ -69,7 +69,7 @@ describe 'mysql class' do
           restart                 => 'false',
           root_group              => 'root',
           root_password           => 'test',
-          service_enabled         => 'false',
+          service_enabled         => '#{os_variant}',
           service_manage          => 'false',
           users                   => {},
           grants                  => {},
