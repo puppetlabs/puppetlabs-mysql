@@ -170,6 +170,8 @@ mysql::db { 'mydb':
 }
 ```
 
+If required, the password can also be an empty string to allow connections without an password.
+
 ### Install Percona server on CentOS
 
 This example shows how to do a minimal installation of a Percona server on a
