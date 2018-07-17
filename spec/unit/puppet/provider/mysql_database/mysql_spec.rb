@@ -13,7 +13,6 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
     )
   end
   let(:raw_databases) do
-    # rubocop:disable Layout/IndentHeredoc
     <<-SQL_OUTPUT
 information_schema
 mydb
