@@ -30,6 +30,7 @@ Gemfile:
         from_env: BEAKER_HOSTGENERATOR_VERSION
       - gem: beaker-rspec
         from_env: BEAKER_RSPEC_VERSION
+      - gem: beaker-testmode_switcher
     ':development':
       - gem: puppet-lint-i18n
 

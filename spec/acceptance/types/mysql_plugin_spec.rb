@@ -37,7 +37,7 @@ describe 'mysql_plugin' do
           class { 'mysql::server': }
         MANIFEST
 
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
     end
 
@@ -49,7 +49,7 @@ describe 'mysql_plugin' do
           }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
 
       it 'finds the plugin #stdout' do

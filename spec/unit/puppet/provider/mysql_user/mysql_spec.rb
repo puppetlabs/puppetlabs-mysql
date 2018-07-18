@@ -52,7 +52,6 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
   let(:newhash) { '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5' }
 
   let(:raw_users) do
-    # rubocop:disable Layout/IndentHeredoc
     <<-SQL_OUTPUT
 root@127.0.0.1
 root@::1

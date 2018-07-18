@@ -74,6 +74,7 @@ RSpec/MessageSpies:
 Style/Documentation:
   Exclude:
   - lib/puppet/parser/functions/**/*
+  - spec/**/*
 Style/WordArray:
   EnforcedStyle: brackets
 Style/CollectionMethods:
@@ -83,6 +84,8 @@ Style/MethodCalledOnDoEndBlock:
 Style/StringMethods:
   Enabled: true
 Layout/EndOfLine:
+  Enabled: false
+Layout/IndentHeredoc:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false

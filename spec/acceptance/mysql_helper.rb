@@ -1,5 +1,5 @@
 def pre_run
-  apply_manifest("class { 'mysql::server': root_password => 'password' }", catch_failures: true)
+  execute_manifest("class { 'mysql::server': root_password => 'password' }", catch_failures: true)
   @mysql_version = (on default, 'mysql --version').output.chomp.match(%r{\d+\.\d+\.\d+})[0]
 end
 
