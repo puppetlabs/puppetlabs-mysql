@@ -53,7 +53,9 @@ hiera_version = ENV['HIERA_GEM_VERSION']
 
 gems = {}
 
-gems['puppet'] = location_for(puppet_version)
+#gems['puppet'] = location_for(puppet_version)
+gem 'puppet', :git => 'git://github.com/pmcmaw/puppet', :ref => '7484d925e6709b2f831b77dc3030cd9edba0b3b0'
+
 
 # If facter or hiera versions have been specified via the environment
 # variables
