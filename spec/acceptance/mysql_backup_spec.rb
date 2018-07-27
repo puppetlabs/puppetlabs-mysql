@@ -29,13 +29,8 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups' do
-      if ENV['TRAVIS'] == 'true'
-        execute_manifest(pp, expect_failures: true)
-        execute_manifest(pp, expect_failures: true)
-      else
-        execute_manifest(pp, catch_failures: true)
-        execute_manifest(pp, catch_failures: true)
-      end
+      execute_manifest(pp, catch_failures: true)
+      execute_manifest(pp, catch_failures: true)
     end
   end
 
