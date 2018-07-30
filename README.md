@@ -13,6 +13,7 @@
     * [Specify passwords](#specify-passwords)
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
     * [Install MariaDB on Ubuntu](#install-mariadb-on-ubuntu)
+    * [Install Plugins](#install-plugins)
 4. [Reference - An under-the-hood peek at what the module is doing and how](REFERENCE.md)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -379,6 +380,22 @@ mysql::server::db:
     host: "127.0.0.1"
     grant:
       - "ALL"
+
+```
+
+### Install Plugins
+
+Plugins can be installed by using the `mysql_plugin` defined type. See `examples/mysql_plugin.pp` for futher examples.
+
+```puppet
+class { 'mysql::server':
+  root_password => 'password'
+}
+
+mysql_plugin { 'auth_pam':
+  ensure => present,
+  soname => 'auth_pam.so',
+}
 
 ```
 
