@@ -124,4 +124,29 @@ class Puppet::Provider::Mysql < Puppet::Provider
     end
     option_string
   end
+
+  def self.merge_tls_options(tls_options)
+    # issuer and subject may contain spaces
+    tls_options.map! do |item|
+      option_name, option_value = item.split(' ', 2)
+      if option_value.nil?
+        option_value = option_name
+      else
+        # make sure the option value is wrapped in ' exactly once
+        option_value = "'#{option_value}" if option_value[0] != "'"
+        option_value = "#{option_value}'" if option_value[-1] != "'"
+        option_value = "#{option_name} #{option_value}"
+      end
+
+      [option_name.upcase, option_value]
+    end
+    tls_options = Hash[tls_options]
+
+    # SSL or X509 keyword turns into SPECIFIED if ISSUER, SUBJECT or CIPHER are, well, specified
+    if tls_options.key?('ISSUER') || tls_options.key?('SUBJECT') || tls_options.key?('CIPHER')
+      tls_options.delete_if { |keyword, _item| %w[ANY X509 SSL].include?(keyword) }
+    end
+
+    tls_options.values.join(' AND ')
+  end
 end
