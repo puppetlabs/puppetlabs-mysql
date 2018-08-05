@@ -72,7 +72,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     elsif newer_than( 'mysql' => '8.0' )
       self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH mysql_native_password AS '#{password_hash}'", 'system')
     else
-      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH PASSWORD '#{password_hash}'", 'system')
+      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'", 'system')
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     end
