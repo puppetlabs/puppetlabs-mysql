@@ -62,26 +62,32 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
     if !plugin.nil?
-      if plugin == 'sha256_password' && !password_hash.nil?
-        self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'", 'system')
+      if ( plugin == 'sha256_password' || plugin == 'caching_sha2_password' ) && !password_hash.nil?
+        self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' BY '#{password}'", 'system')
       else
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'", 'system')
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
+    elsif newer_than( 'mysql' => '8.0' )
+      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH mysql_native_password AS '#{password_hash}'", 'system')
     else
-      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'", 'system')
+      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH PASSWORD '#{password_hash}'", 'system')
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     end
-    # rubocop:disable Metrics/LineLength
-    self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
-    # rubocop:enable Metrics/LineLength
-    @property_hash[:max_user_connections] = max_user_connections
-    @property_hash[:max_connections_per_hour] = max_connections_per_hour
-    @property_hash[:max_queries_per_hour] = max_queries_per_hour
-    @property_hash[:max_updates_per_hour] = max_updates_per_hour
 
+    if newer_than( 'mysql' => '8.0' )
+      self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}'", 'system')
+    else
+      # rubocop:disable Metrics/LineLength
+      self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
+      # rubocop:enable Metrics/LineLength
+      @property_hash[:max_user_connections] = max_user_connections
+      @property_hash[:max_connections_per_hour] = max_connections_per_hour
+      @property_hash[:max_queries_per_hour] = max_queries_per_hour
+      @property_hash[:max_updates_per_hour] = max_updates_per_hour
+    end
     merged_tls_options = tls_options.join(' AND ')
     if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       self.class.mysql_caller("ALTER USER '#{merged_name}' REQUIRE #{merged_tls_options}", 'system')
