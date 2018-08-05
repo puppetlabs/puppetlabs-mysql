@@ -62,7 +62,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
     if !plugin.nil?
-      if ( plugin == 'sha256_password' || plugin == 'caching_sha2_password' ) && !password_hash.nil?
+      if (plugin == 'sha256_password' || plugin == 'caching_sha2_password') && !password_hash.nil?
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' BY '#{password}'", 'system')
       else
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'", 'system')
