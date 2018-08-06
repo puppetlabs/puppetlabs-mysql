@@ -69,17 +69,15 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
+    elsif newer_than('mysql' => '8.0')
+      self.class.mysql_caller("CREATE USER '#{merged_name} IDENTIFIED WITH mysql_native_password AS '#{password}'", 'system')
     else
-      if newer_than('mysql' => '8.0')
-        self.class.mysql_caller("CREATE USER '#{merged_name} IDENTIFIED WITH mysql_native_password AS '#{password}'", 'system')
-      # todo: testing
-      else
-        self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'", 'system')
-        @property_hash[:ensure] = :present
-        @property_hash[:password_hash] = password_hash
-      end
+      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'", 'system')
+      @property_hash[:ensure] = :present
+      @property_hash[:password_hash] = password_hash
     end
-    
+  end
+
     # rubocop:disable Metrics/LineLength
     self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
     # rubocop:enable Metrics/LineLength
