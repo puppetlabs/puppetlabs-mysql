@@ -405,20 +405,9 @@ The MySQL module has an example task that allows a user to execute arbitary SQL 
 
 ## Limitations
 
-This module has been tested on:
-
-* RedHat Enterprise Linux 5, 6, 7
-* Debian 8, 9
-* CentOS 5, 6, 7
-* Ubuntu 14.04, 16.04, 18.04
-* Scientific Linux 6, 7
-* SLES 11 SPI, 12
-
-Testing on other platforms has been minimal and cannot be guaranteed.
+For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-tomcat/blob/master/metadata.json)
 
 **Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
-
-Debian 9 compatibility has not been fully verified.
 
 ## Development
 
