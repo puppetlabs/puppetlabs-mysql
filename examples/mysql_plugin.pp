@@ -7,7 +7,7 @@ $validate_password_soname = $::osfamily ? {
   default => 'validate_password.so'
 }
 
-mysql::plugin { 'validate_password':
+mysql_plugin { 'validate_password':
   ensure => present,
   soname => $validate_password_soname,
 }
@@ -17,7 +17,7 @@ $auth_socket_soname = $::osfamily ? {
   default => 'auth_socket.so'
 }
 
-mysql::plugin { 'auth_socket':
+mysql_plugin { 'auth_socket':
   ensure => present,
   soname => $auth_socket_soname,
 }

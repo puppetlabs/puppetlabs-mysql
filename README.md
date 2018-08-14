@@ -13,6 +13,7 @@
     * [Specify passwords](#specify-passwords)
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
     * [Install MariaDB on Ubuntu](#install-mariadb-on-ubuntu)
+    * [Install Plugins](#install-plugins)
 4. [Reference - An under-the-hood peek at what the module is doing and how](REFERENCE.md)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -169,6 +170,8 @@ mysql::db { 'mydb':
   grant    => ['SELECT', 'UPDATE'],
 }
 ```
+
+If required, the password can also be an empty string to allow connections without an password.
 
 ### Install Percona server on CentOS
 
@@ -380,26 +383,31 @@ mysql::server::db:
 
 ```
 
+### Install Plugins
+
+Plugins can be installed by using the `mysql_plugin` defined type. See `examples/mysql_plugin.pp` for futher examples.
+
+```puppet
+class { 'mysql::server':
+  root_password => 'password'
+}
+
+mysql_plugin { 'auth_pam':
+  ensure => present,
+  soname => 'auth_pam.so',
+}
+
+```
+
 ### Tasks
 
 The MySQL module has an example task that allows a user to execute arbitary SQL against a database. Please refer to to the [PE documentation](https://puppet.com/docs/pe/2017.3/orchestrator/running_tasks.html) or [Bolt documentation](https://puppet.com/docs/bolt/latest/bolt.html) on how to execute a task.
 
 ## Limitations
 
-This module has been tested on:
-
-* RedHat Enterprise Linux 5, 6, 7
-* Debian 6, 7, 8
-* CentOS 5, 6, 7
-* Ubuntu 10.04, 12.04, 14.04, 16.04
-* Scientific Linux 5, 6
-* SLES 11
-
-Testing on other platforms has been minimal and cannot be guaranteed.
+For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-tomcat/blob/master/metadata.json)
 
 **Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
-
-Debian 9 compatibility has not been fully verified.
 
 ## Development
 

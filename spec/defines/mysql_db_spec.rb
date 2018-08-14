@@ -70,6 +70,16 @@ describe 'mysql::db', type: :define do
         params['dbname'] = 'real_db'
         is_expected.to contain_mysql_database('real_db')
       end
+
+      it 'uses tls_options for user when set' do
+        params['tls_options'] = ['SSL']
+        is_expected.to contain_mysql_user('testuser@localhost').with_tls_options(['SSL'])
+      end
+
+      it 'uses grant_options for grant when set' do
+        params['grant_options'] = ['GRANT']
+        is_expected.to contain_mysql_grant('testuser@localhost/test_db.*').with_options(['GRANT'])
+      end
     end
   end
 end

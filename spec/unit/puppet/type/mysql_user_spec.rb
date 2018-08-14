@@ -43,6 +43,11 @@ describe Puppet::Type.type(:mysql_user) do
       user[:password_hash] = 'foo'
       expect(user[:password_hash]).to eq('foo')
     end
+
+    it 'accepts an empty password' do
+      user[:password_hash] = ''
+      expect(user[:password_hash]).to eq('')
+    end
   end
 
   context 'using foo@LocalHost' do

@@ -15,19 +15,8 @@ if fact('osfamily') =~ %r{RedHat}
     plugin_lib = 'auth_pam.so'
   end
 elsif fact('osfamily') =~ %r{Debian}
-  if fact('operatingsystem') =~ %r{Debian}
-    if fact('operatingsystemrelease') =~ %r{^6\.}
-      # Only available plugin is innodb which is already loaded and not unload- or reload-able
-      plugin = nil
-    elsif fact('operatingsystemrelease') =~ %r{^7\.}
-      plugin     = 'example'
-      plugin_lib = 'ha_example.so'
-    end
-  elsif fact('operatingsystem') =~ %r{Ubuntu}
-    if fact('operatingsystemrelease') =~ %r{^10\.04}
-      # Only available plugin is innodb which is already loaded and not unload- or reload-able
-      plugin = nil
-    elsif fact('operatingsystemrelease') =~ %r{^16\.04}
+  if fact('operatingsystem') =~ %r{Ubuntu}
+    if fact('operatingsystemrelease') =~ %r{^16\.04|^18\.04}
       # On Xenial running 5.7.12, the example plugin does not appear to be available.
       plugin = 'validate_password'
       plugin_lib = 'validate_password.so'
@@ -48,7 +37,7 @@ describe 'mysql_plugin' do
           class { 'mysql::server': }
         MANIFEST
 
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
     end
 
@@ -60,7 +49,7 @@ describe 'mysql_plugin' do
           }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
 
       it 'finds the plugin #stdout' do

@@ -7,7 +7,7 @@ describe 'mysql_user' do
         class { 'mysql::server': }
     MANIFEST
     it 'works with no errors' do
-      apply_manifest(pp_one, catch_failures: true)
+      execute_manifest(pp_one, catch_failures: true)
     end
   end
 
@@ -19,7 +19,7 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp_two, catch_failures: true)
+        execute_manifest(pp_two, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
@@ -54,7 +54,7 @@ describe 'mysql_user' do
           }
         EOS
 
-        apply_manifest(pp, catch_failures: true)
+        execute_manifest(pp, catch_failures: true)
       end
 
       it 'has the correct plugin' do
@@ -88,7 +88,7 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp_three, catch_failures: true)
+        execute_manifest(pp_three, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
@@ -112,7 +112,7 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp_four, catch_failures: true)
+        execute_manifest(pp_four, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
@@ -150,7 +150,7 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp_five, catch_failures: true)
+        execute_manifest(pp_five, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
@@ -185,7 +185,7 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        apply_manifest(pp_six, catch_failures: true)
+        execute_manifest(pp_six, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
