@@ -36,9 +36,9 @@ group :development do
   gem "puppet-lint-i18n",                              require: false
 end
 group :system_tests do
-  gem "puppet-module-posix-system-r#{minor_version}",                            require: false, platforms: [:ruby]
-  gem "puppet-module-win-system-r#{minor_version}",                              require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "beaker-testmode_switcher",                                                require: false
+  gem "puppet-module-posix-system-r#{minor_version}", require: false, platforms: [:ruby]
+  gem "puppet-module-win-system-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "beaker-testmode_switcher",                     require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']

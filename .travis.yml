@@ -31,7 +31,7 @@ matrix:
     -
       bundler_args: 
       dist: trusty
-      env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet5 BEAKER_set=docker/ubuntu-14.04 BEAKER_TESTMODE=apply BEAKER_PUPPET_AGENT_VERSION=5.5.2
+      env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet5 BEAKER_set=docker/ubuntu-14.04 BEAKER_TESTMODE=apply
       rvm: 2.4.4
       script: bundle exec rake beaker
       services: docker
@@ -45,9 +45,9 @@ matrix:
       rvm: 2.1.9
 branches:
   only:
-    - master 
-    - /^v\d/ 
-    - release 
+    - master
+    - /^v\d/
+    - release
 notifications:
   email: false
 deploy:
