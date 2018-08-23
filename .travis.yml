@@ -45,9 +45,9 @@ matrix:
       rvm: 2.1.9
 branches:
   only:
-    - master 
-    - /^v\d/ 
-    - release 
+    - master
+    - /^v\d/
+    - release
 notifications:
   email: false
 deploy:
