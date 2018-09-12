@@ -1,4 +1,6 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
+source 'https://uJWbDvS5WfPWxmmH12xM@repo.fury.io/tphoney/'
+
 
 def location_for(place_or_version, fake_version = nil)
   if place_or_version =~ %r{\A(git[:@][^#]*)#(.*)}
@@ -29,15 +31,15 @@ group :development do
   gem "json_pure", '<= 2.0.1',                         require: false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
   gem "json", '= 1.8.1',                               require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.1.9')
   gem "json", '<= 2.0.4',                              require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.4.4')
-  gem "puppet-module-posix-default-r#{minor_version}", require: false, platforms: [:ruby]
-  gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
-  gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet-module-posix-default-r#{minor_version}", require: false, platforms: [:ruby], :source => "https://uJWbDvS5WfPWxmmH12xM@gem.fury.io/tphoney/"
+  gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby], :source => "https://uJWbDvS5WfPWxmmH12xM@gem.fury.io/tphoney/"
+  gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw], :source => "https://uJWbDvS5WfPWxmmH12xM@gem.fury.io/tphoney/"
+  gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw], :source => "https://uJWbDvS5WfPWxmmH12xM@gem.fury.io/tphoney/"
   gem "puppet-lint-i18n",                              require: false
 end
 group :system_tests do
-  gem "puppet-module-posix-system-r#{minor_version}", require: false, platforms: [:ruby]
-  gem "puppet-module-win-system-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet-module-posix-system-r#{minor_version}", require: false, platforms: [:ruby], :source => "https://uJWbDvS5WfPWxmmH12xM@gem.fury.io/tphoney/"
+  gem "puppet-module-win-system-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw], :source => "https://uJWbDvS5WfPWxmmH12xM@gem.fury.io/tphoney/"
   gem "beaker-testmode_switcher",                     require: false
 end
 
