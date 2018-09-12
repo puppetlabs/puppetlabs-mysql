@@ -1,4 +1,4 @@
-## [5.4.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/5.4.0)
+## 5.4.0
 
 ### Added
 
