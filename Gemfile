@@ -1,22 +1,15 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 def location_for(place_or_version, fake_version = nil)
-  if place_or_version =~ %r{\A(git[:@][^#]*)#(.*)}
-    [fake_version, { git: Regexp.last_match(1), branch: Regexp.last_match(2), require: false }].compact
-  elsif place_or_version =~ %r{\Afile:\/\/(.*)}
-    ['>= 0', { path: File.expand_path(Regexp.last_match(1)), require: false }]
+  git_url_regex = %r{\A(?<url>(https?|git)[:@][^#]*)(#(?<branch>.*))?}
+  file_url_regex = %r{\Afile:\/\/(?<path>.*)}
+
+  if place_or_version && (git_url = place_or_version.match(git_url_regex))
+    [fake_version, { git: git_url[:url], branch: git_url[:branch], require: false }].compact
+  elsif place_or_version && (file_url = place_or_version.match(file_url_regex))
+    ['>= 0', { path: File.expand_path(file_url[:path]), require: false }]
   else
     [place_or_version, { require: false }]
-  end
-end
-
-def gem_type(place_or_version)
-  if place_or_version =~ %r{\Agit[:@]}
-    :git
-  elsif !place_or_version.nil? && place_or_version.start_with?('file:')
-    :file
-  else
-    :gem
   end
 end
 
@@ -34,6 +27,7 @@ group :development do
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-lint-i18n",                              require: false
+  gem "github_changelog_generator",                    require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
 end
 group :system_tests do
   gem "puppet-module-posix-system-r#{minor_version}", require: false, platforms: [:ruby]
@@ -42,7 +36,6 @@ group :system_tests do
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
-puppet_type = gem_type(puppet_version)
 facter_version = ENV['FACTER_GEM_VERSION']
 hiera_version = ENV['HIERA_GEM_VERSION']
 

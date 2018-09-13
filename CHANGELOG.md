@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [6.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.0.0) (2018-07-19)
+## [6.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.1.0) (2018-09-12)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/6.0.0...6.1.0)
+
+### Added
+
+- pdksync - \(MODULES-7705\) - Bumping stdlib dependency from \< 5.0.0 to \< 6.0.0 [\#1114](https://github.com/puppetlabs/puppetlabs-mysql/pull/1114) ([pmcmaw](https://github.com/pmcmaw))
+
+### Fixed
+
+- \(MODULES-6981\) Do not try to read ~root/.my.cnf when calling "mysqld -V" [\#1063](https://github.com/puppetlabs/puppetlabs-mysql/pull/1063) ([simondeziel](https://github.com/simondeziel))
+
+## [6.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.0.0) (2018-08-01)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/5.4.0...6.0.0)
 
@@ -12,6 +24,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 
+- \(FM-5985\) - Addition of support for Ubuntu 18.04 to mysql [\#1104](https://github.com/puppetlabs/puppetlabs-mysql/pull/1104) ([david22swan](https://github.com/david22swan))
 - \(MODULES-7439\) - Implementing beaker-testmode\_switcher [\#1095](https://github.com/puppetlabs/puppetlabs-mysql/pull/1095) ([pmcmaw](https://github.com/pmcmaw))
 - Support for optional\_\_args and prescript to mysqldump backup provider [\#1083](https://github.com/puppetlabs/puppetlabs-mysql/pull/1083) ([eputnam](https://github.com/eputnam))
 - Allow empty user passwords [\#1075](https://github.com/puppetlabs/puppetlabs-mysql/pull/1075) ([disappear89](https://github.com/disappear89))
@@ -26,7 +39,7 @@ All notable changes to this project will be documented in this file. The format 
 - \[FM-7045\] Fix to allow Debian 9 test's to run clean [\#1088](https://github.com/puppetlabs/puppetlabs-mysql/pull/1088) ([david22swan](https://github.com/david22swan))
 - \(MODULES-7198\) Fix DROP USER IF EXISTS on mariadb [\#1082](https://github.com/puppetlabs/puppetlabs-mysql/pull/1082) ([hunner](https://github.com/hunner))
 
-## [5.4.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/5.4.0)
+## 5.4.0
 
 ### Added
 
