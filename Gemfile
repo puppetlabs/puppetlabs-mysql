@@ -1,15 +1,22 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 def location_for(place_or_version, fake_version = nil)
-  git_url_regex = %r{\A(?<url>(https?|git)[:@][^#]*)(#(?<branch>.*))?}
-  file_url_regex = %r{\Afile:\/\/(?<path>.*)}
-
-  if place_or_version && (git_url = place_or_version.match(git_url_regex))
-    [fake_version, { git: git_url[:url], branch: git_url[:branch], require: false }].compact
-  elsif place_or_version && (file_url = place_or_version.match(file_url_regex))
-    ['>= 0', { path: File.expand_path(file_url[:path]), require: false }]
+  if place_or_version =~ %r{\A(git[:@][^#]*)#(.*)}
+    [fake_version, { git: Regexp.last_match(1), branch: Regexp.last_match(2), require: false }].compact
+  elsif place_or_version =~ %r{\Afile:\/\/(.*)}
+    ['>= 0', { path: File.expand_path(Regexp.last_match(1)), require: false }]
   else
     [place_or_version, { require: false }]
+  end
+end
+
+def gem_type(place_or_version)
+  if place_or_version =~ %r{\Agit[:@]}
+    :git
+  elsif !place_or_version.nil? && place_or_version.start_with?('file:')
+    :file
+  else
+    :gem
   end
 end
 
@@ -36,6 +43,7 @@ group :system_tests do
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
+puppet_type = gem_type(puppet_version)
 facter_version = ENV['FACTER_GEM_VERSION']
 hiera_version = ENV['HIERA_GEM_VERSION']
 
