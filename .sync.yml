@@ -22,13 +22,20 @@ Gemfile:
       - gem: beaker-testmode_switcher
     ':development':
       - gem: puppet-lint-i18n
+  optional:
+    ':development':
+      - gem: 'github_changelog_generator'
+        git: 'https://github.com/skywinder/github-changelog-generator'
+        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
 
 appveyor.yml:
-  delete: true
+  unmanaged: true
 
 Rakefile:
   requires:
     - puppet_pot_generator/rake_tasks
+  changelog_user: 'puppetlabs'
 
 spec/spec_helper.rb:
   spec_overrides:
