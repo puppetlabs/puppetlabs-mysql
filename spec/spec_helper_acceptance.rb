@@ -31,7 +31,8 @@ RSpec.configure do |c|
     run_puppet_access_login(user: 'admin') if pe_install? && puppet_version =~ %r{(5\.\d\.\d)}
     hosts.each do |host|
       # This will be removed, this is temporary to test localisation.
-      if (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && (puppet_version >= '4.10.5' && puppet_version < '5.2.0')
+      if (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && (Gem::Version.new(puppet_version) >= Gem::Version.new('4.10.5') &&
+          Gem::Version.new(puppet_version) < Gem::Version.new('5.2.0'))
         on(host, 'mkdir /opt/puppetlabs/puppet/share/locale/ja')
         on(host, 'touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
       end
