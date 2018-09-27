@@ -2,16 +2,25 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [6.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.1.0) (2018-09-12)
+## [6.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.2.0) (2018-09-27)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/6.0.0...6.1.0)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/6.1.0...6.2.0)
 
 ### Added
 
-- pdksync - \(MODULES-7705\) - Bumping stdlib dependency from \< 5.0.0 to \< 6.0.0 [\#1114](https://github.com/puppetlabs/puppetlabs-mysql/pull/1114) ([pmcmaw](https://github.com/pmcmaw))
+- pdksync - \(MODULES-6805\) metadata.json shows support for puppet 6 [\#1127](https://github.com/puppetlabs/puppetlabs-mysql/pull/1127) ([tphoney](https://github.com/tphoney))
 
 ### Fixed
 
+- \(maint\) - Change versioning comparison [\#1123](https://github.com/puppetlabs/puppetlabs-mysql/pull/1123) ([eimlav](https://github.com/eimlav))
+
+## [6.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.1.0) (2018-09-13)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/6.0.0...6.1.0)
+
+### Fixed
+
+- pdksync - \(MODULES-7705\) - Bumping stdlib dependency from \< 5.0.0 to \< 6.0.0 [\#1114](https://github.com/puppetlabs/puppetlabs-mysql/pull/1114) ([pmcmaw](https://github.com/pmcmaw))
 - \(MODULES-6981\) Do not try to read ~root/.my.cnf when calling "mysqld -V" [\#1063](https://github.com/puppetlabs/puppetlabs-mysql/pull/1063) ([simondeziel](https://github.com/simondeziel))
 
 ## [6.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.0.0) (2018-08-01)
