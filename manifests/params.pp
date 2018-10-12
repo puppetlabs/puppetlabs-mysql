@@ -18,6 +18,7 @@ class mysql::params {
   $client_package_manage  = true
   $create_root_user       = true
   $create_root_my_cnf     = true
+  $safe_updates           = false
   # mysql::bindings
   $bindings_enable             = false
   $java_package_ensure         = 'present'

@@ -23,7 +23,7 @@ describe 'mysql::deepmerge' do
   index_values = ['one', 'two', 'three']
   expected_values_one = ['1', '2', '2']
   it 'is able to mysql_deepmerge two hashes' do
-    new_hash = subject.execute({ 'one' => '1', 'two' => '1' }, 'two' => '2', 'three' => '2')
+    new_hash = subject.execute({ 'one' => 1, 'two' => 1 }, 'two' => 2, 'three' => 2)
     index_values.each_with_index do |index, expected|
       expect(new_hash[index]).to eq(expected_values_one[expected])
     end
