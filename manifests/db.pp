@@ -70,11 +70,19 @@ define mysql::db (
   }
   ensure_resource('mysql_database', $dbname, $db_resource)
 
-  $user_resource = {
-    ensure        => $ensure,
-    password_hash => mysql::password($password),
-    tls_options   => $tls_options,
+  if $tls_options != undef {
+    $user_resource = {
+      ensure        => $ensure,
+      password_hash => mysql::password($password),
+      tls_options   => $tls_options,
+    }
+  } else {
+    $user_resource = {
+      ensure        => $ensure,
+      password_hash => mysql::password($password),
+    }
   }
+  
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
   if $ensure == 'present' {
