@@ -82,7 +82,7 @@ define mysql::db (
       password_hash => mysql::password($password),
     }
   }
-  
+
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
   if $ensure == 'present' {
