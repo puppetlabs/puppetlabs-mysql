@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [7.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/7.0.0) (2018-10-25)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/6.2.0...7.0.0)
+
+### Changed
+
+- \(MODULES-6923\) remove staging module [\#1115](https://github.com/puppetlabs/puppetlabs-mysql/pull/1115) ([tphoney](https://github.com/tphoney))
+
+### Added
+
+- \(MODULES-7857\) Support user creation on galera [\#1130](https://github.com/puppetlabs/puppetlabs-mysql/pull/1130) ([MaxFedotov](https://github.com/MaxFedotov))
+- MySQL 8 compatibility in user management [\#1092](https://github.com/puppetlabs/puppetlabs-mysql/pull/1092) ([zpetr](https://github.com/zpetr))
+
+### Fixed
+
+- \(MODULES-7487\) Check authentication string for user password on MariaDB 10.2.16+ [\#1135](https://github.com/puppetlabs/puppetlabs-mysql/pull/1135) ([gguillotte](https://github.com/gguillotte))
+
 ## [6.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/6.2.0) (2018-09-27)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/6.1.0...6.2.0)
