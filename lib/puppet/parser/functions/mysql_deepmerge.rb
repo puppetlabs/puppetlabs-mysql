@@ -1,3 +1,4 @@
+require_relative '../../../puppet_x/puppetlabs/mysql_utilities'
 module Puppet::Parser::Functions
   newfunction(:mysql_deepmerge, type: :rvalue, doc: <<-'ENDHEREDOC') do |args|
     @summary Recursively merges two or more hashes together and returns the resulting hash.
@@ -32,27 +33,8 @@ module Puppet::Parser::Functions
       # Now we have to traverse our hash assigning our non-hash values
       # to the matching keys in our result while following our hash values
       # and repeating the process.
-      overlay(result, arg)
+      PuppetX::Puppetlabs::MysqlUtilities.overlay(result, arg)
     end
     return(result)
-  end
-end
-
-def normalized?(hash, key)
-  return true if hash.key?(key)
-  return false unless key =~ %r{-|_}
-  other_key = key.include?('-') ? key.tr('-', '_') : key.tr('_', '-')
-  return false unless hash.key?(other_key)
-  hash[key] = hash.delete(other_key)
-  true
-end
-
-def overlay(hash1, hash2)
-  hash2.each do |key, value|
-    if normalized?(hash1, key) && value.is_a?(Hash) && hash1[key].is_a?(Hash)
-      overlay(hash1[key], value)
-    else
-      hash1[key] = value
-    end
   end
 end
