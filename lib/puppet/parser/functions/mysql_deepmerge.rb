@@ -1,3 +1,7 @@
+if Puppet::Util::Package.versioncmp(Puppet.version, '5.5.6') > 0
+   raise Puppet::ParseError, "this function is not functional on #{Puppet.version}. Please port your code to use the 'mysql::deepmerge' function instead."
+end
+
 module Puppet::Parser::Functions
   newfunction(:mysql_deepmerge, type: :rvalue, doc: <<-'ENDHEREDOC') do |args|
     @summary Recursively merges two or more hashes together and returns the resulting hash.
