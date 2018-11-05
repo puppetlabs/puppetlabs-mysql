@@ -133,7 +133,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     if mysqld_version.nil?
       # default ... if mysqld_version does not work
       self.class.mysql_caller("SET PASSWORD FOR #{merged_name} = '#{string}'", 'system')
-    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       raise ArgumentError, _('Only mysql_native_password (*ABCD...XXX) hashes are supported.') unless string =~ %r{^\*|^$}
       self.class.mysql_caller("ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'", 'system')
     else
