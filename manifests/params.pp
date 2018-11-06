@@ -455,12 +455,18 @@ class mysql::params {
     },
     'mysqld-5.5'       => {
       'myisam-recover' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld-5.6'              => {
       'myisam-recover-options' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld-5.7'              => {
       'myisam-recover-options' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld'                  => {
       'basedir'               => $mysql::params::basedir,
