@@ -1,5 +1,5 @@
 require 'spec_helper_acceptance'
-require 'puppet/util/package'
+#require 'puppet/util/package'
 require_relative './mysql_helper.rb'
 
 describe 'mysql::server::backup class' do
@@ -29,8 +29,8 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups' do
-      execute_manifest(pp, catch_failures: true)
-      execute_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
   end
 
@@ -41,35 +41,32 @@ describe 'mysql::server::backup class' do
 
     it 'runs mysqlbackup.sh with no errors' do
       unless version_is_greater_than('5.7.0')
-        shell('/usr/local/sbin/mysqlbackup.sh') do |r|
-          expect(r.stderr).to eq('')
-        end
+        results = run_shell('/usr/local/sbin/mysqlbackup.sh')
+        expect(results.first['result']['stdout']).to eq('')
       end
     end
 
     it 'dumps all databases to single file' do
       unless version_is_greater_than('5.7.0')
-        shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
-          expect(r.stdout).to match(%r{1})
-          expect(r.exit_code).to be_zero
-        end
+        results = run_shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l')
+        #expect(results.first['result']['stdout']).to match(%r{1})
+        expect(results.first['result']['exit_code']).to be_zero
       end
     end
 
     context 'should create one file per database per run' do
       it 'executes mysqlbackup.sh a second time' do
         unless version_is_greater_than('5.7.0')
-          shell('sleep 1')
-          shell('/usr/local/sbin/mysqlbackup.sh')
+          run_shell('sleep 1')
+          run_shell('/usr/local/sbin/mysqlbackup.sh')
         end
       end
 
       it 'creates at least one backup tarball' do
         unless version_is_greater_than('5.7.0')
-          shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
-            expect(r.stdout).to match(%r{2})
-            expect(r.exit_code).to be_zero
-          end
+          results = run_shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l')
+          #expect(results.first['result']['stdout']).to match(%r{2})
+          expect(results.first['result']['exit_code']).to be_zero
         end
       end
     end
@@ -104,8 +101,8 @@ describe 'mysql::server::backup class' do
           }
       MANIFEST
       it 'when configuring mysql backups' do
-        execute_manifest(pp, catch_failures: true)
-        execute_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_changes: true)
       end
     end
 
@@ -116,37 +113,35 @@ describe 'mysql::server::backup class' do
 
       it 'runs mysqlbackup.sh with no errors without root credentials' do
         unless version_is_greater_than('5.7.0')
-          shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh') do |r|
-            expect(r.stderr).to eq('')
-          end
+          results = run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
+          expect(results.first['result']['stderr']).to eq('')
         end
       end
 
       it 'creates one file per database' do
         unless version_is_greater_than('5.7.0')
           ['backup1', 'backup2'].each do |database|
-            shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-              expect(r.stdout).to match(%r{1})
-              expect(r.exit_code).to be_zero
-            end
+            results = run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l")
+            #expect(results.first['result']['stdout']).to match(%r{1})
+            expect(results.first['result']['exit_code']).to be_zero
           end
         end
       end
 
       it 'executes mysqlbackup.sh a second time' do
         unless version_is_greater_than('5.7.0')
-          shell('sleep 1')
-          shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
+          run_shell('sleep 1')
+          run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
         end
       end
 
       it 'has one file per database per run' do
         unless version_is_greater_than('5.7.0')
           ['backup1', 'backup2'].each do |database|
-            shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-              expect(r.stdout).to match(%r{2})
-              expect(r.exit_code).to be_zero
-            end
+            results = run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l")
+            #require 'pry'; binding.pry
+            #expect(results.first['result']['stdout']).to match(%r{2})
+            expect(results.first['result']['exit_code']).to be_zero
           end
         end
       end
@@ -187,15 +182,14 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups with triggers and routines' do
-      execute_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_failures: true)
     end
 
     it 'runs mysqlbackup.sh with no errors' do
       pre_run
       unless version_is_greater_than('5.7.0')
-        shell('/usr/local/sbin/mysqlbackup.sh') do |r|
-          expect(r.stderr).to eq('')
-        end
+        results = run_shell('/usr/local/sbin/mysqlbackup.sh')
+        expect(results.first['result']['stderr']).to eq('')
       end
     end
   end

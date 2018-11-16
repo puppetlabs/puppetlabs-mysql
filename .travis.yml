@@ -23,17 +23,42 @@ matrix:
     -
       bundler_args: 
       dist: trusty
-      env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet6 BEAKER_set=docker/centos-7 BEAKER_TESTMODE=apply
+      env: PLATFORM=ubuntu:14_16_18
       rvm: 2.5.0
-      script: bundle exec rake beaker
+      script:
+      - bundle exec rake 'waffle:provision[docker, ubuntu:14.04]'
+      - bundle exec rake 'waffle:provision[docker, ubuntu:16.04]'
+      - bundle exec rake 'waffle:provision[docker, ubuntu:18.04]' 
+      - bundle exec rake waffle:install_agent
+      - bundle exec rake waffle:install_module
+      - bundle exec rake acceptance:all -j10 -m
       services: docker
       sudo: required
     -
       bundler_args: 
       dist: trusty
-      env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet6 BEAKER_set=docker/ubuntu-14.04 BEAKER_TESTMODE=apply
+      env: PLATFORM=centos:6_7
       rvm: 2.5.0
-      script: bundle exec rake beaker
+      script:
+      - bundle exec rake 'waffle:provision[docker, centos:6]'
+      - bundle exec rake 'waffle:provision[docker, centos:7]'
+      - bundle exec rake waffle:install_agent
+      - bundle exec rake waffle:install_module
+      - bundle exec rake acceptance:all -j10 -m
+      services: docker
+      sudo: required
+    -
+      bundler_args:
+      dist: trusty
+      env: PLATFORM=debian:8_9
+      rvm: 2.5.0
+      script:
+      - bundle exec rake 'waffle:provision[docker, debian:8]'
+      - bundle exec rake 'waffle:provision[docker, debian:9]'
+      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+      - bundle exec rake waffle:install_agent
+      - bundle exec rake waffle:install_module
+      - bundle exec rake acceptance:all -j10 -m
       services: docker
       sudo: required
     -
@@ -43,9 +68,6 @@ matrix:
     -
       env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
       rvm: 2.4.4
-    -
-      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec
-      rvm: 2.1.9
 branches:
   only:
     - master

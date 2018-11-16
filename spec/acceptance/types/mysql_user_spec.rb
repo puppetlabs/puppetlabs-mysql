@@ -7,7 +7,7 @@ describe 'mysql_user' do
         class { 'mysql::server': }
     MANIFEST
     it 'works with no errors' do
-      execute_manifest(pp_one, catch_failures: true)
+      apply_manifest(pp_one, catch_failures: true)
     end
   end
 
@@ -19,27 +19,27 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        execute_manifest(pp_two, catch_failures: true)
+        apply_manifest(pp_two, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^1$})
         end
       end
       it 'finds the user #stderr' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
 
       it 'has no SSL options #stdout' do
-        shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^\s*$})
         end
       end
       it 'has no SSL options #stderr' do
-        shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
@@ -54,11 +54,11 @@ describe 'mysql_user' do
           }
         EOS
 
-        execute_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_failures: true)
       end
 
       it 'has the correct plugin' do
-        shell("mysql -NBe \"select plugin from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select plugin from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stdout.rstrip).to eq('auth_socket')
           expect(r.stderr).to be_empty
         end
@@ -71,7 +71,7 @@ describe 'mysql_user' do
                 else
                   'password'
                 end
-        shell("mysql -NBe \"select #{table} from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select #{table} from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stdout.rstrip).to be_empty
           expect(r.stderr).to be_empty
         end
@@ -88,16 +88,16 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        execute_manifest(pp_three, catch_failures: true)
+        apply_manifest(pp_three, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp-dash@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp-dash@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^1$})
         end
       end
       it 'finds the user #stderr' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp-dash@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp-dash@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
@@ -112,16 +112,16 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        execute_manifest(pp_four, catch_failures: true)
+        apply_manifest(pp_four, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^1$})
         end
       end
       it 'finds the user #stderr' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
@@ -130,14 +130,12 @@ describe 'mysql_user' do
   context 'using resource should throw no errors' do
     describe 'find users' do
       it do
-        on default, puppet('resource mysql_user'), catch_failures: true do |r|
-          expect(r.stdout).not_to match(%r{Error:})
-        end
+        results = run_shell('puppet resource mysql_user')
+        expect(results.first['result']['stdout']).not_to match(%r{Error:})
       end
       it do
-        on default, puppet('resource mysql_user'), catch_failures: true do |r|
-          expect(r.stdout).not_to match(%r{must be properly quoted, invalid character:})
-        end
+        results = run_shell('puppet resource mysql_user')
+        expect(results.first['result']['stdout']).not_to match(%r{must be properly quoted, invalid character:})
       end
     end
   end
@@ -150,27 +148,27 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        execute_manifest(pp_five, catch_failures: true)
+        apply_manifest(pp_five, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^1$})
         end
       end
       it 'finds the user #stderr' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
 
       it 'shows correct ssl_type #stdout' do
-        shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^ANY$})
         end
       end
       it 'shows correct ssl_type #stderr' do
-        shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-ssl@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
@@ -185,27 +183,27 @@ describe 'mysql_user' do
           }
       MANIFEST
       it 'works without errors' do
-        execute_manifest(pp_six, catch_failures: true)
+        apply_manifest(pp_six, catch_failures: true)
       end
 
       it 'finds the user #stdout' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^1$})
         end
       end
       it 'finds the user #stderr' do
-        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
 
       it 'shows correct ssl_type #stdout' do
-        shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
           expect(r.stdout).to match(%r{^X509$})
         end
       end
       it 'shows correct ssl_type #stderr' do
-        shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
+        run_shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-x509@localhost'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
