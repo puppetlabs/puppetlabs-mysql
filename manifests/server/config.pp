@@ -24,7 +24,7 @@ class mysql::server::config {
 
     # on some systems this is /etc/my.cnf.d, while Debian has /etc/mysql/conf.d and FreeBSD something in /usr/local. For the latter systems,
     # managing this basedir is also required, to have it available before the package is installed.
-    $includeparentdir = mysql::dirname($includedir)
+    $includeparentdir = dirname($includedir)
     if $includeparentdir != '/' and $includeparentdir != '/etc' {
       file { $includeparentdir:
         ensure => directory,
@@ -43,9 +43,9 @@ class mysql::server::config {
 
     # on mariadb systems, $includedir is not defined, but /etc/my.cnf.d has
     # to be managed to place the server.cnf there
-    $configparentdir = mysql::dirname($mysql::server::config_file)
+    $configparentdir = dirname($mysql::server::config_file)
     if $configparentdir != '/' and $configparentdir != '/etc' and $configparentdir
-        != $includedir and $configparentdir != mysql::dirname($includedir) {
+        != $includedir and $configparentdir != dirname($includedir) {
       file { $configparentdir:
         ensure => directory,
         mode   => '0755',
