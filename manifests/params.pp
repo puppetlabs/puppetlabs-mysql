@@ -256,6 +256,7 @@ class mysql::params {
 
     'Gentoo': {
       $client_package_name = 'virtual/mysql'
+      $includedir          = undef
       $server_package_name = 'virtual/mysql'
       $basedir             = '/usr'
       $config_file         = '/etc/mysql/my.cnf'
