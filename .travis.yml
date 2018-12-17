@@ -1,5 +1,4 @@
 ---
-sudo: false
 dist: trusty
 language: ruby
 cache: bundler
@@ -13,7 +12,7 @@ script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
-  - 2.5.0
+  - 2.5.1
 env:
   global:
     - BEAKER_PUPPET_COLLECTION=puppet6 PUPPET_GEM_VERSION="~> 6.0"
@@ -24,7 +23,7 @@ matrix:
       bundler_args: 
       dist: trusty
       env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet6 BEAKER_set=docker/centos-7 BEAKER_TESTMODE=apply
-      rvm: 2.5.0
+      rvm: 2.5.1
       script: bundle exec rake beaker
       services: docker
       sudo: required
@@ -32,7 +31,7 @@ matrix:
       bundler_args: 
       dist: trusty
       env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet6 BEAKER_set=docker/ubuntu-14.04 BEAKER_TESTMODE=apply
-      rvm: 2.5.0
+      rvm: 2.5.1
       script: bundle exec rake beaker
       services: docker
       sudo: required
