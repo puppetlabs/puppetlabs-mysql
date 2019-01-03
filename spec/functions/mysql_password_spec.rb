@@ -4,6 +4,7 @@ describe 'mysql::password' do
   it 'exists' do
     is_expected.not_to eq(nil)
   end
+  
 
   it 'raises a ArgumentError if there is less than 1 arguments' do
     is_expected.to run.with_params.and_raise_error(ArgumentError)
