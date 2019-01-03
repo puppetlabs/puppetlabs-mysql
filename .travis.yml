@@ -3,6 +3,9 @@ dist: trusty
 language: ruby
 cache: bundler
 before_install:
+  - if [ $BUNDLER_VERSION ]; then
+      gem install -v $BUNDLER_VERSION bundler --no-rdoc --no-ri;
+    fi
   - bundle -v
   - rm -f Gemfile.lock
   - gem update --system $RUBYGEMS_VERSION
@@ -43,7 +46,7 @@ matrix:
       env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
       rvm: 2.4.4
     -
-      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec RUBYGEMS_VERSION=2.7.8
+      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec RUBYGEMS_VERSION=2.7.8 BUNDLER_VERSION=1.17.3
       rvm: 2.1.9
 branches:
   only:
