@@ -1143,8 +1143,7 @@ A wrapper for the 4.x function 'mysql::password' to bridge the gap between
 
 The mysql_password function.
 
-Returns: `String` hash
-The mysql password hash from the 4.x function mysql::password.
+Returns: `String` The mysql password hash from the 4.x function mysql::password.
 
 ##### `password`
 

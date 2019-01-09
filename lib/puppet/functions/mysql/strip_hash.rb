@@ -5,7 +5,7 @@ Puppet::Functions.create_function(:'mysql::strip_hash') do
   # @param hash
   #   Hash to be stripped
   #
-  # @return hash 
+  # @return hash
   #   The given hash with all blank entries removed
   #
   dispatch :strip_hash do
