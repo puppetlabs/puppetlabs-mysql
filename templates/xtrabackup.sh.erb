@@ -18,6 +18,10 @@
   <%- _innobackupex_args = '--user="' + @backupuser + '" --password="' + @backuppassword + '"' -%>
 <%- end -%>
 
+<%- if @backupcompress -%>
+  <%- _innobackupex_args = _innobackupex_args + '--compress' -%>
+<%- end -%>
+
 <%- if @backupdatabases and @backupdatabases.is_a?(Array) and !@backupdatabases.empty? -%>
   <%- _innobackupex_args = _innobackupex_args + ' --databases="' + @backupdatabases.join(' ') + '"' -%>
 <%- end -%>
