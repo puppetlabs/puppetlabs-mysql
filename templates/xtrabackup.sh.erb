@@ -19,7 +19,7 @@
 <%- end -%>
 
 <%- if @backupcompress -%>
-  <%- _innobackupex_args = '--compress' -%>
+  <%- _innobackupex_args = _innobackupex_args + '--compress' -%>
 <%- end -%>
 
 <%- if @backupdatabases and @backupdatabases.is_a?(Array) and !@backupdatabases.empty? -%>
