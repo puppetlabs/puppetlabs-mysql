@@ -13,6 +13,7 @@
     * [Specify passwords](#specify-passwords)
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
     * [Install MariaDB on Ubuntu](#install-mariadb-on-ubuntu)
+    * [Install Plugins](#install-plugins)
 4. [Reference - An under-the-hood peek at what the module is doing and how](REFERENCE.md)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -126,6 +127,8 @@ If you set the sql parameter to a file when creating a database, the file is imp
 
 For large sql files, increase the `import_timeout` parameter, which defaults to 300 seconds.
 
+If you have installed the mysql client in a non standard bin/sbin path you can set this with `mysql_exec_path` .
+
 ```puppet
 mysql::db { 'mydb':
   user     => 'myuser',
@@ -135,6 +138,7 @@ mysql::db { 'mydb':
   sql      => '/path/to/sqlfile.gz',
   import_cat_cmd => 'zcat',
   import_timeout => 900,
+  mysql_exec_path => '/opt/rh/rh-myql57/root/bin'
 }
 ```
 
@@ -382,26 +386,139 @@ mysql::server::db:
 
 ```
 
+### Install Plugins
+
+Plugins can be installed by using the `mysql_plugin` defined type. See `examples/mysql_plugin.pp` for futher examples.
+## Reference
+
+### Classes
+
+#### Public classes
+
+* [`mysql::server`](#mysqlserver): Installs and configures MySQL.
+* [`mysql::server::monitor`](#mysqlservermonitor): Sets up a monitoring user.
+* [`mysql::server::mysqltuner`](#mysqlservermysqltuner): Installs MySQL tuner script.
+* [`mysql::server::backup`](#mysqlserverbackup): Sets up MySQL backups via cron.
+* [`mysql::bindings`](#mysqlbindings): Installs various MySQL language bindings.
+* [`mysql::client`](#mysqlclient): Installs MySQL client (for non-servers).
+
+#### Private classes
+
+* `mysql::server::install`: Installs packages.
+* `mysql::server::installdb`: Implements setup of mysqld data directory (e.g. /var/lib/mysql)
+* `mysql::server::config`: Configures MYSQL.
+* `mysql::server::service`: Manages service.
+* `mysql::server::account_security`: Deletes default MySQL accounts.
+* `mysql::server::root_password`: Sets MySQL root password.
+* `mysql::server::providers`: Creates users, grants, and databases.
+* `mysql::bindings::client_dev`: Installs MySQL client development package.
+* `mysql::bindings::daemon_dev`: Installs MySQL daemon development package.
+* `mysql::bindings::java`: Installs Java bindings.
+* `mysql::bindings::perl`: Installs Perl bindings.
+* `mysql::bindings::php`: Installs PHP bindings.
+* `mysql::bindings::python`: Installs Python bindings.
+* `mysql::bindings::ruby`: Installs Ruby bindings.
+* `mysql::client::install`:  Installs MySQL client.
+* `mysql::backup::mysqldump`: Implements mysqldump backups.
+* `mysql::backup::mysqlbackup`: Implements backups with Oracle MySQL Enterprise Backup.
+* `mysql::backup::xtrabackup`: Implements backups with XtraBackup from Percona.
+
+### Parameters
+
+#### mysql::server
+
+##### `create_root_user`
+
+Whether root user should be created.
+
+Valid values are `true`, `false`.
+
+Defaults to `true`.
+
+This is useful for a cluster setup with Galera. The root user has to be created only once. You can set this parameter true on one node and set it to false on the remaining nodes.
+
+#####  `create_root_my_cnf`
+
+Whether to create `/root/.my.cnf`.
+
+Valid values are `true`, `false`.
+
+Defaults to `true`.
+
+`create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. You can use this for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
+
+#####  `root_password`
+
+The MySQL root password. Puppet attempts to set the root password and update `/root/.my.cnf` with it.
+
+This is required if `create_root_user` or `create_root_my_cnf` are true. If `root_password` is 'UNSET', then `create_root_user` and `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created.
+
+Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password.
+
+##### `old_root_password`
+
+This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter above for details on changing the root password.
+
+#####  `create_root_login_file`
+
+Whether to create `/root/.mylogin.cnf` when using mysql 5.6.6+.
+
+Valid values are `true`, `false`.
+
+Defaults to `false`.
+
+`create_root_login_file` will put a copy of your existing `.mylogin.cnf` in the  `/root/.mylogin.cnf` location.
+
+When set to 'true', this option also requires the `login_file` option.
+
+The `login_file` option is required when set to true.
+
+#### `login_file`
+
+Whether to put the `/root/.mylogin.cnf` in place.
+
+You need to create the `.mylogin.cnf` file with `mysql_config_editor`, this tool comes with mysql 5.6.6+.
+
+The created .mylogin.cnf needs to be put under files in your module, see example below on how to use this.
+
+When the `/root/.mylogin.cnf` exists the environment variable `MYSQL_TEST_LOGIN_FILE` will be set.
+
+This is required if `create_root_user` and `create_root_login_file` are true. If `root_password` is 'UNSET', then `create_root_user` and `create_root_login_file` are assumed to be false --- that is, the MySQL root user and `/root/.mylogin.cnf` are not created.
+
+```puppet
+class { '::mysql::server':
+root_password          => 'password',
+create_root_my_cnf     => false,
+create_root_login_file => true,
+login_file             => "puppet:///modules/${module_name}/mylogin.cnf",
+}
+```
+
+##### `override_options`
+
+Specifies override options to pass into MySQL. Structured like a hash in the my.cnf file:
+
+```puppet
+class { 'mysql::server':
+  root_password => 'password'
+}
+
+mysql_plugin { 'auth_pam':
+  ensure => present,
+  soname => 'auth_pam.so',
+}
+
+```
+
 ### Tasks
 
 The MySQL module has an example task that allows a user to execute arbitary SQL against a database. Please refer to to the [PE documentation](https://puppet.com/docs/pe/2017.3/orchestrator/running_tasks.html) or [Bolt documentation](https://puppet.com/docs/bolt/latest/bolt.html) on how to execute a task.
 
 ## Limitations
 
-This module has been tested on:
-
-* RedHat Enterprise Linux 5, 6, 7
-* Debian 6, 7, 8
-* CentOS 5, 6, 7
-* Ubuntu 10.04, 12.04, 14.04, 16.04
-* Scientific Linux 5, 6
-* SLES 11
-
-Testing on other platforms has been minimal and cannot be guaranteed.
+For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-mysql/blob/master/metadata.json)
 
 **Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
-
-Debian 9 compatibility has not been fully verified.
 
 ## Development
 

@@ -174,6 +174,15 @@ usvn_user@localhost
       provider.expects(:exists?).returns(true)
       expect(provider.create).to be_truthy
     end
+    it 'creates a user using IF NOT EXISTS' do
+      provider.class.instance_variable_set(:@mysqld_version_string, '5.7.6')
+
+      provider.class.expects(:mysql_caller).with("CREATE USER IF NOT EXISTS 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system') # rubocop:disable Metrics/LineLength
+      provider.class.expects(:mysql_caller).with("ALTER USER IF EXISTS 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Metrics/LineLength
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system')
+      provider.expects(:exists?).returns(true)
+      expect(provider.create).to be_truthy
+    end
   end
 
   describe 'destroy' do

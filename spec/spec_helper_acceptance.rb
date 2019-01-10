@@ -1,3 +1,5 @@
+require 'beaker-pe'
+require 'beaker-puppet'
 require 'puppet'
 require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
@@ -8,6 +10,7 @@ require 'beaker/testmode_switcher'
 require 'beaker/testmode_switcher/dsl'
 
 run_puppet_install_helper
+configure_type_defaults_on(hosts)
 install_ca_certs unless pe_install?
 install_bolt_on(hosts) unless pe_install?
 install_module_on(hosts)
@@ -25,10 +28,12 @@ RSpec.configure do |c|
 
   # Configure all nodes in nodeset
   c.before :suite do
-    run_puppet_access_login(user: 'admin') if pe_install? && puppet_version =~ %r{(5\.\d\.\d)}
+    run_puppet_access_login(user: 'admin') if pe_install? && (Gem::Version.new(puppet_version) >= Gem::Version.new('5.0.0'))
     hosts.each do |host|
       # This will be removed, this is temporary to test localisation.
-      if (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && (puppet_version >= '4.10.5' && puppet_version < '5.2.0')
+      if (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') &&
+         (Gem::Version.new(puppet_version) >= Gem::Version.new('4.10.5') &&
+          Gem::Version.new(puppet_version) < Gem::Version.new('5.2.0'))
         on(host, 'mkdir /opt/puppetlabs/puppet/share/locale/ja')
         on(host, 'touch /opt/puppetlabs/puppet/share/locale/ja/puppet.po')
       end

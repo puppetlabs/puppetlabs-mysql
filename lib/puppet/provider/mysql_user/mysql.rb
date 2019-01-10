@@ -14,7 +14,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
         ## Default ...
         # rubocop:disable Metrics/LineLength
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
-      elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+      elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.16')
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       else
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
@@ -62,20 +62,28 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
     if !plugin.nil?
-      if plugin == 'sha256_password' && !password_hash.nil?
+      if !password_hash.nil?
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'", 'system')
       else
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'", 'system')
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.1.3')
+      self.class.mysql_caller("CREATE USER IF NOT EXISTS '#{merged_name}' IDENTIFIED WITH 'mysql_native_password' AS '#{password_hash}'", 'system')
+      @property_hash[:ensure] = :present
+      @property_hash[:password_hash] = password_hash
     else
       self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED BY PASSWORD '#{password_hash}'", 'system')
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     end
     # rubocop:disable Metrics/LineLength
-    self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+      self.class.mysql_caller("ALTER USER IF EXISTS '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
+    else
+      self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
+    end
     # rubocop:enable Metrics/LineLength
     @property_hash[:max_user_connections] = max_user_connections
     @property_hash[:max_connections_per_hour] = max_connections_per_hour
@@ -125,7 +133,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     if mysqld_version.nil?
       # default ... if mysqld_version does not work
       self.class.mysql_caller("SET PASSWORD FOR #{merged_name} = '#{string}'", 'system')
-    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       raise ArgumentError, _('Only mysql_native_password (*ABCD...XXX) hashes are supported.') unless string =~ %r{^\*|^$}
       self.class.mysql_caller("ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'", 'system')
     else
