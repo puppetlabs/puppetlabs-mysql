@@ -104,6 +104,30 @@ describe 'mysql_user' do
     end
   end
 
+  context 'using foo@bar@localhost' do
+    describe 'adding user' do
+      pp_three = <<-MANIFEST
+          mysql_user { 'foo@bar@localhost':
+            password_hash => '*F9A8E96790775D196D12F53BCC88B8048FF62ED5',
+          }
+      MANIFEST
+      it 'works without errors' do
+        execute_manifest(pp_three, catch_failures: true)
+      end
+
+      it 'finds the user #stdout' do
+        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'foo@bar@localhost'\"") do |r|
+          expect(r.stdout).to match(%r{^1$})
+        end
+      end
+      it 'finds the user #stderr' do
+        shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'foo@bar@localhost'\"") do |r|
+          expect(r.stderr).to be_empty
+        end
+      end
+    end
+  end
+
   context 'using ashp@LocalHost' do
     describe 'adding user' do
       pp_four = <<-MANIFEST
