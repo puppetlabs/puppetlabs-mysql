@@ -119,8 +119,9 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   # Take root@localhost and munge it to 'root'@'localhost'
+  # Take root@id123@localhost and munge it to 'root@id123'@'localhost'
   def self.cmd_user(user)
-    "'#{user.sub('@', "'@'")}'"
+    "'#{user.reverse.sub('@', "'@'").reverse}'"
   end
 
   # Take root.* and return ON `root`.*

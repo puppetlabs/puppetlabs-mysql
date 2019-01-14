@@ -50,7 +50,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   end
 
   def create
-    merged_name              = @resource[:name].sub('@', "'@'")
+    # (MODULES-3539) Allow @ in username
+    merged_name              = @resource[:name].reverse.sub('@', "'@'").reverse
     password_hash            = @resource.value(:password_hash)
     plugin                   = @resource.value(:plugin)
     max_user_connections     = @resource.value(:max_user_connections) || 0
@@ -102,7 +103,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   end
 
   def destroy
-    merged_name = @resource[:name].sub('@', "'@'")
+    # (MODULES-3539) Allow @ in username
+    merged_name = @resource[:name].reverse.sub('@', "'@'").reverse
     if_exists = if newer_than('mysql' => '5.7', 'percona' => '5.7', 'mariadb' => '10.1.3')
                   'IF EXISTS '
                 else
