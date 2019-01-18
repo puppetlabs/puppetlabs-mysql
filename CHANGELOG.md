@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [8.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/8.0.0) (2019-01-18)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/7.0.0...8.0.0)
+
+### Changed
+
+- \(MODULES-8193\) - Removal of inbuilt deepmerge and dirname functions [\#1145](https://github.com/puppetlabs/puppetlabs-mysql/pull/1145) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- \(MODULES-3539\) Allow @ in username [\#1155](https://github.com/puppetlabs/puppetlabs-mysql/pull/1155) ([Fogelholk](https://github.com/Fogelholk))
+- \(MODULES-8144\) - Add support for SLES 15 [\#1146](https://github.com/puppetlabs/puppetlabs-mysql/pull/1146) ([eimlav](https://github.com/eimlav))
+- Added support for RHSCL mysql versions and support for .mylogin.cnf for MySQL 5.6.6+ [\#1061](https://github.com/puppetlabs/puppetlabs-mysql/pull/1061) ([DJMuggs](https://github.com/DJMuggs))
+
+### Fixed
+
+- \(MODULES-8193\) - Wrapper methods created for inbuilt 4.x functions [\#1151](https://github.com/puppetlabs/puppetlabs-mysql/pull/1151) ([david22swan](https://github.com/david22swan))
+- pdksync - \(FM-7655\) Fix rubygems-update for ruby \< 2.3 [\#1150](https://github.com/puppetlabs/puppetlabs-mysql/pull/1150) ([tphoney](https://github.com/tphoney))
+- Add includedir for Gentoo [\#1147](https://github.com/puppetlabs/puppetlabs-mysql/pull/1147) ([baurmatt](https://github.com/baurmatt))
+- add mysql\_native\_password for mariadb 10.2 in password\_hash [\#1117](https://github.com/puppetlabs/puppetlabs-mysql/pull/1117) ([mlk-89](https://github.com/mlk-89))
+- Removing query\_cache ops that are no longer supported in MySQL \>= 8.0 [\#1107](https://github.com/puppetlabs/puppetlabs-mysql/pull/1107) ([ernstae](https://github.com/ernstae))
+
 ## [7.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/7.0.0) (2018-10-25)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/6.2.0...7.0.0)
