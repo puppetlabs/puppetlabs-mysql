@@ -32,6 +32,9 @@ RSpec.configure do |c|
     # by default Puppet runs at warning level
     Puppet.settings[:strict] = :warning
   end
+  c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
+  c.after(:suite) do
+  end
 end
 
 def ensure_module_defined(module_name)
