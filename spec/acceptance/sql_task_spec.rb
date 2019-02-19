@@ -1,7 +1,7 @@
 # run a test task
 require 'spec_helper_acceptance'
 
-describe 'mysql tasks', if: puppet_version =~ %r{(5\.\d\.\d)} && fact('operatingsystem') != 'SLES' do
+describe 'mysql tasks', if: puppet_version =~ %r{(5\.\d\.\d)} && os[:family] != 'sles' do
   describe 'execute some sql' do
     pp = <<-MANIFEST
         class { 'mysql::server': root_password => 'password' }

@@ -29,8 +29,7 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups' do
-      execute_manifest(pp, catch_failures: true)
-      execute_manifest(pp, catch_failures: true)
+      idempotent_apply(default, pp, {})
     end
   end
 
@@ -104,8 +103,7 @@ describe 'mysql::server::backup class' do
           }
       MANIFEST
       it 'when configuring mysql backups' do
-        execute_manifest(pp, catch_failures: true)
-        execute_manifest(pp, catch_failures: true)
+        idempotent_apply(default, pp, {})
       end
     end
 
@@ -151,52 +149,6 @@ describe 'mysql::server::backup class' do
         end
       end
       # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
-    end
-  end
-
-  context 'with triggers and routines' do
-    pre_run
-    pp = <<-MANIFEST
-        class { 'mysql::server': root_password => 'password' }
-        mysql::db { [
-          'backup1',
-          'backup2'
-          ]:
-          user => 'backup',
-          password => 'secret',
-        }
-        package { 'bzip2':
-          ensure => present,
-        }
-        class { 'mysql::server::backup':
-          backupuser => 'myuser',
-          backuppassword => 'mypassword',
-          backupdir => '/tmp/backups',
-          backupcompress => true,
-          file_per_database => true,
-          include_triggers => #{version_is_greater_than('5.1.5')},
-          include_routines => true,
-          postscript => [
-            'rm -rf /var/tmp/mysqlbackups',
-            'rm -f /var/tmp/mysqlbackups.done',
-            'cp -r /tmp/backups /var/tmp/mysqlbackups',
-            'touch /var/tmp/mysqlbackups.done',
-          ],
-          execpath => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
-          require => Package['bzip2'],
-        }
-    MANIFEST
-    it 'when configuring mysql backups with triggers and routines' do
-      execute_manifest(pp, catch_failures: true)
-    end
-
-    it 'runs mysqlbackup.sh with no errors' do
-      pre_run
-      unless version_is_greater_than('5.7.0')
-        shell('/usr/local/sbin/mysqlbackup.sh') do |r|
-          expect(r.stderr).to eq('')
-        end
-      end
     end
   end
 end

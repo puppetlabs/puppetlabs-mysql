@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 require 'beaker/i18n_helper'
 
-describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfamily') == 'RedHat') && (Gem::Version.new(puppet_version) >= Gem::Version.new('4.10.5')) do
+describe 'mysql localization', if: (fact('osfamily') == 'debian' || fact('osfamily') == 'redhat') && (Gem::Version.new(puppet_version) >= Gem::Version.new('4.10.5')) do
   before :all do
     hosts.each do |host|
       on(host, "sed -i \"96i FastGettext.locale='ja'\" /opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet.rb")
@@ -12,7 +12,7 @@ describe 'mysql localization', if: (fact('osfamily') == 'Debian' || fact('osfami
   context 'when triggering puppet simple string error' do
     # 'service_enabled' being set to false can cause random failures in Debian 9
     let(:os_variant) do
-      if fact('operatingsystem') =~ %r{Debian} && fact('operatingsystemrelease') =~ %r{^9\.}
+      if os[:family] == 'debian' && os[:release].to_i == 9
         'true'
       else
         'false'
