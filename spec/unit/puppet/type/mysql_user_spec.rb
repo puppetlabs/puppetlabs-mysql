@@ -125,4 +125,12 @@ describe Puppet::Type.type(:mysql_user) do
       }.to raise_error %r{Invalid database user "misquoted@localhost}
     end
   end
+
+  context 'using invalid options' do
+    it 'fails with an invalid option' do
+      expect {
+        Puppet::Type.type(:mysql_user).new(name: 'misquoted@localhost', password_hash: 'pass', tls_options: ['SOMETHING_ELSE'])
+      }.to raise_error %r{Invalid tls option}
+    end
+  end
 end

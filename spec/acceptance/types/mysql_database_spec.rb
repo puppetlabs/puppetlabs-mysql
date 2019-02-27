@@ -44,8 +44,7 @@ describe 'mysql_database' do
         }
     MANIFEST
     it 'creates two db of different types idempotently' do
-      execute_manifest(pp, catch_failures: true)
-      execute_manifest(pp, catch_changes: true)
+      idempotent_apply(default, pp, {})
     end
 
     it 'finds latin1 db #stdout' do
