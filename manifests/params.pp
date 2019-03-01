@@ -223,6 +223,7 @@ class mysql::params {
         'stretch'          => 'ruby-mysql2',
         'trusty'           => 'ruby-mysql',
         'xenial'           => 'ruby-mysql',
+        'bionic'           => 'ruby-mysql2',
         default            => 'libmysql-ruby',
       }
     }
