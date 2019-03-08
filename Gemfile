@@ -1,22 +1,15 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 def location_for(place_or_version, fake_version = nil)
-  if place_or_version =~ %r{\A(git[:@][^#]*)#(.*)}
-    [fake_version, { git: Regexp.last_match(1), branch: Regexp.last_match(2), require: false }].compact
-  elsif place_or_version =~ %r{\Afile:\/\/(.*)}
-    ['>= 0', { path: File.expand_path(Regexp.last_match(1)), require: false }]
+  git_url_regex = %r{\A(?<url>(https?|git)[:@][^#]*)(#(?<branch>.*))?}
+  file_url_regex = %r{\Afile:\/\/(?<path>.*)}
+
+  if place_or_version && (git_url = place_or_version.match(git_url_regex))
+    [fake_version, { git: git_url[:url], branch: git_url[:branch], require: false }].compact
+  elsif place_or_version && (file_url = place_or_version.match(file_url_regex))
+    ['>= 0', { path: File.expand_path(file_url[:path]), require: false }]
   else
     [place_or_version, { require: false }]
-  end
-end
-
-def gem_type(place_or_version)
-  if place_or_version =~ %r{\Agit[:@]}
-    :git
-  elsif !place_or_version.nil? && place_or_version.start_with?('file:')
-    :file
-  else
-    :gem
   end
 end
 
@@ -28,26 +21,22 @@ group :development do
   gem "fast_gettext",                                  require: false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1.0')
   gem "json_pure", '<= 2.0.1',                         require: false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
   gem "json", '= 1.8.1',                               require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.1.9')
-  gem "json", '<= 2.0.4',                              require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.4.4')
+  gem "json", '= 2.0.4',                               require: false if Gem::Requirement.create('~> 2.4.2').satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
+  gem "json", '= 2.1.0',                               require: false if Gem::Requirement.create(['>= 2.5.0', '< 2.7.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "puppet-module-posix-default-r#{minor_version}", require: false, platforms: [:ruby]
   gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "puppet-blacksmith", '~> 3.4',                   require: false, platforms: [:ruby]
   gem "puppet-lint-i18n",                              require: false
+  gem "github_changelog_generator",                    require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
 end
 group :system_tests do
-  gem "puppet-module-posix-system-r#{minor_version}",                            require: false, platforms: [:ruby]
-  gem "puppet-module-win-system-r#{minor_version}",                              require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "beaker", *location_for(ENV['BEAKER_VERSION'] || '~> 3.13')
-  gem "beaker-abs", *location_for(ENV['BEAKER_ABS_VERSION'] || '~> 0.1')
-  gem "beaker-pe",                                                               require: false
-  gem "beaker-hostgenerator"
-  gem "beaker-rspec"
+  gem "puppet-module-posix-system-r#{minor_version}", require: false, platforms: [:ruby]
+  gem "puppet-module-win-system-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "beaker-testmode_switcher",                     require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
-puppet_type = gem_type(puppet_version)
 facter_version = ENV['FACTER_GEM_VERSION']
 hiera_version = ENV['HIERA_GEM_VERSION']
 

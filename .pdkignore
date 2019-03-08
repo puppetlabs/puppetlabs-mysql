@@ -1,3 +1,4 @@
+.git/
 .*.sw[op]
 .metadata
 .yardoc
@@ -21,3 +22,18 @@
 /convert_report.txt
 /update_report.txt
 .DS_Store
+.vscode/
+.envrc
+/appveyor.yml
+/.fixtures.yml
+/Gemfile
+/.gitattributes
+/.gitignore
+/.gitlab-ci.yml
+/.pdkignore
+/Rakefile
+/.rspec
+/.rubocop.yml
+/.travis.yml
+/.yardopts
+/spec/

@@ -43,6 +43,11 @@ describe Puppet::Type.type(:mysql_user) do
       user[:password_hash] = 'foo'
       expect(user[:password_hash]).to eq('foo')
     end
+
+    it 'accepts an empty password' do
+      user[:password_hash] = ''
+      expect(user[:password_hash]).to eq('')
+    end
   end
 
   context 'using foo@LocalHost' do
@@ -118,6 +123,14 @@ describe Puppet::Type.type(:mysql_user) do
       expect {
         Puppet::Type.type(:mysql_user).new(name: '"misquoted@localhost', password_hash: 'pass')
       }.to raise_error %r{Invalid database user "misquoted@localhost}
+    end
+  end
+
+  context 'using invalid options' do
+    it 'fails with an invalid option' do
+      expect {
+        Puppet::Type.type(:mysql_user).new(name: 'misquoted@localhost', password_hash: 'pass', tls_options: ['SOMETHING_ELSE'])
+      }.to raise_error %r{Invalid tls option}
     end
   end
 end

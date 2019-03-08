@@ -18,6 +18,9 @@ class mysql::params {
   $client_package_manage  = true
   $create_root_user       = true
   $create_root_my_cnf     = true
+  $create_root_login_file = false
+  $login_file             = undef
+  $exec_path              = ''
   # mysql::bindings
   $bindings_enable             = false
   $java_package_ensure         = 'present'
@@ -253,6 +256,7 @@ class mysql::params {
 
     'Gentoo': {
       $client_package_name = 'virtual/mysql'
+      $includedir          = undef
       $server_package_name = 'virtual/mysql'
       $basedir             = '/usr'
       $config_file         = '/etc/mysql/my.cnf'
@@ -455,12 +459,18 @@ class mysql::params {
     },
     'mysqld-5.5'       => {
       'myisam-recover' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld-5.6'              => {
       'myisam-recover-options' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld-5.7'              => {
       'myisam-recover-options' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld'                  => {
       'basedir'               => $mysql::params::basedir,

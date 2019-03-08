@@ -92,7 +92,7 @@ class mysql::backup::mysqlbackup (
       'password'               => $backuppassword,
     }
   }
-  $options = mysql::deepmerge($default_options, $mysql::server::override_options)
+  $options = $default_options.deep_merge($mysql::server::override_options)
 
   file { 'mysqlbackup-config-file':
     path    => '/etc/mysql/conf.d/meb.cnf',

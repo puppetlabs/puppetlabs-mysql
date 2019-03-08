@@ -14,7 +14,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
         ## Default ...
         # rubocop:disable Metrics/LineLength
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
-      elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+      elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.16')
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       else
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
@@ -50,7 +50,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   end
 
   def create
-    merged_name              = @resource[:name].sub('@', "'@'")
+    # (MODULES-3539) Allow @ in username
+    merged_name              = @resource[:name].reverse.sub('@', "'@'").reverse
     password_hash            = @resource.value(:password_hash)
     plugin                   = @resource.value(:plugin)
     max_user_connections     = @resource.value(:max_user_connections) || 0
@@ -69,8 +70,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       @property_hash[:ensure] = :present
       @property_hash[:plugin] = plugin
-    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
-      self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH 'mysql_native_password' AS '#{password_hash}'", 'system')
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.1.3')
+      self.class.mysql_caller("CREATE USER IF NOT EXISTS '#{merged_name}' IDENTIFIED WITH 'mysql_native_password' AS '#{password_hash}'", 'system')
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     else
@@ -102,7 +103,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   end
 
   def destroy
-    merged_name = @resource[:name].sub('@', "'@'")
+    # (MODULES-3539) Allow @ in username
+    merged_name = @resource[:name].reverse.sub('@', "'@'").reverse
     if_exists = if newer_than('mysql' => '5.7', 'percona' => '5.7', 'mariadb' => '10.1.3')
                   'IF EXISTS '
                 else
@@ -133,8 +135,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     if mysqld_version.nil?
       # default ... if mysqld_version does not work
       self.class.mysql_caller("SET PASSWORD FOR #{merged_name} = '#{string}'", 'system')
-    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
-      raise ArgumentError, _('Only mysql_native_password (*ABCD...XXX) hashes are supported.') unless string =~ %r{^\*}
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
+      raise ArgumentError, _('Only mysql_native_password (*ABCD...XXX) hashes are supported.') unless string =~ %r{^\*|^$}
       self.class.mysql_caller("ALTER USER #{merged_name} IDENTIFIED WITH mysql_native_password AS '#{string}'", 'system')
     else
       self.class.mysql_caller("SET PASSWORD FOR #{merged_name} = '#{string}'", 'system')

@@ -1,4 +1,8 @@
 ---
+.gitignore:
+  required:
+    - ---.project
+
 .travis.yml:
   docker_sets:
     - set: docker/centos-7
@@ -19,26 +23,23 @@ Gemfile:
           - mswin
           - mingw
           - x64_mingw
-      - gem: beaker
-        version: '~> 3.13'
-        from_env: BEAKER_VERSION
-      - gem: beaker-abs
-        from_env: BEAKER_ABS_VERSION
-        version: '~> 0.1'
-      - gem: beaker-pe
-      - gem: beaker-hostgenerator
-        from_env: BEAKER_HOSTGENERATOR_VERSION
-      - gem: beaker-rspec
-        from_env: BEAKER_RSPEC_VERSION
+      - gem: beaker-testmode_switcher
     ':development':
       - gem: puppet-lint-i18n
+  optional:
+    ':development':
+      - gem: 'github_changelog_generator'
+        git: 'https://github.com/skywinder/github-changelog-generator'
+        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
 
 appveyor.yml:
-  delete: true
+  unmanaged: true
 
 Rakefile:
   requires:
     - puppet_pot_generator/rake_tasks
+  changelog_user: 'puppetlabs'
 
 spec/spec_helper.rb:
   spec_overrides:
