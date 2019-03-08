@@ -9,7 +9,7 @@ class mysql::server::config {
   $includedir = $mysql::server::includedir
 
   File {
-    owner  => 'root',
+    owner  => $mysql::server::root_owner,
     group  => $mysql::server::root_group,
     mode   => '0400',
   }

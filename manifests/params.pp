@@ -85,7 +85,9 @@ class mysql::params {
 
       $basedir                 = '/usr'
       $datadir                 = '/var/lib/mysql'
+      $root_owner              = 'root'
       $root_group              = 'root'
+      $mysql_owner             = 'mysql'
       $mysql_group             = 'mysql'
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
@@ -143,7 +145,9 @@ class mysql::params {
         /OpenSuSE/         => '/var/run/mysql/mysqld.pid',
         /(SLES|SLED)/      => '/var/lib/mysql/mysqld.pid',
       }
+      $root_owner          = 'root'
       $root_group          = 'root'
+      $mysql_owner         = 'mysql'
       $mysql_group         = 'mysql'
       $server_service_name = 'mysql'
 
@@ -201,7 +205,9 @@ class mysql::params {
       $datadir                 = '/var/lib/mysql'
       $log_error               = '/var/log/mysql/error.log'
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
+      $root_owner              = 'root'
       $root_group              = 'root'
+      $mysql_owner             = 'mysql'
       $mysql_group             = 'adm'
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
@@ -238,7 +244,9 @@ class mysql::params {
       $datadir                 = '/var/lib/mysql'
       $log_error               = '/var/log/mysqld.log'
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
+      $root_owner              = 'root'
       $root_group              = 'root'
+      $mysql_owner             = 'mysql'
       $mysql_group             = 'mysql'
       $server_service_name     = 'mysqld'
       $socket                  = '/var/lib/mysql/mysql.sock'
@@ -263,7 +271,9 @@ class mysql::params {
       $datadir             = '/var/lib/mysql'
       $log_error           = '/var/log/mysql/mysqld.err'
       $pidfile             = '/run/mysqld/mysqld.pid'
+      $root_owner          = 'root'
       $root_group          = 'root'
+      $mysql_owner         = 'mysql'
       $mysql_group         = 'mysql'
       $server_service_name = 'mysql'
       $socket              = '/run/mysqld/mysqld.sock'
@@ -288,10 +298,42 @@ class mysql::params {
       $datadir             = '/var/db/mysql'
       $log_error           = '/var/log/mysqld.log'
       $pidfile             = '/var/run/mysql.pid'
+      $root_owner          = 'root'
       $root_group          = 'wheel'
+      $mysql_owner         = 'mysql'
       $mysql_group         = 'mysql'
       $server_service_name = 'mysql-server'
       $socket              = '/var/db/mysql/mysql.sock'
+      $ssl_ca              = undef
+      $ssl_cert            = undef
+      $ssl_key             = undef
+      $tmpdir              = '/tmp'
+      # mysql::bindings
+      $java_package_name   = 'databases/mysql-connector-java'
+      $perl_package_name   = 'p5-DBD-mysql'
+      $php_package_name    = 'php5-mysql'
+      $python_package_name = 'databases/py-MySQLdb'
+      $ruby_package_name   = 'databases/ruby-mysql'
+      # The libraries installed by these packages are included in client and server packages, no installation required.
+      $client_dev_package_name     = undef
+      $daemon_dev_package_name     = undef
+    }
+
+    'Darwin': {
+      $client_package_name = 'mysql'
+      $server_package_name = 'mysql'
+      $basedir             = '/usr/local'
+      $config_file         = '/usr/local/etc/my.cnf'
+      $includedir          = '/usr/local/etc/my.cnf.d'
+      $datadir             = '/usr/local/var/mysql'
+      $log_error           = '/usr/local/var/log/mysqld.log'
+      $pidfile             = '/usr/local/var/run/mysql.pid'
+      $root_owner          = $::homebrew_owner
+      $root_group          = $::homebrew_group
+      $mysql_owner         = $::homebrew_owner
+      $mysql_group         = $::homebrew_group
+      $server_service_name = 'homebrew.mxcl.mysql'
+      $socket              = '/usr/local/var/mysql/mysql.sock'
       $ssl_ca              = undef
       $ssl_cert            = undef
       $ssl_key             = undef
@@ -316,7 +358,9 @@ class mysql::params {
       $datadir             = '/var/mysql'
       $log_error           = "/var/mysql/${::hostname}.err"
       $pidfile             = '/var/mysql/mysql.pid'
+      $root_owner          = 'root'
       $root_group          = 'wheel'
+      $mysql_owner         = 'mysql'
       $mysql_group         = '_mysql'
       $server_service_name = 'mysqld'
       $socket              = '/var/run/mysql/mysql.sock'
@@ -343,6 +387,8 @@ class mysql::params {
       $datadir             = '/var/mysql/5.5/data'
       $log_error           = "/var/mysql/5.5/data/${::hostname}.err"
       $pidfile             = "/var/mysql/5.5/data/${::hostname}.pid"
+      $mysql_owner         = 'mysql'
+      $root_owner          = 'root'
       $root_group          = 'bin'
       $server_service_name = 'application/database/mysql:version_55'
       $socket              = '/tmp/mysql.sock'
@@ -371,7 +417,9 @@ class mysql::params {
           $datadir             = '/var/lib/mysql'
           $log_error           = '/var/log/mysqld.log'
           $pidfile             = '/run/mysqld/mysqld.pid'
+          $root_owner          = 'root'
           $root_group          = 'root'
+          $mysql_owner         = 'mysql'
           $mysql_group         = 'mysql'
           $server_service_name = 'mariadb'
           $socket              = '/run/mysqld/mysqld.sock'
@@ -396,7 +444,9 @@ class mysql::params {
           $datadir             = '/var/lib/mysql'
           $log_error           = '/var/log/mysqld.log'
           $pidfile             = '/var/run/mysqld/mysqld.pid'
+          $root_owner          = 'root'
           $root_group          = 'root'
+          $mysql_owner         = 'mysql'
           $mysql_group         = 'mysql'
           $server_service_name = 'mysqld'
           $socket              = '/var/lib/mysql/mysql.sock'
@@ -494,7 +544,7 @@ class mysql::params {
       'thread_cache_size'     => '8',
       'thread_stack'          => '256K',
       'tmpdir'                => $mysql::params::tmpdir,
-      'user'                  => 'mysql',
+      'user'                  => $mysql::params::mysql_owner,
     },
     'mysqldump'             => {
       'max_allowed_packet'  => '16M',

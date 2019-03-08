@@ -6,6 +6,26 @@
 class mysql::server::service {
   $options = $mysql::server::options
 
+  if $::osfamily == 'Darwin' {
+
+    $install_dir = "${mysql::server::basedir}/opt/mysql"
+
+    file {"${install_dir}/${mysql::server::service_name}.plist":
+      ensure => present,
+      owner  => root,
+      group  => wheel,
+    }
+
+    file { "/Library/LaunchAgents/${mysql::server::service_name}.plist":
+      ensure  => link,
+      target  => "${install_dir}/${mysql::server::service_name}.plist",
+      require => File["${install_dir}/${mysql::server::service_name}.plist"]
+    }
+
+    File["/Library/LaunchAgents/${mysql::server::service_name}.plist"] -> Service['mysqld']
+
+  }
+
   if $mysql::server::real_service_manage {
     if $mysql::server::real_service_enabled {
       $service_ensure = 'running'

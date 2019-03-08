@@ -15,6 +15,9 @@
     {
       "name": "puppetlabs/translate",
       "version_requirement": ">= 1.0.0 < 2.0.0"
+    },
+    {
+      "name": "thekevjames/homebrew"
     }
   ],
   "operatingsystem_support": [
@@ -70,6 +73,12 @@
         "14.04",
         "16.04",
         "18.04"
+      ]
+    },
+    {
+      "operatingsystem": "Darwin",
+      "operatingsystemrelease": [
+        "17.7.0"
       ]
     }
   ],

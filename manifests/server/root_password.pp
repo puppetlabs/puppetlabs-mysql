@@ -35,7 +35,7 @@ class mysql::server::root_password {
   if $mysql::server::create_root_my_cnf == true and $mysql::server::root_password != 'UNSET' {
     file { "${::root_home}/.my.cnf":
       content => template('mysql/my.cnf.pass.erb'),
-      owner   => 'root',
+      owner   => $mysql::server::root_owner,
       mode    => '0600',
     }
 

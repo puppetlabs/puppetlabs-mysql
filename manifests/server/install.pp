@@ -5,6 +5,14 @@
 #
 class mysql::server::install {
 
+  if $::osfamily == 'Darwin' {
+
+    Package {
+      provider => brew,
+    }
+
+  }
+
   if $mysql::server::package_manage {
 
     package { 'mysql-server':

@@ -33,6 +33,8 @@
 #   Specifies whether to automatically include `mysql::server::account_security`. Valid values are `true`, `false`. Defaults to `false`.
 # @param restart
 #   Whether the service should be restarted when things change. Valid values are `true`, `false`. Defaults to `false`.
+# @param root_owner
+#   The name of the owner used for root. Can be a owner name or a owner ID. See more about the [owner](https://puppet.com/docs/puppet/latest/type.html#file-attribute-owner).
 # @param root_group
 #   The name of the group used for root. Can be a group name or a group ID. See more about the [group](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 # @param mysql_group
@@ -77,6 +79,7 @@ class mysql::server (
   $purge_conf_dir          = $mysql::params::purge_conf_dir,
   $remove_default_accounts = false,
   $restart                 = $mysql::params::restart,
+  $root_owner              = $mysql::params::root_owner,
   $root_group              = $mysql::params::root_group,
   $mysql_group             = $mysql::params::mysql_group,
   $root_password           = $mysql::params::root_password,
