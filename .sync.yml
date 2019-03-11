@@ -25,7 +25,15 @@ Gemfile:
           - x64_mingw
       - gem: beaker-testmode_switcher
     ':development':
-      - gem: puppet-lint-i18n
+      - gem: 'net-ssh'
+        version: '< 5.0.0'
+      - gem: 'puppet-lint-i18n'
+      - gem: 'puppet_litmus'
+        git: 'git@github.com:puppetlabs/puppet_litmus.git'
+      - gem: 'pdk'
+        git: 'https://github.com/tphoney/pdk.git'
+        branch: 'pin_cri'
+      - gem: 'serverspec'
   optional:
     ':development':
       - gem: 'github_changelog_generator'
@@ -39,6 +47,7 @@ appveyor.yml:
 Rakefile:
   requires:
     - puppet_pot_generator/rake_tasks
+  use_litmus_tasks: true
   changelog_user: 'puppetlabs'
 
 spec/spec_helper.rb:

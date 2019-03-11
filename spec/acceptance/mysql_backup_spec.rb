@@ -1,5 +1,4 @@
 require 'spec_helper_acceptance'
-require 'puppet/util/package'
 require_relative './mysql_helper.rb'
 
 describe 'mysql::server::backup class' do
@@ -29,7 +28,8 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups' do
-      idempotent_apply(default, pp, {})
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_failures: true)
     end
   end
 
@@ -103,7 +103,8 @@ describe 'mysql::server::backup class' do
           }
       MANIFEST
       it 'when configuring mysql backups' do
-        idempotent_apply(default, pp, {})
+        apply_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_failures: true)
       end
     end
 
