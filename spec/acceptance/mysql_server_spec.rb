@@ -43,7 +43,10 @@ describe 'mysql class' do
       MANIFEST
     end
 
-    it_behaves_like 'a idempotent resource'
+     it 'behaves idempotently' do
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
+    end
   end
 
   describe 'syslog configuration' do
@@ -55,6 +58,9 @@ describe 'mysql class' do
       MANIFEST
     end
 
-    it_behaves_like 'a idempotent resource'
+     it 'behaves idempotently' do
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
+    end
   end
 end
