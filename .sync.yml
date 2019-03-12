@@ -4,15 +4,8 @@
     - ---.project
 
 .travis.yml:
-  docker_sets:
-    - set: docker/centos-7
-    - set: docker/ubuntu-14.04
-  docker_defaults:
-    bundler_args: ""
-  secure: ""
-  branches:
-    - release
- 
+  unmanaged: true
+
 Gemfile:
   required:
     ':system_tests':
@@ -29,7 +22,7 @@ Gemfile:
         version: '< 5.0.0'
       - gem: 'puppet-lint-i18n'
       - gem: 'puppet_litmus'
-        git: 'git@github.com:puppetlabs/puppet_litmus.git'
+        git: 'https://github.com/puppetlabs/puppet_litmus.git'
       - gem: 'pdk'
         git: 'https://github.com/tphoney/pdk.git'
         branch: 'pin_cri'
