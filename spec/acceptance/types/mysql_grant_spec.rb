@@ -714,16 +714,16 @@ describe 'mysql_grant' do
         mysql_user { 'test@localhost':
           ensure => present,
         }
-        mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table':
+        mysql_grant { 'test@localhost/grant_spec_db.grant_spec_table_doesnt_exist':
           user       => 'test@localhost',
           privileges => ['SELECT'],
-          table      => 'grant_spec_db.grant_spec_table',
+          table      => 'grant_spec_db.grant_spec_table_doesnt_exist',
           require    => Mysql_user['test@localhost'],
         }
     MANIFEST
     it 'creates grant on missing table will fail' do
       results = apply_manifest(pp_two, expect_failures: true)
-      expect(results.first['result']['stderr']).to match(%r{Table 'grant_spec_db\.grant_spec_table' doesn't exist})
+      expect(results.first['result']['stderr']).to match(%r{Table 'grant_spec_db\.grant_spec_table_doesnt_exist' doesn't exist})
     end
 
     pp_three = <<-MANIFEST
