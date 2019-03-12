@@ -29,7 +29,7 @@ group :development do
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "net-ssh", '< 5.0.0',                            require: false
   gem "puppet-lint-i18n",                              require: false
-  gem "puppet_litmus",                                 require: false, git: 'git@github.com:puppetlabs/puppet_litmus.git'
+  gem "puppet_litmus",                                 require: false, git: 'https://github.com/puppetlabs/puppet_litmus.git'
   gem "pdk",                                           require: false, git: 'https://github.com/tphoney/pdk.git', branch: 'pin_cri'
   gem "serverspec",                                    require: false
   gem "github_changelog_generator",                    require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
