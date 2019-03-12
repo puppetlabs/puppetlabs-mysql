@@ -28,8 +28,7 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups' do
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_failures: true)
+      apply_manifest_and_idempotent(pp)
     end
   end
 
@@ -103,8 +102,7 @@ describe 'mysql::server::backup class' do
           }
       MANIFEST
       it 'when configuring mysql backups' do
-        apply_manifest(pp, catch_failures: true)
-        apply_manifest(pp, catch_failures: true)
+        apply_manifest_and_idempotent(pp)
       end
     end
 
