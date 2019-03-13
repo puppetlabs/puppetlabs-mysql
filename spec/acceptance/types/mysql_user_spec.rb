@@ -46,7 +46,7 @@ describe 'mysql_user' do
     end
 
     pre_run
-    describe 'changing authentication plugin', if: version_is_greater_than('5.5.0') do
+    describe 'changing authentication plugin', if: mysql_version_is_greater_than('5.5.0') do
       it 'works without errors' do
         pp = <<-EOS
           mysql_user { 'ashp@localhost':
@@ -66,7 +66,7 @@ describe 'mysql_user' do
 
       it 'does not have a password' do
         pre_run
-        table = if version_is_greater_than('5.7.0')
+        table = if mysql_version_is_greater_than('5.7.0')
                   'authentication_string'
                 else
                   'password'

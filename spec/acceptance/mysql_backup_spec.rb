@@ -38,7 +38,7 @@ describe 'mysql::server::backup class' do
     end
 
     it 'runs mysqlbackup.sh with no errors' do
-      unless version_is_greater_than('5.7.0')
+      unless mysql_version_is_greater_than('5.7.0')
         run_shell('/usr/local/sbin/mysqlbackup.sh') do |r|
           expect(r.stderr).to eq('')
         end
@@ -46,7 +46,7 @@ describe 'mysql::server::backup class' do
     end
 
     it 'dumps all databases to single file' do
-      unless version_is_greater_than('5.7.0')
+      unless mysql_version_is_greater_than('5.7.0')
         run_shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
           expect(r.stdout).to match(%r{1})
           expect(r.exit_code).to be_zero
@@ -56,14 +56,14 @@ describe 'mysql::server::backup class' do
 
     context 'should create one file per database per run' do
       it 'executes mysqlbackup.sh a second time' do
-        unless version_is_greater_than('5.7.0')
+        unless mysql_version_is_greater_than('5.7.0')
           run_shell('sleep 1')
           run_shell('/usr/local/sbin/mysqlbackup.sh')
         end
       end
 
       it 'creates at least one backup tarball' do
-        unless version_is_greater_than('5.7.0')
+        unless mysql_version_is_greater_than('5.7.0')
           run_shell('ls -l /tmp/backups/mysql_backup_*-*.sql.bz2 | wc -l') do |r|
             expect(r.stdout).to match(%r{2})
             expect(r.exit_code).to be_zero
@@ -112,7 +112,7 @@ describe 'mysql::server::backup class' do
       end
 
       it 'runs mysqlbackup.sh with no errors without root credentials' do
-        unless version_is_greater_than('5.7.0')
+        unless mysql_version_is_greater_than('5.7.0')
           run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh') do |r|
             expect(r.stderr).to eq('')
           end
@@ -120,7 +120,7 @@ describe 'mysql::server::backup class' do
       end
 
       it 'creates one file per database' do
-        unless version_is_greater_than('5.7.0')
+        unless mysql_version_is_greater_than('5.7.0')
           ['backup1', 'backup2'].each do |database|
             run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
               expect(r.stdout).to match(%r{1})
@@ -131,14 +131,14 @@ describe 'mysql::server::backup class' do
       end
 
       it 'executes mysqlbackup.sh a second time' do
-        unless version_is_greater_than('5.7.0')
+        unless mysql_version_is_greater_than('5.7.0')
           run_shell('sleep 1')
           run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
         end
       end
 
       it 'has one file per database per run' do
-        unless version_is_greater_than('5.7.0')
+        unless mysql_version_is_greater_than('5.7.0')
           ['backup1', 'backup2'].each do |database|
             run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
               expect(r.stdout).to match(%r{2})
