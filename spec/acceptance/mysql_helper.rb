@@ -4,7 +4,7 @@ def pre_run
   @mysql_version = shell_output.first['result']['stdout'].match(%r{\d+\.\d+\.\d+})[0]
 end
 
-def version_is_greater_than(version)
-  return true if (@mysql_version > version)
+def mysql_version_is_greater_than(version)
+  return true if (Gem::Version.new(@mysql_version) > Gem::Version.new(version))
   false
 end
