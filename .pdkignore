@@ -22,8 +22,6 @@
 /convert_report.txt
 /update_report.txt
 .DS_Store
-.vscode/
-.envrc
 /appveyor.yml
 /.fixtures.yml
 /Gemfile
