@@ -1,24 +1,38 @@
 ---
+sudo: false
 dist: trusty
 language: ruby
 cache: bundler
 before_install:
   - bundle -v
   - rm -f Gemfile.lock
-  - gem update --system $RUBYGEMS_VERSION
+  - gem update --system
   - gem --version
   - bundle -v
 script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
-  - 2.5.1
+  - 2.5.0
 env:
   global:
     - BEAKER_PUPPET_COLLECTION=puppet6 PUPPET_GEM_VERSION="~> 6.0"
 matrix:
   fast_finish: true
   include:
+    -
+      bundler_args:
+      dist: trusty
+      env: PLATFORM=debian:9
+      rvm: 2.5.0
+      script:
+      - bundle exec rake 'waffle:provision[docker, waffleimage/debian9]'
+      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+      - bundle exec rake waffle:install_agent
+      - bundle exec rake waffle:install_module
+      - bundle exec rake acceptance:all -j10 -m
+      services: docker
+      sudo: required
     -
       env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
     -
@@ -30,6 +44,7 @@ branches:
   only:
     - master
     - /^v\d/
+    - release
 notifications:
   email: false
 deploy:
