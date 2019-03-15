@@ -81,6 +81,6 @@
   ],
   "description": "MySQL module",
   "template-url": "/Users/paula/workspace/pdk-templates",
-  "template-ref": "heads/tphoney-FM-7847-0-g67e942f",
-  "pdk-version": "1.9.0"
+  "template-ref": "heads/tphoney-FM-7847-0-gd0c6e02",
+  "pdk-version": "1.9.1"
 }

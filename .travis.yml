@@ -1,14 +1,4 @@
-
-
-# ---
-# dist: trusty
-# language: ruby
-# cache: bundler
-# before_install:
-#   - bundle -v
-#   - rm -f Gemfile.lock
-#   - gem update --system $RUBYGEMS_VERSION
-#   - gem --version---
+---
 dist: trusty
 language: ruby
 cache: bundler
@@ -25,31 +15,21 @@ rvm:
   - 2.5.1
 env:
   global:
-    - PUPPET_GEM_VERSION="~> 6.0"
+    - BEAKER_PUPPET_COLLECTION=puppet6 PUPPET_GEM_VERSION="~> 6.0"
 matrix:
   fast_finish: true
   include:
     -
-      bundler_args:
-      dist: trusty
-      env: PUPPET5=centos7:debian9
-      rvm: 2.5.1
-      script:
-      - bundle exec rake 'litmus:provision[docker, waffleimage/debian9]'
-      - bundle exec rake 'litmus:install_agent[puppet6]'
-      - bundle exec rake litmus:install_module
-      - bundle exec rake litmus:acceptance:parallel
-      services: docker
-      sudo: required
-    - env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
-    - env: CHECK=parallel_spec
-    - env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
+      env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
+    -
+      env: CHECK=parallel_spec
+    -
+      env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
       rvm: 2.4.4
 branches:
   only:
     - master
     - /^v\d/
-    - release
 notifications:
   email: false
 deploy:
@@ -61,120 +41,3 @@ deploy:
     tags: true
     all_branches: true
     condition: "$DEPLOY_TO_FORGE = yes"
-#   - bundle -v
-# script:
-#   - 'bundle exec rake $CHECK'
-# bundler_args: --without system_tests
-# rvm:
-#   - 2.5.1
-# env:
-#   global:
-#     - PUPPET_GEM_VERSION="~> 6.0"
-# matrix:
-#   fast_finish: true
-#   include:
-#     -
-#       bundler_args:
-#       dist: trusty
-#       env: PUPPET5=centos7:debian9
-#       rvm: 2.5.1
-#       script:
-#       - bundle exec rake 'litmus:provision[docker, centos:7]'
-#       - bundle exec rake 'litmus:provision[docker, debian:9]'
-#       - bundle exec rake 'litmus:install_agent[puppet5]'
-#       - bundle exec rake litmus:install_module
-#       - bundle exec rake litmus:acceptance:parallel
-#       services: docker
-#       sudo: required
-#     -
-#       bundler_args:
-#       dist: trusty
-#       env: PLATFORM=centos:5_6_7
-#       rvm: 2.5.1
-#       script:
-#       - bundle exec rake 'litmus:provision[docker, centos:5]'
-#       - bundle exec rake 'litmus:provision[docker, centos:6]'
-#       - bundle exec rake 'litmus:provision[docker, centos:7]'
-#       - bundle exec rake litmus:install_agent
-#       - bundle exec rake litmus:install_module
-#       - bundle exec rake litmus:acceptance:parallel
-#       services: docker
-#       sudo: required
-#     -
-#       bundler_args:
-#       dist: trusty
-#       env: PLATFORM=debian:8_9
-#       rvm: 2.5.1
-#       script:
-#       - bundle exec rake 'litmus:provision[docker, debian:8]'
-#       - bundle exec rake 'litmus:provision[docker, debian:9]'
-#       - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
-#       - bundle exec rake litmus:install_agent
-#       - bundle exec rake litmus:install_module
-#       - bundle exec rake litmus:acceptance:parallel
-#       services: docker
-#       sudo: required
-#     -
-#       bundler_args:
-#       dist: trusty
-#       env: PLATFORM=oraclelinux:5_6_7
-#       rvm: 2.5.1
-#       script:
-#       - bundle exec rake 'litmus:provision[docker, oraclelinux:5]'
-#       - bundle exec rake 'litmus:provision[docker, oraclelinux:6]'
-#       - bundle exec rake 'litmus:provision[docker, oraclelinux:7]'
-#       - bundle exec rake litmus:install_agent
-#       - bundle exec rake litmus:install_module
-#       - bundle exec rake litmus:acceptance:parallel
-#       services: docker
-#       sudo: required
-#     -
-#       bundler_args:
-#       dist: trusty
-#       env: PLATFORM=scientific:6_7
-#       rvm: 2.5.1
-#       script:
-#       - bundle exec rake 'litmus:provision[docker, scientificlinux/sl:6]'
-#       - bundle exec rake 'litmus:provision[docker, scientificlinux/sl:7]'
-#       - bundle exec rake litmus:install_agent
-#       - bundle exec rake litmus:install_module
-#       - bundle exec rake litmus:acceptance:parallel
-#       services: docker
-#       sudo: required
-#     -
-#       bundler_args:
-#       dist: trusty
-#       env: PLATFORM=ubuntu:14.04_16.04_18.04
-#       rvm: 2.5.1
-#       script:
-#       - bundle exec rake 'litmus:provision[docker, ubuntu:14.04]'
-#       - bundle exec rake 'litmus:provision[docker, ubuntu:16.04]'
-#       - bundle exec rake 'litmus:provision[docker, ubuntu:18.04]'
-#       - bundle exec rake litmus:install_agent
-#       - bundle exec rake litmus:install_module
-#       - bundle exec rake litmus:acceptance:parallel
-#       services: docker
-#       sudo: required
-#     -
-#       env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
-#     -
-#       env: CHECK=parallel_spec
-#     -
-#       env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
-#       rvm: 2.4.4
-# branches:
-#   only:
-#     - master
-#     - /^v\d/
-#     - release
-# notifications:
-#   email: false
-# deploy:
-#   provider: puppetforge
-#   user: puppet
-#   password:
-#     secure: ""
-#   on:
-#     tags: true
-#     all_branches: true
-#     condition: "$DEPLOY_TO_FORGE = yes"
