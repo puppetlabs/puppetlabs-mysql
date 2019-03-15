@@ -37,7 +37,6 @@ group :system_tests do
   gem "beaker-testmode_switcher",                     require: false
   gem "puppet_litmus",                                require: false, git: 'https://github.com/pmcmaw/puppet_litmus.git', branch: 'remove_bolt_dependency', platforms: [:ruby]
   gem "pdk",                                          require: false, git: 'https://github.com/tphoney/pdk.git', branch: 'pin_cri'
-  gem "bolt", '>=1.13.1',                             require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
