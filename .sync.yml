@@ -24,9 +24,6 @@ Gemfile:
       - gem: 'pdk'
         git: 'https://github.com/tphoney/pdk.git'
         branch: 'pin_cri'
-      - gem: 'bolt'
-        version: '>=1.13.1'
-        # version: >=1.13.1, <2.0.0
     ':development':
       - gem: 'puppet-lint-i18n'
   optional:
