@@ -45,25 +45,20 @@ _Private Classes_
 
 _Public Resource types_
 
+* [`mysql_grant`](#mysql_grant): @summary Manage a MySQL user's rights.
 * [`mysql_plugin`](#mysql_plugin): Manage MySQL plugins.
+* [`mysql_user`](#mysql_user): @summary Manage a MySQL user. This includes management of users password as well as privileges.
 
 _Private Resource types_
 
 * `mysql_database`: Manage a MySQL database.
 * `mysql_datadir`: Manage MySQL datadirs with mysql_install_db OR mysqld (5.7.6 and above).
-* `mysql_grant`: Manage a MySQL user's rights.
-* `mysql_user`: Manage a MySQL user. This includes management of users password as well as privileges.
 
 **Functions**
 
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
-* [`mysql_password`](#mysql_password): A wrapper for the 4.x function 'mysql::password' to bridge the gap between
-  it and the 3.x function 'mysql_password'.
 * [`mysql_password`](#mysql_password): Hash a string as mysql's "PASSWORD()" function would do it
-* [`mysql_strip_hash`](#mysql_strip_hash): A wrapper for the 4.x function 'mysql::strip_hash' to bridge the gap between
-  it and the 3.x function 'mysql_strip_hash'.
-* [`mysql_strip_hash`](#mysql_strip_hash): TEMPORARY FUNCTION: EXPIRES 2014-03-10 When given a hash this function strips out all blank entries.
 
 **Tasks**
 
@@ -1050,6 +1045,51 @@ Default value: $mysql::params::exec_path
 
 ## Resource types
 
+### mysql_grant
+
+@summary
+Manage a MySQL user's rights.
+
+#### Properties
+
+The following properties are available in the `mysql_grant` type.
+
+##### `ensure`
+
+Valid values: present, absent
+
+The basic property that the resource should be in.
+
+Default value: present
+
+##### `privileges`
+
+Privileges for user
+
+##### `table`
+
+Valid values: %r{.*\..*}, %r{^[0-9a-zA-Z$_]*@[\w%\.:\-/]*$}
+
+Table to apply privileges to.
+
+##### `user`
+
+User to operate on.
+
+##### `options`
+
+Options to grant.
+
+#### Parameters
+
+The following parameters are available in the `mysql_grant` type.
+
+##### `name`
+
+namevar
+
+Name to describe the grant.
+
 ### mysql_plugin
 
 Manage MySQL plugins.
@@ -1092,6 +1132,73 @@ namevar
 
 The name of the MySQL plugin to manage.
 
+### mysql_user
+
+@summary
+Manage a MySQL user. This includes management of users password as well as privileges.
+
+#### Properties
+
+The following properties are available in the `mysql_user` type.
+
+##### `ensure`
+
+Valid values: present, absent
+
+The basic property that the resource should be in.
+
+Default value: present
+
+##### `password_hash`
+
+Valid values: %r{\w*}
+
+The password hash of the user. Use mysql_password() for creating such a hash.
+
+##### `plugin`
+
+Valid values: %r{\w+}
+
+The authentication plugin of the user.
+
+##### `max_user_connections`
+
+Valid values: %r{\d+}
+
+Max concurrent connections for the user. 0 means no (or global) limit.
+
+##### `max_connections_per_hour`
+
+Valid values: %r{\d+}
+
+Max connections per hour for the user. 0 means no (or global) limit.
+
+##### `max_queries_per_hour`
+
+Valid values: %r{\d+}
+
+Max queries per hour for the user. 0 means no (or global) limit.
+
+##### `max_updates_per_hour`
+
+Valid values: %r{\d+}
+
+Max updates per hour for the user. 0 means no (or global) limit.
+
+##### `tls_options`
+
+Options to that set the TLS-related REQUIRE attributes for the user.
+
+#### Parameters
+
+The following parameters are available in the `mysql_user` type.
+
+##### `name`
+
+namevar
+
+The name of the user. This uses the 'username@hostname' or username@hostname.
+
 ## Functions
 
 ### mysql::password
@@ -1123,7 +1230,7 @@ When given a hash this function strips out all blank entries.
 
 The mysql::strip_hash function.
 
-Returns: `Hash` hash 
+Returns: `Hash` hash
 The given hash with all blank entries removed
 
 ##### `hash`
@@ -1131,25 +1238,6 @@ The given hash with all blank entries removed
 Data type: `Hash`
 
 Hash to be stripped
-
-### mysql_password
-
-Type: Ruby 4.x API
-
-A wrapper for the 4.x function 'mysql::password' to bridge the gap between
-  it and the 3.x function 'mysql_password'.
-
-#### `mysql_password(String $password)`
-
-The mysql_password function.
-
-Returns: `String` The mysql password hash from the 4.x function mysql::password.
-
-##### `password`
-
-Data type: `String`
-
-Plain text password.
 
 ### mysql_password
 
@@ -1168,40 +1256,6 @@ Returns: `String` the mysql password hash from the clear text password.
 Data type: `String`
 
 Plain text password.
-
-### mysql_strip_hash
-
-Type: Ruby 4.x API
-
-A wrapper for the 4.x function 'mysql::strip_hash' to bridge the gap between
-  it and the 3.x function 'mysql_strip_hash'.
-
-#### `mysql_strip_hash(Hash $hash)`
-
-The mysql_strip_hash function.
-
-Returns: `Hash` hash 
-The given hash with all blank entries removed
-
-##### `hash`
-
-Data type: `Hash`
-
-Hash to be stripped
-
-### mysql_strip_hash
-
-Type: Ruby 3.x API
-
-TEMPORARY FUNCTION: EXPIRES 2014-03-10
-When given a hash this function strips out all blank entries.
-
-#### `mysql_strip_hash()`
-
-TEMPORARY FUNCTION: EXPIRES 2014-03-10
-When given a hash this function strips out all blank entries.
-
-Returns: `Any`
 
 ## Tasks
 
