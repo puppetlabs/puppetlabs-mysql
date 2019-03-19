@@ -43,7 +43,7 @@ describe 'mysql class' do
       MANIFEST
     end
 
-     it 'behaves idempotently' do
+    it 'behaves idempotently' do
       apply_manifest(pp, catch_failures: true)
       apply_manifest(pp, catch_changes: true)
     end
@@ -58,7 +58,7 @@ describe 'mysql class' do
       MANIFEST
     end
 
-     it 'behaves idempotently' do
+    it 'behaves idempotently' do
       apply_manifest(pp, catch_failures: true)
       apply_manifest(pp, catch_changes: true)
     end

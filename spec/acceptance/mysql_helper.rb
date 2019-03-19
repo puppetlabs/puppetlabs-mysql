@@ -5,6 +5,6 @@ def pre_run
 end
 
 def mysql_version_is_greater_than(version)
-  return true if (Gem::Version.new(@mysql_version) > Gem::Version.new(version))
+  return true if Gem::Version.new(@mysql_version) > Gem::Version.new(version)
   false
 end

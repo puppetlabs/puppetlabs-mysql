@@ -1,5 +1,5 @@
 require 'spec_helper_acceptance'
-#require 'puppet/util/package'
+# require 'puppet/util/package'
 require_relative '../mysql_helper.rb'
 
 describe 'mysql_grant' do
