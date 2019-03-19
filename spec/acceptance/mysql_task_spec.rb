@@ -12,11 +12,11 @@ describe 'mysql tasks', if: os[:family] != 'sles' do
     MANIFEST
 
     it 'sets up a mysql instance' do
-      results = apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_failures: true)
     end
 
     it 'execute arbitary sql' do
-      results = task_run('mysql::sql', {'sql'=> "show databases;", 'password'=> 'password'})
+      results = task_run('mysql::sql', 'sql' => 'show databases;', 'password' => 'password')
       expect(results.first['result']['status']).to contain(%r{information_schema})
       expect(results.first['result']['status']).to contain(%r{spec1})
     end
