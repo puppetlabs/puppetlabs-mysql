@@ -18,7 +18,7 @@ _Private Classes_
 
 * `mysql::backup::mysqlbackup`: Manage the mysqlbackup client.
 * `mysql::backup::mysqldump`: "Provider" for mysqldump
-* `mysql::backup::xtrabackup`: "Provider" for Percona XtraBackup
+* `mysql::backup::xtrabackup`: "Provider" for Percona XtraBackup or MariaBackup
 * `mysql::bindings::client_dev`: Private class for installing client development bindings
 * `mysql::bindings::daemon_dev`: Private class for installing daemon development bindings
 * `mysql::bindings::java`: Private class for installing java language bindings.

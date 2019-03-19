@@ -401,8 +401,7 @@ describe 'mysql::server::backup' do
         context 'with mariabackup' do
           let(:params) do
             default_params.merge(provider: 'xtrabackup',
-                                 backupmethod: 'mariabackup'
-                                )
+                                 backupmethod: 'mariabackup')
           end
 
           it 'contain the mariabackup executor' do
