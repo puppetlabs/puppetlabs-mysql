@@ -16,14 +16,14 @@ rvm:
   - 2.5.1
 env:
   global:
-    - BEAKER_PUPPET_COLLECTION=puppet6 PUPPET_GEM_VERSION="~> 6.0"
+    - PUPPET6=debian9 PUPPET_GEM_VERSION="~> 6.0"
 matrix:
   fast_finish: true
   include:
     -
       bundler_args:
       dist: trusty
-      env: PLATFORM=debian:9
+      env: PUPPET6=debian:9
       script:
       - bundle exec rake 'litmus:provision[docker, waffleimage/debian9]'
       - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
@@ -39,6 +39,18 @@ matrix:
     -
       env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
       rvm: 2.4.4
+    -
+      bundler_args:
+      dist: trusty
+      env: PUPPET5=debian:9
+      script:
+      - bundle exec rake 'litmus:provision[docker, waffleimage/debian9]'
+      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+      - bundle exec rake 'litmus:install_agent[puppet5]'
+      - bundle exec rake litmus:install_module
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
 branches:
   only:
     - master
