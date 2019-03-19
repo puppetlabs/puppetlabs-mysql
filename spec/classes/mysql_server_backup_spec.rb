@@ -363,7 +363,7 @@ describe 'mysql::server::backup' do
 
         it 'contains the wrapper script' do
           is_expected.to contain_file('xtrabackup.sh').with_content(
-            %r{^innobackupex\s+.*?"\$@"},
+            %r{(\n*^xtrabackup\s+.*\$@)},
           )
         end
 
@@ -395,6 +395,19 @@ describe 'mysql::server::backup' do
           it 'contains the prostscript' do
             is_expected.to contain_file('xtrabackup.sh').with_content(
               %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
+            )
+          end
+        end
+        context 'with mariabackup' do
+          let(:params) do
+            default_params.merge(provider: 'xtrabackup',
+                                 backupmethod: 'mariabackup'
+                                )
+          end
+
+          it 'contain the mariabackup executor' do
+            is_expected.to contain_file('xtrabackup.sh').with_content(
+              %r{(\n*^mariabackup\s+.*\$@)},
             )
           end
         end

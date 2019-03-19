@@ -12,6 +12,7 @@ class mysql::backup::mysqldump (
   $backupdirgroup     = $mysql::params::root_group,
   $backupcompress     = true,
   $backuprotate       = 30,
+  $backupmethod       = 'mysqldump',
   $ignore_events      = true,
   $delete_before_dump = false,
   $backupdatabases    = [],
