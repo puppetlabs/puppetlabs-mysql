@@ -421,7 +421,7 @@ Plugins can be installed by using the `mysql_plugin` defined type. See `examples
 * `mysql::client::install`:  Installs MySQL client.
 * `mysql::backup::mysqldump`: Implements mysqldump backups.
 * `mysql::backup::mysqlbackup`: Implements backups with Oracle MySQL Enterprise Backup.
-* `mysql::backup::xtrabackup`: Implements backups with XtraBackup from Percona.
+* `mysql::backup::xtrabackup`: Implements backups with XtraBackup from Percona or Mariabackup.
 
 ### Parameters
 

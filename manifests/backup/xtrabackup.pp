@@ -1,5 +1,5 @@
 # @summary
-#   "Provider" for Percona XtraBackup
+#   "Provider" for Percona XtraBackup/MariaBackup
 # @api private
 #
 class mysql::backup::xtrabackup (
@@ -8,7 +8,7 @@ class mysql::backup::xtrabackup (
   $backuppassword          = undef,
   $backupdir               = '',
   $maxallowedpacket        = '1M',
-  $backupmethod            = 'mysqldump',
+  $backupmethod            = 'xtrabackup',
   $backupdirmode           = '0700',
   $backupdirowner          = 'root',
   $backupdirgroup          = $mysql::params::root_group,
@@ -26,7 +26,7 @@ class mysql::backup::xtrabackup (
   $postscript              = false,
   $execpath                = '/usr/bin:/usr/sbin:/bin:/sbin',
   $optional_args           = [],
-  $additional_cron_args    = ''
+  $additional_cron_args    = '--backup'
 ) inherits mysql::params {
 
   ensure_packages($xtrabackup_package_name)
@@ -49,7 +49,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-weekly':
     ensure  => $ensure,
-    command => "/usr/local/sbin/xtrabackup.sh ${backupdir} ${additional_cron_args}",
+    command => "/usr/local/sbin/xtrabackup.sh --target-dir=${backupdir} ${additional_cron_args}",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],
@@ -59,7 +59,7 @@ class mysql::backup::xtrabackup (
 
   cron { 'xtrabackup-daily':
     ensure  => $ensure,
-    command => "/usr/local/sbin/xtrabackup.sh --incremental ${backupdir} ${additional_cron_args}",
+    command => "/usr/local/sbin/xtrabackup.sh --incremental-basedir=${backupdir} --target-dir=${backupdir}/`date +%F_%H-%M-%S` ${additional_cron_args}",
     user    => 'root',
     hour    => $time[0],
     minute  => $time[1],

@@ -28,7 +28,7 @@
   <%- end -%>
 <%- end -%>
 
-innobackupex <%= _innobackupex_args %> "$@"
+<%= @backupmethod -%> <%= _innobackupex_args %> $@
 
 <% if @postscript -%>
   <%- [@postscript].flatten.compact.each do |script| %>
