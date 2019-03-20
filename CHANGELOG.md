@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v8.0.1) (2019-03-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/8.0.0...v8.0.1)
+
+### Fixed
+
+- \(MODULES-8684\) - Removing private tags from Puppet Types [\#1170](https://github.com/puppetlabs/puppetlabs-mysql/pull/1170) ([david22swan](https://github.com/david22swan))
+
 ## [8.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/8.0.0) (2019-01-18)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/7.0.0...8.0.0)
