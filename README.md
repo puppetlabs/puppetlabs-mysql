@@ -181,7 +181,7 @@ If required, the password can also be an empty string to allow connections witho
 This example shows how to do a minimal installation of a Percona server on a
 CentOS system. This sets up the Percona server, client, and bindings (including Perl and Python bindings). You can customize this usage and update the version as needed.
 
-This usage has been tested on Puppet 4.4 and 5.5 / CentOS 7 / Percona Server 5.7.
+This usage has been tested on Puppet 4.4, 5.5 and 6.3.0 / CentOS 7 / Percona Server 5.7.
 
 **Note:** The installation of the yum repository is not part of this package
 and is here only to show a full example of how you can install.
