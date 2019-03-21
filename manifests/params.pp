@@ -175,9 +175,7 @@ class mysql::params {
     }
 
     'Debian': {
-      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9') >= 0 {
-        $provider = 'mariadb'
-      } else {
+      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9.0') >= 0 {
         $provider = 'mysql'
       }
 
