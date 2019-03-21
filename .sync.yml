@@ -18,8 +18,7 @@ Gemfile:
           - x64_mingw
       - gem: beaker-testmode_switcher
       - gem: 'puppet_litmus'
-        git: 'https://github.com/pmcmaw/puppet_litmus.git'
-        branch: 'remove_bolt_dependency'
+        git: 'https://github.com/puppetlabs/puppet_litmus.git'
         platforms: ruby
         condition: "ENV['PUPPET_GEM_VERSION'].nil? or ENV['PUPPET_GEM_VERSION'] !~ %r{ 5}"
       - gem: 'pdk'
