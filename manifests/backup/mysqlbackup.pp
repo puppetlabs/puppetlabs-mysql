@@ -63,7 +63,7 @@ class mysql::backup::mysqlbackup (
   }
 
   package { 'cron':,
-            ensure => present,
+    ensure => present,
   }
 
   cron { 'mysqlbackup-weekly':
