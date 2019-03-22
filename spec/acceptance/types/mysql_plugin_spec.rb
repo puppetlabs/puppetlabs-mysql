@@ -53,12 +53,12 @@ describe 'mysql_plugin' do
       end
 
       it 'finds the plugin #stdout' do
-        shell("mysql -NBe \"select plugin_name from information_schema.plugins where plugin_name='#{plugin}'\"") do |r|
+        run_shell("mysql -NBe \"select plugin_name from information_schema.plugins where plugin_name='#{plugin}'\"") do |r|
           expect(r.stdout).to match(%r{^#{plugin}$}i)
         end
       end
       it 'finds the plugin #stderr' do
-        shell("mysql -NBe \"select plugin_name from information_schema.plugins where plugin_name='#{plugin}'\"") do |r|
+        run_shell("mysql -NBe \"select plugin_name from information_schema.plugins where plugin_name='#{plugin}'\"") do |r|
           expect(r.stderr).to be_empty
         end
       end
