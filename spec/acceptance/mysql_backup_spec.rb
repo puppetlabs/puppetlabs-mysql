@@ -13,6 +13,10 @@ describe 'mysql::server::backup class' do
           password => 'secret',
         }
 
+        package { 'cron':
+          ensure => present,
+        }
+
         class { 'mysql::server::backup':
           backupuser     => 'myuser',
           backuppassword => 'mypassword',
