@@ -181,7 +181,7 @@ If required, the password can also be an empty string to allow connections witho
 This example shows how to do a minimal installation of a Percona server on a
 CentOS system. This sets up the Percona server, client, and bindings (including Perl and Python bindings). You can customize this usage and update the version as needed.
 
-This usage has been tested on Puppet 4.4 / CentOS 7 / Percona Server 5.7.
+This usage has been tested on Puppet 4.4, 5.5 and 6.3.0 / CentOS 7 / Percona Server 5.7.
 
 **Note:** The installation of the yum repository is not part of this package
 and is here only to show a full example of how you can install.
@@ -189,15 +189,14 @@ and is here only to show a full example of how you can install.
 ```puppet
 yumrepo { 'percona':
   descr    => 'CentOS $releasever - Percona',
-  baseurl  => 'http://repo.percona.com/centos/$releasever/os/$basearch/',
-  gpgkey   => 'http://www.percona.com/downloads/percona-release/RPM-GPG-KEY-percona',
+  baseurl  => 'http://repo.percona.com/percona/yum/release/$releasever/RPMS/$basearch',
+  gpgkey   => 'https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
   enabled  => 1,
   gpgcheck => 1,
 }
 
 class {'mysql::server':
   package_name     => 'Percona-Server-server-57',
-  package_ensure   => '5.7.11-4.1.el7',
   service_name     => 'mysql',
   config_file      => '/etc/my.cnf',
   includedir       => '/etc/my.cnf.d',
@@ -216,18 +215,15 @@ class {'mysql::server':
 # Note: Installing Percona-Server-server-57 also installs Percona-Server-client-57.
 # This shows how to install the Percona MySQL client on its own
 class {'mysql::client':
-  package_name   => 'Percona-Server-client-57',
-  package_ensure => '5.7.11-4.1.el7',
+  package_name   => 'Percona-Server-client-57'
 }
 
 # These packages are normally installed along with Percona-Server-server-57
 # If you needed to install the bindings, however, you could do so with this code
 class { 'mysql::bindings':
   client_dev_package_name   => 'Percona-Server-shared-57',
-  client_dev_package_ensure => '5.7.11-4.1.el7',
   client_dev                => true,
   daemon_dev_package_name   => 'Percona-Server-devel-57',
-  daemon_dev_package_ensure => '5.7.11-4.1.el7',
   daemon_dev                => true,
   perl_enable               => true,
   perl_package_name         => 'perl-DBD-MySQL',
