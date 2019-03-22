@@ -214,7 +214,7 @@ class mysql::params {
       } else {
         $php_package_name = 'php5-mysql'
       }
-      
+
       $python_package_name = 'python-mysqldb'
       $ruby_package_name   = $::operatingsystemrelease ? {
         '8'                => 'ruby-mysql',
