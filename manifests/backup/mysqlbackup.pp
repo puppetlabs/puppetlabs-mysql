@@ -62,7 +62,7 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
-  package { 'cron',
+  package { 'cron':,
             ensure => present,
   }
 
