@@ -49,12 +49,18 @@ class mysql::params {
           } else {
             $provider = 'mysql'
           }
+          $python_package_name = 'MySQL-python'
         }
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
+          }
+          if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+            $python_package_name = 'python3-PyMySQL'
+          } else {
+            $python_package_name = 'MySQL-python'
           }
         }
         default: {
@@ -96,7 +102,6 @@ class mysql::params {
       $java_package_name       = 'mysql-connector-java'
       $perl_package_name       = 'perl-DBD-MySQL'
       $php_package_name        = 'php-mysql'
-      $python_package_name     = 'MySQL-python'
       $ruby_package_name       = 'ruby-mysql'
       $client_dev_package_name = undef
     }
