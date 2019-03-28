@@ -3,11 +3,13 @@ team-modules/puppetlabs-mysql:
     #    - source /home/distelli/.rvm/scripts/rvm
     #- rvm install 2.3.0 # Modules need at least 2.3 to run properly
     ###    - rvm use 2.3.0 --default
-    - echo "--- LETS INSTALL BUNDLER ---"
-    - gem install -v '1.15' bundler # Bundler dependancy issues mean we need to pin a version
+    #- echo "--- LETS INSTALL BUNDLER ---"
+      #    - gem install -v '1.15' bundler # Bundler dependancy issues mean we need to pin a version
+    - echo $PATH
     - gem list
-    - bundle -v
-    - bundle update --full-index # We require the fullindex option because bundle complains we have too many gems
+    - which bundler
+    - bundle
+      #  - bundle update --full-index # We require the fullindex option because bundle complains we have too many gems
   Build:
     - source /home/distelli/.rvm/scripts/rvm
     - bundle exec rake 'litmus:provision[docker, waffleimage/debian9]'
