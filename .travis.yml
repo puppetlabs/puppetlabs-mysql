@@ -23,8 +23,9 @@ matrix:
     -
       bundler_args:
       dist: trusty
-      env: PUPPET6=debian:9
+      env: PUPPET6=debian:8_9
       script:
+      - bundle exec rake 'litmus:provision[docker, waffleimage/debian8]'
       - bundle exec rake 'litmus:provision[docker, waffleimage/debian9]'
       - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
       - bundle exec rake litmus:install_agent
@@ -42,9 +43,23 @@ matrix:
     -
       bundler_args:
       dist: trusty
-      env: PUPPET5=debian:9
+      env: PUPPET5=debian:8_9
       script:
+      - bundle exec rake 'litmus:provision[docker, waffleimage/debian8]'
       - bundle exec rake 'litmus:provision[docker, waffleimage/debian9]'
+      - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
+      - bundle exec rake 'litmus:install_agent[puppet5]'
+      - bundle exec rake litmus:install_module
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
+    -
+      bundler_args:
+      dist: trusty
+      env: PUPPET5=centos:6_7
+      script:
+      - bundle exec rake 'litmus:provision[docker, waffleimage/centos6]'
+      - bundle exec rake 'litmus:provision[docker, waffleimage/centos7]'
       - bundle exec bolt command run 'apt-get install wget -y' --inventoryfile inventory.yaml --nodes='localhost*'
       - bundle exec rake 'litmus:install_agent[puppet5]'
       - bundle exec rake litmus:install_module

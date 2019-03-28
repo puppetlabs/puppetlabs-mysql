@@ -1,4 +1,4 @@
-team-modules/puppetlabs-motd:
+team-modules/puppetlabs-mysql:
   PreBuild:
     - source /home/distelli/.rvm/scripts/rvm
     #- rvm install 2.3.0 # Modules need at least 2.3 to run properly
