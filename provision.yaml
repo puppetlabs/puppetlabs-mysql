@@ -1,0 +1,13 @@
+---
+default:
+  provisioner: docker 
+  images: ['centos:7']
+travis_deb:
+  provisioner: docker 
+  images: ['debian:8', 'debian:9', 'ubuntu:14.04', 'ubuntu:16.04', 'ubuntu:18.04']
+travis_el:
+  provisioner: docker 
+  images: ['centos:6', 'centos:7', 'oraclelinux:6', 'oraclelinux:7', 'scientificlinux/sl:6', 'scientificlinux/sl:7']
+release_checks:
+  provisioner: vmpooler
+  images: ['redhat-6-x86_64', 'redhat-7-x86_64', 'centos-6-x86_64', 'centos-7-x86_64', 'oracle-6-x86_64', 'oracle-7-x86_64', 'scientific-6-x86_64', 'scientific-7-x86_64', 'debian-8-x86_64', 'debian-9-x86_64', 'sles-11-x86_64', 'ubuntu-1404-x86_64', 'ubuntu-1604-x86_64', 'ubuntu-1804-x86_64']
