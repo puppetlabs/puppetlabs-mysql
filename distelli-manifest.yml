@@ -1,10 +1,11 @@
 team-modules/puppetlabs-mysql:
   PreBuild:
-    - source /home/distelli/.rvm/scripts/rvm
+    #    - source /home/distelli/.rvm/scripts/rvm
     #- rvm install 2.3.0 # Modules need at least 2.3 to run properly
-    - rvm use 2.3.0 --default
+    ###    - rvm use 2.3.0 --default
     - echo "--- LETS INSTALL BUNDLER ---"
     - gem install -v '1.15' bundler # Bundler dependancy issues mean we need to pin a version
+    - gem list
     - bundle -v
     - bundle update --full-index # We require the fullindex option because bundle complains we have too many gems
   Build:
@@ -17,10 +18,10 @@ team-modules/puppetlabs-mysql:
     - bundle exec rake 'litmus:install_module
     - bundle exec rake litmus:acceptance:parallel
   AfterBuildSuccess:
-    - source /home/distelli/.rvm/scripts/rvm
+    #    - source /home/distelli/.rvm/scripts/rvm
     - bundle exec rake waffle:tear_down
   AfterBuildFailure:
-    - source /home/distelli/.rvm/scripts/rvm
+    #    - source /home/distelli/.rvm/scripts/rvm
     - bundle exec rake litmus:tear_down
   CommitData:
     - RepoType: Git
