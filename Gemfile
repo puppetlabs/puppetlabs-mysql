@@ -34,7 +34,7 @@ group :system_tests do
   gem "puppet-module-posix-system-r#{minor_version}", require: false, platforms: [:ruby]
   gem "puppet-module-win-system-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "beaker-testmode_switcher",                     require: false
-  gem "puppet_litmus",                                require: false, git: 'https://github.com/puppetlabs/puppet_litmus.git', platforms: [:ruby] if ENV['PUPPET_GEM_VERSION'].nil? or ENV['PUPPET_GEM_VERSION'] !~ %r{ 5}
+  gem "puppet_litmus",                                require: false, git: 'https://github.com/tphoney/puppet_litmus.git', branch: 'provisioning_from_list', platforms: [:ruby] if ENV['PUPPET_GEM_VERSION'].nil? or ENV['PUPPET_GEM_VERSION'] !~ %r{ 5}
   gem "pdk",                                          require: false, git: 'https://github.com/puppetlabs/pdk.git'
 end
 
