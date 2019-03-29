@@ -1,29 +1,24 @@
 team-modules/puppetlabs-mysql:
   PreBuild:
-    #    - source /home/distelli/.rvm/scripts/rvm
-    #- rvm install 2.3.0 # Modules need at least 2.3 to run properly
-    ###    - rvm use 2.3.0 --default
-    #- echo "--- LETS INSTALL BUNDLER ---"
-      #    - gem install -v '1.15' bundler # Bundler dependancy issues mean we need to pin a version
-    - echo $PATH
-    - gem list
-    - which bundler
-    - bundle
-      #  - bundle update --full-index # We require the fullindex option because bundle complains we have too many gems
+    - source /opt/rh/rh-ruby25/enable
+    - echo "--- LETS update BUNDLER ---"
+    - bundle install --path vendor/bundle --jobs 3
   Build:
-    - source /home/distelli/.rvm/scripts/rvm
-    - bundle exec rake 'litmus:provision[docker, waffleimage/debian9]'
+    - echo "--- PROVISIONING ---"
+    - source /opt/rh/rh-ruby25/enable
+    - bundle exec rake litmus:provision_list[release_checks]
     - cat inventory.yaml
     - echo "--- AGENT INSTALLATION ---"
-    - bundle exec rake 'litmus:install_agent
+    - bundle exec rake litmus:install_agent
     - echo "--- MODULE INSTALLATION ---"
-    - bundle exec rake 'litmus:install_module
+    - bundle exec rake litmus:install_module
+    - echo "--- TESTS RUNNING ---"
     - bundle exec rake litmus:acceptance:parallel
   AfterBuildSuccess:
-    #    - source /home/distelli/.rvm/scripts/rvm
-    - bundle exec rake waffle:tear_down
+    - source /opt/rh/rh-ruby25/enable
+    - bundle exec rake litmus:tear_down
   AfterBuildFailure:
-    #    - source /home/distelli/.rvm/scripts/rvm
+    - source /opt/rh/rh-ruby25/enable
     - bundle exec rake litmus:tear_down
   CommitData:
     - RepoType: Git
