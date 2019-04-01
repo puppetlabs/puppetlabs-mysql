@@ -63,9 +63,9 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
-  package { 'cron':,
-    ensure => present,
-  }
+  #package { 'cron':,
+  #  ensure => present,
+  #}
 
   cron { 'mysqlbackup-weekly':
     ensure  => $ensure,
