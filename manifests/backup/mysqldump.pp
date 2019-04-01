@@ -52,11 +52,29 @@ class mysql::backup::mysqldump (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
-  if $::osfamily == !'RedHat'{
-    package { 'cron':
-      ensure => present,
+  # if $::osfamily == 'RedHat'{
+  #   package { 'cronie':
+  #     ensure => present,
+  #   }
+  # }
+  # else {
+  #   package { 'cron':
+  #     ensure => present,
+  #   }
+  # }
+
+  if $::osfamily == 'RedHat'{
+    cron_package = 'cronie'
     }
   }
+  else {
+    cron_package = 'cron'
+    }
+  }
+
+  package { $cron_package :
+      ensure => present,
+    }
 
   cron { 'mysql-backup':
     ensure  => $ensure,
