@@ -1,8 +1,8 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql localization', unless: (os[:family] == 'windows') do 
+describe 'mysql localization', unless: (os[:family] == 'windows') do
   before :all do
-      run_shell("export LANGUAGE='ja'")
+    run_shell("export LANGUAGE='ja'")
   end
 
   context 'when triggering puppet simple string error' do
