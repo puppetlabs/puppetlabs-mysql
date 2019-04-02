@@ -1,8 +1,6 @@
 require 'rspec-puppet-facts'
 include RspecPuppetFacts
 
-require 'puppetlabs_spec_helper/tasks/beaker' unless Bundler.rubygems.find_name('puppet_litmus')
-
 if ENV['COVERAGE'] == 'yes'
   require 'simplecov'
   require 'simplecov-console'
