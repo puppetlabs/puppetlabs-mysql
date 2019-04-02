@@ -10,6 +10,11 @@
 #     backuppassword => 'mypassword',
 #     backupdir      => '/tmp/backups',
 #   }
+#   class { 'mysql::server::backup':
+#     backupmethod => 'mariabackup',
+#     provider     => 'xtrabackup',
+#     backupdir    => '/tmp/backups',
+#   }
 #
 # @param backupuser
 #   MySQL user with backup administrator privileges.
@@ -25,6 +30,8 @@
 #   Group owner for the backup directory. This parameter is passed directly to the file resource.
 # @param backupcompress
 #   Whether or not to compress the backup (when using the mysqldump provider)
+# @param backupmethod
+#   The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup 
 # @param backuprotate
 #   Backup rotation interval in 24 hour periods.
 # @param ignore_events
@@ -64,6 +71,7 @@ class mysql::server::backup (
   $backupdirgroup     = 'root',
   $backupcompress     = true,
   $backuprotate       = 30,
+  $backupmethod       = undef,
   $ignore_events      = true,
   $delete_before_dump = false,
   $backupdatabases    = [],
@@ -95,6 +103,7 @@ class mysql::server::backup (
       'backupdirgroup'     => $backupdirgroup,
       'backupcompress'     => $backupcompress,
       'backuprotate'       => $backuprotate,
+      'backupmethod'       => $backupmethod,
       'ignore_events'      => $ignore_events,
       'delete_before_dump' => $delete_before_dump,
       'backupdatabases'    => $backupdatabases,

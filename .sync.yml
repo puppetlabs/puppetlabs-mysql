@@ -1,4 +1,8 @@
 ---
+.gitignore:
+  required:
+    - ---.project
+
 .travis.yml:
   docker_sets:
     - set: docker/centos-7

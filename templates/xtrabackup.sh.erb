@@ -5,12 +5,37 @@
 <%- end -%>
 #
 # A wrapper for Xtrabackup
-#
+
+ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
+DIR=<%= @backupdir %>
+
+# Ensure backup directory exist.
+mkdir -p $DIR
+
+<%- if @kernel == 'Linux' -%>
+set -o pipefail
+<%- end -%>
+
 <% if @prescript -%>
   <%- [@prescript].flatten.compact.each do |script| %>
 <%= script %>
   <%- end -%>
 <% end -%>
+
+
+cleanup()
+{
+  <%- if @kernel == 'SunOS' -%>
+    gfind "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | gxargs -0 -r rm -f
+  <%- else -%>
+    find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+  <%- end -%>
+}
+
+<% if @delete_before_dump -%>
+cleanup
+<% end -%>
+
 
 <%- _innobackupex_args = '' -%>
 
@@ -28,7 +53,16 @@
   <%- end -%>
 <%- end -%>
 
-innobackupex <%= _innobackupex_args %> "$@"
+<%= @backupmethod -%> <%= _innobackupex_args %> $@
+
+
+<% unless @delete_before_dump -%>
+if [ $? -eq 0 ] ; then
+    cleanup
+    touch /tmp/mysqlbackup_success
+fi
+<% end -%>
+
 
 <% if @postscript -%>
   <%- [@postscript].flatten.compact.each do |script| %>
