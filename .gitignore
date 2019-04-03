@@ -18,5 +18,7 @@
 /spec/fixtures/manifests/
 /spec/fixtures/modules/
 /tmp/
-.envrc
-/inventory.yaml
+/vendor/
+/convert_report.txt
+/update_report.txt
+.DS_Store

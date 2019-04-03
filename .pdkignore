@@ -22,7 +22,6 @@
 /convert_report.txt
 /update_report.txt
 .DS_Store
-.vscode/
 .envrc
 /inventory.yaml
 /appveyor.yml
