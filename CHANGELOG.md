@@ -2,9 +2,25 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v8.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v8.0.1) (2019-03-20)
+## [v8.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v8.1.0) (2019-04-02)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/8.0.0...v8.0.1)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/8.0.1...v8.1.0)
+
+### Added
+
+- Rotate option for xtrabackup script [\#1176](https://github.com/puppetlabs/puppetlabs-mysql/pull/1176) ([elfranne](https://github.com/elfranne))
+- Add support for dynamic backupmethods/mariabackup [\#1171](https://github.com/puppetlabs/puppetlabs-mysql/pull/1171) ([danquack](https://github.com/danquack))
+
+### Fixed
+
+- \(MODULES-6627\) Remove unused --host flags from mysqlcaller [\#1174](https://github.com/puppetlabs/puppetlabs-mysql/pull/1174) ([david22swan](https://github.com/david22swan))
+- Set correct packagename for ruby\_mysql on Ubuntu 18.04 [\#1163](https://github.com/puppetlabs/puppetlabs-mysql/pull/1163) ([datty](https://github.com/datty))
+- \[MODULES-8779\] Set proper python\_package\_name for RHEL/CentOS 8 [\#1161](https://github.com/puppetlabs/puppetlabs-mysql/pull/1161) ([javierpena](https://github.com/javierpena))
+- fix install ordering for innodb data size [\#1160](https://github.com/puppetlabs/puppetlabs-mysql/pull/1160) ([fe80](https://github.com/fe80))
+
+## [8.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/8.0.1) (2019-03-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/8.0.0...8.0.1)
 
 ### Fixed
 
