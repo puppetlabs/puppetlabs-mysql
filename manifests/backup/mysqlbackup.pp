@@ -71,6 +71,7 @@ class mysql::backup::mysqlbackup (
       package {'cron':
         ensure => present,
     }
+  }
 
   cron { 'mysqlbackup-weekly':
     ensure  => $ensure,
