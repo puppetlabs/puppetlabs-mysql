@@ -1,8 +1,6 @@
-#! /usr/bin/env ruby -S rspec # rubocop:disable Lint/ScriptPermission
-
 require 'spec_helper'
 
-describe 'mysql::deepmerge' do
+describe 'mysql::normalise_and_deepmerge' do
   it 'exists' do
     is_expected.not_to eq(nil)
   end
@@ -22,14 +20,14 @@ describe 'mysql::deepmerge' do
   # rubocop:disable RSpec/NamedSubject
   index_values = ['one', 'two', 'three']
   expected_values_one = ['1', '2', '2']
-  it 'is able to mysql_deepmerge two hashes' do
+  it 'merge two hashes' do
     new_hash = subject.execute({ 'one' => '1', 'two' => '1' }, 'two' => '2', 'three' => '2')
     index_values.each_with_index do |index, expected|
       expect(new_hash[index]).to eq(expected_values_one[expected])
     end
   end
 
-  it 'mysql_deepmerges multiple hashes' do
+  it 'merges multiple hashes' do
     hash = subject.execute({ 'one' => 1 }, { 'one' => '2' }, 'one' => '3')
     expect(hash['one']).to eq('3')
   end
@@ -39,7 +37,7 @@ describe 'mysql::deepmerge' do
   end
 
   expected_values_two = [1, 2, 'four' => 4]
-  it 'mysql_deepmerges subhashes' do
+  it 'merges subhashes' do
     hash = subject.execute({ 'one' => 1 }, 'two' => 2, 'three' => { 'four' => 4 })
     index_values.each_with_index do |index, expected|
       expect(hash[index]).to eq(expected_values_two[expected])

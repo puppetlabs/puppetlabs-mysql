@@ -1,9 +1,10 @@
-# @summary Recursively merges two or more hashes together and returns the resulting hash.
+# @summary Recursively merges two or more hashes together, normalises keys with differing use of dashesh and underscores,
+#   then returns the resulting hash.
 #
 # @example
 #   $hash1 = {'one' => 1, 'two' => 2, 'three' => { 'four' => 4 } }
 #   $hash2 = {'two' => 'dos', 'three' => { 'five' => 5 } }
-#   $merged_hash = mysql::deepmerge($hash1, $hash2)
+#   $merged_hash = mysql::normalise_and_deepmerge($hash1, $hash2)
 #   # The resulting hash is equivalent to:
 #   # $merged_hash = { 'one' => 1, 'two' => 'dos', 'three' => { 'four' => 4, 'five' => 5 } }
 #
@@ -11,10 +12,10 @@
 # - When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
 # - When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate), the rightmost style will win.
 #
-Puppet::Functions.create_function(:'mysql::deepmerge') do
-  def deepmerge(*args)
+Puppet::Functions.create_function(:'mysql::normalise_and_deepmerge') do
+  def normalise_and_deepmerge(*args)
     if args.length < 2
-      raise Puppet::ParseError, _('mysql::deepmerge(): wrong number of arguments (%{args_length}; must be at least 2)') % { args_length: args.length }
+      raise Puppet::ParseError, _('mysql::normalise_and_deepmerge(): wrong number of arguments (%{args_length}; must be at least 2)') % { args_length: args.length }
     end
 
     result = {}
@@ -22,7 +23,7 @@ Puppet::Functions.create_function(:'mysql::deepmerge') do
       next if arg.is_a?(String) && arg.empty? # empty string is synonym for puppet's undef
       # If the argument was not a hash, skip it.
       unless arg.is_a?(Hash)
-        raise Puppet::ParseError, _('mysql::deepmerge: unexpected argument type %{arg_class}, only expects hash arguments.') % { args_class: args.class }
+        raise Puppet::ParseError, _('mysql::normalise_and_deepmerge: unexpected argument type %{arg_class}, only expects hash arguments.') % { args_class: args.class }
       end
 
       # We need to make a copy of the hash since it is frozen by puppet
