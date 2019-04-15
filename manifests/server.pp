@@ -121,8 +121,8 @@ class mysql::server (
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
   include '::mysql::server::config'
-  include '::mysql::server::install'
   include '::mysql::server::binarylog'
+  include '::mysql::server::install'
   include '::mysql::server::installdb'
   include '::mysql::server::service'
   include '::mysql::server::root_password'
