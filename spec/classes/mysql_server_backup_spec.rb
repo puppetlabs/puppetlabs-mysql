@@ -15,7 +15,7 @@ describe 'mysql::server::backup' do
       let(:default_params) do
         { 'backupuser'         => 'testuser',
           'backuppassword'     => 'testpass',
-          'backupdir'          => '/tmp',
+          'backupdir'          => '/tmp/mysql-backup',
           'backuprotate'       => '25',
           'delete_before_dump' => true,
           'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
@@ -65,8 +65,7 @@ describe 'mysql::server::backup' do
         }
 
         it {
-          is_expected.to contain_file('mysqlbackupdir').with(
-            path: '/tmp',
+          is_expected.to contain_file('/tmp/mysql-backup').with(
             ensure: 'directory',
           )
         }
@@ -113,10 +112,11 @@ describe 'mysql::server::backup' do
         end
 
         it {
-          is_expected.to contain_file('mysqlbackupdir').with(
-            path: '/tmp', ensure: 'directory',
-            mode: '0750', owner: 'testuser',
-            group: 'testgrp'
+          is_expected.to contain_file('/tmp/mysql-backup').with(
+            ensure: 'directory',
+            mode: '0750',
+            owner: 'testuser',
+            group: 'testgrp',
           )
         }
       end

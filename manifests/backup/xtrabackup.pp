@@ -67,9 +67,8 @@ class mysql::backup::xtrabackup (
     require => Package[$xtrabackup_package_name],
   }
 
-  file { 'mysqlbackupdir':
+  file { $backupdir:
     ensure => 'directory',
-    path   => $backupdir,
     mode   => $backupdirmode,
     owner  => $backupdirowner,
     group  => $backupdirgroup,
