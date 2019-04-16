@@ -22,8 +22,8 @@
 /convert_report.txt
 /update_report.txt
 .DS_Store
-.vscode/
 .envrc
+/inventory.yaml
 /appveyor.yml
 /.fixtures.yml
 /Gemfile
@@ -32,8 +32,10 @@
 /.gitlab-ci.yml
 /.pdkignore
 /Rakefile
+/rakelib/
 /.rspec
 /.rubocop.yml
 /.travis.yml
 /.yardopts
 /spec/
+/.vscode/
