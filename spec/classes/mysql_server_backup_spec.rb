@@ -355,62 +355,6 @@ describe 'mysql::server::backup' do
           )
         end
       end
-
-      context 'with the xtrabackup provider' do
-        let(:params) do
-          default_params.merge(provider: 'xtrabackup')
-        end
-
-        it 'contains the wrapper script' do
-          is_expected.to contain_file('xtrabackup.sh').with_content(
-            %r{(\n*^xtrabackup\s+.*\$@)},
-          )
-        end
-
-        context 'with prescript defined' do
-          let(:params) do
-            default_params.merge(provider: 'xtrabackup',
-                                 prescript: [
-                                   'rsync -a /tmp backup01.local-lan:',
-                                   'rsync -a /tmp backup02.local-lan:',
-                                 ])
-          end
-
-          it 'contains the prescript' do
-            is_expected.to contain_file('xtrabackup.sh').with_content(
-              %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
-            )
-          end
-        end
-
-        context 'with postscript defined' do
-          let(:params) do
-            default_params.merge(provider: 'xtrabackup',
-                                 postscript: [
-                                   'rsync -a /tmp backup01.local-lan:',
-                                   'rsync -a /tmp backup02.local-lan:',
-                                 ])
-          end
-
-          it 'contains the prostscript' do
-            is_expected.to contain_file('xtrabackup.sh').with_content(
-              %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
-            )
-          end
-        end
-        context 'with mariabackup' do
-          let(:params) do
-            default_params.merge(provider: 'xtrabackup',
-                                 backupmethod: 'mariabackup')
-          end
-
-          it 'contain the mariabackup executor' do
-            is_expected.to contain_file('xtrabackup.sh').with_content(
-              %r{(\n*^mariabackup\s+.*\$@)},
-            )
-          end
-        end
-      end
     end
   end
   # rubocop:enable RSpec/NestedGroups
