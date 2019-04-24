@@ -7,6 +7,13 @@
   unmanaged: true
 
 Gemfile:
+  optional:
+    ':development':
+      - gem: puppet-lint-i18n
+      - gem: 'github_changelog_generator'
+        git: 'https://github.com/skywinder/github-changelog-generator'
+        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
   required:
     ':system_tests':
       - gem: 'puppet-module-posix-system-r#{minor_version}'
@@ -16,21 +23,13 @@ Gemfile:
           - mswin
           - mingw
           - x64_mingw
-      - gem: beaker-testmode_switcher
       - gem: 'puppet_litmus'
-        git: 'https://github.com/puppetlabs/puppet_litmus.git'
-        platforms: ruby
+        platforms:
+          - ruby
+          - mswin
+          - mingw
+          - x64_mingw
         condition: "ENV['PUPPET_GEM_VERSION'].nil? or ENV['PUPPET_GEM_VERSION'] !~ %r{ 5}"
-      - gem: 'pdk'
-        git: 'https://github.com/puppetlabs/pdk.git'
-    ':development':
-      - gem: 'puppet-lint-i18n'
-  optional:
-    ':development':
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
 
 appveyor.yml:
   unmanaged: true
