@@ -14,6 +14,7 @@ class mysql::backup::xtrabackup (
   $backupdirgroup          = $mysql::params::root_group,
   $backupcompress          = true,
   $backuprotate            = 30,
+  $backupscript_template   = 'mysql/xtrabackup.sh.erb',
   $ignore_events           = true,
   $delete_before_dump      = false,
   $backupdatabases         = [],
@@ -94,6 +95,6 @@ class mysql::backup::xtrabackup (
     mode    => '0700',
     owner   => 'root',
     group   => $mysql::params::root_group,
-    content => template('mysql/xtrabackup.sh.erb'),
+    content => template($backupscript_template),
   }
 }
