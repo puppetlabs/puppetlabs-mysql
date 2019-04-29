@@ -28,7 +28,7 @@ describe 'mysql::server::backup class' do
         }
     MANIFEST
     it 'when configuring mysql backups' do
-      apply_manifest_and_idempotent(pp)
+      idempotent_apply(pp)
     end
   end
 
@@ -102,7 +102,7 @@ describe 'mysql::server::backup class' do
           }
       MANIFEST
       it 'when configuring mysql backups' do
-        apply_manifest_and_idempotent(pp)
+        idempotent_apply(pp)
       end
     end
 

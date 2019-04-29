@@ -16,7 +16,7 @@ describe 'mysql tasks', if: os[:family] != 'sles' do
     end
 
     it 'execute arbitary sql' do
-      results = task_run('mysql::sql', 'sql' => 'show databases;', 'password' => 'password')
+      results = run_bolt_task('mysql::sql', 'sql' => 'show databases;', 'password' => 'password')
       expect(results.first['result']['status']).to contain(%r{information_schema})
       expect(results.first['result']['status']).to contain(%r{spec1})
     end

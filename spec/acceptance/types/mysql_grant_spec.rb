@@ -30,7 +30,7 @@ describe 'mysql_grant' do
     MANIFEST
     it 'fails' do
       results = apply_manifest(pp, expect_failures: true)
-      expect(results.first['result']['stderr']).to contain(%r{`privileges` `parameter` is required})
+      expect(results['result']['stderr']).to contain(%r{`privileges` `parameter` is required})
     end
 
     it 'does not find the user' do
@@ -158,7 +158,7 @@ describe 'mysql_grant' do
     MANIFEST
     it 'fails' do
       results = apply_manifest(pp, expect_failures: true)
-      expect(results.first['result']['stderr']).to contain(%r{`table` `parameter` is required.})
+      expect(results['result']['stderr']).to contain(%r{`table` `parameter` is required.})
     end
   end
 
@@ -414,7 +414,7 @@ describe 'mysql_grant' do
     MANIFEST
     it 'create lowercase all privs' do
       results = apply_manifest(pp_two, catch_failures: true)
-      expect(results.first['result']['exit_code']).to eq(0)
+      expect(results['result']['exit_code']).to eq(0)
     end
   end
 
@@ -558,7 +558,7 @@ describe 'mysql_grant' do
       MANIFEST
       it 'fails' do
         results = apply_manifest(pp, expect_failures: true)
-        expect(results.first['result']['stderr']).to match(%r{`privileges` `parameter`: PROXY can only be specified by itself})
+        expect(results['result']['stderr']).to match(%r{`privileges` `parameter`: PROXY can only be specified by itself})
       end
 
       it 'does not find the user' do
@@ -582,7 +582,7 @@ describe 'mysql_grant' do
       MANIFEST
       it 'fails' do
         results = apply_manifest(pp, expect_failures: true)
-        expect(results.first['result']['stderr']).to match(%r{PROXY user not supported on mysql versions < 5\.5\.0}i)
+        expect(results['result']['stderr']).to match(%r{PROXY user not supported on mysql versions < 5\.5\.0}i)
       end
 
       it 'does not find the user' do
@@ -606,7 +606,7 @@ describe 'mysql_grant' do
       MANIFEST
       it 'fails' do
         results = apply_manifest(pp, expect_failures: true)
-        expect(results.first['result']['stderr']).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
+        expect(results['result']['stderr']).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
       end
 
       it 'does not find the user' do
@@ -690,7 +690,7 @@ describe 'mysql_grant' do
       mysql_cmd = run_shell('which mysql').first['result']['stdout'].chomp
       run_shell("mv #{mysql_cmd} #{mysql_cmd}.bak")
       results = apply_manifest(pp_three, expect_failures: true)
-      expect(results.first['result']['stderr']).to match(%r{Could not find a suitable provider for mysql_grant})
+      expect(results['result']['stderr']).to match(%r{Could not find a suitable provider for mysql_grant})
       run_shell("mv #{mysql_cmd}.bak #{mysql_cmd}")
     end
 
@@ -726,7 +726,7 @@ describe 'mysql_grant' do
     MANIFEST
     it 'creates grant on missing table will fail' do
       results = apply_manifest(pp_two, expect_failures: true)
-      expect(results.first['result']['stderr']).to match(%r{Table 'grant_spec_db\.grant_spec_table_doesnt_exist' doesn't exist})
+      expect(results['result']['stderr']).to match(%r{Table 'grant_spec_db\.grant_spec_table_doesnt_exist' doesn't exist})
     end
 
     pp_three = <<-MANIFEST
