@@ -1,19 +1,19 @@
-# @summary 
+# @summary
 #   Builds initial databases on installation.
 #
 # @api private
 #
 class mysql::server::installdb {
-  $options = $mysql::server::options
+  $options = $mysql::server::_options
 
   if $mysql::server::package_manage {
 
     # Build the initial databases.
-    $mysqluser = $mysql::server::options['mysqld']['user']
-    $datadir = $mysql::server::options['mysqld']['datadir']
-    $basedir = $mysql::server::options['mysqld']['basedir']
+    $mysqluser = $mysql::server::_options['mysqld']['user']
+    $datadir = $mysql::server::_options['mysqld']['datadir']
+    $basedir = $mysql::server::_options['mysqld']['basedir']
     $config_file = $mysql::server::config_file
-    $log_error = $mysql::server::options['mysqld']['log-error']
+    $log_error = $mysql::server::_options['mysqld']['log-error']
 
     if $mysql::server::manage_config_file and $config_file != $mysql::params::config_file {
       $_config_file=$config_file

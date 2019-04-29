@@ -5,7 +5,7 @@
 #
 class mysql::server::config {
 
-  $options = $mysql::server::options
+  $options = $mysql::server::_options
   $includedir = $mysql::server::includedir
 
   File {

@@ -77,6 +77,12 @@ msgid ""
 "future release."
 msgstr ""
 
+#. ./manifests/server.pp:122
+msgid ""
+"You can\'t specify $options and $override_options simultaneously, see the "
+"README section \'Customize server options\'!"
+msgstr ""
+
 #: ./lib/puppet/parser/functions/mysql_deepmerge.rb:22
 msgid ""
 "mysql_deepmerge(): wrong number of arguments (%{args_length}; must be at "
