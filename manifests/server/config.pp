@@ -7,7 +7,6 @@ class mysql::server::config {
 
   $options = $mysql::server::options
   $includedir = $mysql::server::includedir
-  $managed_dirs = $mysql::server::managed_dirs
 
   File {
     owner  => 'root',
@@ -15,7 +14,7 @@ class mysql::server::config {
     mode   => '0400',
   }
 
-  if $managed_dirs {
+  if $mysql::server::managed_dirs {
     $managed_dirs.each | $dir | {
       if $options['mysqld']["${dir}"] {
         file {$options['mysqld']["${dir}"]:
