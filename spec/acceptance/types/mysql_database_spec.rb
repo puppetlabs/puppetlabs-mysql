@@ -23,10 +23,6 @@ describe 'mysql_database' do
     it 'finds the database #stdout' do
       run_shell("mysql -NBe \"SHOW DATABASES LIKE 'spec_db'\"") do |r|
         expect(r.stdout).to match(%r{^spec_db$})
-      end
-    end
-    it 'finds the database #stderr' do
-      run_shell("mysql -NBe \"SHOW DATABASES LIKE 'spec_db'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -50,10 +46,6 @@ describe 'mysql_database' do
     it 'finds latin1 db #stdout' do
       run_shell("mysql -NBe \"SHOW VARIABLES LIKE '%_database'\" spec_latin1") do |r|
         expect(r.stdout).to match(%r{^character_set_database\tlatin1\ncollation_database\tlatin1_swedish_ci$})
-      end
-    end
-    it 'finds latin1 db #stderr' do
-      run_shell("mysql -NBe \"SHOW VARIABLES LIKE '%_database'\" spec_latin1") do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -61,10 +53,6 @@ describe 'mysql_database' do
     it 'finds utf8 db #stdout' do
       run_shell("mysql -NBe \"SHOW VARIABLES LIKE '%_database'\" spec_utf8") do |r|
         expect(r.stdout).to match(%r{^character_set_database\tutf8\ncollation_database\tutf8_general_ci$})
-      end
-    end
-    it 'finds utf8 db #stderr' do
-      run_shell("mysql -NBe \"SHOW VARIABLES LIKE '%_database'\" spec_utf8") do |r|
         expect(r.stderr).to be_empty
       end
     end

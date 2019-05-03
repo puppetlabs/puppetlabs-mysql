@@ -81,9 +81,6 @@ describe 'mysql_grant' do
     it 'finds the user #stdout' do
       results = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
       expect(results.first['result']['stdout']).to contain(%r{GRANT SELECT, UPDATE.*TO 'test2'@'tester'})
-    end
-    it 'finds the user #stderr' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
       expect(results.first['result']['stderr']).to be_empty
     end
   end
@@ -108,9 +105,6 @@ describe 'mysql_grant' do
     it 'finds the user #stdout' do
       results = run_shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"")
       expect(results.first['result']['stdout']).to contain(%r{GRANT SELECT, UPDATE.*TO 'test-2'@'tester'})
-    end
-    it 'finds the user #stderr' do
-      results = run_shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"")
       expect(results.first['result']['stderr']).to be_empty
     end
   end
@@ -136,9 +130,6 @@ describe 'mysql_grant' do
     it 'finds the user #stdout' do
       results = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
       expect(results.first['result']['stdout']).to contain(%r{GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$})
-    end
-    it 'finds the user #stderr' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
       expect(results.first['result']['stderr']).to be_empty
     end
   end
@@ -183,9 +174,6 @@ describe 'mysql_grant' do
     it 'finds the user #stdout' do
       results = run_shell('mysql -NBe "SHOW GRANTS FOR test4@tester"')
       expect(results.first['result']['stdout']).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test4'@'tester' WITH GRANT OPTION})
-    end
-    it 'finds the user #stderr' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test4@tester"')
       expect(results.first['result']['stderr']).to be_empty
     end
   end
@@ -251,19 +239,12 @@ describe 'mysql_grant' do
     it 'finds short hostname #stdout' do
       results = run_shell('mysql -NBe "SHOW GRANTS FOR test@short"')
       expect(results.first['result']['stdout']).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'short'})
-    end
-    it 'finds short hostname #stderr' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test@short"')
       expect(results.first['result']['stderr']).to be_empty
     end
 
     it 'finds long hostname #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'long.hostname.com'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'long.hostname.com'})
-      end
-    end
-    it 'finds long hostname #stderr' do
-      run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'long.hostname.com'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -271,10 +252,6 @@ describe 'mysql_grant' do
     it 'finds ipv4 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.6'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.6'})
-      end
-    end
-    it 'finds ipv4 #stderr' do
-      run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.6'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -282,10 +259,6 @@ describe 'mysql_grant' do
     it 'finds ipv6 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'})
-      end
-    end
-    it 'finds ipv6 #stderr' do
-      run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -293,10 +266,6 @@ describe 'mysql_grant' do
     it 'finds short ipv6 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'::1\/128'})
-      end
-    end
-    it 'finds short ipv6 @stderr' do
-      run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
@@ -380,8 +349,7 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'setup mysql::server' do
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      idempotent_apply(pp)
     end
   end
 
@@ -443,9 +411,6 @@ describe 'mysql_grant' do
     it 'finds the user #stdout' do
       results = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
       expect(results.first['result']['stdout']).to match(%r{GRANT EXECUTE ON PROCEDURE `mysql`.`simpleproc` TO 'test2'@'tester'})
-    end
-    it 'finds the user #stderr' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
       expect(results.first['result']['stderr']).to be_empty
     end
   end
@@ -505,10 +470,6 @@ describe 'mysql_grant' do
       it 'finds the user #stdout' do
         run_shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stdout).to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'})
-        end
-      end
-      it 'finds the user #stderr' do
-        run_shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stderr).to be_empty
         end
       end
@@ -534,10 +495,6 @@ describe 'mysql_grant' do
       it 'finds the user #stdout' do
         run_shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stdout).not_to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'})
-        end
-      end
-      it 'finds the user #stderr' do
-        run_shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
           expect(r.stderr).to be_empty
         end
       end
@@ -666,10 +623,6 @@ describe 'mysql_grant' do
     it 'finds ipv4 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.7'\"") do |r|
         expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.7'})
-      end
-    end
-    it 'finds ipv4 #stderr' do
-      run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.7'\"") do |r|
         expect(r.stderr).to be_empty
       end
     end
