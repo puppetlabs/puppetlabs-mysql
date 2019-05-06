@@ -7,6 +7,8 @@ class mysql::server::config {
 
   $options = $mysql::server::_options
   $includedir = $mysql::server::includedir
+  $managed_dirs = $mysql::server::managed_dirs
+
 
   File {
     owner  => 'root',
@@ -29,6 +31,24 @@ class mysql::server::config {
       file { $includeparentdir:
         ensure => directory,
         mode   => '0755',
+      }
+    }
+  }
+
+  #Debian: Creating world readable directories before installing.
+  if $managed_dirs {
+    $managed_dirs.each | $entry | {
+      $dir = $options['mysqld']["${entry}"]
+      if ( $dir and $dir != '/usr' and $dir != '/tmp' ) {
+        exec {"${entry}-managed_dir-mkdir":
+          command => "/bin/mkdir -p ${dir}",
+          creates => $dir,
+          notify  =>  Exec["${entry}-managed_dir-chmod"],
+        }
+        exec {"${entry}-managed_dir-chmod":
+          command     => "/bin/chmod 777 ${dir}",
+          refreshonly => true,
+        }
       }
     }
   }
