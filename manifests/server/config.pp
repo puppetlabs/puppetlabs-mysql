@@ -42,7 +42,7 @@ class mysql::server::config {
       if ( $dir and $dir != '/usr' and $dir != '/tmp' ) {
         exec {"${entry}-managed_dir-mkdir":
           command => "/bin/mkdir -p ${dir}",
-          creates => $dir,
+          unless  => "/usr/bin/dpkg -s ${mysql::server::package_name}",
           notify  =>  Exec["${entry}-managed_dir-chmod"],
         }
         exec {"${entry}-managed_dir-chmod":
