@@ -17,7 +17,7 @@ class mysql::server::managed_dirs {
         file {"${entry}-managed_dir":
           ensure => directory,
           path   => $dir,
-          mode   => '0755',
+          mode   => '0700',
           owner  => $options['mysqld']['user'],
           group  => $options['mysqld']['user'],
         }
@@ -34,7 +34,7 @@ class mysql::server::managed_dirs {
     if $logbindir != '.' {
       file { $logbindir:
         ensure => directory,
-        mode   => '0755',
+        mode   => '0700',
         owner  => $options['mysqld']['user'],
         group  => $options['mysqld']['user'],
       }
