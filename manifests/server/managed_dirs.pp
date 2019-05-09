@@ -11,6 +11,7 @@ class mysql::server::managed_dirs {
 
   #Debian: Fix permission on directories
   if $managed_dirs {
+    $managed_dirs_path = $managed_dirs.map |$path| { $options['mysqld']["${path}"] }
     $managed_dirs.each | $entry | {
       $dir = $options['mysqld']["${entry}"]
       if ( $dir and $dir != '/usr' and $dir != '/tmp' ) {
@@ -30,8 +31,8 @@ class mysql::server::managed_dirs {
   if $logbin {
     $logbindir = dirname($logbin)
 
-    #Stop puppet from managing directory if just a filename/prefix is specified or is datadir
-    if ($logbindir != '.' and $logbindir != $mysql::server::options['mysqld']['datadir'] ) {
+    #Stop puppet from managing directory if just a filename/prefix is specified or is not already managed
+    if ($logbindir != '.' and !($logbindir in $managed_dirs_path)) {
       file { $logbindir:
         ensure => directory,
         mode   => '0700',
