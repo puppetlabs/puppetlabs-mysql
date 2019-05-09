@@ -30,8 +30,8 @@ class mysql::server::managed_dirs {
   if $logbin {
     $logbindir = dirname($logbin)
 
-    #Stop puppet from managing directory if just a filename/prefix is specified
-    if $logbindir != '.' {
+    #Stop puppet from managing directory if just a filename/prefix is specified or is datadir
+    if ($logbindir != '.' and $logbindir != $mysql::server::options['mysqld']['datadir'] ) {
       file { $logbindir:
         ensure => directory,
         mode   => '0700',
