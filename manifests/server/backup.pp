@@ -24,7 +24,7 @@
 # @param backupdirgroup
 #   Group owner for the backup directory. This parameter is passed directly to the file resource.
 # @param backupcompress
-#   Whether or not to compress the backup (when using the mysqldump provider)
+#   Whether or not to compress the backup (when using the mysqldump or xtrabackup provider)
 # @param backuprotate
 #   Backup rotation interval in 24 hour periods.
 # @param ignore_events
