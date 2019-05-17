@@ -114,9 +114,9 @@ describe 'mysql_user' do
   context 'using resource should throw no errors' do
     describe 'find users' do
       it do
-        results = run_shell('puppet resource mysql_user')
-        expect(results.first['result']['stdout']).not_to match(%r{Error:})
-        expect(results.first['result']['stdout']).not_to match(%r{must be properly quoted, invalid character:})
+        result = run_shell('puppet resource mysql_user')
+        expect(result.stdout).not_to match(%r{Error:})
+        expect(result.stdout).not_to match(%r{must be properly quoted, invalid character:})
       end
     end
   end

@@ -21,9 +21,9 @@ describe 'mysql::db define' do
     end
 
     it 'Checking exit code and stdout' do
-      results = run_shell("mysql -e 'show databases;'")
-      expect(results.first['result']['exit_code']).to eq 0
-      expect(results.first['result']['stdout']).to match %r{^spec1$}
+      result = run_shell("mysql -e 'show databases;'")
+      expect(result.exit_code).to eq 0
+      expect(result.stdout).to match %r{^spec1$}
     end
   end
 
@@ -49,9 +49,9 @@ describe 'mysql::db define' do
     end
 
     it 'Checking exit code and stdout' do
-      results = run_shell("mysql -e 'show tables;' spec2")
-      expect(results.first['result']['exit_code']).to eq 0
-      expect(results.first['result']['stdout']).to match %r{^table1$}
+      result = run_shell("mysql -e 'show tables;' spec2")
+      expect(result.exit_code).to eq 0
+      expect(result.stdout).to match %r{^table1$}
     end
   end
 
@@ -73,9 +73,9 @@ describe 'mysql::db define' do
     end
 
     it 'Checking exit code and stdout' do
-      results = run_shell("mysql -e 'show databases;'")
-      expect(results.first['result']['exit_code']).to eq 0
-      expect(results.first['result']['stdout']).to match %r{^realdb$}
+      result = run_shell("mysql -e 'show databases;'")
+      expect(result.exit_code).to eq 0
+      expect(result.stdout).to match %r{^realdb$}
     end
   end
 end

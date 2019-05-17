@@ -29,13 +29,13 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'fails' do
-      results = apply_manifest(pp, expect_failures: true)
-      expect(results['result']['stderr']).to contain(%r{`privileges` `parameter` is required})
+      result = apply_manifest(pp, expect_failures: true)
+      expect(result.stderr).to contain(%r{`privileges` `parameter` is required})
     end
 
     it 'does not find the user' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test1@tester"', expect_failures: true)
-      expect(results.first['result']['stderr']).to contain(%r{There is no such grant defined for user 'test1' on host 'tester'})
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test1@tester"', expect_failures: true)
+      expect(result.stderr).to contain(%r{There is no such grant defined for user 'test1' on host 'tester'})
     end
   end
 
@@ -56,8 +56,8 @@ describe 'mysql_grant' do
     end
 
     it 'does not find the user' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR atest@tester"', expect_failures: true)
-      expect(results.first['result']['stderr']).to contain(%r{There is no such grant defined for user 'atest' on host 'tester'})
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR atest@tester"', expect_failures: true)
+      expect(result.stderr).to contain(%r{There is no such grant defined for user 'atest' on host 'tester'})
     end
   end
 
@@ -79,9 +79,9 @@ describe 'mysql_grant' do
     end
 
     it 'finds the user #stdout' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
-      expect(results.first['result']['stdout']).to contain(%r{GRANT SELECT, UPDATE.*TO 'test2'@'tester'})
-      expect(results.first['result']['stderr']).to be_empty
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
+      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE.*TO 'test2'@'tester'})
+      expect(result.stderr).to be_empty
     end
   end
 
@@ -103,9 +103,9 @@ describe 'mysql_grant' do
     end
 
     it 'finds the user #stdout' do
-      results = run_shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"")
-      expect(results.first['result']['stdout']).to contain(%r{GRANT SELECT, UPDATE.*TO 'test-2'@'tester'})
-      expect(results.first['result']['stderr']).to be_empty
+      result = run_shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"")
+      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE.*TO 'test-2'@'tester'})
+      expect(result.stderr).to be_empty
     end
   end
 
@@ -128,9 +128,9 @@ describe 'mysql_grant' do
     end
 
     it 'finds the user #stdout' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
-      expect(results.first['result']['stdout']).to contain(%r{GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$})
-      expect(results.first['result']['stderr']).to be_empty
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
+      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$})
+      expect(result.stderr).to be_empty
     end
   end
 
@@ -148,8 +148,8 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'fails' do
-      results = apply_manifest(pp, expect_failures: true)
-      expect(results['result']['stderr']).to contain(%r{`table` `parameter` is required.})
+      result = apply_manifest(pp, expect_failures: true)
+      expect(result.stderr).to contain(%r{`table` `parameter` is required.})
     end
   end
 
@@ -172,9 +172,9 @@ describe 'mysql_grant' do
     end
 
     it 'finds the user #stdout' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test4@tester"')
-      expect(results.first['result']['stdout']).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test4'@'tester' WITH GRANT OPTION})
-      expect(results.first['result']['stderr']).to be_empty
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test4@tester"')
+      expect(result.stdout).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test4'@'tester' WITH GRANT OPTION})
+      expect(result.stderr).to be_empty
     end
   end
 
@@ -237,9 +237,9 @@ describe 'mysql_grant' do
     end
 
     it 'finds short hostname #stdout' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test@short"')
-      expect(results.first['result']['stdout']).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'short'})
-      expect(results.first['result']['stderr']).to be_empty
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test@short"')
+      expect(result.stdout).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'short'})
+      expect(result.stderr).to be_empty
     end
 
     it 'finds long hostname #stdout' do
@@ -381,8 +381,8 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'create lowercase all privs' do
-      results = apply_manifest(pp_two, catch_failures: true)
-      expect(results['result']['exit_code']).to eq(0)
+      result = apply_manifest(pp_two, catch_failures: true)
+      expect(result.exit_code).to eq(0)
     end
   end
 
@@ -409,9 +409,9 @@ describe 'mysql_grant' do
     end
 
     it 'finds the user #stdout' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
-      expect(results.first['result']['stdout']).to match(%r{GRANT EXECUTE ON PROCEDURE `mysql`.`simpleproc` TO 'test2'@'tester'})
-      expect(results.first['result']['stderr']).to be_empty
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
+      expect(result.stdout).to match(%r{GRANT EXECUTE ON PROCEDURE `mysql`.`simpleproc` TO 'test2'@'tester'})
+      expect(result.stderr).to be_empty
     end
   end
 
@@ -440,9 +440,9 @@ describe 'mysql_grant' do
     end
     # rubocop:enable RSpec/ExampleLength
     it 'finds the user' do
-      results = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
-      expect(results.first['result']['stdout']).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO 'test3'@'tester'})
-      expect(results.first['result']['stderr']).to be_empty
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
+      expect(result.stdout).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO 'test3'@'tester'})
+      expect(result.stderr).to be_empty
     end
     # rubocop:enable RSpec/MultipleExpectations
   end
@@ -514,13 +514,13 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'fails' do
-        results = apply_manifest(pp, expect_failures: true)
-        expect(results['result']['stderr']).to match(%r{`privileges` `parameter`: PROXY can only be specified by itself})
+        result = apply_manifest(pp, expect_failures: true)
+        expect(result.stderr).to match(%r{`privileges` `parameter`: PROXY can only be specified by itself})
       end
 
       it 'does not find the user' do
-        results = run_shell('mysql -NBe "SHOW GRANTS FOR proxy2@tester"', expect_failures: true)
-        expect(results.first['result']['stderr']).to match(%r{There is no such grant defined for user 'proxy2' on host 'tester'})
+        result = run_shell('mysql -NBe "SHOW GRANTS FOR proxy2@tester"', expect_failures: true)
+        expect(result.stderr).to match(%r{There is no such grant defined for user 'proxy2' on host 'tester'})
       end
     end
 
@@ -538,13 +538,13 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'fails' do
-        results = apply_manifest(pp, expect_failures: true)
-        expect(results['result']['stderr']).to match(%r{PROXY user not supported on mysql versions < 5\.5\.0}i)
+        result = apply_manifest(pp, expect_failures: true)
+        expect(result.stderr).to match(%r{PROXY user not supported on mysql versions < 5\.5\.0}i)
       end
 
       it 'does not find the user' do
-        results = run_shell('mysql -NBe "SHOW GRANTS FOR proxy2@tester"', expect_failures: true)
-        expect(results.first['result']['stderr']).to match(%r{There is no such grant defined for user 'proxy2' on host 'tester'})
+        result = run_shell('mysql -NBe "SHOW GRANTS FOR proxy2@tester"', expect_failures: true)
+        expect(result.stderr).to match(%r{There is no such grant defined for user 'proxy2' on host 'tester'})
       end
     end
 
@@ -562,13 +562,13 @@ describe 'mysql_grant' do
         }
       MANIFEST
       it 'fails' do
-        results = apply_manifest(pp, expect_failures: true)
-        expect(results['result']['stderr']).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
+        result = apply_manifest(pp, expect_failures: true)
+        expect(result.stderr).to match(%r{`table` `property` for PROXY should be specified as proxy_user@proxy_host.})
       end
 
       it 'does not find the user' do
-        results = run_shell('mysql -NBe "SHOW GRANTS FOR proxy3@tester"', expect_failures: true)
-        expect(results.first['result']['stderr']).to contain(%r{There is no such grant defined for user 'proxy3' on host 'tester'})
+        result = run_shell('mysql -NBe "SHOW GRANTS FOR proxy3@tester"', expect_failures: true)
+        expect(result.stderr).to contain(%r{There is no such grant defined for user 'proxy3' on host 'tester'})
       end
     end
   end
@@ -615,8 +615,8 @@ describe 'mysql_grant' do
     it 'fails with fqdn' do
       pre_run
       unless mysql_version_is_greater_than('5.7.0')
-        results = run_shell('mysql -NBe "SHOW GRANTS FOR test@fqdn.com"', expect_failures: true)
-        expect(results.first['result']['stderr']).to contain(%r{There is no such grant defined for user 'test' on host 'fqdn.com'})
+        result = run_shell('mysql -NBe "SHOW GRANTS FOR test@fqdn.com"', expect_failures: true)
+        expect(result.stderr).to contain(%r{There is no such grant defined for user 'test' on host 'fqdn.com'})
       end
     end
 
@@ -640,10 +640,10 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'fails to execute while applying' do
-      mysql_cmd = run_shell('which mysql').first['result']['stdout'].chomp
+      mysql_cmd = run_shell('which mysql').stdout.chomp
       run_shell("mv #{mysql_cmd} #{mysql_cmd}.bak")
-      results = apply_manifest(pp_three, expect_failures: true)
-      expect(results['result']['stderr']).to match(%r{Could not find a suitable provider for mysql_grant})
+      result = apply_manifest(pp_three, expect_failures: true)
+      expect(result.stderr).to match(%r{Could not find a suitable provider for mysql_grant})
       run_shell("mv #{mysql_cmd}.bak #{mysql_cmd}")
     end
 
@@ -678,8 +678,8 @@ describe 'mysql_grant' do
         }
     MANIFEST
     it 'creates grant on missing table will fail' do
-      results = apply_manifest(pp_two, expect_failures: true)
-      expect(results['result']['stderr']).to match(%r{Table 'grant_spec_db\.grant_spec_table_doesnt_exist' doesn't exist})
+      result = apply_manifest(pp_two, expect_failures: true)
+      expect(result.stderr).to match(%r{Table 'grant_spec_db\.grant_spec_table_doesnt_exist' doesn't exist})
     end
 
     pp_three = <<-MANIFEST
@@ -699,8 +699,8 @@ describe 'mysql_grant' do
     end
 
     it 'has the table' do
-      results = run_shell("mysql -e 'show tables;' grant_spec_db|grep grant_spec_table")
-      expect(results.first['result']['exit_code']).to be_zero
+      result = run_shell("mysql -e 'show tables;' grant_spec_db|grep grant_spec_table")
+      expect(result.exit_code).to be_zero
     end
   end
 end
