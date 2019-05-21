@@ -2,7 +2,26 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [8.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/8.1.0) (2019-04-02)
+## [v9.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v9.0.0) (2019-05-21)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/8.1.0...v9.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#1184](https://github.com/puppetlabs/puppetlabs-mysql/pull/1184) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- Make incremental backups deactivable [\#1188](https://github.com/puppetlabs/puppetlabs-mysql/pull/1188) ([SaschaDoering](https://github.com/SaschaDoering))
+- Allow multiple backupmethods [\#1187](https://github.com/puppetlabs/puppetlabs-mysql/pull/1187) ([SaschaDoering](https://github.com/SaschaDoering))
+
+### Fixed
+
+- Fix the contribution guide URL [\#1190](https://github.com/puppetlabs/puppetlabs-mysql/pull/1190) ([mauricemeyer](https://github.com/mauricemeyer))
+- \(MODULES-8886\) Revert removal of deepmerge function [\#1181](https://github.com/puppetlabs/puppetlabs-mysql/pull/1181) ([eimlav](https://github.com/eimlav))
+- Fixed Changelog links for 8.1.0 [\#1180](https://github.com/puppetlabs/puppetlabs-mysql/pull/1180) ([mauricemeyer](https://github.com/mauricemeyer))
+
+## [8.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/8.1.0) (2019-04-03)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/8.0.1...8.1.0)
 
