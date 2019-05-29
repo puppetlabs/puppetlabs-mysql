@@ -33,33 +33,6 @@ end
 RSpec.configure do |c|
   # Readable test descriptions
   c.formatter = :documentation
-
-  # detect the situation where PUP-5016 is triggered and skip the idempotency tests in that case
-  # also note how fact('puppetversion') is not available because of PUP-4359
-  if os[:family] == 'debian' && os[:release].to_i == 8 && shell('puppet --version').stdout =~ %r{^4\.2}
-    c.filter_run_excluding skip_pup_5016: true
-  end
-
-  # Configure all nodes in nodeset
-  c.before :suite do
-    run_puppet_access_login(user: 'admin') if pe_install? && (Gem::Version.new(puppet_version) >= Gem::Version.new('5.0.0'))
-    hosts.each do |host|
-      # This will be removed, this is temporary to test localisation.
-
-      if os[:family] == 'debian'
-        # install language on debian systems
-        install_language_on(host, 'ja_JP.utf-8') if not_controller(host)
-        # This will be removed, this is temporary to test localisation.
-      end
-      # Required for binding tests.
-      if os[:family] == 'redhat'
-        if os[:release].to_i == 7 || os[:family] == 'fedora'
-          shell('yum install -y bzip2')
-        end
-      end
-      on host, puppet('module', 'install', 'stahnma/epel')
-    end
-  end
 end
 
 shared_examples 'a idempotent resource' do
