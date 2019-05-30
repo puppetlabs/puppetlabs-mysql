@@ -25,6 +25,8 @@ class mysql::backup::mysqldump (
   $postscript         = false,
   $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
   $optional_args      = [],
+  $mysqlbackupdir_ensure = 'directory',
+  $mysqlbackupdir_target = undef,
 ) inherits mysql::params {
 
   if $backupcompress {
@@ -70,10 +72,20 @@ class mysql::backup::mysqldump (
     content => template('mysql/mysqlbackup.sh.erb'),
   }
 
-  file { $backupdir:
-    ensure => 'directory',
-    mode   => $backupdirmode,
-    owner  => $backupdirowner,
-    group  => $backupdirgroup,
+  if $mysqlbackupdir_target {
+    file { $backupdir:
+      ensure => $mysqlbackupdir_ensure,
+      target => $mysqlbackupdir_target,
+      mode   => $backupdirmode,
+      owner  => $backupdirowner,
+      group  => $backupdirgroup,
+    } else {
+    file { $backupdir:
+      ensure => $mysqlbackupdir_ensure,
+      mode   => $backupdirmode,
+      owner  => $backupdirowner,
+      group  => $backupdirgroup,
+    }
   }
+
 }
