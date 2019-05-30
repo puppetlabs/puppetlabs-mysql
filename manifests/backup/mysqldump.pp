@@ -52,6 +52,20 @@ class mysql::backup::mysqldump (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
+  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
+      package {'crontabs':
+        ensure => present,
+      }
+    } elsif $::osfamily == 'RedHat' {
+      package {'cronie':
+        ensure => present,
+      }
+    } else {
+      package {'cron':
+        ensure => present,
+    }
+  }
+
   cron { 'mysql-backup':
     ensure  => $ensure,
     command => '/usr/local/sbin/mysqlbackup.sh',

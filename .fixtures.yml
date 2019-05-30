@@ -3,5 +3,8 @@ fixtures:
     "stdlib": "https://github.com/puppetlabs/puppetlabs-stdlib"
     "translate": "https://github.com/puppetlabs/puppetlabs-translate"
     "cron_core": "https://github.com/puppetlabs/puppetlabs-cron_core.git"
+    "facts": "git://github.com/puppetlabs/puppetlabs-facts.git"
+    "puppet_agent": "git://github.com/puppetlabs/puppetlabs-puppet_agent.git"
+    "provision": "git://github.com/puppetlabs/provision.git"
   symlinks:
     "mysql": "#{source_dir}"

@@ -4,16 +4,16 @@
     - ---.project
 
 .travis.yml:
-  docker_sets:
-    - set: docker/centos-7
-    - set: docker/ubuntu-14.04
-  docker_defaults:
-    bundler_args: ""
-  secure: ""
-  branches:
-    - release
- 
+  unmanaged: true
+
 Gemfile:
+  optional:
+    ':development':
+      - gem: puppet-lint-i18n
+      - gem: 'github_changelog_generator'
+        git: 'https://github.com/skywinder/github-changelog-generator'
+        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
   required:
     ':system_tests':
       - gem: 'puppet-module-posix-system-r#{minor_version}'
@@ -23,15 +23,13 @@ Gemfile:
           - mswin
           - mingw
           - x64_mingw
-      - gem: beaker-testmode_switcher
-    ':development':
-      - gem: puppet-lint-i18n
-  optional:
-    ':development':
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
+      - gem: 'puppet_litmus'
+        platforms:
+          - ruby
+          - mswin
+          - mingw
+          - x64_mingw
+        condition: "ENV['PUPPET_GEM_VERSION'].nil? or ENV['PUPPET_GEM_VERSION'] !~ %r{ 5}"
 
 appveyor.yml:
   unmanaged: true
@@ -39,6 +37,7 @@ appveyor.yml:
 Rakefile:
   requires:
     - puppet_pot_generator/rake_tasks
+  use_litmus_tasks: true
   changelog_user: 'puppetlabs'
 
 spec/spec_helper.rb:

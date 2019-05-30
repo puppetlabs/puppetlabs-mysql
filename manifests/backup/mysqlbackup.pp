@@ -63,6 +63,16 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
+  if $::osfamily == 'RedHat' {
+      package {'cronie':
+        ensure => present,
+      }
+    } else {
+      package {'cron':
+        ensure => present,
+    }
+  }
+
   cron { 'mysqlbackup-weekly':
     ensure  => $ensure,
     command => 'mysqlbackup backup',
