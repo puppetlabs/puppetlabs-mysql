@@ -79,7 +79,7 @@ class mysql::backup::mysqldump (
       mode   => $backupdirmode,
       owner  => $backupdirowner,
       group  => $backupdirgroup,
-    } else {
+    } elsif {
     file { $backupdir:
       ensure => $mysqlbackupdir_ensure,
       mode   => $backupdirmode,
