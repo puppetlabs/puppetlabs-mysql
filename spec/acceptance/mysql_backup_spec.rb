@@ -1,5 +1,4 @@
 require 'spec_helper_acceptance'
-require_relative './mysql_helper.rb'
 
 describe 'mysql::server::backup class' do
   context 'should work with no errors' do
@@ -32,7 +31,7 @@ describe 'mysql::server::backup class' do
     end
   end
 
-  describe 'mysqlbackup.sh', unless: mysql_version_is_greater_than('5.7.0') do
+  describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
     before(:all) do
       pre_run
     end
@@ -99,7 +98,7 @@ context 'with one file per database' do
     end
   end
 
-  describe 'mysqlbackup.sh', unless: mysql_version_is_greater_than('5.7.0') do
+  describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
     before(:all) do
       pre_run
     end

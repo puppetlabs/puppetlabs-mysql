@@ -1,5 +1,4 @@
 require 'spec_helper_acceptance'
-require_relative '../mysql_helper.rb'
 
 describe 'mysql_user' do
   describe 'setup' do
@@ -37,8 +36,7 @@ describe 'mysql_user' do
       end
     end
 
-    pre_run
-    describe 'changing authentication plugin', if: mysql_version_is_greater_than('5.5.0') do
+    describe 'changing authentication plugin', if: (Gem::Version.new(mysql_version) > Gem::Version.new('5.5.0') && os[:release] !~ %r{^16\.04}) do
       it 'works without errors' do
         pp = <<-EOS
           mysql_user { 'ashp@localhost':
@@ -46,7 +44,7 @@ describe 'mysql_user' do
           }
         EOS
 
-        apply_manifest(pp, catch_failures: true)
+        idempotent_apply(pp)
       end
 
       it 'has the correct plugin' do
@@ -58,7 +56,7 @@ describe 'mysql_user' do
 
       it 'does not have a password' do
         pre_run
-        table = if mysql_version_is_greater_than('5.7.0')
+        table = if Gem::Version.new(mysql_version) > Gem::Version.new('5.7.0')
                   'authentication_string'
                 else
                   'password'
