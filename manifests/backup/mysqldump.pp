@@ -72,14 +72,15 @@ class mysql::backup::mysqldump (
     content => template('mysql/mysqlbackup.sh.erb'),
   }
 
-  if $mysqlbackupdir_target {
+  if $mysqlbackupdir_target != undef {
     file { $backupdir:
       ensure => $mysqlbackupdir_ensure,
       target => $mysqlbackupdir_target,
       mode   => $backupdirmode,
       owner  => $backupdirowner,
       group  => $backupdirgroup,
-    } elsif {
+    }
+  else {
     file { $backupdir:
       ensure => $mysqlbackupdir_ensure,
       mode   => $backupdirmode,
