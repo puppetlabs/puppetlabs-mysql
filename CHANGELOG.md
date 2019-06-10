@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v9.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v9.1.0) (2019-06-10)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v9.0.0...v9.1.0)
+
+### Added
+
+- Add option to specify $backupdir as a symlink target, for use with dm… [\#1200](https://github.com/puppetlabs/puppetlabs-mysql/pull/1200) ([comport3](https://github.com/comport3))
+- \(FM-8029\) Add RedHat 8 support [\#1199](https://github.com/puppetlabs/puppetlabs-mysql/pull/1199) ([eimlav](https://github.com/eimlav))
+- Allow own Xtrabackup script [\#1189](https://github.com/puppetlabs/puppetlabs-mysql/pull/1189) ([SaschaDoering](https://github.com/SaschaDoering))
+- Litmus conversion [\#1175](https://github.com/puppetlabs/puppetlabs-mysql/pull/1175) ([pmcmaw](https://github.com/pmcmaw))
+
+### Fixed
+
+- \(MODULES-6875,MODULES-7487\) - Fix mariadb mysql\_user password idempotency [\#1195](https://github.com/puppetlabs/puppetlabs-mysql/pull/1195) ([alexjfisher](https://github.com/alexjfisher))
+
 ## [v9.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v9.0.0) (2019-05-21)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/8.1.0...v9.0.0)
