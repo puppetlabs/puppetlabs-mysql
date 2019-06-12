@@ -837,7 +837,7 @@ Default value: []
 
 Data type: `Boolean`
 
-Specifies whether to let the MySQL module manage the `cron` package. Set this to `false` to emulate module behaviour in release <= 9.0.0 or if you use the `puppet-cron` module or similar to manage cron packages externally.
+Specifies whether to let the MySQL module manage the `cron` package. Set this to `false` to emulate module behaviour in release <= 9.0.0 or if you use the `puppet-cron` module or similar to manage cron packages externally. Hiera YAML example `mysql::server::backup::manage_package_cron: false`
 
 Default value: `true`
 
