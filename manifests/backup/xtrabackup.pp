@@ -23,7 +23,6 @@ class mysql::backup::xtrabackup (
   $include_routines        = false,
   $include_triggers        = true,
   $incremental_backups     = true,
-  $manage_package_cron     = $mysql::server::backup::manage_package_cron,
   $maxallowedpacket        = '1M',
   $optional_args           = [],
   $postscript              = false,
@@ -47,22 +46,6 @@ class mysql::backup::xtrabackup (
       table      => '*.*',
       privileges => [ 'RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT' ],
       require    => Mysql_user["${backupuser}@localhost"],
-    }
-  }
-
-  if $manage_package_cron {
-    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-      package {'crontabs':
-        ensure => present,
-      }
-    } elsif $::osfamily == 'RedHat' {
-      package {'cronie':
-        ensure => present,
-      }
-    } else {
-      package {'cron':
-        ensure => present,
-      }
     }
   }
 
