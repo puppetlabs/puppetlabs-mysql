@@ -4,28 +4,29 @@
 # @api private
 #
 class mysql::backup::mysqlbackup (
-  $backupuser         = '',
-  $backuppassword     = '',
-  $maxallowedpacket   = '1M',
-  $backupdir          = '',
-  $backupdirmode      = '0700',
-  $backupdirowner     = 'root',
-  $backupdirgroup     = $mysql::params::root_group,
-  $backupcompress     = true,
-  $backuprotate       = 30,
-  $backupmethod       = '',
-  $ignore_events      = true,
-  $delete_before_dump = false,
-  $backupdatabases    = [],
-  $file_per_database  = false,
-  $include_triggers   = true,
-  $include_routines   = false,
-  $ensure             = 'present',
-  $time               = ['23', '5'],
-  $prescript          = false,
-  $postscript         = false,
-  $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $optional_args      = [],
+  $backupuser          = '',
+  $backuppassword      = '',
+  $maxallowedpacket    = '1M',
+  $backupdir           = '',
+  $backupdirmode       = '0700',
+  $backupdirowner      = 'root',
+  $backupdirgroup      = $mysql::params::root_group,
+  $backupcompress      = true,
+  $backuprotate        = 30,
+  $backupmethod        = '',
+  $ignore_events       = true,
+  $delete_before_dump  = false,
+  $backupdatabases     = [],
+  $file_per_database   = false,
+  $include_triggers    = true,
+  $include_routines    = false,
+  $ensure              = 'present',
+  $time                = ['23', '5'],
+  $manage_package_cron = false,
+  $prescript           = false,
+  $postscript          = false,
+  $execpath            = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $optional_args       = [],
 ) inherits mysql::params {
 
   mysql_user { "${backupuser}@localhost":
@@ -63,13 +64,15 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
-  if $::osfamily == 'RedHat' {
+  if $manage_package_cron {
+    if $::osfamily == 'RedHat' {
       package {'cronie':
         ensure => present,
       }
     } else {
       package {'cron':
         ensure => present,
+      }
     }
   }
 
