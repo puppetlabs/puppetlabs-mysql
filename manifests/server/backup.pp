@@ -31,7 +31,7 @@
 # @param backupcompress
 #   Whether or not to compress the backup (when using the mysqldump provider)
 # @param backupmethod
-#   The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup 
+#   The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup
 # @param backuprotate
 #   Backup rotation interval in 24 hour periods.
 # @param ignore_events
@@ -56,36 +56,37 @@
 # @param execpath
 #   Allows you to set a custom PATH should your MySQL installation be non-standard places. Defaults to `/usr/bin:/usr/sbin:/bin:/sbin`.
 # @param provider
-#   Sets the server backup implementation. Valid values are: 
+#   Sets the server backup implementation. Valid values are:
 # @param maxallowedpacket
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
 #   Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
 #
 class mysql::server::backup (
-  $backupuser         = undef,
-  $backuppassword     = undef,
-  $backupdir          = undef,
-  $backupdirmode      = '0700',
-  $backupdirowner     = 'root',
-  $backupdirgroup     = 'root',
-  $backupcompress     = true,
-  $backuprotate       = 30,
-  $backupmethod       = undef,
-  $ignore_events      = true,
-  $delete_before_dump = false,
-  $backupdatabases    = [],
-  $file_per_database  = false,
-  $include_routines   = false,
-  $include_triggers   = false,
-  $ensure             = 'present',
-  $time               = ['23', '5'],
-  $prescript          = false,
-  $postscript         = false,
-  $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $provider           = 'mysqldump',
-  $maxallowedpacket   = '1M',
-  $optional_args      = [],
+  $backupcompress      = true,
+  $backupdatabases     = [],
+  $backupdirgroup      = 'root',
+  $backupdirmode       = '0700',
+  $backupdirowner      = 'root',
+  $backupdir           = undef,
+  $backupmethod        = undef,
+  $backuppassword      = undef,
+  $backuprotate        = 30,
+  $backupuser          = undef,
+  $delete_before_dump  = false,
+  $ensure              = 'present',
+  $execpath            = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $file_per_database   = false,
+  $ignore_events       = true,
+  $include_routines    = false,
+  $include_triggers    = false,
+  $manage_package_cron = true,
+  $maxallowedpacket    = '1M',
+  $optional_args       = [],
+  $postscript          = false,
+  $prescript           = false,
+  $provider            = 'mysqldump',
+  $time                = ['23', '5'],
 ) {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
@@ -95,28 +96,29 @@ class mysql::server::backup (
 
   create_resources('class', {
     "mysql::backup::${provider}" => {
-      'backupuser'         => $backupuser,
-      'backuppassword'     => $backuppassword,
-      'backupdir'          => $backupdir,
-      'backupdirmode'      => $backupdirmode,
-      'backupdirowner'     => $backupdirowner,
-      'backupdirgroup'     => $backupdirgroup,
-      'backupcompress'     => $backupcompress,
-      'backuprotate'       => $backuprotate,
-      'backupmethod'       => $backupmethod,
-      'ignore_events'      => $ignore_events,
-      'delete_before_dump' => $delete_before_dump,
-      'backupdatabases'    => $backupdatabases,
-      'file_per_database'  => $file_per_database,
-      'include_routines'   => $include_routines,
-      'include_triggers'   => $include_triggers,
-      'ensure'             => $ensure,
-      'time'               => $time,
-      'prescript'          => $prescript,
-      'postscript'         => $postscript,
-      'execpath'           => $execpath,
-      'maxallowedpacket'   => $maxallowedpacket,
-      'optional_args'      => $optional_args,
+      'backupcompress'      => $backupcompress,
+      'backupdatabases'     => $backupdatabases,
+      'backupdir'           => $backupdir,
+      'backupdirgroup'      => $backupdirgroup,
+      'backupdirmode'       => $backupdirmode,
+      'backupdirowner'      => $backupdirowner,
+      'backupmethod'        => $backupmethod,
+      'backuppassword'      => $backuppassword,
+      'backuprotate'        => $backuprotate,
+      'backupuser'          => $backupuser,
+      'delete_before_dump'  => $delete_before_dump,
+      'ensure'              => $ensure,
+      'execpath'            => $execpath,
+      'file_per_database'   => $file_per_database,
+      'ignore_events'       => $ignore_events,
+      'include_routines'    => $include_routines,
+      'include_triggers'    => $include_triggers,
+      'manage_package_cron' => $manage_package_cron,
+      'maxallowedpacket'    => $maxallowedpacket,
+      'optional_args'       => $optional_args,
+      'postscript'          => $postscript,
+      'prescript'           => $prescript,
+      'time'                => $time,
     }
   })
 

@@ -646,9 +646,10 @@ class { 'mysql::server':
   root_password => 'password'
 }
 class { 'mysql::server::backup':
-  backupuser     => 'myuser',
-  backuppassword => 'mypassword',
-  backupdir      => '/tmp/backups',
+  backupuser          => 'myuser',
+  backuppassword      => 'mypassword',
+  backupdir           => '/tmp/backups',
+  manage_package_cron => false,
 }
 ```
 
@@ -831,6 +832,14 @@ Data type: `Any`
 Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
 
 Default value: []
+
+##### `manage_package_cron`
+
+Data type: `Boolean`
+
+Specifies whether to let the MySQL module manage the `cron` package. Set this to `false` to emulate module behaviour in release <= 9.0.0 or if you use the `puppet-cron` module or similar to manage cron packages externally.
+
+Default value: `true`
 
 ### mysql::server::monitor
 
@@ -1096,7 +1105,7 @@ Manage MySQL plugins.
 
 #### Examples
 
-##### 
+#####
 
 ```puppet
 mysql_plugin { 'some_plugin':
@@ -1322,4 +1331,3 @@ The password
 Data type: `String[1]`
 
 The SQL you want to execute
-

@@ -3,32 +3,33 @@
 # @api private
 #
 class mysql::backup::xtrabackup (
-  $xtrabackup_package_name = $mysql::params::xtrabackup_package_name,
-  $backupuser              = undef,
-  $backuppassword          = undef,
+  $additional_cron_args    = '--backup',
+  $backupcompress          = true,
+  $backupdatabases         = [],
   $backupdir               = '',
-  $maxallowedpacket        = '1M',
-  $backupmethod            = 'xtrabackup',
+  $backupdirgroup          = $mysql::params::root_group,
   $backupdirmode           = '0700',
   $backupdirowner          = 'root',
-  $backupdirgroup          = $mysql::params::root_group,
-  $backupcompress          = true,
+  $backupmethod            = 'xtrabackup',
+  $backuppassword          = undef,
   $backuprotate            = 30,
   $backupscript_template   = 'mysql/xtrabackup.sh.erb',
-  $ignore_events           = true,
+  $backupuser              = undef,
   $delete_before_dump      = false,
-  $backupdatabases         = [],
-  $file_per_database       = false,
-  $include_triggers        = true,
-  $include_routines        = false,
   $ensure                  = 'present',
-  $time                    = ['23', '5'],
-  $prescript               = false,
-  $postscript              = false,
   $execpath                = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $optional_args           = [],
-  $additional_cron_args    = '--backup',
+  $file_per_database       = false,
+  $ignore_events           = true,
+  $include_routines        = false,
+  $include_triggers        = true,
   $incremental_backups     = true
+  $manage_package_cron   = $mysql::server::backup::manage_package_cron,
+  $maxallowedpacket        = '1M',
+  $optional_args           = [],
+  $postscript              = false,
+  $prescript               = false,
+  $time                    = ['23', '5'],
+  $xtrabackup_package_name = $mysql::params::xtrabackup_package_name,
 ) inherits mysql::params {
 
   ensure_packages($xtrabackup_package_name)
@@ -46,6 +47,22 @@ class mysql::backup::xtrabackup (
       table      => '*.*',
       privileges => [ 'RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT' ],
       require    => Mysql_user["${backupuser}@localhost"],
+    }
+  }
+
+  if $manage_package_cron {
+    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
+      package {'crontabs':
+        ensure => present,
+      }
+    } elsif $::osfamily == 'RedHat' {
+      package {'cronie':
+        ensure => present,
+      }
+    } else {
+      package {'cron':
+        ensure => present,
+      }
     }
   }
 
