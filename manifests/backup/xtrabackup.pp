@@ -22,8 +22,8 @@ class mysql::backup::xtrabackup (
   $ignore_events           = true,
   $include_routines        = false,
   $include_triggers        = true,
-  $incremental_backups     = true
-  $manage_package_cron   = $mysql::server::backup::manage_package_cron,
+  $incremental_backups     = true,
+  $manage_package_cron     = $mysql::server::backup::manage_package_cron,
   $maxallowedpacket        = '1M',
   $optional_args           = [],
   $postscript              = false,
