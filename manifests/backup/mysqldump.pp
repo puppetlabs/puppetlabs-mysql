@@ -66,7 +66,7 @@ class mysql::backup::mysqldump (
       }
     } else {
       package {'cron':
-        ensure => $package_cron,
+        ensure => present,
       }
     }
   }
