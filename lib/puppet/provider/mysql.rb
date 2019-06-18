@@ -5,6 +5,29 @@ class Puppet::Provider::Mysql < Puppet::Provider
 
   # Make sure we find mysql commands on CentOS and FreeBSD
   ENV['PATH'] = ENV['PATH'] + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
+  ENV['LD_LIBRARY_PATH'] = [
+    ENV['LD_LIBRARY_PATH'],
+    '/usr/lib',
+    '/usr/lib64',
+    '/opt/rh/rh-mysql56/root/usr/lib',
+    '/opt/rh/rh-mysql56/root/usr/lib64',
+    '/opt/rh/rh-mysql57/root/usr/lib',
+    '/opt/rh/rh-mysql57/root/usr/lib64',
+    '/opt/rh/rh-mariadb100/root/usr/lib',
+    '/opt/rh/rh-mariadb100/root/usr/lib64',
+    '/opt/rh/rh-mariadb101/root/usr/lib',
+    '/opt/rh/rh-mariadb101/root/usr/lib64',
+    '/opt/rh/mysql55/root/usr/lib',
+    '/opt/rh/mysql55/root/usr/lib64',
+    '/opt/rh/mariadb55/root/usr/lib',
+    '/opt/rh/mariadb55/root/usr/lib64',
+    '/usr/mysql/5.5/lib',
+    '/usr/mysql/5.5/lib64',
+    '/usr/mysql/5.6/lib',
+    '/usr/mysql/5.6/lib64',
+    '/usr/mysql/5.7/lib',
+    '/usr/mysql/5.7/lib64',
+  ].join(':')
 
   # rubocop:disable Style/HashSyntax
   commands :mysql_raw  => 'mysql'
@@ -58,15 +81,33 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.newer_than(forks_versions)
   end
 
+  def self.older_than(forks_versions)
+    forks_versions.keys.include?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) < 0
+  end
+
+  def older_than(forks_versions)
+    self.class.older_than(forks_versions)
+  end
+
   def defaults_file
     self.class.defaults_file
   end
 
   def self.mysql_caller(text_of_sql, type)
     if type.eql? 'system'
-      mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact)
+      if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
+        ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
+        mysql_raw([system_database, '-e', text_of_sql].flatten.compact)
+      else
+        mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact)
+      end
     elsif type.eql? 'regular'
-      mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact)
+      if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
+        ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
+        mysql_raw(['-NBe', text_of_sql].flatten.compact)
+      else
+        mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact)
+      end
     else
       raise Puppet::Error, _("#mysql_caller: Unrecognised type '%{type}'" % { type: type })
     end
@@ -86,8 +127,9 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   # Take root@localhost and munge it to 'root'@'localhost'
+  # Take root@id123@localhost and munge it to 'root@id123'@'localhost'
   def self.cmd_user(user)
-    "'#{user.sub('@', "'@'")}'"
+    "'#{user.reverse.sub('@', "'@'").reverse}'"
   end
 
   # Take root.* and return ON `root`.*

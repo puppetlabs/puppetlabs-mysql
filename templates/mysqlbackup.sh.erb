@@ -91,18 +91,18 @@ cleanup
 <% if @file_per_database -%>
 mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read dbname
 do
-  mysqldump --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
+  <%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
     ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 done
 <% else -%>
-mysqldump --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
+<%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
  ${ADDITIONAL_OPTIONS} \
  --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>
 <% else -%>
 <% @backupdatabases.each do |db| -%>
-mysqldump --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
+<%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
  <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
 <% end -%>

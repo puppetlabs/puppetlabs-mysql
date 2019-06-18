@@ -86,6 +86,8 @@ class mysql::server (
   $service_provider        = $mysql::params::server_service_provider,
   $create_root_user        = $mysql::params::create_root_user,
   $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
+  $create_root_login_file  = $mysql::params::create_root_login_file,
+  $login_file              = $mysql::params::login_file,
   $users                   = {},
   $grants                  = {},
   $databases               = {},
@@ -114,7 +116,7 @@ class mysql::server (
   }
 
   # Create a merged together set of options.  Rightmost hashes win over left.
-  $options = mysql::deepmerge($mysql::params::default_options, $override_options)
+  $options = mysql::normalise_and_deepmerge($mysql::params::default_options, $override_options)
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
@@ -141,8 +143,8 @@ class mysql::server (
   }
 
   Anchor['mysql::server::start']
-  -> Class['mysql::server::install']
   -> Class['mysql::server::config']
+  -> Class['mysql::server::install']
   -> Class['mysql::server::binarylog']
   -> Class['mysql::server::installdb']
   -> Class['mysql::server::service']

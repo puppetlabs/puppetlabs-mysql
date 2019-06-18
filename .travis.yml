@@ -1,48 +1,110 @@
 ---
-sudo: false
-dist: trusty
 language: ruby
 cache: bundler
 before_install:
   - bundle -v
   - rm -f Gemfile.lock
-  - gem update --system
+  - gem update --system $RUBYGEMS_VERSION
   - gem --version
   - bundle -v
 script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
-  - 2.4.4
+  - 2.5.1
 env:
   global:
-    - BEAKER_PUPPET_COLLECTION=puppet5 PUPPET_GEM_VERSION="~> 5.0"
+    - PUPPET_GEM_VERSION="~> 6.0"
 matrix:
   fast_finish: true
   include:
     -
-      bundler_args: 
+      bundler_args:
       dist: trusty
-      env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet5 BEAKER_set=docker/centos-7 BEAKER_TESTMODE=apply
-      rvm: 2.4.4
-      script: bundle exec rake beaker
+      env: PLATFORMS=deb_puppet5
+      rvm: 2.5.1
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_deb]'
+      - bundle exec rake 'litmus:install_agent[puppet5]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
       services: docker
       sudo: required
     -
-      bundler_args: 
+      bundler_args:
       dist: trusty
-      env: PUPPET_INSTALL_TYPE=agent BEAKER_debug=true BEAKER_PUPPET_COLLECTION=puppet5 BEAKER_set=docker/ubuntu-14.04 BEAKER_TESTMODE=apply BEAKER_PUPPET_AGENT_VERSION=5.5.2
-      rvm: 2.4.4
-      script: bundle exec rake beaker
+      env: PLATFORM=deb_puppet6
+      rvm: 2.5.1
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_deb]'
+      - bundle exec rake 'litmus:install_agent[puppet6]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
       services: docker
       sudo: required
     -
-      env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
+      bundler_args:
+      dist: trusty
+      env: PLATFORMS=el7_puppet5
+      rvm: 2.5.1
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_el7]'
+      - bundle exec rake 'litmus:install_agent[puppet5]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
     -
-      env: CHECK=parallel_spec
+      bundler_args:
+      dist: trusty
+      env: PLATFORM=el7_puppet6
+      rvm: 2.5.1
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_el7]'
+      - bundle exec rake 'litmus:install_agent[puppet6]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
     -
-      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec
-      rvm: 2.1.9
+      bundler_args:
+      dist: trusty
+      env: PLATFORMS=el6_puppet5
+      rvm: 2.5.3
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_el6]'
+      - bundle exec rake 'litmus:install_agent[puppet5]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
+    -
+      bundler_args:
+      dist: trusty
+      env: PLATFORMS=el6_puppet6
+      rvm: 2.5.3
+      before_script:
+      - bundle exec rake 'litmus:provision_list[travis_el6]'
+      - bundle exec rake 'litmus:install_agent[puppet6]'
+      - bundle exec rake litmus:install_module
+      script:
+      - bundle exec rake litmus:acceptance:parallel
+      services: docker
+      sudo: required
+
+    -
+      env: CHECK="check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop syntax lint metadata_lint"
+    -
+      env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
+      rvm: 2.4.5
+    -
+      env: PUPPET_GEM_VERSION="~> 6.0" CHECK=parallel_spec
+      rvm: 2.5.3
 branches:
   only:
     - master

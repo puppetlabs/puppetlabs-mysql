@@ -13,6 +13,7 @@ class mysql::backup::mysqlbackup (
   $backupdirgroup     = $mysql::params::root_group,
   $backupcompress     = true,
   $backuprotate       = 30,
+  $backupmethod       = '',
   $ignore_events      = true,
   $delete_before_dump = false,
   $backupdatabases    = [],
@@ -62,6 +63,16 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
+  if $::osfamily == 'RedHat' {
+      package {'cronie':
+        ensure => present,
+      }
+    } else {
+      package {'cron':
+        ensure => present,
+    }
+  }
+
   cron { 'mysqlbackup-weekly':
     ensure  => $ensure,
     command => 'mysqlbackup backup',
@@ -92,7 +103,7 @@ class mysql::backup::mysqlbackup (
       'password'               => $backuppassword,
     }
   }
-  $options = mysql::deepmerge($default_options, $mysql::server::override_options)
+  $options = mysql::normalise_and_deepmerge($default_options, $mysql::server::override_options)
 
   file { 'mysqlbackup-config-file':
     path    => '/etc/mysql/conf.d/meb.cnf',
@@ -100,12 +111,10 @@ class mysql::backup::mysqlbackup (
     mode    => '0600',
   }
 
-  file { 'mysqlbackupdir':
+  file { $backupdir:
     ensure => 'directory',
-    path   => $backupdir,
     mode   => $backupdirmode,
     owner  => $backupdirowner,
     group  => $backupdirgroup,
   }
-
 }

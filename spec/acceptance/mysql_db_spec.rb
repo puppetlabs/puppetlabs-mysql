@@ -4,19 +4,26 @@ describe 'mysql::db define' do
   describe 'creating a database' do
     let(:pp) do
       <<-MANIFEST
-        class { 'mysql::server': root_password => 'password' }
+        class { 'mysql::server':
+          root_password => 'password',
+          service_enabled => 'true',
+          service_manage  => 'true',
+        }
         mysql::db { 'spec1':
-          user     => 'root1',
-          password => 'password',
+          user            => 'root1',
+          password        => 'password',
         }
       MANIFEST
     end
 
-    it_behaves_like 'a idempotent resource'
+    it 'behaves idempotently' do
+      idempotent_apply(pp)
+    end
 
-    describe command("mysql -e 'show databases;'") do
-      its(:exit_status) { is_expected.to eq 0 }
-      its(:stdout) { is_expected.to match %r{^spec1$} }
+    it 'Checking exit code and stdout' do
+      result = run_shell("mysql -e 'show databases;'")
+      expect(result.exit_code).to eq 0
+      expect(result.stdout).to match %r{^spec1$}
     end
   end
 
@@ -37,11 +44,14 @@ describe 'mysql::db define' do
       MANIFEST
     end
 
-    it_behaves_like 'a idempotent resource'
+    it 'behaves idempotently' do
+      idempotent_apply(pp)
+    end
 
-    describe command("mysql -e 'show tables;' spec2") do
-      its(:exit_status) { is_expected.to eq 0 }
-      its(:stdout) { is_expected.to match %r{^table1$} }
+    it 'Checking exit code and stdout' do
+      result = run_shell("mysql -e 'show tables;' spec2")
+      expect(result.exit_code).to eq 0
+      expect(result.stdout).to match %r{^table1$}
     end
   end
 
@@ -58,11 +68,14 @@ describe 'mysql::db define' do
       MANIFEST
     end
 
-    it_behaves_like 'a idempotent resource'
+    it 'behaves idempotently' do
+      idempotent_apply(pp)
+    end
 
-    describe command("mysql -e 'show databases;'") do
-      its(:exit_status) { is_expected.to eq 0 }
-      its(:stdout) { is_expected.to match %r{^realdb$} }
+    it 'Checking exit code and stdout' do
+      result = run_shell("mysql -e 'show databases;'")
+      expect(result.exit_code).to eq 0
+      expect(result.stdout).to match %r{^realdb$}
     end
   end
 end

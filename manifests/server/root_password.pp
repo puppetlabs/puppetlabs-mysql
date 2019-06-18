@@ -7,6 +7,7 @@ class mysql::server::root_password {
 
   $options = $mysql::server::options
   $secret_file = $mysql::server::install_secret_file
+  $login_file = $mysql::server::login_file
 
   # New installations of MySQL will configure a default random password for the root user
   # with an expiration. No actions can be performed until this password is changed. The
@@ -47,4 +48,11 @@ class mysql::server::root_password {
     }
   }
 
+  if $mysql::server::create_root_login_file == true and $mysql::server::root_password != 'UNSET' {
+    file { "${::root_home}/.mylogin.cnf":
+      source => $login_file,
+      owner  => 'root',
+      mode   => '0600',
+    }
+  }
 }

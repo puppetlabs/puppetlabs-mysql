@@ -1,0 +1,16 @@
+---
+default:
+  provisioner: docker_exp
+  images: ['waffleimage/centos7']
+travis_deb:
+  provisioner: docker
+  images: ['waffleimage/debian8', 'waffleimage/debian9', 'waffleimage/ubuntu14.04', 'waffleimage/ubuntu16.04', 'waffleimage/ubuntu18.04']
+travis_el6:
+  provisioner: docker_exp
+  images: ['waffleimage/centos6', 'waffleimage/scientificlinux6']
+travis_el7:
+  provisioner: docker_exp
+  images: ['waffleimage/centos7', 'waffleimage/oraclelinux7', 'waffleimage/scientificlinux7']
+release_checks:
+  provisioner: vmpooler
+  images: ['redhat-5-x86_64', 'redhat-6-x86_64', 'redhat-7-x86_64', 'redhat-8-x86_64', 'centos-5-x86_64', 'centos-6-x86_64', 'centos-7-x86_64', 'oracle-5-x86_64', 'oracle-6-x86_64', 'oracle-7-x86_64', 'scientific-6-x86_64', 'scientific-7-x86_64', 'debian-8-x86_64', 'debian-9-x86_64', 'sles-11-x86_64', 'ubuntu-1404-x86_64', 'ubuntu-1604-x86_64', 'ubuntu-1804-x86_64']

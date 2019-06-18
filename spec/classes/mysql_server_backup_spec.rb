@@ -15,7 +15,7 @@ describe 'mysql::server::backup' do
       let(:default_params) do
         { 'backupuser'         => 'testuser',
           'backuppassword'     => 'testpass',
-          'backupdir'          => '/tmp',
+          'backupdir'          => '/tmp/mysql-backup',
           'backuprotate'       => '25',
           'delete_before_dump' => true,
           'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
@@ -65,8 +65,7 @@ describe 'mysql::server::backup' do
         }
 
         it {
-          is_expected.to contain_file('mysqlbackupdir').with(
-            path: '/tmp',
+          is_expected.to contain_file('/tmp/mysql-backup').with(
             ensure: 'directory',
           )
         }
@@ -113,10 +112,11 @@ describe 'mysql::server::backup' do
         end
 
         it {
-          is_expected.to contain_file('mysqlbackupdir').with(
-            path: '/tmp', ensure: 'directory',
-            mode: '0750', owner: 'testuser',
-            group: 'testgrp'
+          is_expected.to contain_file('/tmp/mysql-backup').with(
+            ensure: 'directory',
+            mode: '0750',
+            owner: 'testuser',
+            group: 'testgrp',
           )
         }
       end
@@ -353,50 +353,6 @@ describe 'mysql::server::backup' do
           is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
           )
-        end
-      end
-
-      context 'with the xtrabackup provider' do
-        let(:params) do
-          default_params.merge(provider: 'xtrabackup')
-        end
-
-        it 'contains the wrapper script' do
-          is_expected.to contain_file('xtrabackup.sh').with_content(
-            %r{^innobackupex\s+.*?"\$@"},
-          )
-        end
-
-        context 'with prescript defined' do
-          let(:params) do
-            default_params.merge(provider: 'xtrabackup',
-                                 prescript: [
-                                   'rsync -a /tmp backup01.local-lan:',
-                                   'rsync -a /tmp backup02.local-lan:',
-                                 ])
-          end
-
-          it 'contains the prescript' do
-            is_expected.to contain_file('xtrabackup.sh').with_content(
-              %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
-            )
-          end
-        end
-
-        context 'with postscript defined' do
-          let(:params) do
-            default_params.merge(provider: 'xtrabackup',
-                                 postscript: [
-                                   'rsync -a /tmp backup01.local-lan:',
-                                   'rsync -a /tmp backup02.local-lan:',
-                                 ])
-          end
-
-          it 'contains the prostscript' do
-            is_expected.to contain_file('xtrabackup.sh').with_content(
-              %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
-            )
-          end
         end
       end
     end

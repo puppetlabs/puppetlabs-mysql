@@ -18,6 +18,9 @@ class mysql::params {
   $client_package_manage  = true
   $create_root_user       = true
   $create_root_my_cnf     = true
+  $create_root_login_file = false
+  $login_file             = undef
+  $exec_path              = ''
   # mysql::bindings
   $bindings_enable             = false
   $java_package_ensure         = 'present'
@@ -46,12 +49,18 @@ class mysql::params {
           } else {
             $provider = 'mysql'
           }
+          $python_package_name = 'MySQL-python'
         }
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
+          }
+          if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+            $python_package_name = 'python3-PyMySQL'
+          } else {
+            $python_package_name = 'MySQL-python'
           }
         }
         default: {
@@ -93,7 +102,6 @@ class mysql::params {
       $java_package_name       = 'mysql-connector-java'
       $perl_package_name       = 'perl-DBD-MySQL'
       $php_package_name        = 'php-mysql'
-      $python_package_name     = 'MySQL-python'
       $ruby_package_name       = 'ruby-mysql'
       $client_dev_package_name = undef
     }
@@ -177,7 +185,6 @@ class mysql::params {
       } else {
         $provider = 'mysql'
       }
-
       if $provider == 'mariadb' {
         $client_package_name     = 'mariadb-client'
         $server_package_name     = 'mariadb-server'
@@ -214,12 +221,13 @@ class mysql::params {
       } else {
         $php_package_name = 'php5-mysql'
       }
+
       $python_package_name = 'python-mysqldb'
-      $ruby_package_name   = $::lsbdistcodename ? {
-        'jessie'           => 'ruby-mysql',
-        'stretch'          => 'ruby-mysql2',
-        'trusty'           => 'ruby-mysql',
-        'xenial'           => 'ruby-mysql',
+      $ruby_package_name   = $::operatingsystemrelease ? {
+        '8'                => 'ruby-mysql',
+        '9'                => 'ruby-mysql2',
+        '14'               => 'ruby-mysql',
+        '16'               => 'ruby-mysql',
         default            => 'libmysql-ruby',
       }
     }
@@ -253,6 +261,7 @@ class mysql::params {
 
     'Gentoo': {
       $client_package_name = 'virtual/mysql'
+      $includedir          = undef
       $server_package_name = 'virtual/mysql'
       $basedir             = '/usr'
       $config_file         = '/etc/mysql/my.cnf'
@@ -455,12 +464,18 @@ class mysql::params {
     },
     'mysqld-5.5'       => {
       'myisam-recover' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld-5.6'              => {
       'myisam-recover-options' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld-5.7'              => {
       'myisam-recover-options' => 'BACKUP',
+      'query_cache_limit'     => '1M',
+      'query_cache_size'      => '16M',
     },
     'mysqld'                  => {
       'basedir'               => $mysql::params::basedir,
@@ -474,8 +489,6 @@ class mysql::params {
       'max_connections'       => '151',
       'pid-file'              => $mysql::params::pidfile,
       'port'                  => '3306',
-      'query_cache_limit'     => '1M',
-      'query_cache_size'      => '16M',
       'skip-external-locking' => true,
       'socket'                => $mysql::params::socket,
       'ssl'                   => false,

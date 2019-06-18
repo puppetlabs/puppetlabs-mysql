@@ -2,22 +2,23 @@
 
 #### 目次
 
-1. [モジュールについて - モジュールの機能とその有益性](#モジュールについて)
-2. [セットアップ - mysql導入の基本](#セットアップ)
-    * [mysqlの導入](#mysqlの導入)
-3. [使用方法 - 設定オプションとその他の機能](#使用方法)
-    * [サーバオプションのカスタマイズ](#サーバオプションのカスタマイズ)
-    * [データベースの作成](#データベースの作成)
-    * [設定のカスタマイズ](#設定のカスタマイズ)
-    * [既存のサーバに対する操作](#既存のサーバに対する操作)
-    * [パスワードの指定](#パスワードの指定)
-    * [CentOSへのPerconaサーバのインストール](#centosへのperconaサーバのインストール)
-    *[UbuntuへのMariaDBのインストール](#ubuntuへのmariadbのインストール)
-4. [参考 - モジュールの機能と動作について](#参考)
-5. [制約事項 - OSの互換性など](#制約事項)
-6. [開発 - モジュール貢献についてのガイドライン](#開発)
+1. [説明 - モジュールの機能とその有益性](#module-description)
+2. [セットアップ - mysql導入の基本](#setup)
+    * [mysqlの導入](#beginning-with-mysql)
+3. [使用方法 - 設定オプションと追加機能](#usage)
+    * [サーバオプションのカスタマイズ](#customize-server-options)
+    * [データベースを作成します](#create-a-database)
+    * [設定のカスタマイズ](#customize-configuration)
+    * [既存のサーバに対する操作](#work-with-an-existing-server)
+    * [パスワードの指定](#specify-passwords)
+    * [CentOSへのPerconaサーバのインストール](#install-percona-server-on-centos)
+    * [UbuntuへのMariaDBのインストール](#install-mariadb-on-ubuntu)
+    * [プラグインのインストール](#install-plugins)
+4. [参考 - モジュールの機能と動作について](REFERENCE.md)
+5. [制約 - OS互換性など](#limitations)
+6. [開発 - モジュール貢献についてのガイド](#development)
 
-## モジュールについて
+## モジュールの概要
 
 mysqlモジュールは、MySQLサービスをインストール、設定、管理します。
 
@@ -43,7 +44,7 @@ class { '::mysql::server':
 
 $override_options用のハッシュ構造体の例については、後述の[**サーバオプションのカスタマイズ**](#サーバオプションのカスタマイズ)を参照してください。
 
-## 使用方法
+## 使用
 
 サーバに関するすべてのインタラクションは`mysql::server`を使用して行われ、クライアントのインストールには`mysql::client`が、バインディングのインストールには`mysql::bindings`が使用されます。
 
@@ -90,7 +91,7 @@ replicate-do-db = base2
 
 バージョンに固有なパラメータを実装するには、[mysqld-5.5]のようにバージョンを指定します。こうすると、1つのconfigで複数の異なるバージョンのMySQLに対応できます。
 
-### データベースの作成
+### データベースを作成します
 
 ユーザおよび割り当てられたいくつかの権限を含むデータベースを作成するには、次のようにします。
 
@@ -126,6 +127,8 @@ Mysql::Db <<| tag == $domain |>>
 
 サイズの大きいsqlファイルの場合は、`import_timeout`パラメータの値(デフォルト値300秒)を大きくします。
 
+MySQLクライアントを標準のbin/sbin以外のパスにインストールしている場合、`mysql_exec_path`にこれを設定します。
+
 ```puppet
 mysql::db { 'mydb':
   user     => 'myuser',
@@ -135,6 +138,7 @@ mysql::db { 'mydb':
   sql      => '/path/to/sqlfile.gz',
   import_cat_cmd => 'zcat',
   import_timeout => 900,
+  mysql_exec_path => '/opt/rh/rh-myql57/root/bin'
 }
 ```
 
@@ -170,15 +174,15 @@ mysql::db { 'mydb':
 }
 ```
 
+必要に応じて、パスワードも空文字列とし、パスワードなしで接続を許可することができます。
+
 ### CentOSへのPerconaサーバのインストール
 
-次の例は、CentOSシステムへのPerconaサーバの最小限のインストール方法を示します。
-この例では、Perconaサーバ、クライアント、バインディング(PerlとPythonのバインディングを含む)がセットアップされます。この方法をカスタマイズして必要に応じバージョンを更新することができます。
+次の例は、CentOSシステムへのPerconaサーバの最小限のインストール方法を示します。この例では、Perconaサーバ、クライアント、バインディング(PerlとPythonのバインディングを含む)がセットアップされます。この方法をカスタマイズして必要に応じバージョンを更新することができます。
 
 この方法は、Puppet 4.4/CentOS 7/Perconaサーバ5.7でテストされています。
 
-**注意：** yumレポジトリのインストールはこのパッケージには含まれていません。
-この例は、インストールの詳細を示したものに過ぎません。
+注意：** yumレポジトリのインストールはこのパッケージには含まれていません。
 
 ```puppet
 yumrepo { 'percona':
@@ -229,7 +233,7 @@ class { 'mysql::bindings':
   python_package_name       => 'MySQL-python',
 }
 
-# 依存関係の定義
+# Dependencies definition
 Yumrepo['percona']->
 Class['mysql::server']
 
@@ -293,8 +297,7 @@ class {'::mysql::server':
   }
 }
 
-# 依存関係の管理。レポジトリをインストールする場合は
-# この例の前のステップで示されている部分だけを使用してください。
+# 依存関係の管理。レポジトリをインストールする場合はこの例の前のステップで示されている部分だけを使用してください。
 Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
 Class['::mysql::server']
@@ -314,7 +317,7 @@ class {'::mysql::client':
   bindings_enable => true,
 }
 
-# 依存関係の管理。レポジトリをインストールする場合はこの例の前のステップで示されている部分だけを使用してください。
+# Dependency management. Only use that part if you are installing the repository as shown in the Preliminary step of this example.
 Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
 Class['::mysql::client']
@@ -326,7 +329,7 @@ MySQLモジュールおよびHieraを使用して、MySQL Communityサーバー�
 
 * MySQL Community Server 5.6
 * Centos 7.3
-* Hieraを使用したPuppet 3.8.7 
+* Hieraを使用したPuppet 3.8.7
 * puppetlabs-mysqlモジュールv3.9.0
 
 Puppetで：
@@ -357,8 +360,8 @@ yumrepo:
     gpgkey: 'http://repo.mysql.com/RPM-GPG-KEY-mysql'
 
 mysql::client::package_name: "mysql-community-client" # 適切なMySQL導入のために必要
-mysql::server::package_name: "mysql-community-server" #適切なMySQL導入のために必要
-mysql::server::package_ensure: 'installed' #ここではバージョンを指定しないでください。残念ながら、パッケージがインストールされているエラーでyumは失敗しました。
+mysql::server::package_name: "mysql-community-server" # 適切なMySQL導入のために必要
+mysql::server::package_ensure: 'installed' # ここではバージョンを指定しないでください。残念ながら、パッケージがインストールされているエラーでyumは失敗しました。
 mysql::server::root_password: "change_me_i_am_insecure"
 mysql::server::manage_config_file: true
 mysql::server::service_name: 'mysqld' # Puppetモジュールに必要
@@ -367,7 +370,7 @@ mysql::server::override_options:
     'bind-address': '127.0.0.1'
     'log-error': '/var/log/mysqld.log' # 適切なMySQL導入のために必要
   'mysqld_safe':
-    'log-error': '/var/log/mysqld.log'  # 適切なMySQL導入のために必要 
+    'log-error': '/var/log/mysqld.log'  # 適切なMySQL導入のために必要
 
 # データベース+アクセスできるアカウント、暗号化されていないパスワードを作成
 mysql::server::db:
@@ -380,8 +383,10 @@ mysql::server::db:
 
 ```
 
+### プラグインのインストール
 
-## 参考
+プラグインはユーザ定義のタイプ`mysql_plugin` を使用してインストールできます。`examples/mysql_plugin.pp`で、具体的な例を参照してください。
+## リファレンス
 
 ### クラス
 
@@ -451,836 +456,56 @@ MySQLのルートパスワード。Puppetは、このパラメータを使用し
 
 現在、このパラメータでは何も行わず、下位互換性を確保するためだけに存在します。ルートパスワードの変更についての詳細は、上記の`root_password`パラメータの説明を参照してください。
 
+#####  `create_root_login_file`
+
+mysql 5.6.6以上を使用するときに、`/root/.mylogin.cnf`を作成するかどうかを指定します。
+
+有効な値：`true`、`false`。
+
+デフォルト値：`false`。
+
+`create_root_login_file`は、既存の`.mylogin.cnf`のコピーを`/root/.mylogin.cnf`に作成します。
+
+このオプションを'true'に設定する場合、`login_file`オプションも指定する必要があります。
+
+'true'に設定する場合、`login_file`オプションが必要です。
+
+#### `login_file`
+
+`/root/.mylogin.cnf`を規定の位置に配置するかどうかを指定します。
+
+`.mylogin.cnf`ファイルの作成には、`mysql_config_editor`を使用する必要があります。このツールは、mysql 5.6.6+に付属しています。
+
+作成した.mylogin.cnfファイルは、モジュール内のファイルの下に配置する必要があります。使用法については下記の例を参照してください。
+
+`/root/.mylogin.cnf`が存在する場合、環境変数`MYSQL_TEST_LOGIN_FILE`が設定されます。
+
+このパラメータは、`create_root_user`と`create_root_login_file`がどちらもtrueである場合に必要です。`root_password`が'UNSET'である場合、`create_root_user`および`create_root_login_file`はfalseであると見なされます。このため、MySQLのrootユーザと`/root/.mylogin.cnf`は作成されません。
+
+```puppet
+class { '::mysql::server':
+root_password          => 'password',
+create_root_my_cnf     => false,
+create_root_login_file => true,
+login_file             => "puppet:///modules/${module_name}/mylogin.cnf",
+}
+```
+
 ##### `override_options`
 
 MySQLに渡すオーバーライドオプションを指定します。構造はmy.cnfファイルのハッシュと同様です。
 
 ```puppet
-$override_options = {
-  'section' => {
-    'item'             => 'thing',
-  }
+class { 'mysql::server':
+  root_password => 'password'
 }
+
+mysql_plugin { 'auth_pam':
+  ensure => present,
+  soname => 'auth_pam.so',
+}
+
 ```
-
-使用方法の詳細は、上記の[**サーバオプションのカスタマイズ**](#サーバオプションのカスタマイズ)を参照してください。
-
-##### `config_file`
-
-MySQL設定ファイルの場所を示すパス。
-
-##### `manage_config_file`
-
-MySQL設定ファイルを管理するかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`true`。
-
-##### `includedir`
-
-カスタム設定オーバーライド用の!includedirの場所を示すパス。
-
-##### `install_options`
-
-管理対象のパッケージリソースに[install_options](https://docs.puppetlabs.com/references/latest/type.html#package-attribute-install_options)配列を渡します。指定されているパッケージマネージャに対応する正しいオプションを渡す必要があります。
-
-##### `purge_conf_dir`
-
-`includedir`ディレクトリをパージするかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `restart`
-
-何らかの変更があった場合にサービスを再起動するかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `root_group`
-
-ルートに使用するグループの名前。グループ名またはグループIDのいずれかです。詳細については[`group`ファイルの属性](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group)を参照してください。
-
-##### `mysql_group`
-
-MySQLデーモンユーザのグループの名前。グループ名またはグループIDのいずれかです。詳細については[`group`ファイルの属性](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group)を参照してください。
-
-##### `package_ensure`
-
-パッケージが存在するかどうか、またはパッケージが特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-デフォルト値：'present'。
-
-##### `package_manage`
-
-MySQLサーバパッケージを管理するかどうかを指定します。
-
-デフォルト値：`true`。
-
-##### `package_name`
-
-インストールするMySQLサーバパッケージの名前。
-
-##### `remove_default_accounts`
-
-`mysql::server::account_security`を自動的に含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `service_enabled`
-
-サービスの有効化を指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`true`。
-
-##### `service_manage`
-
-サービスを管理するかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`true`。
-
-##### `service_name`
-
-MySQLサーバサービスの名前。
-
-デフォルト値はOSにより異なり、'params.pp'に定義されています。
-
-##### `service_provider`
-
-サービスの管理に使用するプロバイダ。
-
-Ubuntuの場合のデフォルト値は'upstart'、Ubuntu以外の場合のデフォルト値は定義されていません。
-
-##### `users`
-
-作成するユーザのハッシュ(オプション)。[mysql_user](#mysql_user)に渡されます。
-
-```puppet
-users => {
-  'someuser@localhost' => {
-    ensure                   => 'present',
-    max_connections_per_hour => '0',
-    max_queries_per_hour     => '0',
-    max_updates_per_hour     => '0',
-    max_user_connections     => '0',
-    password_hash            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
-    tls_options              => ['NONE'],
-  },
-}
-```
-
-##### `grants`
-
-[mysql_grant](#mysql_grant)に渡されるGRANT権限のハッシュ(オプション)。
-
-```puppet
-grants => {
-  'someuser@localhost/somedb.*' => {
-    ensure     => 'present',
-    options    => ['GRANT'],
-    privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
-    table      => 'somedb.*',
-    user       => 'someuser@localhost',
-  },
-}
-```
-
-##### `databases`
-
-作成されるデータベースのハッシュ(オプション)。[mysql_database](#mysql_database)に渡されます。
-
-```puppet
-databases   => {
-  'somedb'  => {
-    ensure  => 'present',
-    charset => 'utf8',
-  },
-}
-```
-
-#### mysql::server::backup
-
-##### `backupuser`
-
-バックアップ用に作成するMySQLユーザ。
-
-##### `backuppassword`
-
-バックアップ用のMySQLユーザパスワード。
-
-##### `backupdir`
-
-バックアップを保存するディレクトリ。
-
-##### `backupdirmode`
-
-バックアップディレクトリに適用されるパーミッション。このパラメータは`file`リソースに直接渡されます。
-
-##### `backupdirowner`
-
-バックアップディレクトリの所有者。このパラメータは`file`リソースに直接渡されます。
-
-##### `backupdirgroup`
-
-バックアップディレクトリのグループ所有者。このパラメータは`file`リソースに直接渡されます。
-
-##### `backupcompress`
-
-バックアップを圧縮するかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`true`。
-
-##### `backuprotate`
-
-バックアップを保持する日数。
-
-有効な値：整数値。
-
-デフォルト値：30。
-
-##### `delete_before_dump`
-
-バックアップ前に古い.sqlファイルを削除するかどうかを設定します。trueに設定すると古いファイルがバックアップ前に削除され、falseに設定するとバックアップ後に削除されます。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `backupdatabases`
-
-バックアップするデータベースの配列を指定します。
-
-##### `file_per_database`
-
-データベースごとに個別のファイルを使用するかどうかを設定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `include_routines`
-
-`file_per_database`バックアップを実行する際にデータベースごとにルーチンを含めるかどうかを設定します。
-
-デフォルト値：`false`。
-
-##### `include_triggers`
-
-`file_per_database`バックアップを実行する際にデータベースごとにトリガを含めるかどうかを設定します。
-
-デフォルト値：`false`。
-
-##### `ensure`
-
-バックアップスクリプトを削除できます。
-
-有効な値：'present'、'absent'。
-
-デフォルト値：'present'。
-
-##### `execpath`
-
-MySQLを標準的でない場所にインストールする場合にカスタムパスを設定できます。デフォルト値：`/usr/bin:/usr/sbin:/bin:/sbin`。
-
-##### `time`
-
-バックアップ時刻を設定する2つの要素の配列。時刻をHH:MM形式で['23', '5'](23:05)または['3', '45'](03:45)に設定できます。
-
-#### mysql::server::backup
-
-##### `postscript`
-
-バックアップ終了時に実行されるスクリプト。この機能を使用すると、バックアップを中央ストアに同期させることができます。このスクリプトは、直接実行される1つの行であっても、配列を形成する複数の行であっても構いません。あるいは、外部で管理される1つ以上の(実行可能な)ファイルにすることもできます。
-
-##### `prescript`
-
-バックアップ開始前に実行されるスクリプト。
-
-##### `provider`
-
-サーバのバックアップの実行について設定します。有効な値は以下のとおりです。
-
-* `mysqldump`：mysqldumpを使用してバックアップを実行。バックアップのタイプ：Logical(デフォルト値)。
-* `mysqlbackup`：OracleのMySQL Enterprise Backupを使用してバックアップを実行します。バックアップのタイプ：Physical。このタイプのバックアップを使用するにはOracleの`meb`パッケージが必要です。RPM形式のものとTAR形式のものがあります。Ubuntuの場合は、[meb-deb](https://github.com/dveeden/meb-deb)を使用して公式のtarballからパッケージを作成できます。
-* `xtrabackup：PerconaのXtraBackupを使用してバックアップを実行します。バックアップのタイプ：Physical。
-
-##### `maxallowedpacket`
-
-バックアップダンプスクリプト用のSQLステートメントの最大サイズを定義ます。デフォルト値は1MBで、MySQL Serverのデフォルト値と同じです。
-
-##### `optional_args`
-
-バックアップツールに渡すべきオプションの引数の配列を指定します(現在はxtrabackupプロバイダでのみサポート)。
-
-#### mysql::server::monitor
-
-##### `mysql_monitor_username`
-
-MySQLのモニタ用に作成するユーザ名。
-
-##### `mysql_monitor_password`
-
-MySQLのモニタ用に作成するパスワード。
-
-##### `mysql_monitor_hostname`
-
-モニタするユーザリクエストへのアクセスが許可されたホスト名。
-
-#### mysql::server::mysqltuner
-
-**注意**：ネットワークに接続されていないシステムでこのクラスを使用する場合は、mysqltuner.plスクリプトをダウンロードし、`http(s)://`、`puppet://`、`ftp://`、または完全修飾ファイルパスを使用して、アクセス可能な場所でホストされるようにしておく必要があります。
-
-##### `ensure`
-
-リソースが存在することを確認します。
-
-有効な値：'present'、'absent'。
-
-デフォルト値：'present'。
-
-##### `version`
-
-major/MySQLTuner-perl githubレポジトリからインストールするバージョン。有効なタグでなければなりません。
-
-デフォルト値：'v1.3.0'。
-
-##### `environment`
-
-プロキシを使用したダウンロードなどのダウンロード中に有効な環境変数：environment => 'https_proxy=http://proxy.example.com:80'
-
-#### mysql::bindings
-
-##### `client_dev`
-
-`::mysql::bindings::client_dev`を含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `daemon_dev`
-
-`::mysql::bindings::daemon_dev`を含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `java_enable`
-
-`::mysql::bindings::java`を含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-#####  `perl_enable`
-
-`mysql::bindings::perl`を含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `php_enable`
-
-`mysql::bindings::php`を含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `python_enable`
-
-`mysql::bindings::python`を含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `ruby_enable`
-
-`mysql::bindings::ruby`を含めるかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `install_options`
-
-管理対象のパッケージリソースに`install_options`を渡します。パッケージマネージャに対応する[正しいオプション](https://docs.puppetlabs.com/references/latest/type.html#package-attribute-install_options)を渡す必要があります。
-
-##### `client_dev_package_ensure`
-
-パッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-適用されるのは`client_dev => true`の場合だけです。
-
-##### `client_dev_package_name`
-
-インストールするclient_devパッケージの名前。
-
-適用されるのは`client_dev => true`の場合だけです。
-
-##### `client_dev_package_provider`
-
-client_devパッケージのインストールに使用するプロバイダ。
-
-適用されるのは`client_dev => true`の場合だけです。
-
-##### `daemon_dev_package_ensure`
-
-パッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-適用されるのはdaemon_dev => true`の場合だけです。
-
-##### `daemon_dev_package_name`
-
-インストールするdaemon_devパッケージの名前。
-
-適用されるのはdaemon_dev => true`の場合だけです。
-
-##### `daemon_dev_package_provider`
-
-daemon_devパッケージのインストールに使用するプロバイダ。
-
-適用されるのはdaemon_dev => true`の場合だけです。
-
-##### `java_package_ensure`
-
-パッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-適用されるのは`java_enable => true`の場合だけです。
-
-##### `java_package_name`
-
-インストールするJavaパッケージの名前。
-
-適用されるのは`java_enable => true`の場合だけです。
-
-##### `java_package_provider`
-
-Javaパッケージのインストールに使用するプロバイダ。
-
-適用されるのは`java_enable => true`の場合だけです。
-
-##### `perl_package_ensure`
-
-パッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-適用されるのは`perl_enable => true`の場合だけです。
-
-##### `perl_package_name`
-
-インストールするPerlパッケージの名前。
-
-適用されるのは`perl_enable => true`の場合だけです。
-
-##### `perl_package_provider`
-
-Perlパッケージのインストールに使用するプロバイダ。
-
-適用されるのは`perl_enable => true`の場合だけです。
-
-##### `php_package_ensure`
-
-パッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-適用されるのは`php_enable => true`の場合だけです。
-
-##### `php_package_name`
-
-インストールするPHPパッケージの名前。
-
-適用されるのは`php_enable => true`の場合だけです。
-
-##### `python_package_ensure`
-
-パッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-適用されるのは`python_enable => true`の場合だけです。
-
-##### `python_package_name`
-
-インストールするPythonパッケージの名前。
-
-適用されるのは`python_enable => true`の場合だけです。
-
-##### `python_package_provider`
-
-Pythonパッケージのインストールに使用するプロバイダ。
-
-適用されるのは`python_enable => true`の場合だけです。
-
-##### `ruby_package_ensure`
-
-パッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-適用されるのは`ruby_enable => true`の場合だけです。
-
-##### `ruby_package_name`
-
-インストールするRubyパッケージの名前。
-
-適用されるのは`ruby_enable => true`の場合だけです。
-
-##### `ruby_package_provider`
-
-Rubyパッケージのインストールに使用するプロバイダ。
-
-#### mysql::client
-
-##### `bindings_enable`
-
-すべてのバインディングを自動的にインストールするかどうかを指定します。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `install_options`
-
-管理対象のパッケージリソースに関するインストールオプションの配列。パッケージマネージャに対応する正しいオプションを渡す必要があります。
-
-##### `package_ensure`
-
-MySQLパッケージが、存在するかしないか、または特定のバージョンでなければならないかどうかを指定します。
-
-有効な値：'present'、'absent'、または'x.y.z'。
-
-##### `package_manage`
-
-MySQLクライアントパッケージを管理するかどうかを指定します。
-
-デフォルト値：`true`。
-
-##### `package_name`
-
-インストールするMySQLクライアントパッケージの名前。
-
-### 定義
-
-#### mysql::db
-
-```puppet
-mysql_database { 'information_schema':
-  ensure  => 'present',
-  charset => 'utf8',
-  collate => 'utf8_swedish_ci',
-}
-mysql_database { 'mysql':
-  ensure  => 'present',
-  charset => 'latin1',
-  collate => 'latin1_swedish_ci',
-}
-```
-
-##### `user`
-
-作成するデータベースのユーザ。
-
-##### `password`
-
-作成するデータベースの$userのパスワード。
-
-##### `dbname`
-
-作成するデータベースの名前。
-
-デフォルト値："$name"。
-
-##### `charset`
-
-データベースに使用するキャラクタセット。
-
-デフォルト値：'utf8'。
-
-##### `collate`
-
-データベースの照合順序。
-
-デフォルト値：'utf8_general_ci'。
-
-##### `host`
-
-GRANT権限を付与するuser@hostの一部として使用するホスト。
-
-デフォルト値：'localhost'。
-
-##### `grant`
-
-データベースに対してuser@hostに付与される権限。
-
-デフォルト値：'ALL'。
-
-##### `sql`
-
-実行するsqlfileへのパス。文字列として指定された1つのファイル、または文字列の配列のいずれかです。
-
-デフォルト値：`undef`。
-
-##### `enforce_sql`
-
-sqlfilesを毎回実行するかどうかを指定します。falseに設定した場合はsqlfilesは1回しか実行されません。
-
-有効な値：`true`、`false`。
-
-デフォルト値：`false`。
-
-##### `ensure`
-
-データベースを作成するかどうかを指定します。
-
-有効な値：'present'、'absent'。
-
-デフォルト値：'present'。
-
-##### `import_timeout`
-
-sqlfilesをロードするときのタイムアウト(秒)。
-
-デフォルト値：300。
-
-##### `import_cat_cmd`
-
-データベースをインポートするためにsqlfileを読み込むコマンド。sqlfilesが圧縮されている場合に役立ちます。たとえば.gzファイルの場合に'zcat'を使用することができます。
-
-デフォルト値：'cat'。
-
-### タイプ
-
-#### mysql_database
-
-`mysql_database`は、MySQLでデータベースを作成し、管理します。
-
-##### `ensure`
-
-リソースの存在を指定します。
-
-有効な値：'present'、'absent'。
-
-デフォルト値：'present'。
-
-##### `name`
-
-管理するMySQLデータベースの名前。
-
-##### `charset`
-
-データベースに使用するキャラクタセットの設定。
-
-デフォルト値：'utf8'。
-
-##### `collate`
-
-データベースに使用する照合順序の設定。
-
-デフォルト値：'utf8_general_ci'。
-
-#### mysql_user
-
-MySQLでのユーザのGRANT権限を作成し、管理します。
-
-```puppet
-mysql_user { 'root@127.0.0.1':
-  ensure                   => 'present',
-  max_connections_per_hour => '0',
-  max_queries_per_hour     => '0',
-  max_updates_per_hour     => '0',
-  max_user_connections     => '0',
-}
-```
-
-認証プラグインを指定することもできます。
-
-```puppet
-mysql_user{ 'myuser'@'localhost':
-  ensure                   => 'present',
-  plugin                   => 'unix_socket',
-}
-```
-
-ユーザに対しTLSオプションを指定できます。
-
-```puppet
-mysql_user{ 'myuser'@'localhost':
-  ensure                   => 'present',
-  tls_options              => ['SSL'],
-}
-```
-
-##### `name`
-
-ユーザ名('username@hostname'またはusername@hostname)。
-
-##### `password_hash`
-
-ユーザのパスワードハッシュ。このようなハッシュを作成するには、mysql_password()を使用してください。
-
-##### `max_user_connections`
-
-同時に接続するユーザ数の最大値。
-
-整数値でなければなりません。
-
-指定値が'0'の場合は無制限(またはグローバル)になります。
-
-##### `max_connections_per_hour`
-
-ユーザの1時間あたりの接続回数最大値。
-
-整数値でなければなりません。
-
-指定値が'0'の場合は無制限(またはグローバル)になります。
-
-##### `max_queries_per_hour`
-
-ユーザの1時間あたりのクエリ数最大値。
-
-整数値でなければなりません。
-
-指定値が'0'の場合は無制限(またはグローバル)になります。
-
-##### `max_updates_per_hour`
-
-ユーザの1時間あたりの更新回数最大値。
-
-整数値でなければなりません。
-
-指定値が'0'の場合は無制限(またはグローバル)になります。
-
-##### `tls_options`
-
-1つ以上のtls_optionの値を使用するMySQLアカウント用のSSL関連のオプション。'NONE'の場合はアカウントにTLSオプションが指定されません。使用可能なオプションは、MySQLドキュメントに示されているとおり、'SSL'、'X509'、'CIPHER *cipher*'、'ISSUER *issuer*'、'SUBJECT *subject*'です。
-
-
-#### mysql_grant
-
-`mysql_grant`は、MySQLでデータベースにアクセスするのに必要なGRANT権限を作成します。MySQLでデータベースにアクセスするためのGRANT権限を作成するには、`username@hostname/database.table`のパターンに続けて次のようにリソースのタイトルを作成する必要があります。
-
-```puppet
-mysql_grant { 'root@localhost/*.*':
-  ensure     => 'present',
-  options    => ['GRANT'],
-  privileges => ['ALL'],
-  table      => '*.*',
-  user       => 'root@localhost',
-}
-```
-
-次のように、列レベルまで詳細に権限を指定することができます。
-
-```puppet
-mysql_grant { 'root@localhost/mysql.user':
-  ensure     => 'present',
-  privileges => ['SELECT (Host, User)'],
-  table      => 'mysql.user',
-  user       => 'root@localhost',
-}
-```
-
-GRANT権限を取り消す場合は['NONE']を指定します。
-
-##### `ensure`
-
-リソースの存在を指定します。
-
-有効な値：'present'、'absent'。
-
-デフォルト値：'present'。
-
-##### `name`
-
-GRANT権限を示す名前。'user/table'の形式でなければなりません。
-
-##### `privileges`
-
-ユーザに許可を与える権限。
-
-##### `table`
-
-権限が適用されるテーブル。
-
-##### `user`
-
-権限が付与されるユーザ。
-
-##### `options`
-
-権限を付与するMySQLオプション(オプション)。
-
-#### mysql_plugin
-
-`mysql_plugin`を使用してMySQLサーバにプラグインをロードできます。
-
-```puppet
-mysql_plugin { 'auth_socket':
-  ensure     => 'present',
-  soname     => 'auth_socket.so',
-}
-```
-
-##### `ensure`
-
-リソースの存在を指定します。
-
-有効な値：'present'、'absent'。
-
-デフォルト値：'present'。
-
-##### `name`
-
-管理するMySQLプラグインの名前。
-
-#####  `soname`
-
-ライブラリファイルの名前。
-
-#### `mysql_datadir`
-
-バージョンに固有なコードでMySQLデータディレクトリを初期化します。MySQL 5.7.6より前のバージョンではmysql_install_dbを、後のバージョンではmysqld --initialize-insecureを使用します。
-
-安全でない初期化が必要なのは、mysqldバージョン5.7で'secure by default'モードが導入されているからです。これは、MySQLがランダムなパスワードを作成してSTDOUTに書き込むことを意味します。したがって、使用可能な認証情報がないためPuppetが後でデータベースサーバにアクセスすることはできません。
-
-このタイプは内部タイプであるため、直接呼び出すことはできません。
-
-### ファクト
-
-#### `mysql_version`
-
-`mysql --version`からの出力を解析してMySQLのバージョンを判断します。
-
-#### `mysql_server_id`
-
-ノードのMACアドレスに基づいて、`server_id`として使用可能な一意なIDを作成します。ループバックインターフェイスしかないノードでは、このファクトは*常に*`0`を返します。これらのノードは外部に接続されていないため、これが衝突の原因になる可能性はありません。
 
 ### タスク
 
@@ -1288,20 +513,9 @@ MySQLモジュールにはサンプルタスクがあり、ユーザはデータ
 
 ## 制約事項
 
-このモジュールは以下のプラットフォームでテストされています。
-
-* RedHat Enterprise Linux 5、6、7
-* Debian 6、7、8
-* CentOS 5、 6、7
-* Ubuntu 10.04、12.04、14.04、16.04
-* Scientific Linux 5、6
-* SLES 11
-
-他のプラットフォームでは最小限のテストしか行っていないため、保証はできません。
+サポートされているオペレーティングシステムの一覧については、[metadata.json](https://github.com/puppetlabs/puppetlabs-mysql/blob/master/metadata.json)を参照してください。
 
 **注意：** mysqlbackup.shは、MySQL 5.7以降では動作せず、サポートされていません。
-
-Debian 9の互換性は完全には検証されていません。
 
 ## 開発
 
