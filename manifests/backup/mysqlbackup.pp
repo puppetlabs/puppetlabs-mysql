@@ -71,7 +71,7 @@ class mysql::backup::mysqlbackup (
     package {'cronie':
       ensure => present,
     }
-  } elsif $::osfamily == 'FreeBSD' {
+  } elsif $::osfamily != 'FreeBSD' {
     package {'cron':
       ensure => present,
     }
