@@ -63,13 +63,17 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
-  if $::osfamily == 'RedHat' {
-      package {'cronie':
-        ensure => present,
-      }
-    } else {
-      package {'cron':
-        ensure => present,
+  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
+    package {'crontabs':
+      ensure => present,
+    }
+  } elsif $::osfamily == 'RedHat' {
+    package {'cronie':
+      ensure => present,
+    }
+  } elsif $::osfamily != 'FreeBSD' {
+    package {'cron':
+      ensure => present,
     }
   }
 
