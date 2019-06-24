@@ -13,13 +13,14 @@ describe 'mysql::server::backup' do
       end
 
       let(:default_params) do
-        { 'backupuser'         => 'testuser',
-          'backuppassword'     => 'testpass',
-          'backupdir'          => '/tmp/mysql-backup',
-          'backuprotate'       => '25',
-          'delete_before_dump' => true,
-          'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
-          'maxallowedpacket'   => '1M' }
+        { 'backupuser'          => 'testuser',
+          'backuppassword'      => 'testpass',
+          'backupdir'           => '/tmp/mysql-backup',
+          'backuprotate'        => '25',
+          'delete_before_dump'  => true,
+          'execpath'            => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          'manage_package_cron' => false,
+          'maxallowedpacket'    => '1M' }
       end
 
       context 'standard conditions' do

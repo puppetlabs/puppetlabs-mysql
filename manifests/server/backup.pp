@@ -80,7 +80,7 @@ class mysql::server::backup (
   $ignore_events       = true,
   $include_routines    = false,
   $include_triggers    = false,
-  $manage_package_cron = true,
+  $manage_package_cron = false,
   $maxallowedpacket    = '1M',
   $optional_args       = [],
   $postscript          = false,
