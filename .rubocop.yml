@@ -1,7 +1,7 @@
 ---
 require:
-- rubocop-i18n
 - rubocop-rspec
+- rubocop-i18n
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: '2.1'
@@ -21,10 +21,12 @@ AllCops:
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
+GetText:
+  Enabled: false
 GetText/DecorateString:
   Description: We don't want to decorate test output.
   Exclude:
-  - spec/*
+  - spec/**/*
 RSpec/BeforeAfterAll:
   Description: Beware of using after(:all) as it may cause state to leak between tests.
     A necessary evil in acceptance testing.
