@@ -65,10 +65,6 @@ describe 'mysql::server::backup' do
         }
 
         it {
-          is_expected.to contain_file('/usr/local/sbin/mysqlbackup.sh').with_content(%r{touch /tmp/mysqlbackup_success})
-        }
-
-        it {
           is_expected.to contain_file('/tmp/mysql-backup').with(
             ensure: 'directory',
           )
