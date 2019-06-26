@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.0.0) (2019-06-26)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v9.1.0...v10.0.0)
+
+### Changed
+
+- \(FM-7709\) pdksync and remove beaker [\#1210](https://github.com/puppetlabs/puppetlabs-mysql/pull/1210) ([tphoney](https://github.com/tphoney))
+
+### Added
+
+- add support for rh-mariadb102 [\#1209](https://github.com/puppetlabs/puppetlabs-mysql/pull/1209) ([martin-schlossarek](https://github.com/martin-schlossarek))
+- Freebsd compat [\#1208](https://github.com/puppetlabs/puppetlabs-mysql/pull/1208) ([kapouik](https://github.com/kapouik))
+
+### Fixed
+
+- FM-7982 - update provisioner to docker\_exp [\#1205](https://github.com/puppetlabs/puppetlabs-mysql/pull/1205) ([lionce](https://github.com/lionce))
+
 ## [v9.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v9.1.0) (2019-06-10)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v9.0.0...v9.1.0)
