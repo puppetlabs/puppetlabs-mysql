@@ -69,12 +69,15 @@ class mysql::backup::mysqldump (
   }
 
   cron { 'mysql-backup':
-    ensure  => $ensure,
-    command => '/usr/local/sbin/mysqlbackup.sh',
-    user    => 'root',
-    hour    => $time[0],
-    minute  => $time[1],
-    require => File['mysqlbackup.sh'],
+    ensure   => $ensure,
+    command  => '/usr/local/sbin/mysqlbackup.sh',
+    user     => 'root',
+    hour     => $time[0],
+    minute   => $time[1],
+    monthday => $time[2],
+    month    => $time[3],
+    weekday  => $time[4],
+    require  => File['mysqlbackup.sh'],
   }
 
   file { 'mysqlbackup.sh':
