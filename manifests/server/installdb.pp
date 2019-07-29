@@ -27,7 +27,6 @@ class mysql::server::installdb {
       owner   => $mysqluser,
       group   => $::mysql::server::mysql_group,
       mode    => 'u+rw',
-      require => Mysql_datadir[ $datadir ],
     }
   }
 
@@ -38,6 +37,7 @@ class mysql::server::installdb {
       user                => $mysqluser,
       log_error           => $log_error,
       defaults_extra_file => $_config_file,
+      require             => File[$options['mysqld']['log-error']],
     }
 
     if $mysql::server::restart {
