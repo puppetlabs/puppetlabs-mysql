@@ -740,9 +740,9 @@ Default value: `false`
 
 Data type: `Any`
 
-Databases to backup (if using xtrabackup provider).
+Databases to backup (required if using xtrabackup provider).
 
-Default value: []
+Default value: `[]` (backs up all databases)
 
 ##### `file_per_database`
 
