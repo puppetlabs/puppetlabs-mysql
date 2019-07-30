@@ -39,7 +39,7 @@
 # @param delete_before_dump
 #   Whether to delete old .sql files before backing up. Setting to true deletes old files before backing up, while setting to false deletes them after backup.
 # @param backupdatabases
-#   Databases to backup (if using xtrabackup provider).
+#   Databases to backup (required if using xtrabackup provider). By default `[]` will back up all databases.
 # @param file_per_database
 #   Use file per database mode creating one file per database backup.
 # @param include_routines
