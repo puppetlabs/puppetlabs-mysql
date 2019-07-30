@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "9.1.0",
+  "version": "10.0.0",
   "author": "puppetlabs",
   "summary": "Installs, configures, and manages the MySQL service.",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     },
     {
       "name": "puppetlabs/translate",
-      "version_requirement": ">= 1.0.0 < 2.0.0"
+      "version_requirement": ">= 1.0.0 < 3.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -81,7 +81,7 @@
     }
   ],
   "description": "MySQL module",
-  "template-url": "https://github.com/puppetlabs/pdk-templates/#1.10.0",
-  "template-ref": "1.10.0-0-gbba9ac3",
-  "pdk-version": "1.10.0"
+  "template-url": "https://github.com/puppetlabs/pdk-templates/#master",
+  "template-ref": "heads/master-0-gb096033",
+  "pdk-version": "1.11.1"
 }

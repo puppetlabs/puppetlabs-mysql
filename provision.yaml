@@ -1,12 +1,15 @@
 ---
 default:
-  provisioner: docker
+  provisioner: docker_exp
   images: ['waffleimage/centos7']
 travis_deb:
   provisioner: docker
   images: ['waffleimage/debian8', 'waffleimage/debian9', 'waffleimage/ubuntu14.04', 'waffleimage/ubuntu16.04', 'waffleimage/ubuntu18.04']
+travis_el6:
+  provisioner: docker_exp
+  images: ['waffleimage/centos6', 'waffleimage/scientificlinux6']
 travis_el7:
-  provisioner: docker
+  provisioner: docker_exp
   images: ['waffleimage/centos7', 'waffleimage/oraclelinux7', 'waffleimage/scientificlinux7']
 release_checks:
   provisioner: vmpooler

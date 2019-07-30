@@ -16,7 +16,7 @@ end
 
 def changelog_project
   return unless Rake.application.top_level_tasks.include? "changelog"
-  returnVal = nil || JSON.load(File.read('metadata.json'))['name']
+  returnVal = nil || JSON.load(File.read('metadata.json'))['source'].match(%r{.*/([^/]*)})[1]
   raise "unable to find the changelog_project in .sync.yml or the name in metadata.json" if returnVal.nil?
   puts "GitHubChangelogGenerator project:#{returnVal}"
   returnVal
