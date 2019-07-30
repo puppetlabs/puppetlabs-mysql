@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 def pre_run
-  apply_manifest("class { 'mysql::server': root_password => 'password' }", catch_failures: true)
+  apply_manifest("class { 'mysql::server': root_password => 'password' }")
 end
 
 def mysql_version
