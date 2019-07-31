@@ -2,13 +2,17 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.1.0) (2019-07-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.0.0...v10.1.0)
+
+### Added
+
+- Allow backup::mysqldump::time to accept monthday, month, weekday [\#1214](https://github.com/puppetlabs/puppetlabs-mysql/pull/1214) ([malakai97](https://github.com/malakai97))
+
 ## [v10.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.0.0) (2019-06-26)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v9.1.0...v10.0.0)
-
-### Changed
-
-- \(FM-7709\) pdksync and remove beaker [\#1210](https://github.com/puppetlabs/puppetlabs-mysql/pull/1210) ([tphoney](https://github.com/tphoney))
 
 ### Added
 
@@ -150,7 +154,7 @@ All notable changes to this project will be documented in this file. The format 
 - \(FM-5985\) - Addition of support for Ubuntu 18.04 to mysql [\#1104](https://github.com/puppetlabs/puppetlabs-mysql/pull/1104) ([david22swan](https://github.com/david22swan))
 - \(MODULES-7439\) - Implementing beaker-testmode\_switcher [\#1095](https://github.com/puppetlabs/puppetlabs-mysql/pull/1095) ([pmcmaw](https://github.com/pmcmaw))
 - Support for optional\_\_args and prescript to mysqldump backup provider [\#1083](https://github.com/puppetlabs/puppetlabs-mysql/pull/1083) ([eputnam](https://github.com/eputnam))
-- Allow empty user passwords [\#1075](https://github.com/puppetlabs/puppetlabs-mysql/pull/1075) ([disappear89](https://github.com/disappear89))
+- Allow empty user passwords [\#1075](https://github.com/puppetlabs/puppetlabs-mysql/pull/1075) ([ThoTischner](https://github.com/ThoTischner))
 - Add user tls\_options and grant options to mysql::db [\#1065](https://github.com/puppetlabs/puppetlabs-mysql/pull/1065) ([edestecd](https://github.com/edestecd))
 - Use puppet4 functions-api [\#1044](https://github.com/puppetlabs/puppetlabs-mysql/pull/1044) ([juliantodt](https://github.com/juliantodt))
 - Replaced 'DROP USER' with 'DROP USER IF EXISTS' [\#942](https://github.com/puppetlabs/puppetlabs-mysql/pull/942) ([libertamohamed](https://github.com/libertamohamed))

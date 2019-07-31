@@ -18,7 +18,7 @@ _Private Classes_
 
 * `mysql::backup::mysqlbackup`: Manage the mysqlbackup client.
 * `mysql::backup::mysqldump`: "Provider" for mysqldump
-* `mysql::backup::xtrabackup`: "Provider" for Percona XtraBackup or MariaBackup
+* `mysql::backup::xtrabackup`: "Provider" for Percona XtraBackup/MariaBackup
 * `mysql::bindings::client_dev`: Private class for installing client development bindings
 * `mysql::bindings::daemon_dev`: Private class for installing daemon development bindings
 * `mysql::bindings::java`: Private class for installing java language bindings.
@@ -56,6 +56,8 @@ _Private Resource types_
 
 **Functions**
 
+* [`mysql::normalise_and_deepmerge`](#mysqlnormalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashesh and underscores,
+then returns the resulting hash.
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
 * [`mysql_password`](#mysql_password): Hash a string as mysql's "PASSWORD()" function would do it
@@ -650,6 +652,11 @@ class { 'mysql::server::backup':
   backuppassword => 'mypassword',
   backupdir      => '/tmp/backups',
 }
+class { 'mysql::server::backup':
+  backupmethod => 'mariabackup',
+  provider     => 'xtrabackup',
+  backupdir    => '/tmp/backups',
+}
 ```
 
 #### Parameters
@@ -712,6 +719,14 @@ Whether or not to compress the backup (when using the mysqldump provider)
 
 Default value: `true`
 
+##### `backupmethod`
+
+Data type: `Any`
+
+The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup
+
+Default value: `undef`
+
 ##### `backuprotate`
 
 Data type: `Any`
@@ -740,9 +755,9 @@ Default value: `false`
 
 Data type: `Any`
 
-Databases to backup (required if using xtrabackup provider).
+Databases to backup (required if using xtrabackup provider). By default `[]` will back up all databases.
 
-Default value: `[]` (backs up all databases)
+Default value: []
 
 ##### `file_per_database`
 
@@ -1200,6 +1215,52 @@ namevar
 The name of the user. This uses the 'username@hostname' or username@hostname.
 
 ## Functions
+
+### mysql::normalise_and_deepmerge
+
+Type: Ruby 4.x API
+
+- When there is a duplicate key that is a hash, they are recursively merged.
+- When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
+- When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate), the rightmost style will win.
+
+#### Examples
+
+##### 
+
+```puppet
+$hash1 = {'one' => 1, 'two' => 2, 'three' => { 'four' => 4 } }
+$hash2 = {'two' => 'dos', 'three' => { 'five' => 5 } }
+$merged_hash = mysql::normalise_and_deepmerge($hash1, $hash2)
+# The resulting hash is equivalent to:
+# $merged_hash = { 'one' => 1, 'two' => 'dos', 'three' => { 'four' => 4, 'five' => 5 } }
+```
+
+#### `mysql::normalise_and_deepmerge(Any *$args)`
+
+- When there is a duplicate key that is a hash, they are recursively merged.
+- When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
+- When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate), the rightmost style will win.
+
+Returns: `Any`
+
+##### Examples
+
+###### 
+
+```puppet
+$hash1 = {'one' => 1, 'two' => 2, 'three' => { 'four' => 4 } }
+$hash2 = {'two' => 'dos', 'three' => { 'five' => 5 } }
+$merged_hash = mysql::normalise_and_deepmerge($hash1, $hash2)
+# The resulting hash is equivalent to:
+# $merged_hash = { 'one' => 1, 'two' => 'dos', 'three' => { 'four' => 4, 'five' => 5 } }
+```
+
+##### `*args`
+
+Data type: `Any`
+
+
 
 ### mysql::password
 
