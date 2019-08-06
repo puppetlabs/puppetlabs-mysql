@@ -44,7 +44,7 @@ describe 'mysql::backup::xtrabackup' do
           is_expected.to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp --target-dir=/tmp/$(date +%F_%H-%M-%S) --backup',
+              command: '/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup',
               user: 'root',
               hour: '23',
               minute: '5',
@@ -101,7 +101,7 @@ describe 'mysql::backup::xtrabackup' do
           is_expected.to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp --target-dir=/tmp/$(date +%F_%H-%M-%S) --backup --skip-ssl',
+              command: '/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup --skip-ssl',
               user: 'root',
               hour: '23',
               minute: '5',

@@ -63,7 +63,7 @@ class mysql::backup::xtrabackup (
 
   $daily_cron_data = ($incremental_backups) ? {
     true  => {
-      'directories' => "--incremental-basedir=${backupdir} --target-dir=${backupdir}/$(date +%F_%H-%M-%S)",
+      'directories' => "--incremental-basedir=${backupdir} --target-dir=${backupdir}/$(date +\\%F_\\%H-\\%M-\\%S)",
       'weekday'     => '1-6',
     },
     false => {
