@@ -223,11 +223,12 @@ class mysql::params {
       }
 
       $python_package_name = 'python-mysqldb'
-      $ruby_package_name   = $::operatingsystemrelease ? {
-        '8'                => 'ruby-mysql',
-        '9'                => 'ruby-mysql2',
-        '14'               => 'ruby-mysql',
-        '16'               => 'ruby-mysql',
+      $ruby_package_name   = $::lsbdistcodename ? {
+        'jessie'           => 'ruby-mysql',
+        'stretch'          => 'ruby-mysql2',
+        'trusty'           => 'ruby-mysql',
+        'xenial'           => 'ruby-mysql',
+        'bionic'           => 'ruby-mysql2',
         default            => 'libmysql-ruby',
       }
     }
