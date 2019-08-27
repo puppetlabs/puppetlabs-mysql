@@ -69,7 +69,7 @@ class mysql::server::backup (
   $backupdir                = undef,
   $backupdirmode            = '0700',
   $backupdirowner           = 'root',
-  $backupdirgroup           = 'root',
+  $backupdirgroup           = $mysql::params::root_group,
   $backupcompress           = true,
   $backuprotate             = 30,
   $backupmethod             = undef,
@@ -88,7 +88,7 @@ class mysql::server::backup (
   $provider                 = 'mysqldump',
   $maxallowedpacket         = '1M',
   $optional_args            = [],
-) {
+) inherits mysql::params {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
     warning(translate("The 'prescript' option is not currently implemented for the %{provider} backup provider.",
