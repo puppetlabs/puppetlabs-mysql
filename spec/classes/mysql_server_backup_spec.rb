@@ -102,6 +102,12 @@ describe 'mysql::server::backup' do
         it 'has a standard PATH' do
           is_expected.to contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
         end
+
+        it 'has default success file path' do
+          is_expected.to contain_file('/usr/local/sbin/mysqlbackup.sh').with_content(
+            %r{touch /tmp/mysqlbackup_success},
+          )
+        end
       end
 
       context 'custom ownership and mode for backupdir' do
