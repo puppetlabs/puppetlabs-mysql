@@ -114,7 +114,7 @@ describe 'mysql::server::backup' do
           default_params.merge!(custom_params)
         end
 
-        it { is_expected.to contain_file('mysqlbackup.sh').with_content( %r{touch /tmp/mysqlbackup_success}) }
+        it { is_expected.to contain_file('mysqlbackup.sh').with_content(%r{touch /tmp/mysqlbackup_success}) }
       end
 
       context 'with delete after dump and custom success file path' do
@@ -128,7 +128,7 @@ describe 'mysql::server::backup' do
           default_params.merge!(custom_params)
         end
 
-        it { is_expected.to contain_file('mysqlbackup.sh').with_content( %r{touch /opt/mysqlbackup_success}) }
+        it { is_expected.to contain_file('mysqlbackup.sh').with_content(%r{touch /opt/mysqlbackup_success}) }
       end
 
       context 'custom ownership and mode for backupdir' do
