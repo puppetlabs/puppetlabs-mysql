@@ -102,12 +102,33 @@ describe 'mysql::server::backup' do
         it 'has a standard PATH' do
           is_expected.to contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
         end
+      end
 
-        it 'has default success file path' do
-          is_expected.to contain_file('/usr/local/sbin/mysqlbackup.sh').with_content(
-            %r{touch /tmp/mysqlbackup_success},
-          )
+      context 'with delete after dump' do
+        let(:custom_params) do
+          {
+            'delete_before_dump' => false,
+          }
         end
+        let(:params) do
+          default_params.merge!(custom_params)
+        end
+
+        it { is_expected.to contain_file('mysqlbackup.sh').with_content( %r{touch /tmp/mysqlbackup_success}) }
+      end
+
+      context 'with delete after dump and custom success file path' do
+        let(:custom_params) do
+          {
+            'delete_before_dump'       => false,
+            'backup_success_file_path' => '/opt/mysqlbackup_success',
+          }
+        end
+        let(:params) do
+          default_params.merge!(custom_params)
+        end
+
+        it { is_expected.to contain_file('mysqlbackup.sh').with_content( %r{touch /opt/mysqlbackup_success}) }
       end
 
       context 'custom ownership and mode for backupdir' do
