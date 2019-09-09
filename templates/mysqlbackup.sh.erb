@@ -111,7 +111,7 @@ done
 <% unless @delete_before_dump -%>
 if [ $? -eq 0 ] ; then
     cleanup
-    touch /tmp/mysqlbackup_success
+    touch <%= @backup_success_file_path %>
 fi
 <% end -%>
 
