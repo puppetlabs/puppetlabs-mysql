@@ -30,9 +30,11 @@ class mysql::backup::mysqldump (
   $mysqlbackupdir_target    = undef,
 ) inherits mysql::params {
 
-  if $backupcompress {
-    ensure_packages(['bzip2'])
-    Package['bzip2'] -> File['mysqlbackup.sh']
+  unless $::osfamily == 'FreeBSD' {
+    if $backupcompress {
+      ensure_packages(['bzip2'])
+      Package['bzip2'] -> File['mysqlbackup.sh']
+    }
   }
 
   mysql_user { "${backupuser}@localhost":
