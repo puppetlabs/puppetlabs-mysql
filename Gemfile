@@ -30,6 +30,7 @@ group :development do
   gem "puppet-module-win-dev-r#{minor_version}", '~> 0.3',       require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-lint-i18n",                                        require: false
   gem "github_changelog_generator",                              require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
+  gem "puppet_litmus",                                           require: false, git: 'https://github.com/florindragos/puppet_litmus'
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
