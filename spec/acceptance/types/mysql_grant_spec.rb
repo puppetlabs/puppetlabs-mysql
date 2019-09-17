@@ -6,9 +6,6 @@ describe 'mysql_grant' do
       class { 'mysql::server':
         root_password => 'password',
       }
-      package {'which':
-        ensure => present,
-      }
     MANIFEST
 
     apply_manifest(pp, catch_failures: true)
