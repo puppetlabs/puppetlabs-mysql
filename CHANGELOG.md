@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.2.0) (2019-09-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.1.0...v10.2.0)
+
+### Added
+
+- FM-8406 add support on Debian10 [\#1230](https://github.com/puppetlabs/puppetlabs-mysql/pull/1230) ([lionce](https://github.com/lionce))
+- Make backup success file path configurable [\#1207](https://github.com/puppetlabs/puppetlabs-mysql/pull/1207) ([HT43-bqxFqB](https://github.com/HT43-bqxFqB))
+
+### Fixed
+
+- No package under FreeBSD [\#1227](https://github.com/puppetlabs/puppetlabs-mysql/pull/1227) ([jas01](https://github.com/jas01))
+- Fix group on FreeBSD [\#1226](https://github.com/puppetlabs/puppetlabs-mysql/pull/1226) ([jas01](https://github.com/jas01))
+- Don't run fact when you can't find mysqld [\#1224](https://github.com/puppetlabs/puppetlabs-mysql/pull/1224) ([jstewart612](https://github.com/jstewart612))
+-  Bugfix on Debian 9 : ruby\_package\_name must be ruby-mysql2 [\#1223](https://github.com/puppetlabs/puppetlabs-mysql/pull/1223) ([leopoiroux](https://github.com/leopoiroux))
+- Fix errors for /bin/sh with the xtrabackup cron [\#1222](https://github.com/puppetlabs/puppetlabs-mysql/pull/1222) ([baldurmen](https://github.com/baldurmen))
+- Fix/fix dependency issue in freebsd with log error file creation from 10.0.0 [\#1221](https://github.com/puppetlabs/puppetlabs-mysql/pull/1221) ([rick-pri](https://github.com/rick-pri))
+
 ## [v10.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.1.0) (2019-07-30)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.0.0...v10.1.0)

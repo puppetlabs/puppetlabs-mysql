@@ -709,7 +709,7 @@ Data type: `Any`
 
 Group owner for the backup directory. This parameter is passed directly to the file resource.
 
-Default value: 'root'
+Default value: $mysql::params::root_group
 
 ##### `backupcompress`
 
@@ -726,6 +726,14 @@ Data type: `Any`
 The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup
 
 Default value: `undef`
+
+##### `backup_success_file_path`
+
+Data type: `Any`
+
+Specify a path where upon successfull backup a file should be created for checking purposes.
+
+Default value: '/tmp/mysqlbackup_success'
 
 ##### `backuprotate`
 
