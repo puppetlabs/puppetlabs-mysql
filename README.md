@@ -38,9 +38,13 @@ To customize options, such as the root password or `/etc/my.cnf` settings, you m
 class { '::mysql::server':
   root_password           => 'strongpassword',
   remove_default_accounts => true,
+  restart                 => true,
   override_options        => $override_options
 }
 ```
+
+Nota bene: Configuration changes will only be applied to the running
+MySQL server if you pass true as restart to mysql::server.
 
 See [**Customize Server Options**](#customize-server-options) below for examples of the hash structure for $override_options.
 
