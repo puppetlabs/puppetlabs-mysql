@@ -1111,7 +1111,7 @@ The following parameters are available in the `mysql_grant` type.
 
 namevar
 
-Name to describe the grant.
+Name to describe the grant. Must match *user*@*host*/*table*.
 
 ### mysql_plugin
 
