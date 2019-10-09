@@ -58,8 +58,10 @@ class mysql::params {
             $provider = 'mysql'
           }
           if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+            $java_package_name   = 'mariadb-java-client'
             $python_package_name = 'python3-PyMySQL'
           } else {
+            $java_package_name   = 'mysql-connector-java'
             $python_package_name = 'MySQL-python'
           }
         }
@@ -99,7 +101,6 @@ class mysql::params {
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       # mysql::bindings
-      $java_package_name       = 'mysql-connector-java'
       $perl_package_name       = 'perl-DBD-MySQL'
       $php_package_name        = 'php-mysql'
       $ruby_package_name       = 'ruby-mysql'
