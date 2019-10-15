@@ -17,6 +17,10 @@
      "sql": {
       "description": "The SQL you want to execute",
       "type": "String[1]"
+    },
+     "structured": {
+      "description": "Whether you want the returned data parsed for you",
+      "type": "Optional[Boolean]"
     }
   }
 }
