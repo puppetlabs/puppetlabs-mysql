@@ -68,7 +68,7 @@ class mysql::backup::xtrabackup (
       'weekday'     => '1-6',
     },
     false => {
-      'directories' => "--target-dir=${backupdir}",
+      'directories' => "--target-dir=${backupdir}/$(date +\\%F_\\%H-\\%M-\\%S)",
       'weekday'     => '*',
     },
   }

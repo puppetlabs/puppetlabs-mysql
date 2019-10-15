@@ -31,7 +31,7 @@ describe 'mysql::backup::xtrabackup' do
           is_expected.to contain_cron('xtrabackup-weekly')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp --backup',
+              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup',
               user: 'root',
               hour: '23',
               minute: '5',
@@ -88,7 +88,7 @@ describe 'mysql::backup::xtrabackup' do
           is_expected.to contain_cron('xtrabackup-weekly')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp --backup --skip-ssl',
+              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup --skip-ssl',
               user: 'root',
               hour: '23',
               minute: '5',
@@ -123,7 +123,7 @@ describe 'mysql::backup::xtrabackup' do
         it 'contains the daily cronjob with all weekdays' do
           is_expected.to contain_cron('xtrabackup-daily').with(
             ensure: 'present',
-            command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp --backup',
+            command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup',
             user: 'root',
             hour: '23',
             minute: '5',
