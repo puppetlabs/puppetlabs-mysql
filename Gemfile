@@ -1,4 +1,5 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
+gem 'pdk', git: 'https://github.com/puppetlabs/pdk.git', branch: 'master'
 
 def location_for(place_or_version, fake_version = nil)
   git_url_regex = %r{\A(?<url>(https?|git)[:@][^#]*)(#(?<branch>.*))?}
