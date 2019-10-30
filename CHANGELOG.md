@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.2.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.2.1) (2019-10-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.2.0...v10.2.1)
+
+### Fixed
+
+- Fix mysql::sql task error message [\#1243](https://github.com/puppetlabs/puppetlabs-mysql/pull/1243) ([alexjfisher](https://github.com/alexjfisher))
+- Fix xtrabackup regression introduced in \#1207 [\#1242](https://github.com/puppetlabs/puppetlabs-mysql/pull/1242) ([fraenki](https://github.com/fraenki))
+- Repair mysql\_grant docs and diagnostics [\#1237](https://github.com/puppetlabs/puppetlabs-mysql/pull/1237) ([qha](https://github.com/qha))
+
 ## [v10.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.2.0) (2019-09-24)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.1.0...v10.2.0)
