@@ -27,6 +27,7 @@ GetText/DecorateString:
   Description: We don't want to decorate test output.
   Exclude:
   - spec/**/*
+  Enabled: false
 RSpec/BeforeAfterAll:
   Description: Beware of using after(:all) as it may cause state to leak between tests.
     A necessary evil in acceptance testing.
@@ -89,6 +90,12 @@ Style/MethodCalledOnDoEndBlock:
   Enabled: true
 Style/StringMethods:
   Enabled: true
+GetText/DecorateFunctionMessage:
+  Enabled: false
+GetText/DecorateStringFormattingUsingInterpolation:
+  Enabled: false
+GetText/DecorateStringFormattingUsingPercent:
+  Enabled: false
 Layout/EndOfLine:
   Enabled: false
 Layout/IndentHeredoc:
