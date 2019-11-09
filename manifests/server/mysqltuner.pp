@@ -11,7 +11,7 @@
 #   Destination for the mysqltuner package.
 class mysql::server::mysqltuner(
   $ensure  = 'present',
-  $version = 'v1.3.0',
+  $version = 'v1.7.17',
   $source  = undef,
   $tuner_location = '/usr/local/bin/mysqltuner',
 ) {
