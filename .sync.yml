@@ -3,7 +3,7 @@
   required:
   - "---.project"
 ".gitlab-ci.yml":
-  unmanaged: true
+  delete: true
 ".rubocop.yml":
   default_configs:
     inherit_from: ".rubocop_todo.yml"
