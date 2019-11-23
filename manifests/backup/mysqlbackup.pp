@@ -27,6 +27,7 @@ class mysql::backup::mysqlbackup (
   $postscript               = false,
   $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
   $optional_args            = [],
+  $incremental_backups      = false,
 ) inherits mysql::params {
 
   mysql_user { "${backupuser}@localhost":
