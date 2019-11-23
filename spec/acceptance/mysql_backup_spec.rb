@@ -134,3 +134,133 @@ context 'with one file per database' do
     # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
   end
 end
+
+context 'with xtrabackup enabled' do
+  context 'should work with no errors' do
+    pp = <<-MANIFEST
+          class { 'mysql::server': root_password => 'password' }
+          mysql::db { [
+            'backup1',
+            'backup2'
+          ]:
+            user     => 'backup',
+            password => 'secret',
+          }
+          yumrepo { 'percona':
+            descr    => 'CentOS $releasever - Percona',
+            baseurl  => 'http://repo.percona.com/release/$releasever/RPMS/$basearch',
+            gpgkey   => 'https://www.percona.com/downloads/RPM-GPG-KEY-percona https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
+            enabled  => 1,
+            gpgcheck => 1,
+          }
+          class { 'mysql::server::backup':
+            backupuser        => 'myuser',
+            backuppassword    => 'mypassword',
+            backupdir         => '/tmp/xtrabackups',
+            provider          => 'xtrabackup',
+            execpath          => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          }
+      MANIFEST
+    it 'when configuring mysql backup' do
+      idempotent_apply(pp)
+    end
+  end
+
+  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
+    before(:all) do
+      pre_run
+    end
+
+    it 'runs xtrabackup.sh full backup with no errors' do
+      run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F)_full --backup 2>&1 | tee /tmp/xtrabackup_full.log') do |r|
+        expect(r.exit_code).to be_zero
+      end
+    end
+
+    it 'xtrabackup reports success for the full backup' do
+      run_shell('grep "completed OK" /tmp/xtrabackup_full.log') do |r|
+        expect(r.exit_code).to be_zero
+      end
+    end
+
+    it 'creates a subdirectory for the full backup' do
+      run_shell('find /tmp/xtrabackups -mindepth 1 -maxdepth 1 -type d -name $(date +%Y)\*full | wc -l') do |r|
+        expect(r.stdout).to match(%r{1})
+        expect(r.exit_code).to be_zero
+      end
+    end
+
+    it 'runs xtrabackup.sh incremental backup with no errors' do
+      run_shell('sleep 1')
+      run_shell('/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/xtrabackups/$(date +%F)_full --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup_inc.log') do |r| # rubocop:disable Metrics/LineLength
+        expect(r.exit_code).to be_zero
+      end
+    end
+
+    it 'xtrabackup reports success for the incremental backup' do
+      run_shell('grep "completed OK" /tmp/xtrabackup_inc.log') do |r|
+        expect(r.exit_code).to be_zero
+      end
+    end
+
+    it 'creates a new subdirectory for each backup' do
+      run_shell('find /tmp/xtrabackups -mindepth 1 -maxdepth 1 -type d -name $(date +%Y)\* | wc -l') do |r|
+        expect(r.stdout).to match(%r{2})
+        expect(r.exit_code).to be_zero
+      end
+    end
+  end
+  # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
+end
+
+context 'with xtrabackup enabled and incremental backups disabled' do
+  context 'should work with no errors' do
+    pp = <<-MANIFEST
+          class { 'mysql::server': root_password => 'password' }
+          mysql::db { [
+            'backup1',
+            'backup2'
+          ]:
+            user     => 'backup',
+            password => 'secret',
+          }
+          yumrepo { 'percona':
+            descr    => 'CentOS $releasever - Percona',
+            baseurl  => 'http://repo.percona.com/release/$releasever/RPMS/$basearch',
+            gpgkey   => 'https://www.percona.com/downloads/RPM-GPG-KEY-percona https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
+            enabled  => 1,
+            gpgcheck => 1,
+          }
+          class { 'mysql::server::backup':
+            backupuser          => 'myuser',
+            backuppassword      => 'mypassword',
+            backupdir           => '/tmp/xtrabackups',
+            provider            => 'xtrabackup',
+            incremental_backups => false,
+            execpath          => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          }
+      MANIFEST
+    it 'when configuring mysql backup' do
+      idempotent_apply(pp)
+    end
+  end
+
+  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
+    before(:all) do
+      pre_run
+    end
+
+    it 'runs xtrabackup.sh with no errors' do
+      run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup.log') do |r|
+        expect(r.exit_code).to be_zero
+      end
+    end
+
+    it 'xtrabackup reports success for the backup' do
+      run_shell('grep "completed OK" /tmp/xtrabackup.log') do |r|
+        expect(r.exit_code).to be_zero
+      end
+    end
+  end
+  # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
+end
