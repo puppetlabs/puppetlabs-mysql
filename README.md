@@ -14,6 +14,7 @@
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
     * [Install MariaDB on Ubuntu](#install-mariadb-on-ubuntu)
     * [Install Plugins](#install-plugins)
+    * [Use Percona XtraBackup](#use-percona-xtrabackup)
 4. [Reference - An under-the-hood peek at what the module is doing and how](REFERENCE.md)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -389,6 +390,69 @@ mysql::server::db:
 ### Install Plugins
 
 Plugins can be installed by using the `mysql_plugin` defined type. See `examples/mysql_plugin.pp` for futher examples.
+
+### Use Percona XtraBackup
+
+This example shows how to configure MySQL backups with Percona XtraBackup. This sets up a weekly cronjob to perform a full backup and additional daily cronjobs for incremental backups. Each backup will create a new directory. A cleanup job will automatically remove backups that are older than 15 days.
+
+```puppet
+yumrepo { 'percona':
+  descr    => 'CentOS $releasever - Percona',
+  baseurl  => 'http://repo.percona.com/release/$releasever/RPMS/$basearch',
+  gpgkey   => 'https://www.percona.com/downloads/RPM-GPG-KEY-percona https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
+  enabled  => 1,
+  gpgcheck => 1,
+}
+
+class { 'mysql::server::backup':
+  backupuser        => 'myuser',
+  backuppassword    => 'mypassword',
+  backupdir         => '/tmp/backups',
+  provider          => 'xtrabackup',
+  rotate            => 15,
+  execpath          => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
+  time              => ['23', '15'],
+}
+```
+
+If the daily or weekly backup was successful, then the empty file `/tmp/mysqlbackup_success` is created, which makes it easy to monitor the status of the database backup.
+
+After two weeks the backup directory should look similar to the example below.
+
+```
+/tmp/backups/2019-11-10_full
+/tmp/backups/2019-11-11_23-15-01
+/tmp/backups/2019-11-13_23-15-01
+/tmp/backups/2019-11-13_23-15-02
+/tmp/backups/2019-11-14_23-15-01
+/tmp/backups/2019-11-15_23-15-02
+/tmp/backups/2019-11-16_23-15-01
+/tmp/backups/2019-11-17_full
+/tmp/backups/2019-11-18_23-15-01
+/tmp/backups/2019-11-19_23-15-01
+/tmp/backups/2019-11-20_23-15-02
+/tmp/backups/2019-11-21_23-15-01
+/tmp/backups/2019-11-22_23-15-02
+/tmp/backups/2019-11-23_23-15-01
+```
+
+A drawback of using incremental backups is the need to keep at least 7 days of backups, otherwise the full backups is removed early and consecutive incremental backups will fail. Furthermore an incremental backups becomes obsolete once the required full backup was removed.
+
+The next example uses XtraBackup with incremental backups disabled. In this case the daily cronjob will always perform a full backup.
+
+```puppet
+class { 'mysql::server::backup':
+  backupuser          => 'myuser',
+  backuppassword      => 'mypassword',
+  backupdir           => '/tmp/backups',
+  provider            => 'xtrabackup',
+  incremental_backups => false,
+  rotate              => 5,
+  execpath            => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
+  time                => ['23', '15'],
+}
+```
+
 ## Reference
 
 ### Classes
