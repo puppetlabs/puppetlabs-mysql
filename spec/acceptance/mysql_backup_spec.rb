@@ -146,19 +146,44 @@ context 'with xtrabackup enabled' do
             user     => 'backup',
             password => 'secret',
           }
-          yumrepo { 'percona':
-            descr    => 'CentOS $releasever - Percona',
-            baseurl  => 'http://repo.percona.com/release/$releasever/RPMS/$basearch',
-            gpgkey   => 'https://www.percona.com/downloads/RPM-GPG-KEY-percona https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
-            enabled  => 1,
-            gpgcheck => 1,
+          case $facts['os']['family'] {
+            /Debian/: {
+              file { '/tmp/percona-release_latest.deb':
+                ensure => present,
+                source => "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb",
+              }
+              ensure_packages('gnupg')
+              ensure_packages('percona-release',{
+                ensure   => present,
+                provider => 'dpkg',
+                source   => '/tmp/percona-release_latest.deb',
+                notify   => Exec['apt-get update'],
+              })
+              exec { 'apt-get update':
+                path        => '/usr/bin:/usr/sbin:/bin:/sbin',
+                refreshonly => true,
+              }
+            }
+            /RedHat/: {
+              ensure_packages('percona-release',{
+                ensure   => present,
+                provider => 'rpm',
+                source   => 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm',
+              })
+              ensure_packages('epel-release',{
+                ensure   => present,
+                provider => 'rpm',
+                source   => "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm",
+              })
+            }
+            default: { }
           }
           class { 'mysql::server::backup':
-            backupuser        => 'myuser',
-            backuppassword    => 'mypassword',
-            backupdir         => '/tmp/xtrabackups',
-            provider          => 'xtrabackup',
-            execpath          => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+            backupuser     => 'myuser',
+            backuppassword => 'mypassword',
+            backupdir      => '/tmp/xtrabackups',
+            provider       => 'xtrabackup',
+            execpath       => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
           }
       MANIFEST
     it 'when configuring mysql backup' do
@@ -224,12 +249,37 @@ context 'with xtrabackup enabled and incremental backups disabled' do
             user     => 'backup',
             password => 'secret',
           }
-          yumrepo { 'percona':
-            descr    => 'CentOS $releasever - Percona',
-            baseurl  => 'http://repo.percona.com/release/$releasever/RPMS/$basearch',
-            gpgkey   => 'https://www.percona.com/downloads/RPM-GPG-KEY-percona https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
-            enabled  => 1,
-            gpgcheck => 1,
+          case $facts['os']['family'] {
+            /Debian/: {
+              file { '/tmp/percona-release_latest.deb':
+                ensure => present,
+                source => "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb",
+              }
+              ensure_packages('gnupg')
+              ensure_packages('percona-release',{
+                ensure   => present,
+                provider => 'dpkg',
+                source   => '/tmp/percona-release_latest.deb',
+                notify   => Exec['apt-get update'],
+              })
+              exec { 'apt-get update':
+                path        => '/usr/bin:/usr/sbin:/bin:/sbin',
+                refreshonly => true,
+              }
+            }
+            /RedHat/: {
+              ensure_packages('percona-release',{
+                ensure   => present,
+                provider => 'rpm',
+                source   => 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm',
+              })
+              ensure_packages('epel-release',{
+                ensure   => present,
+                provider => 'rpm',
+                source   => "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm",
+              })
+            }
+            default: { }
           }
           class { 'mysql::server::backup':
             backupuser          => 'myuser',
@@ -237,7 +287,7 @@ context 'with xtrabackup enabled and incremental backups disabled' do
             backupdir           => '/tmp/xtrabackups',
             provider            => 'xtrabackup',
             incremental_backups => false,
-            execpath          => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+            execpath            => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
           }
       MANIFEST
     it 'when configuring mysql backup' do
