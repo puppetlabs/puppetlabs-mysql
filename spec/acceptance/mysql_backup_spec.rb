@@ -203,7 +203,8 @@ context 'with xtrabackup enabled' do
     end
 
     it 'xtrabackup reports success for the full backup' do
-      run_shell('grep "completed OK" /tmp/xtrabackup_full.log') do |r|
+      # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
+      run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup_full.log') do |r|
         expect(r.exit_code).to be_zero
       end
     end
@@ -223,7 +224,8 @@ context 'with xtrabackup enabled' do
     end
 
     it 'xtrabackup reports success for the incremental backup' do
-      run_shell('grep "completed OK" /tmp/xtrabackup_inc.log') do |r|
+      # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
+      run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup_inc.log') do |r|
         expect(r.exit_code).to be_zero
       end
     end
@@ -307,7 +309,8 @@ context 'with xtrabackup enabled and incremental backups disabled' do
     end
 
     it 'xtrabackup reports success for the backup' do
-      run_shell('grep "completed OK" /tmp/xtrabackup.log') do |r|
+      # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
+      run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup.log') do |r|
         expect(r.exit_code).to be_zero
       end
     end

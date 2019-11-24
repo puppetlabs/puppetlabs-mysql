@@ -37,7 +37,7 @@ class mysql::params {
   $client_dev_package_provider = undef
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
-  $xtrabackup_package_name     = 'percona-xtrabackup'
+  $xtrabackup_package_name_default = 'percona-xtrabackup'
 
 
   case $::osfamily {
@@ -56,6 +56,7 @@ class mysql::params {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
+            $xtrabackup_package_name_override = 'percona-xtrabackup-20'
           }
           if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
             $java_package_name   = 'mariadb-java-client'
@@ -511,6 +512,12 @@ class mysql::params {
     'isamchk'      => {
       'key_buffer_size' => '16M',
     },
+  }
+
+  if defined('$xtrabackup_package_name_override') {
+    $xtrabackup_package_name = pick($xtrabackup_package_name_override, $xtrabackup_package_name_default)
+  } else {
+    $xtrabackup_package_name = $xtrabackup_package_name_default
   }
 
   ## Additional graceful failures

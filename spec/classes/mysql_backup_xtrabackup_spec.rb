@@ -27,6 +27,16 @@ describe 'mysql::backup::xtrabackup' do
           )
         end
 
+        package = if facts[:osfamily] == 'RedHat'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-20'
+                    end
+                  else
+                    'percona-xtrabackup'
+                  end
+
         it 'contains the weekly cronjob' do
           is_expected.to contain_cron('xtrabackup-weekly')
             .with(
@@ -37,7 +47,7 @@ describe 'mysql::backup::xtrabackup' do
               minute: '5',
               weekday: '0',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
 
         it 'contains the daily cronjob for weekdays 1-6' do
@@ -56,7 +66,7 @@ describe 'mysql::backup::xtrabackup' do
               minute: '5',
               weekday: '1-6',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
       end
 
@@ -90,6 +100,16 @@ describe 'mysql::backup::xtrabackup' do
           { additional_cron_args: '--backup --skip-ssl' }.merge(default_params)
         end
 
+        package = if facts[:osfamily] == 'RedHat'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-20'
+                    end
+                  else
+                    'percona-xtrabackup'
+                  end
+
         dateformat = case facts[:osfamily]
                      when 'FreeBSD', 'OpenBSD'
                        '$(date -v-sun +\%F)_full'
@@ -107,7 +127,7 @@ describe 'mysql::backup::xtrabackup' do
               minute: '5',
               weekday: '0',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
 
         it 'contains the daily cronjob for weekdays 1-6' do
@@ -120,7 +140,7 @@ describe 'mysql::backup::xtrabackup' do
               minute: '5',
               weekday: '1-6',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
       end
 
