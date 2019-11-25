@@ -89,6 +89,7 @@
     services: docker
     sudo: required
     stage: acceptance
+  simplecov: true
 appveyor.yml:
   unmanaged: true
 Gemfile:

@@ -9,7 +9,7 @@ before_install:
   - gem --version
   - bundle -v
 script:
-  - 'bundle exec rake $CHECK'
+  - 'SIMPLECOV=yes bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
   - 2.5.3
@@ -34,9 +34,6 @@ matrix:
       env: PUPPET_GEM_VERSION="~> 6.0" CHECK=parallel_spec
       rvm: 2.5.3
       stage: spec
-    -
-      env: DEPLOY_TO_FORGE=yes
-      stage: deploy
     -
       before_script: ["bundle exec rake 'litmus:provision_list[travis_deb]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
@@ -97,6 +94,9 @@ matrix:
       services: docker
       stage: acceptance
       sudo: required
+    -
+      env: DEPLOY_TO_FORGE=yes
+      stage: deploy
 branches:
   only:
     - master
