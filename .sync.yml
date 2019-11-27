@@ -91,7 +91,7 @@
     stage: acceptance
   simplecov: true
 appveyor.yml:
-  unmanaged: true
+  delete: true
 Gemfile:
   optional:
     ":development":
