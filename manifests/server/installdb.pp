@@ -1,4 +1,4 @@
-# @summary 
+# @summary
 #   Builds initial databases on installation.
 #
 # @api private
@@ -21,15 +21,27 @@ class mysql::server::installdb {
       $_config_file=undef
     }
 
-  if $options['mysqld']['log-error'] {
-    file { $options['mysqld']['log-error']:
-      ensure => present,
-      owner  => $mysqluser,
-      group  => $::mysql::server::mysql_group,
-      mode   => 'u+rw',
-      before => Mysql_datadir[ $datadir ],
+    # create the folder for the logfile
+    if dirname($options['mysqld']['log-error']) or $options['mysqld_safe']['log-error']{
+      file { dirname($options['mysqld']['log-error']):
+        ensure => present,
+        owner  => $mysqluser,
+        group  => $::mysql::server::mysql_group,
+        mode   => 'u+rw',
+        before => Mysql_datadir[ $datadir ],
+      }
     }
-  }
+
+    # create the folder for the pid-file
+    if $options['mysqld']['pid-file'] {
+      file { dirname($options['mysqld']['pid-file']):
+        ensure => present,
+        owner  => $mysqluser,
+        group  => $::mysql::server::mysql_group,
+        mode   => 'u+rw',
+        before => Mysql_datadir[ $datadir ],
+      }
+    }
 
     mysql_datadir { $datadir:
       ensure              => 'present',
