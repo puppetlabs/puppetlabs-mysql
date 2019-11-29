@@ -24,7 +24,7 @@ class mysql::server::installdb {
     # create the folder for the logfile
     if dirname($options['mysqld']['log-error']) or $options['mysqld_safe']['log-error']{
       file { dirname($options['mysqld']['log-error']):
-        ensure => present,
+        ensure => directory,
         owner  => $mysqluser,
         group  => $::mysql::server::mysql_group,
         mode   => 'u+rw',
@@ -35,7 +35,7 @@ class mysql::server::installdb {
     # create the folder for the pid-file
     if $options['mysqld']['pid-file'] {
       file { dirname($options['mysqld']['pid-file']):
-        ensure => present,
+        ensure => directory,
         owner  => $mysqluser,
         group  => $::mysql::server::mysql_group,
         mode   => 'u+rw',
