@@ -10,7 +10,10 @@ travis_el6:
   images: ['waffleimage/centos6', 'waffleimage/scientificlinux6']
 travis_el7:
   provisioner: docker_exp
-  images: ['waffleimage/centos7', 'waffleimage/oraclelinux7', 'waffleimage/scientificlinux7']
+  images: ['litmusimage/centos:7', 'litmusimage/oraclelinux:7', 'litmusimage/scientificlinux:7']
+travis_el8:
+  provisioner: docker_exp
+  images: ['litmusimage/centos:8']
 vagrant:
   provisioner: vagrant
   images: ['centos/7', 'generic/ubuntu1804']
