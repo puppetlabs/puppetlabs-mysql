@@ -75,6 +75,26 @@ matrix:
       stage: acceptance
       sudo: required
     -
+      before_script: ["bundle exec rake 'litmus:provision_list[travis_el8]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      bundler_args: 
+      dist: trusty
+      env: PLATFORMS=el8_puppet5
+      rvm: 2.5.3
+      script: ["bundle exec rake litmus:acceptance:parallel"]
+      services: docker
+      stage: acceptance
+      sudo: required
+    -
+      before_script: ["bundle exec rake 'litmus:provision_list[travis_el8]'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
+      bundler_args: 
+      dist: trusty
+      env: PLATFORM=el8_puppet6
+      rvm: 2.5.3
+      script: ["bundle exec rake litmus:acceptance:parallel"]
+      services: docker
+      stage: acceptance
+      sudo: required
+    -
       before_script: ["bundle exec rake 'litmus:provision_list[travis_el6]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       dist: trusty
