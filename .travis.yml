@@ -17,9 +17,6 @@ stages:
   - static
   - spec
   - acceptance
-  -
-    if: tag =~ ^v\d
-    name: deploy
 matrix:
   fast_finish: true
   include:
@@ -94,9 +91,6 @@ matrix:
       services: docker
       stage: acceptance
       sudo: required
-    -
-      env: DEPLOY_TO_FORGE=yes
-      stage: deploy
 branches:
   only:
     - master
