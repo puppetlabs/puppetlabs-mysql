@@ -8,6 +8,8 @@
     - rubocop-i18n
     - rubocop-rspec
 ".travis.yml":
+  deploy_to_forge:
+    enabled: false
   branches:
   - release
   includes:
