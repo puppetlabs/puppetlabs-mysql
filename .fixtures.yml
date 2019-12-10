@@ -5,6 +5,8 @@ fixtures:
     "cron_core": "https://github.com/puppetlabs/puppetlabs-cron_core.git"
     "facts": "https://github.com/puppetlabs/puppetlabs-facts.git"
     "puppet_agent": "https://github.com/puppetlabs/puppetlabs-puppet_agent.git"
-    "provision": "https://github.com/puppetlabs/provision.git"
+    "provision": 
+      repo: "https://github.com/puppetlabs/provision.git"
+      branch: "fm-8784"
   symlinks:
     "mysql": "#{source_dir}"
