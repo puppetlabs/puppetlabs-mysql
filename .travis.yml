@@ -5,7 +5,9 @@ cache: bundler
 before_install:
   - bundle -v
   - rm -f Gemfile.lock
-  - gem update --system $RUBYGEMS_VERSION
+  - "# Update system gems if requested. This is useful to temporarily workaround troubles in the test runner"
+  - "# See https://github.com/puppetlabs/pdk-templates/commit/705154d5c437796b821691b707156e1b056d244f for an example of how this was used"
+  - '[ -z "$RUBYGEMS_VERSION" ] || gem update --system $RUBYGEMS_VERSION'
   - gem --version
   - bundle -v
 script:
@@ -71,27 +73,6 @@ matrix:
       services: docker
       stage: acceptance
       sudo: required
-    # FM-8784: Back out CentOS 8, Puppet 6 tests until image provisioning issue can be resolved
-    # -
-    #   before_script: ["bundle exec rake 'litmus:provision_list[travis_el8]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
-    #   bundler_args: 
-    #   dist: trusty
-    #   env: PLATFORMS=el8_puppet5
-    #   rvm: 2.5.3
-    #   script: ["bundle exec rake litmus:acceptance:parallel"]
-    #   services: docker
-    #   stage: acceptance
-    #   sudo: required
-    # -
-    #   before_script: ["bundle exec rake 'litmus:provision_list[travis_el8]'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
-    #   bundler_args: 
-    #   dist: trusty
-    #   env: PLATFORM=el8_puppet6
-    #   rvm: 2.5.3
-    #   script: ["bundle exec rake litmus:acceptance:parallel"]
-    #   services: docker
-    #   stage: acceptance
-    #   sudo: required
     -
       before_script: ["bundle exec rake 'litmus:provision_list[travis_el6]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
