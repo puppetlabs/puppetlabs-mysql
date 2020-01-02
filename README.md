@@ -38,9 +38,13 @@ To customize options, such as the root password or `/etc/my.cnf` settings, you m
 class { '::mysql::server':
   root_password           => 'strongpassword',
   remove_default_accounts => true,
+  restart                 => true,
   override_options        => $override_options
 }
 ```
+
+Nota bene: Configuration changes will only be applied to the running
+MySQL server if you pass true as restart to mysql::server.
 
 See [**Customize Server Options**](#customize-server-options) below for examples of the hash structure for $override_options.
 
@@ -181,7 +185,7 @@ If required, the password can also be an empty string to allow connections witho
 This example shows how to do a minimal installation of a Percona server on a
 CentOS system. This sets up the Percona server, client, and bindings (including Perl and Python bindings). You can customize this usage and update the version as needed.
 
-This usage has been tested on Puppet 4.4 / CentOS 7 / Percona Server 5.7.
+This usage has been tested on Puppet 4.4, 5.5 and 6.3.0 / CentOS 7 / Percona Server 5.7.
 
 **Note:** The installation of the yum repository is not part of this package
 and is here only to show a full example of how you can install.
@@ -189,15 +193,14 @@ and is here only to show a full example of how you can install.
 ```puppet
 yumrepo { 'percona':
   descr    => 'CentOS $releasever - Percona',
-  baseurl  => 'http://repo.percona.com/centos/$releasever/os/$basearch/',
-  gpgkey   => 'http://www.percona.com/downloads/percona-release/RPM-GPG-KEY-percona',
+  baseurl  => 'http://repo.percona.com/percona/yum/release/$releasever/RPMS/$basearch',
+  gpgkey   => 'https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
   enabled  => 1,
   gpgcheck => 1,
 }
 
 class {'mysql::server':
   package_name     => 'Percona-Server-server-57',
-  package_ensure   => '5.7.11-4.1.el7',
   service_name     => 'mysql',
   config_file      => '/etc/my.cnf',
   includedir       => '/etc/my.cnf.d',
@@ -216,18 +219,15 @@ class {'mysql::server':
 # Note: Installing Percona-Server-server-57 also installs Percona-Server-client-57.
 # This shows how to install the Percona MySQL client on its own
 class {'mysql::client':
-  package_name   => 'Percona-Server-client-57',
-  package_ensure => '5.7.11-4.1.el7',
+  package_name   => 'Percona-Server-client-57'
 }
 
 # These packages are normally installed along with Percona-Server-server-57
 # If you needed to install the bindings, however, you could do so with this code
 class { 'mysql::bindings':
   client_dev_package_name   => 'Percona-Server-shared-57',
-  client_dev_package_ensure => '5.7.11-4.1.el7',
   client_dev                => true,
   daemon_dev_package_name   => 'Percona-Server-devel-57',
-  daemon_dev_package_ensure => '5.7.11-4.1.el7',
   daemon_dev                => true,
   perl_enable               => true,
   perl_package_name         => 'perl-DBD-MySQL',
@@ -421,7 +421,7 @@ Plugins can be installed by using the `mysql_plugin` defined type. See `examples
 * `mysql::client::install`:  Installs MySQL client.
 * `mysql::backup::mysqldump`: Implements mysqldump backups.
 * `mysql::backup::mysqlbackup`: Implements backups with Oracle MySQL Enterprise Backup.
-* `mysql::backup::xtrabackup`: Implements backups with XtraBackup from Percona.
+* `mysql::backup::xtrabackup`: Implements backups with XtraBackup from Percona or Mariabackup.
 
 ### Parameters
 
@@ -522,11 +522,13 @@ For an extensive list of supported operating systems, see [metadata.json](https:
 
 ## Development
 
+We are experimenting with a new tool for running acceptance tests. Its name is [puppet_litmus](https://github.com/puppetlabs/puppet_litmus) this replaces beaker as the test runner. To run the acceptance tests follow the instructions from this point [here](https://github.com/puppetlabs/puppet_litmus/wiki/Tutorial:-use-Litmus-to-execute-acceptance-tests-with-a-sample-module-(MoTD)#install-the-necessary-gems-for-the-module).
+
 Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
 
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
-Check out our the complete [module contribution guide](https://docs.puppetlabs.com/forge/contributing.html).
+Check out our the complete [module contribution guide](https://puppet.com/docs/puppet/latest/contributing.html).
 
 ### Authors
 

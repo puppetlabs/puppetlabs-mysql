@@ -17,6 +17,10 @@ describe 'mysql::password' do
     is_expected.to run.with_params('password').and_return('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19')
   end
 
+  it 'password should be String' do
+    is_expected.to run.with_params(123).and_raise_error(ArgumentError)
+  end
+
   it 'converts an empty password into a empty string' do
     is_expected.to run.with_params('').and_return('')
   end

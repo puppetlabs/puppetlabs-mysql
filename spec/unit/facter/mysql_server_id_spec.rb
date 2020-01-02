@@ -23,5 +23,14 @@ describe Facter::Util::Fact.to_s do
         Facter.fact(:mysql_server_id).value.to_s.should == '0'
       end
     end
+
+    context 'test nil case' do
+      before :each do
+        Facter.fact(:macaddress).stubs(:value).returns(nil)
+      end
+      it do
+        Facter.fact(:mysql_server_id).value.to_s.should == ''
+      end
+    end
   end
 end

@@ -49,12 +49,20 @@ class mysql::params {
           } else {
             $provider = 'mysql'
           }
+          $python_package_name = 'MySQL-python'
         }
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
+          }
+          if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+            $java_package_name   = 'mariadb-java-client'
+            $python_package_name = 'python3-PyMySQL'
+          } else {
+            $java_package_name   = 'mysql-connector-java'
+            $python_package_name = 'MySQL-python'
           }
         }
         default: {
@@ -93,10 +101,8 @@ class mysql::params {
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       # mysql::bindings
-      $java_package_name       = 'mysql-connector-java'
       $perl_package_name       = 'perl-DBD-MySQL'
       $php_package_name        = 'php-mysql'
-      $python_package_name     = 'MySQL-python'
       $ruby_package_name       = 'ruby-mysql'
       $client_dev_package_name = undef
     }
@@ -180,7 +186,6 @@ class mysql::params {
       } else {
         $provider = 'mysql'
       }
-
       if $provider == 'mariadb' {
         $client_package_name     = 'mariadb-client'
         $server_package_name     = 'mariadb-server'
@@ -209,7 +214,11 @@ class mysql::params {
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       # mysql::bindings
-      $java_package_name   = 'libmysql-java'
+      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '10') >= 0 {
+        $java_package_name   = 'libmariadb-java'
+      } else {
+        $java_package_name   = 'libmysql-java'
+      }
       $perl_package_name   = 'libdbd-mysql-perl'
       if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') >= 0) or
           ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9') >= 0) {
@@ -217,12 +226,15 @@ class mysql::params {
       } else {
         $php_package_name = 'php5-mysql'
       }
+
       $python_package_name = 'python-mysqldb'
       $ruby_package_name   = $::lsbdistcodename ? {
         'jessie'           => 'ruby-mysql',
         'stretch'          => 'ruby-mysql2',
+        'buster'           => 'ruby-mysql2',
         'trusty'           => 'ruby-mysql',
         'xenial'           => 'ruby-mysql',
+        'bionic'           => 'ruby-mysql2',
         default            => 'libmysql-ruby',
       }
     }

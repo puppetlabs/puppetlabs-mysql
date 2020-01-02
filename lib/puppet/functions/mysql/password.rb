@@ -6,7 +6,8 @@ Puppet::Functions.create_function(:'mysql::password') do
   # @param password
   #   Plain text password.
   #
-  # @return the mysql password hash from the clear text password.
+  # @return hash
+  #   The mysql password hash from the clear text password.
   #
   dispatch :password do
     required_param 'String', :password

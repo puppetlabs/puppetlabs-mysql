@@ -1,0 +1,25 @@
+team-modules/puppetlabs-mysql:
+  PreBuild:
+    - source /opt/rh/rh-ruby25/enable
+    - echo "--- LETS update BUNDLER ---"
+    - bundle install --path vendor/bundle --jobs 3
+  Build:
+    - echo "--- PROVISIONING ---"
+    - source /opt/rh/rh-ruby25/enable
+    - bundle exec rake litmus:provision_list[release_checks]
+    - cat inventory.yaml
+    - echo "--- AGENT INSTALLATION ---"
+    - bundle exec rake litmus:install_agent
+    - echo "--- MODULE INSTALLATION ---"
+    - bundle exec rake litmus:install_module
+    - echo "--- TESTS RUNNING ---"
+    - bundle exec rake litmus:acceptance:parallel
+  AfterBuildSuccess:
+    - source /opt/rh/rh-ruby25/enable
+    - bundle exec rake litmus:tear_down
+  AfterBuildFailure:
+    - source /opt/rh/rh-ruby25/enable
+    - bundle exec rake litmus:tear_down
+  CommitData:
+    - RepoType: Git
+    - RepoPath: .

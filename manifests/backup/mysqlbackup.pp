@@ -4,27 +4,29 @@
 # @api private
 #
 class mysql::backup::mysqlbackup (
-  $backupuser         = '',
-  $backuppassword     = '',
-  $maxallowedpacket   = '1M',
-  $backupdir          = '',
-  $backupdirmode      = '0700',
-  $backupdirowner     = 'root',
-  $backupdirgroup     = $mysql::params::root_group,
-  $backupcompress     = true,
-  $backuprotate       = 30,
-  $ignore_events      = true,
-  $delete_before_dump = false,
-  $backupdatabases    = [],
-  $file_per_database  = false,
-  $include_triggers   = true,
-  $include_routines   = false,
-  $ensure             = 'present',
-  $time               = ['23', '5'],
-  $prescript          = false,
-  $postscript         = false,
-  $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $optional_args      = [],
+  $backupuser               = '',
+  $backuppassword           = '',
+  $maxallowedpacket         = '1M',
+  $backupdir                = '',
+  $backupdirmode            = '0700',
+  $backupdirowner           = 'root',
+  $backupdirgroup           = $mysql::params::root_group,
+  $backupcompress           = true,
+  $backuprotate             = 30,
+  $backupmethod             = '',
+  $backup_success_file_path = undef,
+  $ignore_events            = true,
+  $delete_before_dump       = false,
+  $backupdatabases          = [],
+  $file_per_database        = false,
+  $include_triggers         = true,
+  $include_routines         = false,
+  $ensure                   = 'present',
+  $time                     = ['23', '5'],
+  $prescript                = false,
+  $postscript               = false,
+  $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $optional_args            = [],
 ) inherits mysql::params {
 
   mysql_user { "${backupuser}@localhost":
@@ -62,6 +64,20 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
+  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
+    package {'crontabs':
+      ensure => present,
+    }
+  } elsif $::osfamily == 'RedHat' {
+    package {'cronie':
+      ensure => present,
+    }
+  } elsif $::osfamily != 'FreeBSD' {
+    package {'cron':
+      ensure => present,
+    }
+  }
+
   cron { 'mysqlbackup-weekly':
     ensure  => $ensure,
     command => 'mysqlbackup backup',
@@ -92,7 +108,7 @@ class mysql::backup::mysqlbackup (
       'password'               => $backuppassword,
     }
   }
-  $options = $default_options.deep_merge($mysql::server::override_options)
+  $options = mysql::normalise_and_deepmerge($default_options, $mysql::server::override_options)
 
   file { 'mysqlbackup-config-file':
     path    => '/etc/mysql/conf.d/meb.cnf',
@@ -100,12 +116,10 @@ class mysql::backup::mysqlbackup (
     mode    => '0600',
   }
 
-  file { 'mysqlbackupdir':
+  file { $backupdir:
     ensure => 'directory',
-    path   => $backupdir,
     mode   => $backupdirmode,
     owner  => $backupdirowner,
     group  => $backupdirgroup,
   }
-
 }

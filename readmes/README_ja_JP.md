@@ -127,6 +127,8 @@ Mysql::Db <<| tag == $domain |>>
 
 サイズの大きいsqlファイルの場合は、`import_timeout`パラメータの値(デフォルト値300秒)を大きくします。
 
+MySQLクライアントを標準のbin/sbin以外のパスにインストールしている場合、`mysql_exec_path`にこれを設定します。
+
 ```puppet
 mysql::db { 'mydb':
   user     => 'myuser',
@@ -136,6 +138,7 @@ mysql::db { 'mydb':
   sql      => '/path/to/sqlfile.gz',
   import_cat_cmd => 'zcat',
   import_timeout => 900,
+  mysql_exec_path => '/opt/rh/rh-myql57/root/bin'
 }
 ```
 
@@ -383,6 +386,114 @@ mysql::server::db:
 ### プラグインのインストール
 
 プラグインはユーザ定義のタイプ`mysql_plugin` を使用してインストールできます。`examples/mysql_plugin.pp`で、具体的な例を参照してください。
+## リファレンス
+
+### クラス
+
+#### パブリッククラス
+
+* [`mysql::server`](#mysqlserver)：MySQLをインストールして設定します。
+* [`mysql::server::monitor`](#mysqlservermonitor)：モニタするユーザをセットアップします。
+* [`mysql::server::mysqltuner`](#mysqlservermysqltuner)：MySQL tunerスクリプトをインストールします。
+* [`mysql::server::backup`](#mysqlserverbackup)：cronを使用してMySQLバックアップをセットアップします。
+* [`mysql::bindings`](#mysqlbindings)：さまざまなMySQL言語バインディングをインストールします。
+* [`mysql::client`](#mysqlclient)：MySQLクライアントをインストールします(サーバ以外)。
+
+#### プライベートクラス
+
+* `mysql::server::install`：パッケージをインストールします。
+* `mysql::server::installdb`：mysqldデータディレクトリ(/var/lib/mysqlなど)のセットアップを実行します。
+* `mysql::server::config`：MySQLを設定します。
+* `mysql::server::service`：サービスを管理します。
+* `mysql::server::account_security`：デフォルトのMySQLアカウントを削除します。
+* `mysql::server::root_password`：MySQLのルートパスワードを設定します。
+* `mysql::server::providers`：ユーザ、GRANT権限、データベースを作成します。
+* `mysql::bindings::client_dev`：MySQLクライアント開発パッケージをインストールします。
+* `mysql::bindings::daemon_dev`：MySQLデーモン開発パッケージをインストールします。
+* `mysql::bindings::java`：javaバインディングをインストールします。
+* `mysql::bindings::perl`：Perlバインディングをインストールします。
+* `mysql::bindings::php`：PHPバインディングをインストールします。
+* `mysql::bindings::python`：Pythonバインディングをインストールします。
+* `mysql::bindings::ruby`：Rubyバインディングをインストールします。
+* `mysql::client::install`：MySQLクライアントをインストールします。
+* `mysql::backup::mysqldump`：mysqldumpのバックアップを実行します。
+* `mysql::backup::mysqlbackup`：Oracle MySQL Enterprise Backupを使用してバックアップを実行します。
+* `mysql::backup::xtrabackup`：PerconaのXtraBackupを使用してバックアップを実行します。
+
+### パラメータ
+
+#### mysql::server
+
+##### `create_root_user`
+
+ルートユーザを作成するかどうかを指定します。
+
+有効な値：`true`、`false`。
+
+デフォルト値：`true`。
+
+このパラメータは、Galeraでクラスタをセットアップする場合に役立ちます。ルートユーザの作成が必要なのは一度だけです。このパラメータを、1つのノードに対しtrueに設定し、他のすべてのノードに対してfalseに設定できます。
+
+#####  `create_root_my_cnf`
+
+`/root/.my.cnf`を作成するかどうかを指定します。
+
+有効な値：`true`、`false`。
+
+デフォルト値：`true`。
+
+`create_root_my_cnf`を使用すると`create_root_user`に左右されずに`/root/.my.cnf`を作成できます。すべてのノードに`/root/.my.cnf`が存在するようにしたい場合に、Galeraでこの機能を使用してクラスタをセットアップできます。
+
+#####  `root_password`
+
+MySQLのルートパスワード。Puppetは、このパラメータを使用して、ルートパスワードの設定や`/root/.my.cnf`の更新を試みます。
+
+`create_root_user`または`create_root_my_cnf`がtrueの場合にこのパラメータが必要です。`root_password`が'UNSET'の場合は`create_root_user`と`create_root_my_cnf`がfalseになります(MySQLルートユーザと`/root/.my.cnf`が作成されません)。
+
+パスワード変更はサポートされますが、`/root/.my.cnf`に旧パスワードが設定されている必要があります。実際には、Puppetは`/root/.my.cnf`に設定されている旧パスワードを使用してMySQLで新しいパスワードを設定してから、`/root/.my.cnf`を新しいパスワードで更新します。
+
+##### `old_root_password`
+
+現在、このパラメータでは何も行わず、下位互換性を確保するためだけに存在します。ルートパスワードの変更についての詳細は、上記の`root_password`パラメータの説明を参照してください。
+
+#####  `create_root_login_file`
+
+mysql 5.6.6以上を使用するときに、`/root/.mylogin.cnf`を作成するかどうかを指定します。
+
+有効な値：`true`、`false`。
+
+デフォルト値：`false`。
+
+`create_root_login_file`は、既存の`.mylogin.cnf`のコピーを`/root/.mylogin.cnf`に作成します。
+
+このオプションを'true'に設定する場合、`login_file`オプションも指定する必要があります。
+
+'true'に設定する場合、`login_file`オプションが必要です。
+
+#### `login_file`
+
+`/root/.mylogin.cnf`を規定の位置に配置するかどうかを指定します。
+
+`.mylogin.cnf`ファイルの作成には、`mysql_config_editor`を使用する必要があります。このツールは、mysql 5.6.6+に付属しています。
+
+作成した.mylogin.cnfファイルは、モジュール内のファイルの下に配置する必要があります。使用法については下記の例を参照してください。
+
+`/root/.mylogin.cnf`が存在する場合、環境変数`MYSQL_TEST_LOGIN_FILE`が設定されます。
+
+このパラメータは、`create_root_user`と`create_root_login_file`がどちらもtrueである場合に必要です。`root_password`が'UNSET'である場合、`create_root_user`および`create_root_login_file`はfalseであると見なされます。このため、MySQLのrootユーザと`/root/.mylogin.cnf`は作成されません。
+
+```puppet
+class { '::mysql::server':
+root_password          => 'password',
+create_root_my_cnf     => false,
+create_root_login_file => true,
+login_file             => "puppet:///modules/${module_name}/mylogin.cnf",
+}
+```
+
+##### `override_options`
+
+MySQLに渡すオーバーライドオプションを指定します。構造はmy.cnfファイルのハッシュと同様です。
 
 ```puppet
 class { 'mysql::server':
@@ -400,9 +511,9 @@ mysql_plugin { 'auth_pam':
 
 MySQLモジュールにはサンプルタスクがあり、ユーザはデータベースに対して任意のSQLを実行できます。[Puppet Enterpriseマニュアル](https://puppet.com/docs/pe/2017.3/orchestrator/running_tasks.html)または[Boltマニュアル](https://puppet.com/docs/bolt/latest/bolt.html)で、タスクを実行する方法に関する情報を参照してください。
 
-## 制約
+## 制約事項
 
-サポートされているオペレーティングシステムの一覧については、[metadata.json](https://github.com/puppetlabs/puppetlabs-tomcat/blob/master/metadata.json)を参照してください。
+サポートされているオペレーティングシステムの一覧については、[metadata.json](https://github.com/puppetlabs/puppetlabs-mysql/blob/master/metadata.json)を参照してください。
 
 **注意：** mysqlbackup.shは、MySQL 5.7以降では動作せず、サポートされていません。
 

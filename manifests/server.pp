@@ -116,7 +116,7 @@ class mysql::server (
   }
 
   # Create a merged together set of options.  Rightmost hashes win over left.
-  $options = $mysql::params::default_options.deep_merge($override_options)
+  $options = mysql::normalise_and_deepmerge($mysql::params::default_options, $override_options)
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
@@ -143,8 +143,8 @@ class mysql::server (
   }
 
   Anchor['mysql::server::start']
-  -> Class['mysql::server::install']
   -> Class['mysql::server::config']
+  -> Class['mysql::server::install']
   -> Class['mysql::server::binarylog']
   -> Class['mysql::server::installdb']
   -> Class['mysql::server::service']

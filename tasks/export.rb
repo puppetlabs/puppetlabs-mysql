@@ -9,8 +9,8 @@ def get(file, database, user, password)
   cmd_string << " --user=#{user}" unless user.nil?
   cmd_string << " --password=#{password}" unless password.nil?
   cmd_string << " > #{file}" unless file.nil?
-  stdout, _stderr, status = Open3.capture3(cmd_string)
-  raise Puppet::Error, _("stderr: ' %{stderr}') % { stderr: stderr }") if status != 0
+  stdout, stderr, status = Open3.capture3(cmd_string)
+  raise Puppet::Error, _("stderr: '%{stderr}'" % { stderr: stderr }) if status != 0
   { status: stdout.strip }
 end
 

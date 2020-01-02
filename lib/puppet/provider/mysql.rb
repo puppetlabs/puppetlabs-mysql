@@ -17,6 +17,10 @@ class Puppet::Provider::Mysql < Puppet::Provider
     '/opt/rh/rh-mariadb100/root/usr/lib64',
     '/opt/rh/rh-mariadb101/root/usr/lib',
     '/opt/rh/rh-mariadb101/root/usr/lib64',
+    '/opt/rh/rh-mariadb102/root/usr/lib',
+    '/opt/rh/rh-mariadb102/root/usr/lib64',
+    '/opt/rh/rh-mariadb103/root/usr/lib',
+    '/opt/rh/rh-mariadb103/root/usr/lib64',
     '/opt/rh/mysql55/root/usr/lib',
     '/opt/rh/mysql55/root/usr/lib64',
     '/opt/rh/mariadb55/root/usr/lib',
@@ -81,6 +85,14 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.newer_than(forks_versions)
   end
 
+  def self.older_than(forks_versions)
+    forks_versions.keys.include?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) < 0
+  end
+
+  def older_than(forks_versions)
+    self.class.older_than(forks_versions)
+  end
+
   def defaults_file
     self.class.defaults_file
   end
@@ -89,9 +101,9 @@ class Puppet::Provider::Mysql < Puppet::Provider
     if type.eql? 'system'
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
         ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
-        mysql_raw(['--host=', system_database, '-e', text_of_sql].flatten.compact)
+        mysql_raw([system_database, '-e', text_of_sql].flatten.compact)
       else
-        mysql_raw([defaults_file, '--host=', system_database, '-e', text_of_sql].flatten.compact)
+        mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact)
       end
     elsif type.eql? 'regular'
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
@@ -119,8 +131,9 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   # Take root@localhost and munge it to 'root'@'localhost'
+  # Take root@id123@localhost and munge it to 'root@id123'@'localhost'
   def self.cmd_user(user)
-    "'#{user.sub('@', "'@'")}'"
+    "'#{user.reverse.sub('@', "'@'").reverse}'"
   end
 
   # Take root.* and return ON `root`.*
