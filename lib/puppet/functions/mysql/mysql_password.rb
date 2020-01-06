@@ -32,10 +32,7 @@ Puppet::Functions.create_function(:'mysql::mysql_password') do
     repeated_param 'Any', :args
   end
 
-
   def default_impl(*args)
-    
-
     if args.size != 1
       raise Puppet::ParseError, _('mysql_password(): Wrong number of arguments given (%{args_length} for 1)') % { args_length: args.length }
     end
@@ -43,6 +40,5 @@ Puppet::Functions.create_function(:'mysql::mysql_password') do
     return '' if args[0].empty?
     return args[0] if args[0] =~ %r{\*[A-F0-9]{40}$}
     '*' + Digest::SHA1.hexdigest(Digest::SHA1.digest(args[0])).upcase
-  
   end
 end
