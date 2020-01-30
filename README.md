@@ -250,7 +250,7 @@ Class['mysql::bindings']
 
 #### Optional: Install the MariaDB official repo
 
-In this example, we'll use the latest stable (currently 10.1) from the official MariaDB repository, not the one from the distro repository. You could instead use the package from the Ubuntu repository. Make sure you use the repository corresponding to the version you want.
+In this example, we'll use the latest stable (currently 10.3) from the official MariaDB repository, not the one from the distro repository. You could instead use the package from the Ubuntu repository. Make sure you use the repository corresponding to the version you want.
 
 **Note:** `sfo1.mirrors.digitalocean.com` is one of many mirrors available. You can use any official mirror.
 
@@ -274,7 +274,7 @@ apt::source { 'mariadb':
 
 #### Install the MariaDB server
 
-This example shows MariaDB server installation on Ubuntu Trusty. Adjust the version and the parameters of `my.cnf` as needed. All parameters of the `my.cnf` can be defined using the `override_options` parameter.
+This example shows MariaDB server installation on Ubuntu Xenial. Adjust the version and the parameters of `my.cnf` as needed. All parameters of the `my.cnf` can be defined using the `override_options` parameter.
 
 The folders `/var/log/mysql` and `/var/run/mysqld` are created automatically, but if you are using other custom folders, they should exist as prerequisites for this code.
 
@@ -285,8 +285,8 @@ Specify the version of the package you want with the `package_ensure` parameter.
 ```puppet
 class {'::mysql::server':
   package_name     => 'mariadb-server',
-  package_ensure   => '10.1.14+maria-1~trusty',
-  service_name     => 'mysql',
+  package_ensure   => '1:10.3.21+maria~xenial',
+  service_name     => 'mysqld',
   root_password    => 'AVeryStrongPasswordUShouldEncrypt!',
   override_options => {
     mysqld => {
@@ -316,7 +316,7 @@ Specify the version of the package you want with the `package_ensure` parameter.
 ```puppet
 class {'::mysql::client':
   package_name    => 'mariadb-client',
-  package_ensure  => '10.1.14+maria-1~trusty',
+  package_ensure  => '1:10.3.21+maria~xenial',
   bindings_enable => true,
 }
 
