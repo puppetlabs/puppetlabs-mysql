@@ -258,11 +258,11 @@ In this example, we'll use the latest stable (currently 10.3) from the official 
 include apt
 
 apt::source { 'mariadb':
-  location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu',
+  location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu',
   release  => $::lsbdistcodename,
   repos    => 'main',
   key      => {
-    id     => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+    id     => '177F4010FE56CA3336300305F1656F24C74CD1D8',
     server => 'hkp://keyserver.ubuntu.com:80',
   },
   include => {
