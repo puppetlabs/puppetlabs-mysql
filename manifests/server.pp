@@ -11,6 +11,8 @@
 #
 # @param config_file
 #   The location, as a path, of the MySQL configuration file.
+# @param config_file_mode
+#   The MySQL configuration file's permissions mode.
 # @param includedir
 #   The location, as a path, of !includedir for custom configuration overrides.
 # @param install_options
@@ -52,11 +54,11 @@
 # @param create_root_my_cnf
 #   Whether to create `/root/.my.cnf`. Valid values are `true`, `false`. Defaults to `true`. `create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. You can use this for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
 # @param users
-#   Optional hash of users to create, which are passed to [mysql_user](#mysql_user). 
+#   Optional hash of users to create, which are passed to [mysql_user](#mysql_user).
 # @param grants
-#   Optional hash of grants, which are passed to [mysql_grant](#mysql_grant). 
+#   Optional hash of grants, which are passed to [mysql_grant](#mysql_grant).
 # @param databases
-#   Optional hash of databases to create, which are passed to [mysql_database](#mysql_database). 
+#   Optional hash of databases to create, which are passed to [mysql_database](#mysql_database).
 # @param enabled
 #   _Deprecated_
 # @param manage_service
@@ -66,6 +68,7 @@
 #
 class mysql::server (
   $config_file             = $mysql::params::config_file,
+  $config_file_mode        = $mysql::params::config_file_mode,
   $includedir              = $mysql::params::includedir,
   $install_options         = undef,
   $install_secret_file     = $mysql::params::install_secret_file,
