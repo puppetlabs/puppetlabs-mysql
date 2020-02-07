@@ -7,7 +7,8 @@ before_install:
   - rm -f Gemfile.lock
   - "# Update system gems if requested. This is useful to temporarily workaround troubles in the test runner"
   - "# See https://github.com/puppetlabs/pdk-templates/commit/705154d5c437796b821691b707156e1b056d244f for an example of how this was used"
-  - '[ -z "$RUBYGEMS_VERSION" ] || gem update --system $RUBYGEMS_VERSION'
+  - "# Ignore exit code of SIGPIPE'd yes to not fail with shell's pipefail set"
+  - '[ -z "$RUBYGEMS_VERSION" ] || (yes || true) | gem update --system $RUBYGEMS_VERSION'
   - gem --version
   - bundle -v
 script:
@@ -15,6 +16,9 @@ script:
 bundler_args: --without system_tests
 rvm:
   - 2.5.3
+env:
+  global:
+    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
 stages:
   - static
   - spec
@@ -107,7 +111,7 @@ matrix:
       before_script: ["bundle exec rake 'litmus:provision_list[travis_el7]'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       dist: trusty
-      env: PLATFORM=el7_puppet6
+      env: PLATFORMS=el7_puppet6
       rvm: 2.5.3
       script: ["bundle exec rake litmus:acceptance:parallel"]
       services: docker

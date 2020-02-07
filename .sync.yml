@@ -8,6 +8,8 @@
     - rubocop-i18n
     - rubocop-rspec
 ".travis.yml":
+  global_env: 
+    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
   deploy_to_forge:
     enabled: false
   branches:
@@ -67,32 +69,6 @@
     stage: acceptance
   - bundler_args: 
     dist: trusty
-    env: PLATFORMS=el7_puppet5
-    rvm: 2.5.3
-    before_script:
-    - bundle exec rake 'litmus:provision_list[travis_el7]'
-    - bundle exec rake 'litmus:install_agent[puppet5]'
-    - bundle exec rake litmus:install_module
-    script:
-    - bundle exec rake litmus:acceptance:parallel
-    services: docker
-    sudo: required
-    stage: acceptance
-  - bundler_args: 
-    dist: trusty
-    env: PLATFORM=el7_puppet6
-    rvm: 2.5.3
-    before_script:
-    - bundle exec rake 'litmus:provision_list[travis_el7]'
-    - bundle exec rake 'litmus:install_agent[puppet6]'
-    - bundle exec rake litmus:install_module
-    script:
-    - bundle exec rake litmus:acceptance:parallel
-    services: docker
-    sudo: required
-    stage: acceptance
-  - bundler_args: 
-    dist: trusty
     env: PLATFORMS=el6_puppet5
     rvm: 2.5.3
     before_script:
@@ -106,10 +82,36 @@
     stage: acceptance
   - bundler_args: 
     dist: trusty
-    env: PLATFORMS=el6_puppet6
+    env: PLATFORM=el6_puppet6
     rvm: 2.5.3
     before_script:
     - bundle exec rake 'litmus:provision_list[travis_el6]'
+    - bundle exec rake 'litmus:install_agent[puppet6]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+    stage: acceptance
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el7_puppet5
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el7]'
+    - bundle exec rake 'litmus:install_agent[puppet5]'
+    - bundle exec rake litmus:install_module
+    script:
+    - bundle exec rake litmus:acceptance:parallel
+    services: docker
+    sudo: required
+    stage: acceptance
+  - bundler_args: 
+    dist: trusty
+    env: PLATFORMS=el7_puppet6
+    rvm: 2.5.3
+    before_script:
+    - bundle exec rake 'litmus:provision_list[travis_el7]'
     - bundle exec rake 'litmus:install_agent[puppet6]'
     - bundle exec rake litmus:install_module
     script:
