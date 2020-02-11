@@ -4,7 +4,7 @@
 # @api private
 #
 class mysql::server::service {
-  $options = $mysql::server::options
+  $options = $mysql::server::_options
 
   if $mysql::server::real_service_manage {
     if $mysql::server::real_service_enabled {

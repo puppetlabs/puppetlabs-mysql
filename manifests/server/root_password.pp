@@ -5,7 +5,7 @@
 #
 class mysql::server::root_password {
 
-  $options = $mysql::server::options
+  $options = $mysql::server::_options
   $secret_file = $mysql::server::install_secret_file
   $login_file = $mysql::server::login_file
 
