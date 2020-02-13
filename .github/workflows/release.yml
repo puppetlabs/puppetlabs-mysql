@@ -7,7 +7,9 @@ on:
 
 jobs:
   LitmusAcceptance:
-
+    env:
+      HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
+      HONEYCOMB_DATASET: litmus tests
     runs-on: self-hosted
 
     strategy:

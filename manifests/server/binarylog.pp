@@ -5,7 +5,7 @@
 #
 class mysql::server::binarylog {
 
-  $options = $mysql::server::options
+  $options = $mysql::server::_options
   $includedir = $mysql::server::includedir
 
   $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)

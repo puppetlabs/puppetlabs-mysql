@@ -34,6 +34,31 @@ describe 'mysql::server' do
         it { is_expected.not_to contain_service('mysqld') }
       end
 
+      context 'configuration options' do
+        context 'when specifying both $override_options and $options' do
+          let(:params) do
+            {
+              override_options: { 'mysqld' => { 'datadir' => '/tmp' } },
+              options: { 'mysqld' => { 'max_allowed_packet' => '12M' } },
+            }
+          end
+
+          it { is_expected.to compile.and_raise_error(%r{You can't specify \$options and \$override_options simultaneously, see the README section 'Customize server options'!}) }
+        end
+
+        context 'when specifying $options' do
+          let(:params) do
+            {
+              options: { 'mysqld' => { 'datadir' => '/tmp' } },
+            }
+          end
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_mysql_datadir('/tmp') }
+          it { is_expected.not_to contain_mysql_bind_addr('127.0.0.1') }
+        end
+      end
+
       context 'mysql::server::install' do
         it 'contains the package by default' do
           is_expected.to contain_package('mysql-server').with(ensure: :present)

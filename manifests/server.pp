@@ -21,6 +21,8 @@
 #   Path to secret file containing temporary root password.
 # @param manage_config_file
 #   Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
+# @param options
+#   A hash of options structured like the override_options, but not merged with the default options. Use this if you don’t want your options merged with the default options.
 # @param override_options
 #   Specifies override options to pass into MySQL. Structured like a hash in the my.cnf file:  See  above for usage details.
 # @param package_ensure
@@ -67,38 +69,38 @@
 #   This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter above for details on changing the root password.
 #
 class mysql::server (
-  $config_file             = $mysql::params::config_file,
-  $config_file_mode        = $mysql::params::config_file_mode,
-  $includedir              = $mysql::params::includedir,
-  $install_options         = undef,
-  $install_secret_file     = $mysql::params::install_secret_file,
-  $manage_config_file      = $mysql::params::manage_config_file,
-  $override_options        = {},
-  $package_ensure          = $mysql::params::server_package_ensure,
-  $package_manage          = $mysql::params::server_package_manage,
-  $package_name            = $mysql::params::server_package_name,
-  $purge_conf_dir          = $mysql::params::purge_conf_dir,
-  $remove_default_accounts = false,
-  $restart                 = $mysql::params::restart,
-  $root_group              = $mysql::params::root_group,
-  $mysql_group             = $mysql::params::mysql_group,
-  $root_password           = $mysql::params::root_password,
-  $service_enabled         = $mysql::params::server_service_enabled,
-  $service_manage          = $mysql::params::server_service_manage,
-  $service_name            = $mysql::params::server_service_name,
-  $service_provider        = $mysql::params::server_service_provider,
-  $create_root_user        = $mysql::params::create_root_user,
-  $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
-  $create_root_login_file  = $mysql::params::create_root_login_file,
-  $login_file              = $mysql::params::login_file,
-  $users                   = {},
-  $grants                  = {},
-  $databases               = {},
-
-  # Deprecated parameters
-  $enabled                 = undef,
-  $manage_service          = undef,
-  $old_root_password       = undef
+                  $config_file             = $mysql::params::config_file,
+                  $config_file_mode        = $mysql::params::config_file_mode,
+                  $includedir              = $mysql::params::includedir,
+                  $install_options         = undef,
+                  $install_secret_file     = $mysql::params::install_secret_file,
+                  $manage_config_file      = $mysql::params::manage_config_file,
+  Mysql::Options  $options                 = {},
+                  $override_options        = {},
+                  $package_ensure          = $mysql::params::server_package_ensure,
+                  $package_manage          = $mysql::params::server_package_manage,
+                  $package_name            = $mysql::params::server_package_name,
+                  $purge_conf_dir          = $mysql::params::purge_conf_dir,
+                  $remove_default_accounts = false,
+                  $restart                 = $mysql::params::restart,
+                  $root_group              = $mysql::params::root_group,
+                  $mysql_group             = $mysql::params::mysql_group,
+                  $root_password           = $mysql::params::root_password,
+                  $service_enabled         = $mysql::params::server_service_enabled,
+                  $service_manage          = $mysql::params::server_service_manage,
+                  $service_name            = $mysql::params::server_service_name,
+                  $service_provider        = $mysql::params::server_service_provider,
+                  $create_root_user        = $mysql::params::create_root_user,
+                  $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
+                  $create_root_login_file  = $mysql::params::create_root_login_file,
+                  $login_file              = $mysql::params::login_file,
+                  $users                   = {},
+                  $grants                  = {},
+                  $databases               = {},
+                  # Deprecated parameters
+                  $enabled                 = undef,
+                  $manage_service          = undef,
+                  $old_root_password       = undef
 ) inherits mysql::params {
 
   # Deprecated parameters.
@@ -118,8 +120,16 @@ class mysql::server (
     warning(translate('The `old_root_password` attribute is no longer used and will be removed in a future release.'))
   }
 
-  # Create a merged together set of options.  Rightmost hashes win over left.
-  $options = mysql::normalise_and_deepmerge($mysql::params::default_options, $override_options)
+  if ! empty($options) and ! empty($override_options) {
+    fail(translate('You can\'t specify $options and $override_options simultaneously, see the README section \'Customize server options\'!'))
+  }
+
+  # If override_options are set, create a merged together set of options. Rightmost hashes win over left.
+  # If options are set, just use them.
+  $_options = empty($options) ? {
+    true  => mysql::normalise_and_deepmerge($mysql::params::default_options, $override_options),
+    false => $options,
+  }
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
