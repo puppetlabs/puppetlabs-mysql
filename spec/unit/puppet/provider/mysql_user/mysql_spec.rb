@@ -89,7 +89,7 @@ usvn_user@localhost
     Puppet::Util.stubs(:which).with('mysqld').returns('/usr/sbin/mysqld')
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
     provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns('joe@localhost')
-    provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').returns('10 10 10 10     *6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Metrics/LineLength
+    provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').returns('10	10	10	10					*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Metrics/LineLength
   end
 
   describe 'self.instances' do
