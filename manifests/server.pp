@@ -11,6 +11,8 @@
 #
 # @param config_file
 #   The location, as a path, of the MySQL configuration file.
+# @param config_file_mode
+#   The MySQL configuration file's permissions mode.
 # @param includedir
 #   The location, as a path, of !includedir for custom configuration overrides.
 # @param install_options
@@ -68,6 +70,7 @@
 #
 class mysql::server (
                   $config_file             = $mysql::params::config_file,
+                  $config_file_mode        = $mysql::params::config_file_mode,
                   $includedir              = $mysql::params::includedir,
                   $install_options         = undef,
                   $install_secret_file     = $mysql::params::install_secret_file,
@@ -94,11 +97,10 @@ class mysql::server (
                   $users                   = {},
                   $grants                  = {},
                   $databases               = {},
-
-  # Deprecated parameters
-  $enabled                 = undef,
-  $manage_service          = undef,
-  $old_root_password       = undef
+                  # Deprecated parameters
+                  $enabled                 = undef,
+                  $manage_service          = undef,
+                  $old_root_password       = undef
 ) inherits mysql::params {
 
   # Deprecated parameters.
