@@ -153,6 +153,7 @@ context 'with xtrabackup enabled' do
                 source => "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb",
               }
               ensure_packages('gnupg')
+              ensure_packages('gnupg2')
               ensure_packages('percona-release',{
                 ensure   => present,
                 provider => 'dpkg',
@@ -175,6 +176,13 @@ context 'with xtrabackup enabled' do
                 provider => 'rpm',
                 source   => "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm",
               })
+              if ($facts['os']['name'] == 'Scientific') {
+                # $releasever resolves to '6.10' instead of '6' which breaks Percona repos
+                file { '/etc/yum/vars/releasever':
+                  ensure  => present,
+                  content => '6',
+                }
+              }
             }
             default: { }
           }
@@ -258,6 +266,7 @@ context 'with xtrabackup enabled and incremental backups disabled' do
                 source => "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb",
               }
               ensure_packages('gnupg')
+              ensure_packages('gnupg2')
               ensure_packages('percona-release',{
                 ensure   => present,
                 provider => 'dpkg',
@@ -280,6 +289,13 @@ context 'with xtrabackup enabled and incremental backups disabled' do
                 provider => 'rpm',
                 source   => "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm",
               })
+              if ($facts['os']['name'] == 'Scientific') {
+                # $releasever resolves to '6.10' instead of '6' which breaks Percona repos
+                file { '/etc/yum/vars/releasever':
+                  ensure  => present,
+                  content => '6',
+                }
+              }
             }
             default: { }
           }

@@ -33,6 +33,14 @@ describe 'mysql::backup::xtrabackup' do
                     else
                       'percona-xtrabackup-20'
                     end
+                  elsif facts[:operatingsystem] == 'Debian'
+                    'percona-xtrabackup-24'
+                  elsif facts[:operatingsystem] == 'Ubuntu'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-24'
+                    end
                   else
                     'percona-xtrabackup'
                   end
@@ -105,6 +113,14 @@ describe 'mysql::backup::xtrabackup' do
                       'percona-xtrabackup'
                     else
                       'percona-xtrabackup-20'
+                    end
+                  elsif facts[:operatingsystem] == 'Debian'
+                    'percona-xtrabackup-24'
+                  elsif facts[:operatingsystem] == 'Ubuntu'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-24'
                     end
                   else
                     'percona-xtrabackup'
