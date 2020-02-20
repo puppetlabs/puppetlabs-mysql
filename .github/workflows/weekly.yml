@@ -1,0 +1,42 @@
+name: "weekly"
+
+on:
+  schedule:
+    - cron: '0 0 * * 6'
+
+jobs:
+  LitmusAcceptance:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        ruby_version: [2.5.x]
+        puppet_gem_version: [~> 6.0]
+        platform: [release_checks]
+        agent_family: ['puppet5', 'puppet6']
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Litmus Parallel
+      uses: puppetlabs/action-litmus_parallel@master
+      with:
+        platform: ${{ matrix.platform }}
+        agent_family: ${{ matrix.agent_family }}
+  Spec:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        check: [spec, 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop']
+        ruby_version: [2.5.x]
+        puppet_gem_version: [~> 5.0, ~> 6.0]
+        exclude:
+        - puppet_gem_version: ~> 5.0
+          check: 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop'
+        - ruby_version: 2.5.x
+          puppet_gem_version: ~> 5.0
+    steps:
+    - uses: actions/checkout@v1
+    - name: Spec Tests
+      uses: puppetlabs/action-litmus_spec@master
+      with:
+        puppet_gem_version: ${{ matrix.puppet_gem_version }}
+        check: ${{ matrix.check }}
