@@ -43,6 +43,10 @@ cleanup
   <%- _innobackupex_args = '--user="' + @backupuser + '" --password="' + @backuppassword + '"' -%>
 <%- end -%>
 
+<%- if @backupcompress -%>
+  <%- _innobackupex_args = _innobackupex_args + ' --compress' -%>
+<%- end -%>
+
 <%- if @backupdatabases and @backupdatabases.is_a?(Array) and !@backupdatabases.empty? -%>
   <%- _innobackupex_args = _innobackupex_args + ' --databases="' + @backupdatabases.join(' ') + '"' -%>
 <%- end -%>
@@ -59,7 +63,7 @@ cleanup
 <% unless @delete_before_dump -%>
 if [ $? -eq 0 ] ; then
     cleanup
-    touch /tmp/mysqlbackup_success
+    touch <%= @backup_success_file_path %>
 fi
 <% end -%>
 

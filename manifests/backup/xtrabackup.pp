@@ -3,32 +3,33 @@
 # @api private
 #
 class mysql::backup::xtrabackup (
-  $additional_cron_args    = '--backup',
-  $backupcompress          = true,
-  $backupdatabases         = [],
-  $backupdir               = '',
-  $backupdirgroup          = $mysql::params::root_group,
-  $backupdirmode           = '0700',
-  $backupdirowner          = 'root',
-  $backupmethod            = 'xtrabackup',
-  $backuppassword          = undef,
-  $backuprotate            = 30,
-  $backupscript_template   = 'mysql/xtrabackup.sh.erb',
-  $backupuser              = undef,
-  $delete_before_dump      = false,
-  $ensure                  = 'present',
-  $execpath                = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $file_per_database       = false,
-  $ignore_events           = true,
-  $include_routines        = false,
-  $include_triggers        = true,
-  $incremental_backups     = true,
-  $maxallowedpacket        = '1M',
-  $optional_args           = [],
-  $postscript              = false,
-  $prescript               = false,
-  $time                    = ['23', '5'],
-  $xtrabackup_package_name = $mysql::params::xtrabackup_package_name,
+  $xtrabackup_package_name  = $mysql::params::xtrabackup_package_name,
+  $backupuser               = undef,
+  $backuppassword           = undef,
+  $backupdir                = '',
+  $maxallowedpacket         = '1M',
+  $backupmethod             = 'xtrabackup',
+  $backupdirmode            = '0700',
+  $backupdirowner           = 'root',
+  $backupdirgroup           = $mysql::params::root_group,
+  $backupcompress           = true,
+  $backuprotate             = 30,
+  $backupscript_template    = 'mysql/xtrabackup.sh.erb',
+  $backup_success_file_path = undef,
+  $ignore_events            = true,
+  $delete_before_dump       = false,
+  $backupdatabases          = [],
+  $file_per_database        = false,
+  $include_triggers         = true,
+  $include_routines         = false,
+  $ensure                   = 'present',
+  $time                     = ['23', '5'],
+  $prescript                = false,
+  $postscript               = false,
+  $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $optional_args            = [],
+  $additional_cron_args     = '--backup',
+  $incremental_backups      = true
 ) inherits mysql::params {
 
   ensure_packages($xtrabackup_package_name)
@@ -63,7 +64,7 @@ class mysql::backup::xtrabackup (
 
   $daily_cron_data = ($incremental_backups) ? {
     true  => {
-      'directories' => "--incremental-basedir=${backupdir} --target-dir=${backupdir}/`date +%F_%H-%M-%S`",
+      'directories' => "--incremental-basedir=${backupdir} --target-dir=${backupdir}/$(date +\\%F_\\%H-\\%M-\\%S)",
       'weekday'     => '1-6',
     },
     false => {

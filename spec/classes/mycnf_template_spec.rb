@@ -80,6 +80,54 @@ describe 'mysql::server' do
 
         it { is_expected.to contain_file('mysql-config-file').without_content(%r{!includedir}) }
       end
+
+      context 'with file mode 0644' do
+        let(:params) { { 'config_file_mode' => '0644' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(mode: '0644')
+        end
+      end
+
+      context 'with file mode 0664' do
+        let(:params) { { 'config_file_mode' => '0664' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(mode: '0664')
+        end
+      end
+
+      context 'with file mode 0660' do
+        let(:params) { { 'config_file_mode' => '0660' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(mode: '0660')
+        end
+      end
+
+      context 'with file mode 0641' do
+        let(:params) { { 'config_file_mode' => '0641' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(mode: '0641')
+        end
+      end
+
+      context 'with file mode 0610' do
+        let(:params) { { 'config_file_mode' => '0610' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(mode: '0610')
+        end
+      end
+
+      context 'with file 0600' do
+        let(:params) { { 'config_file_mode' => '0600' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(mode: '0600')
+        end
+      end
     end
   end
 end

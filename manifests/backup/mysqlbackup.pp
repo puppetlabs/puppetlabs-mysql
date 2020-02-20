@@ -4,29 +4,30 @@
 # @api private
 #
 class mysql::backup::mysqlbackup (
-  $backupcompress      = true,
-  $backupdatabases     = [],
-  $backupdir           = '',
-  $backupdirgroup      = $mysql::params::root_group,
-  $backupdirmode       = '0700',
-  $backupdirowner      = 'root',
-  $backupmethod        = '',
-  $backuppassword      = '',
-  $backuprotate        = 30,
-  $backupuser          = '',
-  $delete_before_dump  = false,
-  $ensure              = 'present',
-  $execpath            = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $file_per_database   = false,
-  $ignore_events       = true,
-  $include_routines    = false,
-  $include_triggers    = true,
-  $manage_package_cron = $mysql::server::backup::manage_package_cron,
-  $maxallowedpacket    = '1M',
-  $optional_args       = [],
-  $postscript          = false,
-  $prescript           = false,
-  $time                = ['23', '5'],
+  $backupuser               = '',
+  $backuppassword           = '',
+  $maxallowedpacket         = '1M',
+  $backupdir                = '',
+  $backupdirmode            = '0700',
+  $backupdirowner           = 'root',
+  $backupdirgroup           = $mysql::params::root_group,
+  $backupcompress           = true,
+  $backuprotate             = 30,
+  $backupmethod             = '',
+  $backup_success_file_path = undef,
+  $ignore_events            = true,
+  $delete_before_dump       = false,
+  $backupdatabases          = [],
+  $file_per_database        = false,
+  $include_triggers         = true,
+  $include_routines         = false,
+  $ensure                   = 'present',
+  $time                     = ['23', '5'],
+  $prescript                = false,
+  $postscript               = false,
+  $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $optional_args            = [],
+  $manage_package_cron      = $mysql::server::backup::manage_package_cron,
 ) inherits mysql::params {
 
   mysql_user { "${backupuser}@localhost":
@@ -78,6 +79,7 @@ if $manage_package_cron {
       ensure => present,
     }
   }
+}
 
   cron { 'mysqlbackup-weekly':
     ensure  => $ensure,

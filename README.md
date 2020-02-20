@@ -38,9 +38,13 @@ To customize options, such as the root password or `/etc/my.cnf` settings, you m
 class { '::mysql::server':
   root_password           => 'strongpassword',
   remove_default_accounts => true,
+  restart                 => true,
   override_options        => $override_options
 }
 ```
+
+Nota bene: Configuration changes will only be applied to the running
+MySQL server if you pass true as restart to mysql::server.
 
 See [**Customize Server Options**](#customize-server-options) below for examples of the hash structure for $override_options.
 
@@ -90,6 +94,9 @@ replicate-do-db = base2
 ```
 
 To implement version specific parameters, specify the version, such as [mysqld-5.5]. This allows one config for different versions of MySQL.
+
+If you don’t want to use the default configuration, you can also supply your options to the `$options` parameter instead of `$override_options`.
+Please note that `$options` and `$override_options` are mutually exclusive, you can only use one of them.
 
 ### Create a database
 
@@ -246,7 +253,7 @@ Class['mysql::bindings']
 
 #### Optional: Install the MariaDB official repo
 
-In this example, we'll use the latest stable (currently 10.1) from the official MariaDB repository, not the one from the distro repository. You could instead use the package from the Ubuntu repository. Make sure you use the repository corresponding to the version you want.
+In this example, we'll use the latest stable (currently 10.3) from the official MariaDB repository, not the one from the distro repository. You could instead use the package from the Ubuntu repository. Make sure you use the repository corresponding to the version you want.
 
 **Note:** `sfo1.mirrors.digitalocean.com` is one of many mirrors available. You can use any official mirror.
 
@@ -254,11 +261,11 @@ In this example, we'll use the latest stable (currently 10.1) from the official 
 include apt
 
 apt::source { 'mariadb':
-  location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu',
+  location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu',
   release  => $::lsbdistcodename,
   repos    => 'main',
   key      => {
-    id     => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+    id     => '177F4010FE56CA3336300305F1656F24C74CD1D8',
     server => 'hkp://keyserver.ubuntu.com:80',
   },
   include => {
@@ -270,7 +277,7 @@ apt::source { 'mariadb':
 
 #### Install the MariaDB server
 
-This example shows MariaDB server installation on Ubuntu Trusty. Adjust the version and the parameters of `my.cnf` as needed. All parameters of the `my.cnf` can be defined using the `override_options` parameter.
+This example shows MariaDB server installation on Ubuntu Xenial. Adjust the version and the parameters of `my.cnf` as needed. All parameters of the `my.cnf` can be defined using the `override_options` parameter.
 
 The folders `/var/log/mysql` and `/var/run/mysqld` are created automatically, but if you are using other custom folders, they should exist as prerequisites for this code.
 
@@ -281,8 +288,8 @@ Specify the version of the package you want with the `package_ensure` parameter.
 ```puppet
 class {'::mysql::server':
   package_name     => 'mariadb-server',
-  package_ensure   => '10.1.14+maria-1~trusty',
-  service_name     => 'mysql',
+  package_ensure   => '1:10.3.21+maria~xenial',
+  service_name     => 'mysqld',
   root_password    => 'AVeryStrongPasswordUShouldEncrypt!',
   override_options => {
     mysqld => {
@@ -312,7 +319,7 @@ Specify the version of the package you want with the `package_ensure` parameter.
 ```puppet
 class {'::mysql::client':
   package_name    => 'mariadb-client',
-  package_ensure  => '10.1.14+maria-1~trusty',
+  package_ensure  => '1:10.3.21+maria~xenial',
   bindings_enable => true,
 }
 

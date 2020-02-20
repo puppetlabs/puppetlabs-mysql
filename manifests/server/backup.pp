@@ -29,9 +29,11 @@
 # @param backupdirgroup
 #   Group owner for the backup directory. This parameter is passed directly to the file resource.
 # @param backupcompress
-#   Whether or not to compress the backup (when using the mysqldump provider)
+#   Whether or not to compress the backup (when using the mysqldump or xtrabackup provider)
 # @param backupmethod
 #   The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup
+# @param backup_success_file_path
+#   Specify a path where upon successfull backup a file should be created for checking purposes.
 # @param backuprotate
 #   Backup rotation interval in 24 hour periods.
 # @param ignore_events
@@ -39,7 +41,7 @@
 # @param delete_before_dump
 #   Whether to delete old .sql files before backing up. Setting to true deletes old files before backing up, while setting to false deletes them after backup.
 # @param backupdatabases
-#   Databases to backup (if using xtrabackup provider).
+#   Databases to backup (required if using xtrabackup provider). By default `[]` will back up all databases.
 # @param file_per_database
 #   Use file per database mode creating one file per database backup.
 # @param include_routines
@@ -61,33 +63,33 @@
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
 #   Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
-#
 class mysql::server::backup (
-  $backupcompress      = true,
-  $backupdatabases     = [],
-  $backupdirgroup      = 'root',
-  $backupdirmode       = '0700',
-  $backupdirowner      = 'root',
-  $backupdir           = undef,
-  $backupmethod        = undef,
-  $backuppassword      = undef,
-  $backuprotate        = 30,
-  $backupuser          = undef,
-  $delete_before_dump  = false,
-  $ensure              = 'present',
-  $execpath            = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $file_per_database   = false,
-  $ignore_events       = true,
-  $include_routines    = false,
-  $include_triggers    = false,
-  $manage_package_cron = false,
-  $maxallowedpacket    = '1M',
-  $optional_args       = [],
-  $postscript          = false,
-  $prescript           = false,
-  $provider            = 'mysqldump',
-  $time                = ['23', '5'],
-) {
+  $backupuser               = undef,
+  $backuppassword           = undef,
+  $backupdir                = undef,
+  $backupdirmode            = '0700',
+  $backupdirowner           = 'root',
+  $backupdirgroup           = $mysql::params::root_group,
+  $backupcompress           = true,
+  $backuprotate             = 30,
+  $backupmethod             = undef,
+  $backup_success_file_path = '/tmp/mysqlbackup_success',
+  $ignore_events            = true,
+  $delete_before_dump       = false,
+  $backupdatabases          = [],
+  $file_per_database        = false,
+  $include_routines         = false,
+  $include_triggers         = false,
+  $ensure                   = 'present',
+  $time                     = ['23', '5'],
+  $prescript                = false,
+  $postscript               = false,
+  $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $provider                 = 'mysqldump',
+  $maxallowedpacket         = '1M',
+  $optional_args            = [],
+  $manage_package_cron      = false,
+) inherits mysql::params {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
     warning(translate("The 'prescript' option is not currently implemented for the %{provider} backup provider.",
@@ -96,30 +98,30 @@ class mysql::server::backup (
 
   create_resources('class', {
     "mysql::backup::${provider}" => {
-      'backupcompress'      => $backupcompress,
-      'backupdatabases'     => $backupdatabases,
-      'backupdir'           => $backupdir,
-      'backupdirgroup'      => $backupdirgroup,
-      'backupdirmode'       => $backupdirmode,
-      'backupdirowner'      => $backupdirowner,
-      'backupmethod'        => $backupmethod,
-      'backuppassword'      => $backuppassword,
-      'backuprotate'        => $backuprotate,
-      'backupuser'          => $backupuser,
-      'delete_before_dump'  => $delete_before_dump,
-      'ensure'              => $ensure,
-      'execpath'            => $execpath,
-      'file_per_database'   => $file_per_database,
-      'ignore_events'       => $ignore_events,
-      'include_routines'    => $include_routines,
-      'include_triggers'    => $include_triggers,
-      'manage_package_cron' => $manage_package_cron,
-      'maxallowedpacket'    => $maxallowedpacket,
-      'optional_args'       => $optional_args,
-      'postscript'          => $postscript,
-      'prescript'           => $prescript,
-      'time'                => $time,
+      'backupuser'               => $backupuser,
+      'backuppassword'           => $backuppassword,
+      'backupdir'                => $backupdir,
+      'backupdirmode'            => $backupdirmode,
+      'backupdirowner'           => $backupdirowner,
+      'backupdirgroup'           => $backupdirgroup,
+      'backupcompress'           => $backupcompress,
+      'backuprotate'             => $backuprotate,
+      'backupmethod'             => $backupmethod,
+      'backup_success_file_path' => $backup_success_file_path,
+      'ignore_events'            => $ignore_events,
+      'delete_before_dump'       => $delete_before_dump,
+      'backupdatabases'          => $backupdatabases,
+      'file_per_database'        => $file_per_database,
+      'include_routines'         => $include_routines,
+      'include_triggers'         => $include_triggers,
+      'ensure'                   => $ensure,
+      'time'                     => $time,
+      'prescript'                => $prescript,
+      'postscript'               => $postscript,
+      'execpath'                 => $execpath,
+      'maxallowedpacket'         => $maxallowedpacket,
+      'optional_args'            => $optional_args,
+      'manage_package_cron'      => $manage_package_cron,
     }
   })
-
 }

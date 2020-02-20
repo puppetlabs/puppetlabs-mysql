@@ -2,13 +2,62 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.3.0) (2019-12-11)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.2.1...v10.3.0)
+
+### Added
+
+- \(FM-8677\) - Support added for CentOS 8 [\#1254](https://github.com/puppetlabs/puppetlabs-mysql/pull/1254) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- Fix java and ruby binding packages for Debian 10 [\#1264](https://github.com/puppetlabs/puppetlabs-mysql/pull/1264) ([treydock](https://github.com/treydock))
+- \(MODULES-10114\) Confine fact for only when mysql is in PATH [\#1256](https://github.com/puppetlabs/puppetlabs-mysql/pull/1256) ([bFekete](https://github.com/bFekete))
+
+# Change log
+
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+
+## [v10.2.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.2.1) (2019-10-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.2.0...v10.2.1)
+
+### Fixed
+
+- Fix mysql::sql task error message [\#1243](https://github.com/puppetlabs/puppetlabs-mysql/pull/1243) ([alexjfisher](https://github.com/alexjfisher))
+- Fix xtrabackup regression introduced in \#1207 [\#1242](https://github.com/puppetlabs/puppetlabs-mysql/pull/1242) ([fraenki](https://github.com/fraenki))
+- Repair mysql\_grant docs and diagnostics [\#1237](https://github.com/puppetlabs/puppetlabs-mysql/pull/1237) ([qha](https://github.com/qha))
+
+## [v10.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.2.0) (2019-09-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.1.0...v10.2.0)
+
+### Added
+
+- FM-8406 add support on Debian10 [\#1230](https://github.com/puppetlabs/puppetlabs-mysql/pull/1230) ([lionce](https://github.com/lionce))
+- Make backup success file path configurable [\#1207](https://github.com/puppetlabs/puppetlabs-mysql/pull/1207) ([HT43-bqxFqB](https://github.com/HT43-bqxFqB))
+
+### Fixed
+
+- No package under FreeBSD [\#1227](https://github.com/puppetlabs/puppetlabs-mysql/pull/1227) ([jas01](https://github.com/jas01))
+- Fix group on FreeBSD [\#1226](https://github.com/puppetlabs/puppetlabs-mysql/pull/1226) ([jas01](https://github.com/jas01))
+- Don't run fact when you can't find mysqld [\#1224](https://github.com/puppetlabs/puppetlabs-mysql/pull/1224) ([jstewart612](https://github.com/jstewart612))
+-  Bugfix on Debian 9 : ruby\_package\_name must be ruby-mysql2 [\#1223](https://github.com/puppetlabs/puppetlabs-mysql/pull/1223) ([leopoiroux](https://github.com/leopoiroux))
+- Fix errors for /bin/sh with the xtrabackup cron [\#1222](https://github.com/puppetlabs/puppetlabs-mysql/pull/1222) ([baldurmen](https://github.com/baldurmen))
+- Fix/fix dependency issue in freebsd with log error file creation from 10.0.0 [\#1221](https://github.com/puppetlabs/puppetlabs-mysql/pull/1221) ([rick-pri](https://github.com/rick-pri))
+
+## [v10.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.1.0) (2019-07-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.0.0...v10.1.0)
+
+### Added
+
+- Allow backup::mysqldump::time to accept monthday, month, weekday [\#1214](https://github.com/puppetlabs/puppetlabs-mysql/pull/1214) ([malakai97](https://github.com/malakai97))
+
 ## [v10.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.0.0) (2019-06-26)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v9.1.0...v10.0.0)
-
-### Changed
-
-- \(FM-7709\) pdksync and remove beaker [\#1210](https://github.com/puppetlabs/puppetlabs-mysql/pull/1210) ([tphoney](https://github.com/tphoney))
 
 ### Added
 
@@ -150,7 +199,7 @@ All notable changes to this project will be documented in this file. The format 
 - \(FM-5985\) - Addition of support for Ubuntu 18.04 to mysql [\#1104](https://github.com/puppetlabs/puppetlabs-mysql/pull/1104) ([david22swan](https://github.com/david22swan))
 - \(MODULES-7439\) - Implementing beaker-testmode\_switcher [\#1095](https://github.com/puppetlabs/puppetlabs-mysql/pull/1095) ([pmcmaw](https://github.com/pmcmaw))
 - Support for optional\_\_args and prescript to mysqldump backup provider [\#1083](https://github.com/puppetlabs/puppetlabs-mysql/pull/1083) ([eputnam](https://github.com/eputnam))
-- Allow empty user passwords [\#1075](https://github.com/puppetlabs/puppetlabs-mysql/pull/1075) ([disappear89](https://github.com/disappear89))
+- Allow empty user passwords [\#1075](https://github.com/puppetlabs/puppetlabs-mysql/pull/1075) ([ThoTischner](https://github.com/ThoTischner))
 - Add user tls\_options and grant options to mysql::db [\#1065](https://github.com/puppetlabs/puppetlabs-mysql/pull/1065) ([edestecd](https://github.com/edestecd))
 - Use puppet4 functions-api [\#1044](https://github.com/puppetlabs/puppetlabs-mysql/pull/1044) ([juliantodt](https://github.com/juliantodt))
 - Replaced 'DROP USER' with 'DROP USER IF EXISTS' [\#942](https://github.com/puppetlabs/puppetlabs-mysql/pull/942) ([libertamohamed](https://github.com/libertamohamed))
@@ -1056,6 +1105,9 @@ configuration variables.
 [5.2.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.1.0...5.2.0
 [5.1.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/5.0.0...5.1.0
 [5.0.0]:https://github.com/puppetlabs/puppetlabs-mysql/compare/4.0.1...5.0.0
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
 
 
 \* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*

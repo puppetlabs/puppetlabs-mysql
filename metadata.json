@@ -1,10 +1,10 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "10.0.0",
+  "version": "10.3.0",
   "author": "puppetlabs",
   "summary": "Installs, configures, and manages the MySQL service.",
   "license": "Apache-2.0",
-  "source": "git://github.com/puppetlabs/puppetlabs-mysql.git",
+  "source": "git://github.com/puppetlabs/puppetlabs-mysql",
   "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
   "dependencies": [
@@ -32,7 +32,8 @@
       "operatingsystemrelease": [
         "5",
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -62,7 +63,8 @@
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
@@ -81,7 +83,7 @@
     }
   ],
   "description": "MySQL module",
-  "template-url": "https://github.com/puppetlabs/pdk-templates/#master",
-  "template-ref": "heads/master-0-gb096033",
-  "pdk-version": "1.11.1"
+  "template-url": "https://github.com/puppetlabs/pdk-templates#master",
+  "template-ref": "heads/master-0-g88c96ab",
+  "pdk-version": "1.16.0"
 }

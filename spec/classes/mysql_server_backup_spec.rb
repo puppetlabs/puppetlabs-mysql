@@ -105,6 +105,33 @@ describe 'mysql::server::backup' do
         end
       end
 
+      context 'with delete after dump' do
+        let(:custom_params) do
+          {
+            'delete_before_dump' => false,
+          }
+        end
+        let(:params) do
+          default_params.merge!(custom_params)
+        end
+
+        it { is_expected.to contain_file('mysqlbackup.sh').with_content(%r{touch /tmp/mysqlbackup_success}) }
+      end
+
+      context 'with delete after dump and custom success file path' do
+        let(:custom_params) do
+          {
+            'delete_before_dump'       => false,
+            'backup_success_file_path' => '/opt/mysqlbackup_success',
+          }
+        end
+        let(:params) do
+          default_params.merge!(custom_params)
+        end
+
+        it { is_expected.to contain_file('mysqlbackup.sh').with_content(%r{touch /opt/mysqlbackup_success}) }
+      end
+
       context 'custom ownership and mode for backupdir' do
         let(:params) do
           { backupdirmode: '0750',

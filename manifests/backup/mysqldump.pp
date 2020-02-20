@@ -3,36 +3,39 @@
 # @api private
 #
 class mysql::backup::mysqldump (
-  $backupcompress        = true,
-  $backupdatabases       = [],
-  $backupdir             = '',
-  $backupdirgroup        = $mysql::params::root_group,
-  $backupdirmode         = '0700',
-  $backupdirowner        = 'root',
-  $backupmethod          = 'mysqldump',
-  $backuppassword        = '',
-  $backuprotate          = 30,
-  $backupuser            = '',
-  $delete_before_dump    = false,
-  $ensure                = 'present',
-  $execpath              = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $file_per_database     = false,
-  $ignore_events         = true,
-  $include_routines      = false,
-  $include_triggers      = false,
-  $manage_package_cron   = $mysql::server::backup::manage_package_cron,
-  $maxallowedpacket      = '1M',
-  $mysqlbackupdir_ensure = 'directory',
-  $mysqlbackupdir_target = undef,
-  $optional_args         = [],
-  $postscript            = false,
-  $prescript             = false,
-  $time                  = ['23', '5'],
+  $backupuser               = '',
+  $backuppassword           = '',
+  $backupdir                = '',
+  $maxallowedpacket         = '1M',
+  $backupdirmode            = '0700',
+  $backupdirowner           = 'root',
+  $backupdirgroup           = $mysql::params::root_group,
+  $backupcompress           = true,
+  $backuprotate             = 30,
+  $backupmethod             = 'mysqldump',
+  $backup_success_file_path = undef,
+  $ignore_events            = true,
+  $delete_before_dump       = false,
+  $backupdatabases          = [],
+  $file_per_database        = false,
+  $include_triggers         = false,
+  $include_routines         = false,
+  $ensure                   = 'present',
+  $time                     = ['23', '5'],
+  $prescript                = false,
+  $postscript               = false,
+  $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
+  $optional_args            = [],
+  $mysqlbackupdir_ensure    = 'directory',
+  $mysqlbackupdir_target    = undef,
+  $manage_package_cron      = $mysql::server::backup::manage_package_cron,
 ) inherits mysql::params {
 
-  if $backupcompress {
-    ensure_packages(['bzip2'])
-    Package['bzip2'] -> File['mysqlbackup.sh']
+  unless $::osfamily == 'FreeBSD' {
+    if $backupcompress {
+      ensure_packages(['bzip2'])
+      Package['bzip2'] -> File['mysqlbackup.sh']
+    }
   }
 
   mysql_user { "${backupuser}@localhost":
@@ -69,6 +72,7 @@ if $manage_package_cron {
       ensure => present,
     }
   }
+}
 
   cron { 'mysql-backup':
     ensure   => $ensure,

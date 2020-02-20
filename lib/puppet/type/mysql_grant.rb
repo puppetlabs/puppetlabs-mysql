@@ -33,12 +33,12 @@ Puppet::Type.newtype(:mysql_grant) do
   end
   # rubocop:enable Style/MultilineBlockChain
   validate do
-    raise(_('`privileges` `parameter` is required.')) if self[:ensure] == :present && self[:privileges].nil?
-    raise(_('`privileges` `parameter`: PROXY can only be specified by itself.')) if Array(self[:privileges]).count > 1 && Array(self[:privileges]).include?('PROXY')
-    raise(_('`table` `parameter` is required.')) if self[:ensure] == :present && self[:table].nil?
-    raise(_('`user` `parameter` is required.')) if self[:ensure] == :present && self[:user].nil?
+    raise(_('mysql_grant: `privileges` `parameter` is required.')) if self[:ensure] == :present && self[:privileges].nil?
+    raise(_('mysql_grant: `privileges` `parameter`: PROXY can only be specified by itself.')) if Array(self[:privileges]).count > 1 && Array(self[:privileges]).include?('PROXY')
+    raise(_('mysql_grant: `table` `parameter` is required.')) if self[:ensure] == :present && self[:table].nil?
+    raise(_('mysql_grant: `user` `parameter` is required.')) if self[:ensure] == :present && self[:user].nil?
     if self[:user] && self[:table]
-      raise(_('`name` `parameter` must match user@host/table format.')) if self[:name] != "#{self[:user]}/#{self[:table]}"
+      raise(_('mysql_grant: `name` `parameter` must match user@host/table format.')) if self[:name] != "#{self[:user]}/#{self[:table]}"
     end
   end
 
@@ -56,7 +56,7 @@ Puppet::Type.newtype(:mysql_grant) do
     validate do |value|
       mysql_version = Facter.value(:mysql_version)
       if value =~ %r{proxy}i && Puppet::Util::Package.versioncmp(mysql_version, '5.5.0') < 0
-        raise(ArgumentError, _('PROXY user not supported on mysql versions < 5.5.0. Current version %{version}.') % { version: mysql_version })
+        raise(ArgumentError, _('mysql_grant: PROXY user not supported on mysql versions < 5.5.0. Current version %{version}.') % { version: mysql_version })
       end
     end
   end
@@ -66,7 +66,7 @@ Puppet::Type.newtype(:mysql_grant) do
 
     validate do |value|
       if Array(@resource[:privileges]).include?('PROXY') && !%r{^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$}.match(value)
-        raise(ArgumentError, _('`table` `property` for PROXY should be specified as proxy_user@proxy_host.'))
+        raise(ArgumentError, _('mysql_grant: `table` `property` for PROXY should be specified as proxy_user@proxy_host.'))
       end
     end
 
@@ -95,15 +95,15 @@ Puppet::Type.newtype(:mysql_grant) do
         user_part = matches[1]
         host_part = matches[2]
       else
-        raise(ArgumentError, _('Invalid database user %{user}.') % { user: value })
+        raise(ArgumentError, _('mysql_grant: Invalid database user %{user}.') % { user: value })
       end
       # rubocop:enable Lint/AssignmentInCondition
       # rubocop:enable Lint/UselessAssignment
       mysql_version = Facter.value(:mysql_version)
       unless mysql_version.nil?
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
+        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
+        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
+        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
       end
     end
 
