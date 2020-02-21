@@ -63,6 +63,9 @@
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
 #   Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
+# @param manage_package_cron`
+#   Specifies whether to let the MySQL module manage the `cron` package. Set this to `false` to emulate module behaviour in release <= 9.0.0 or if you use the `puppet-cron` module or similar to manage cron packages externally. Hiera YAML example `mysql::params::manage_package_cron: false`
+
 class mysql::server::backup (
   $backupuser               = undef,
   $backuppassword           = undef,
@@ -88,7 +91,7 @@ class mysql::server::backup (
   $provider                 = 'mysqldump',
   $maxallowedpacket         = '1M',
   $optional_args            = [],
-  $manage_package_cron      = false,
+  $manage_package_cron      = $mysql::params::manage_package_cron,
 ) inherits mysql::params {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {

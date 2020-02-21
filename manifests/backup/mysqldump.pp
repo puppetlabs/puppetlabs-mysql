@@ -28,7 +28,7 @@ class mysql::backup::mysqldump (
   $optional_args            = [],
   $mysqlbackupdir_ensure    = 'directory',
   $mysqlbackupdir_target    = undef,
-  $manage_package_cron      = $mysql::server::backup::manage_package_cron,
+  $manage_package_cron      = $mysql::params::manage_package_cron,
 ) inherits mysql::params {
 
   unless $::osfamily == 'FreeBSD' {

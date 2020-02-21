@@ -27,7 +27,7 @@ class mysql::backup::mysqlbackup (
   $postscript               = false,
   $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
   $optional_args            = [],
-  $manage_package_cron      = $mysql::server::backup::manage_package_cron,
+  $manage_package_cron      = $mysql::params::manage_package_cron,
 ) inherits mysql::params {
 
   mysql_user { "${backupuser}@localhost":
