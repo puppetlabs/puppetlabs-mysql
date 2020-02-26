@@ -128,6 +128,22 @@ describe 'mysql::server' do
           is_expected.to contain_file('mysql-config-file').with(mode: '0600')
         end
       end
+
+      context 'group owner adm' do
+        let(:params) { { 'mysql_group' => 'adm' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(group: 'adm')
+        end
+      end
+
+      context 'group owner root' do
+        let(:params) { { 'mysql_group' => 'root' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(group: 'root')
+        end
+      end
     end
   end
 end

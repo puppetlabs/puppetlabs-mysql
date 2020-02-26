@@ -38,6 +38,7 @@ class mysql::server::config {
       path                    => $mysql::server::config_file,
       content                 => template('mysql/my.cnf.erb'),
       mode                    => $mysql::server::config_file_mode,
+      group                   => $mysql::server::mysql_group,
       selinux_ignore_defaults => true,
     }
 
