@@ -2,10 +2,13 @@ name: "weekly"
 
 on:
   schedule:
-    - cron: '0 0 * * 6'
+    - cron: '0 5 * * 6'
 
 jobs:
   LitmusAcceptance:
+    env:
+      HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
+      HONEYCOMB_DATASET: litmus tests
     runs-on: self-hosted
     strategy:
       matrix:
@@ -25,7 +28,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        check: [spec, 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop']
+        check: [parallel_spec, 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop']
         ruby_version: [2.5.x]
         puppet_gem_version: [~> 5.0, ~> 6.0]
         exclude:
