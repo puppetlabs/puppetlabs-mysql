@@ -166,10 +166,17 @@ context 'with xtrabackup enabled' do
               }
             }
             /RedHat/: {
+              # RHEL/CentOS 5 is no longer supported by Percona, but older versions
+              # of the repository are still available.
+              if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
+                $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
+              } else {
+                $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-5.noarch.rpm'
+              }
               ensure_packages('percona-release',{
                 ensure   => present,
                 provider => 'rpm',
-                source   => 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm',
+                source   => $percona_url,
               })
               ensure_packages('epel-release',{
                 ensure   => present,
@@ -279,10 +286,17 @@ context 'with xtrabackup enabled and incremental backups disabled' do
               }
             }
             /RedHat/: {
+              # RHEL/CentOS 5 is no longer supported by Percona, but older versions
+              # of the repository are still available.
+              if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
+                $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
+              } else {
+                $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-5.noarch.rpm'
+              }
               ensure_packages('percona-release',{
                 ensure   => present,
                 provider => 'rpm',
-                source   => 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm',
+                source   => $percona_url,
               })
               ensure_packages('epel-release',{
                 ensure   => present,

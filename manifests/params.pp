@@ -54,6 +54,9 @@ class mysql::params {
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
+            if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+              $xtrabackup_package_name_override = 'percona-xtrabackup-24'
+            }
           } else {
             $provider = 'mysql'
             $xtrabackup_package_name_override = 'percona-xtrabackup-20'
@@ -153,6 +156,7 @@ class mysql::params {
       $root_group          = 'root'
       $mysql_group         = 'mysql'
       $server_service_name = 'mysql'
+      $xtrabackup_package_name_override = 'xtrabackup'
 
       if $::operatingsystem =~ /(SLES|SLED)/ {
         if versioncmp( $::operatingsystemmajrelease, '12' ) >= 0 {
