@@ -41,6 +41,10 @@
 #   The name of the group used for root. Can be a group name or a group ID. See more about the [group](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 # @param mysql_group
 #   The name of the group of the MySQL daemon user. Can be a group name or a group ID. See more about the [group](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
+# @param mycnf_owner
+#   Name or user-id who owns the mysql-config-file.
+# @param mycnf_group
+#   Name or group-id which owns the mysql-config-file.
 # @param root_password
 #   The MySQL root password. Puppet attempts to set the root password and update `/root/.my.cnf` with it. This is required if `create_root_user` or `create_root_my_cnf` are true. If `root_password` is 'UNSET', then `create_root_user` and `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created. Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password.
 # @param service_enabled
@@ -85,6 +89,8 @@ class mysql::server (
                   $restart                 = $mysql::params::restart,
                   $root_group              = $mysql::params::root_group,
                   $mysql_group             = $mysql::params::mysql_group,
+                  $mycnf_owner             = $mysql::params::mycnf_owner,
+                  $mycnf_group             = $mysql::params::mycnf_group,
                   $root_password           = $mysql::params::root_password,
                   $service_enabled         = $mysql::params::server_service_enabled,
                   $service_manage          = $mysql::params::server_service_manage,
