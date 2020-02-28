@@ -29,7 +29,7 @@
 # @param backupdirgroup
 #   Group owner for the backup directory. This parameter is passed directly to the file resource.
 # @param backupcompress
-#   Whether or not to compress the backup (when using the mysqldump provider)
+#   Whether or not to compress the backup (when using the mysqldump or xtrabackup provider)
 # @param backupmethod
 #   The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup
 # @param backup_success_file_path

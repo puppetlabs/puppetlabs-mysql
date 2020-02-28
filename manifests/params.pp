@@ -6,6 +6,7 @@
 class mysql::params {
 
   $manage_config_file     = true
+  $config_file_mode       = '0644'
   $purge_conf_dir         = false
   $restart                = false
   $root_password          = 'UNSET'
@@ -219,7 +220,11 @@ class mysql::params {
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       # mysql::bindings
-      $java_package_name   = 'libmysql-java'
+      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '10') >= 0 {
+        $java_package_name   = 'libmariadb-java'
+      } else {
+        $java_package_name   = 'libmysql-java'
+      }
       $perl_package_name   = 'libdbd-mysql-perl'
       if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') >= 0) or
           ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9') >= 0) {
@@ -236,6 +241,7 @@ class mysql::params {
       $ruby_package_name   = $::lsbdistcodename ? {
         'jessie'           => 'ruby-mysql',
         'stretch'          => 'ruby-mysql2',
+        'buster'           => 'ruby-mysql2',
         'trusty'           => 'ruby-mysql',
         'xenial'           => 'ruby-mysql',
         'bionic'           => 'ruby-mysql2',
