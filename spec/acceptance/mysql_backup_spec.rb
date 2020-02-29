@@ -170,8 +170,10 @@ context 'with xtrabackup enabled' do
               # of the repository are still available.
               if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
                 $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
+                $epel_url = "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
               } else {
-                $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-5.noarch.rpm'
+                $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-3.noarch.rpm'
+                $epel_url = 'https://archives.fedoraproject.org/pub/archive/epel/epel-release-latest-5.noarch.rpm'
               }
               ensure_packages('percona-release',{
                 ensure   => present,
@@ -181,7 +183,7 @@ context 'with xtrabackup enabled' do
               ensure_packages('epel-release',{
                 ensure   => present,
                 provider => 'rpm',
-                source   => "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm",
+                source   => $epel_url,
               })
               if ($facts['os']['name'] == 'Scientific') {
                 # $releasever resolves to '6.10' instead of '6' which breaks Percona repos
@@ -290,8 +292,10 @@ context 'with xtrabackup enabled and incremental backups disabled' do
               # of the repository are still available.
               if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
                 $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
+                $epel_url = "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
               } else {
-                $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-5.noarch.rpm'
+                $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-3.noarch.rpm'
+                $epel_url = 'https://archives.fedoraproject.org/pub/archive/epel/epel-release-latest-5.noarch.rpm'
               }
               ensure_packages('percona-release',{
                 ensure   => present,
@@ -301,7 +305,7 @@ context 'with xtrabackup enabled and incremental backups disabled' do
               ensure_packages('epel-release',{
                 ensure   => present,
                 provider => 'rpm',
-                source   => "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm",
+                source   => $epel_url,
               })
               if ($facts['os']['name'] == 'Scientific') {
                 # $releasever resolves to '6.10' instead of '6' which breaks Percona repos
