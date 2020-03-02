@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.4.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.3.0) (2020-02-27)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.3.0...v10.3.0)
+
+### Added
+
+- Allow adapting MySQL configuration file's permissions mode [\#1278](https://github.com/puppetlabs/puppetlabs-mysql/pull/1278) ([unki](https://github.com/unki))
+- pdksync - \(FM-8581\) - Debian 10 added to travis and provision file refactored [\#1275](https://github.com/puppetlabs/puppetlabs-mysql/pull/1275) ([david22swan](https://github.com/david22swan))
+- Puppet 4 functions [\#1274](https://github.com/puppetlabs/puppetlabs-mysql/pull/1274) ([binford2k](https://github.com/binford2k))
+- Allow backupcompress for xtrabackup profile [\#1196](https://github.com/puppetlabs/puppetlabs-mysql/pull/1196) ([Spuffnduff](https://github.com/Spuffnduff))
+- Enable module to not use default options [\#1192](https://github.com/puppetlabs/puppetlabs-mysql/pull/1192) ([mauricemeyer](https://github.com/mauricemeyer))
+
 ## [v10.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.3.0) (2019-12-11)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.2.1...v10.3.0)
