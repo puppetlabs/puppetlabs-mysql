@@ -3,7 +3,14 @@ require 'spec_helper_acceptance'
 describe 'mysql_user' do
   describe 'setup' do
     pp_one = <<-MANIFEST
-        class { 'mysql::server': }
+        $ed25519_opts = versioncmp($facts['mysql_version'], '10.1.21') >= 0 ? {
+          true  => {
+            restart => true,
+            override_options => { 'mysqld' => { 'plugin_load_add' => 'auth_ed25519' } },
+          },
+          false => {}
+        }
+        class { 'mysql::server': * => $ed25519_opts }
     MANIFEST
     it 'works with no errors' do
       apply_manifest(pp_one, catch_failures: true)
@@ -63,6 +70,26 @@ describe 'mysql_user' do
                 end
         run_shell("mysql -NBe \"select #{table} from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stdout.rstrip).to be_empty
+          expect(r.stderr).to be_empty
+        end
+      end
+    end
+
+    describe 'using ed25519 authentication plugin', if: Gem::Version.new(mysql_version) > Gem::Version.new('10.1.21') do
+      it 'works without errors' do
+        pp = <<-EOS
+          mysql_user { 'ashp@localhost':
+            plugin        => 'ed25519',
+            password_hash => 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU',
+          }
+        EOS
+
+        idempotent_apply(pp)
+      end
+
+      it 'has the correct plugin' do
+        run_shell("mysql -NBe \"select plugin from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
+          expect(r.stdout.rstrip).to eq('ed25519')
           expect(r.stderr).to be_empty
         end
       end
