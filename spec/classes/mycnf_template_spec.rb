@@ -128,6 +128,37 @@ describe 'mysql::server' do
           is_expected.to contain_file('mysql-config-file').with(mode: '0600')
         end
       end
+
+      context 'user owner 12345' do
+        let(:params) { { 'mycnf_owner' => '12345' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(
+            owner: '12345',
+          )
+        end
+      end
+
+      context 'group owner 12345' do
+        let(:params) { { 'mycnf_group' => '12345' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(
+            group: '12345',
+          )
+        end
+      end
+
+      context 'user and group owner 12345' do
+        let(:params) { { 'mycnf_owner' => '12345', 'mycnf_group' => '12345' } }
+
+        it do
+          is_expected.to contain_file('mysql-config-file').with(
+            owner: '12345',
+            group: '12345',
+          )
+        end
+      end
     end
   end
 end

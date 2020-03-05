@@ -96,6 +96,8 @@ class mysql::params {
       $datadir                 = '/var/lib/mysql'
       $root_group              = 'root'
       $mysql_group             = 'mysql'
+      $mycnf_owner             = undef
+      $mycnf_group             = undef
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
@@ -152,6 +154,8 @@ class mysql::params {
       }
       $root_group          = 'root'
       $mysql_group         = 'mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysql'
 
       if $::operatingsystem =~ /(SLES|SLED)/ {
@@ -209,6 +213,8 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'adm'
+      $mycnf_owner             = undef
+      $mycnf_group             = undef
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
@@ -253,6 +259,8 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'mysql'
+      $mycnf_owner             = undef
+      $mycnf_group             = undef
       $server_service_name     = 'mysqld'
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
@@ -278,6 +286,8 @@ class mysql::params {
       $pidfile             = '/run/mysqld/mysqld.pid'
       $root_group          = 'root'
       $mysql_group         = 'mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysql'
       $socket              = '/run/mysqld/mysqld.sock'
       $ssl_ca              = '/etc/mysql/cacert.pem'
@@ -303,6 +313,8 @@ class mysql::params {
       $pidfile             = '/var/run/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = 'mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysql-server'
       $socket              = '/var/db/mysql/mysql.sock'
       $ssl_ca              = undef
@@ -331,6 +343,8 @@ class mysql::params {
       $pidfile             = '/var/mysql/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = '_mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysqld'
       $socket              = '/var/run/mysql/mysql.sock'
       $ssl_ca              = undef
@@ -386,6 +400,8 @@ class mysql::params {
           $pidfile             = '/run/mysqld/mysqld.pid'
           $root_group          = 'root'
           $mysql_group         = 'mysql'
+          $mycnf_owner         = undef
+          $mycnf_group         = undef
           $server_service_name = 'mariadb'
           $socket              = '/run/mysqld/mysqld.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'
@@ -411,6 +427,8 @@ class mysql::params {
           $pidfile             = '/var/run/mysqld/mysqld.pid'
           $root_group          = 'root'
           $mysql_group         = 'mysql'
+          $mycnf_owner         = undef
+          $mycnf_group         = undef
           $server_service_name = 'mysqld'
           $socket              = '/var/lib/mysql/mysql.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'
