@@ -36,10 +36,12 @@ Gemfile:
       git: https://github.com/skywinder/github-changelog-generator
       ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
       condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
+    - gem: puppet-resource_api
 Rakefile:
   requires:
   - puppet_pot_generator/rake_tasks
 spec/spec_helper.rb:
+  mock_with: ':rspec'
   spec_overrides:
   - require 'spec_helper_local'
   coverage_report: true
