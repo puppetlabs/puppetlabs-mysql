@@ -4,19 +4,17 @@ require 'puppet/resource_api'
 
 Puppet::ResourceApi.register_type(
   name: 'mysql_login_path',
+
   docs: <<-EOS,
-@summary a mysql_login_path type
+@summary Manage a MySQL login path.
 @example
 mysql_login_path { 'foo':
   ensure => 'present',
 }
 
-This type provides Puppet with the capabilities to manage ...
+This type provides Puppet with the capabilities to store authentication credentials in an obfuscated login path file 
+named .mylogin.cnf created with the mysql_config_editor utility.
 
-If your type uses autorequires, please document as shown below, else delete
-these lines.
-**Autorequires**:
-* `Package[foo]`
 EOS
   features: [],
   attributes: {
@@ -27,8 +25,28 @@ EOS
     },
     name: {
       type:      'String',
-      desc:      'The name of the resource you want to manage.',
+      desc:      'Name of the login path you want to manage.',
       behaviour: :namevar,
+    },
+    host: {
+      type:      'String',
+      desc:      'Host name to be entered into the login file.',
+    },
+    user: {
+      type:      'String',
+      desc:      'User name to be entered into the login file.',
+    },
+    password: {
+      type:      'String',
+      desc:      'Password to be entered into login file',
+    },
+    socket: {
+      type:      'String',
+      desc:      'Socket path to be entered into login file',
+    },
+    port: {
+      type:      'Integer[0,65535]',
+      desc:      'Port number to be entered into login file.',
     },
   },
 )
