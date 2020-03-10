@@ -21,6 +21,18 @@ describe 'mysql_login_path' do
     end
   end
 
+  context 'create login path with socket' do
+    describe 'create login path' do
+      pp = <<-MANIFEST
+        mysql_login_path { 'local_socket':
+          ensure => present,
+        }
+
+      MANIFEST
+    end
+
+
+  end
   # mysql_config_editor set --login-path=mysql1  --host=localhost \
   #   --port=3306 --socket=/path/to/socket --user=root --password
   #login-path                        client
