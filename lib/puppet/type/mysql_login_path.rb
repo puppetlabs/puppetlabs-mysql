@@ -8,8 +8,12 @@ Puppet::ResourceApi.register_type(
   docs: <<-EOS,
 @summary Manage a MySQL login path.
 @example
-mysql_login_path { 'foo':
-  ensure => 'present',
+mysql_login_path { 'local_socket':
+  host     => 'localhost',
+  user     => 'root',
+  password => 'secure',
+  socket   => '/var/run/mysql/mysql.sock',
+  ensure   => present,
 }
 
 This type provides Puppet with the capabilities to store authentication credentials in an obfuscated login path file 
@@ -29,23 +33,23 @@ EOS
       behaviour: :namevar,
     },
     host: {
-      type:      'String',
+      type:      'Optional[String]',
       desc:      'Host name to be entered into the login file.',
     },
     user: {
-      type:      'String',
+      type:      'Optional[String]',
       desc:      'User name to be entered into the login file.',
     },
     password: {
-      type:      'String',
+      type:      'Optional[String]',
       desc:      'Password to be entered into login file',
     },
     socket: {
-      type:      'String',
+      type:      'Optional[String]',
       desc:      'Socket path to be entered into login file',
     },
     port: {
-      type:      'Integer[0,65535]',
+      type:      'Optional[Integer[0,65535]]',
       desc:      'Port number to be entered into login file.',
     },
   },
