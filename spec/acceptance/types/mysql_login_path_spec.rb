@@ -31,6 +31,7 @@ describe 'mysql_login_path' do
     describe 'add login path' do
       pp = <<-MANIFEST
         mysql_login_path { 'local_socket':
+          owner    => root,
           host     => 'localhost',
           user     => 'root',
           password => 'secure',

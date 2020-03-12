@@ -9,6 +9,7 @@ Puppet::ResourceApi.register_type(
 @summary Manage a MySQL login path.
 @example
 mysql_login_path { 'local_socket':
+  uid      => 'root',
   host     => 'localhost',
   user     => 'root',
   password => 'secure',
@@ -20,7 +21,17 @@ This type provides Puppet with the capabilities to store authentication credenti
 named .mylogin.cnf created with the mysql_config_editor utility.
 
 EOS
-  features: [],
+  features: ['simple_get_filter'],
+  title_patterns: [
+    {
+      pattern: %r{^(?<name>.*[^-])-(?<owner>.*)$},
+      desc: 'Where the name of the and the uid are provided with a hyphen seperator',
+    },
+    {
+      pattern: %r{^(?<name>.*)$},
+      desc: 'Where only the name is provided',
+    },
+  ],
   attributes: {
     ensure: {
       type:    'Enum[present, absent]',
@@ -32,25 +43,30 @@ EOS
       desc:      'Name of the login path you want to manage.',
       behaviour: :namevar,
     },
+    owner: {
+      type:      'String',
+      desc:      'The user to whom the logon path should belong.',
+      behaviour: :namevar,
+    },
     host: {
       type:      'Optional[String]',
-      desc:      'Host name to be entered into the login file.',
+      desc:      'Host name to be entered into the login path.',
     },
     user: {
       type:      'Optional[String]',
-      desc:      'User name to be entered into the login file.',
+      desc:      'Username to be entered into the login path.',
     },
     password: {
       type:      'Optional[String]',
-      desc:      'Password to be entered into login file',
+      desc:      'Password to be entered into login path',
     },
     socket: {
       type:      'Optional[String]',
-      desc:      'Socket path to be entered into login file',
+      desc:      'Socket path to be entered into login path',
     },
     port: {
       type:      'Optional[Integer[0,65535]]',
-      desc:      'Port number to be entered into login file.',
+      desc:      'Port number to be entered into login path.',
     },
   },
 )
