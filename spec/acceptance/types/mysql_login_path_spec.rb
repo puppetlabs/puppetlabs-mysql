@@ -1,11 +1,11 @@
 require 'spec_helper_acceptance'
 
-RSpec.configure do |c|
-  c.before(:each) do
-    Puppet::Util::Log.level = :debug
-    Puppet::Util::Log.newdestination(:console)
-  end
-end
+#RSpec.configure do |c|
+#  c.before(:each) do
+#    Puppet::Util::Log.level = :debug
+#    Puppet::Util::Log.newdestination(:console)
+#  end
+#end
 
 describe 'mysql_login_path' do
   describe 'setup' do
@@ -17,10 +17,17 @@ describe 'mysql_login_path' do
         enabled  => 1,
         gpgcheck => 1,
       }
-
+      class { '::mysql::server':
+        service_manage => false,
+        service_name   => 'mysqld',
+        package_name   => 'mysql-community-server',
+      }
+      
       class {'::mysql::client':
         package_name => 'mysql-community-client',
       }
+      Yumrepo['repo.mysql.com']->Class['::mysql::server']
+      Yumrepo['repo.mysql.com']->Class['::mysql::client']
     MANIFEST
     it 'works with no errors' do
       apply_manifest(pp, catch_failures: true)
@@ -30,14 +37,19 @@ describe 'mysql_login_path' do
   context 'create login path with socket' do
     describe 'add login path' do
       pp = <<-MANIFEST
-        mysql_login_path { 'local_socket':
-          owner    => root,
+        mysql_login_path { 'local_tcp':
+          owner    => astuerz,
           host     => 'localhost',
           user     => 'root',
           password => 'secure',
-          socket   => '/var/run/mysql/mysql.sock',
+          #port     => 3306,
+          socket => '/var/run/mysql/mysql.sock',
           ensure   => present,
         }
+        #mysql_login_path { 'local_tcp':
+        #  owner  => root,
+        #  ensure => absent,
+        #}
       MANIFEST
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
