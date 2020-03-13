@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require File.expand_path(File.join(File.dirname(__FILE__), 'inifile'))
 require 'puppet/resource_api/simple_provider'
 require 'puppet/util/execution'
-require File.expand_path(File.join(File.dirname(__FILE__), 'inifile'))
+require 'puppet/util/suidmanager'
+require 'open3'
 
 # Implementation for the mysql_login_path type using the Resource API.
 class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::SimpleProvider
@@ -12,15 +14,39 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     return result.split(':')[5]
   end
 
-  # return a valid uid for a username or a uid
-  #def get_uid(user)
-  #  uid = user
-  #  if user.is_a? String
-  #    result =  Puppet::Util::Execution.execute(['/usr/bin/getent', 'passwd', user], failonfail: true)
-  #    uid = result.split(':')[2]
-  #  end
-  #  return uid
-  #end
+  def mysql_config_editor_set_cmd(context, uid, password = nil, *args)
+    args.unshift('/usr/bin/mysql_config_editor')
+    homedir = get_homedir(context, uid)
+
+    if args.is_a?(Array)
+      command = args.flatten.map(&:to_s)
+      command_str = command.join(" ")
+    elsif args.is_a?(String)
+      command_str = command
+    end
+
+    Puppet::Util::SUIDManager.asuser(uid) do
+      @exit_status = Open3.popen3({ 'HOME' => homedir }, command_str) do |stdin, stdout, stderr, wait_thr|
+        if password
+          stdin.puts(password + "\r\n")
+          stdin.close
+        end
+        @captured_stdout = stdout.read
+        @captured_stderr = stderr.read
+        wait_thr.value
+      end
+    end
+
+    if @exit_status.success? == false
+      raise Puppet::ExecutionFailure, _(
+          "Execution of '%{str}' returned %{exit_status}: %{output}") % {
+          str: command_str,
+          exit_status: @exit_status,
+          output: @captured_stderr.strip
+      }
+    end
+    @captured_stdout
+  end
 
   def mysql_config_editor_cmd(context, uid, *args)
     args.unshift('/usr/bin/mysql_config_editor')
@@ -57,7 +83,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   def list_login_paths(context, uid)
     result = []
     output = mysql_config_editor_cmd(context, uid, 'print', '--all')
-    ini = IniFile.new( :content => output )
+    ini = Puppet::Provider::MysqlLoginPath::IniFile.new( :content => output )
     ini.each_section do |section|
       result.push({
                       ensure: 'present',
@@ -74,25 +100,47 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result
   end
 
+  def save_login_path(context, name, should)
+    uid = name.fetch(:owner)
+
+    args = ['set', '--skip-warn']
+    args.push('-G', should[:name].to_s) if should[:name]
+    args.push('-h', should[:host].to_s) if should[:host]
+    args.push('-u', should[:user].to_s) if should[:user]
+    args.push('-S', should[:socket].to_s) if should[:socket]
+    args.push('-P', should[:port].to_s) if should[:port]
+    args.push('-p') if should[:password]
+    password = should[:password] ? should[:password] : nil
+
+    mysql_config_editor_set_cmd(context, uid, password, args)
+  end
+
+  def delete_login_path(context, name)
+    login_path = name.fetch(:name)
+    uid = name.fetch(:owner)
+    mysql_config_editor_cmd(context, uid, 'remove', '-G', login_path)
+  end
+
   def get(context, name)
     uid = name.first.fetch(:owner)
     login_paths = list_login_paths(context, uid)
+    puts login_paths
     login_paths
   end
 
   def create(context, name, should)
     context.notice("Creating '#{name}' with #{should.inspect}")
+    save_login_path(context, name, should)
   end
 
   def update(context, name, should)
     context.notice("Updating '#{name}' with #{should.inspect}")
+    delete_login_path(context, name)
+    save_login_path(context, name, should)
   end
 
   def delete(context, name)
     context.notice("Deleting '#{name}'")
+    delete_login_path(context, name)
   end
 end
-
-
-#var = "[local_socket]\nuser = root\npassword = *****\nhost = localhost\nsocket = /var/run/mysql/mysql.sock\n[local_tcp]\nuser = root\npassword = *****\nhost = 127.0.0.1\nport = 3306\n"
-#var = "--user=root\n--password=test123\n--host=127.0.0.1\n--port=3306"

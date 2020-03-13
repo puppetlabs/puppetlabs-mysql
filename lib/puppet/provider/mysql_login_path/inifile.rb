@@ -2,11 +2,11 @@
 # See: https://github.com/puppetlabs/puppet/blob/master/lib/puppet/util/inifile.rb
 # This class represents the INI file and can be used to parse, modify,
 # and write INI files.
-class IniFile
+class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   include Enumerable
 
   class Error < StandardError; end
-  VERSION = '3.0.0'
+  #VERSION = '3.0.0'
 
   # Public: Open an INI file and load the contents.
   #
