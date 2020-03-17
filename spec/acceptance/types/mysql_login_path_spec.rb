@@ -1,12 +1,5 @@
 require 'spec_helper_acceptance'
 
-#RSpec.configure do |c|
-#  c.before(:each) do
-#    Puppet::Util::Log.level = :debug
-#    Puppet::Util::Log.newdestination(:console)
-#  end
-#end
-
 describe 'mysql_login_path' do
   describe 'setup' do
     pp = <<-MANIFEST
@@ -21,10 +14,12 @@ describe 'mysql_login_path' do
         service_manage => false,
         service_name   => 'mysqld',
         package_name   => 'mysql-community-server',
-      }
-      
+      }      
       class {'::mysql::client':
         package_name => 'mysql-community-client',
+      }
+      user { 'loginpath_test':
+        ensure => present,
       }
       Yumrepo['repo.mysql.com']->Class['::mysql::server']
       Yumrepo['repo.mysql.com']->Class['::mysql::client']
@@ -34,62 +29,183 @@ describe 'mysql_login_path' do
     end
   end
 
-  context 'create login path with socket' do
+  context 'login path for user root' do
     describe 'add login path' do
       pp = <<-MANIFEST
-        mysql_login_path { 'local_tcp':
-          owner    => astuerz,
+        mysql_login_path { 'local_socket':
+          owner    => root,
           host     => 'localhost',
           user     => 'root',
           password => 'secure',
-          #port     => 3306,
-          socket => '/var/run/mysql/mysql.sock',
+          socket   => '/var/run/mysql/mysql.sock',
           ensure   => present,
         }
-        #mysql_login_path { 'local_tcp':
-        #  owner  => root,
-        #  ensure => absent,
-        #}
+        mysql_login_path { 'local_tcp':
+          owner    => root,
+          host     => '127.0.0.1',
+          user     => 'network',
+          password => 'more_secure',
+          port     => 3306,
+          ensure   => present,
+        }
       MANIFEST
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
+      it 'finds the login path #stdout' do
+        run_shell("mysql_config_editor print --all") do |r|
+          expect(r.stdout).to match(%r{^\[local_socket\]\n})
+          expect(r.stdout).to match(%r{host = localhost\n})
+          expect(r.stdout).to match(%r{user = root\n})
+          expect(r.stdout).to match(%r{socket = /var/run/mysql/mysql.sock\n})
 
-      #it 'finds the login path #stdout' do
-      #  run_shell("mysql_config_editor print -G local_socket") do |r|
-      #    expect(r.stdout).to match(%r{^\[local_socket\]\n})
-      #    expect(r.stdout).to match(%r{user = root\n})
-      #    expect(r.stdout).to match(%r{password = \*{5}\n})
-      #    expect(r.stdout).to match(%r{host = localhost\n})
-      #    expect(r.stderr).to be_empty
-      #  end
-      #end
+          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
+          expect(r.stdout).to match(%r{host = 127.0.0.1\n})
+          expect(r.stdout).to match(%r{user = network\n})
+          expect(r.stdout).to match(%r{port = 3306\n})
+          expect(r.stderr).to be_empty
+        end
+      end
+      it 'finds the login path password #stdout' do
+        run_shell("my_print_defaults -s local_socket") do |r|
+          expect(r.stdout).to match(%r{--password=secure\n})
+        end
+        run_shell("my_print_defaults -s local_tcp") do |r|
+          expect(r.stdout).to match(%r{--password=more_secure\n})
+        end
+      end
+    end
 
+    describe 'update login path' do
+      pp = <<-MANIFEST
+        mysql_login_path { 'local_tcp-root':
+          owner    => root,
+          host     => '10.0.0.1',
+          user     => 'network2',
+          password => 'Fort_kn0X',
+          port     => 3307,
+          ensure   => present,
+        }
+      MANIFEST
+      it 'works without errors' do
+        apply_manifest(pp, catch_failures: true)
+      end
+      it 'finds the login path #stdout' do
+        run_shell("mysql_config_editor print -G local_tcp") do |r|
+          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
+          expect(r.stdout).to match(%r{host = 10.0.0.1\n})
+          expect(r.stdout).to match(%r{user = network2\n})
+          expect(r.stdout).to match(%r{port = 3307\n})
+          expect(r.stderr).to be_empty
+        end
+      end
+      it 'finds the login path password #stdout' do
+        run_shell("my_print_defaults -s local_tcp") do |r|
+          expect(r.stdout).to match(%r{--password=Fort_kn0X\n})
+        end
+      end
+    end
+
+    describe 'delete login path' do
+      pp = <<-MANIFEST
+        mysql_login_path { 'local_socket':
+          owner  => root,
+          ensure => absent,
+        }
+        mysql_login_path { 'local_tcp-root':
+          ensure => absent,
+        }
+      MANIFEST
+      it 'works without errors' do
+        apply_manifest(pp, catch_failures: true)
+      end
+      it 'finds the login path #stdout' do
+        run_shell("mysql_config_editor print --all") do |r|
+          expect(r.stdout).not_to match(%r{^\[local_socket\]\n})
+          expect(r.stdout).not_to match(%r{^\[local_tcp\]\n})
+          expect(r.stderr).to be_empty
+        end
+      end
     end
   end
 
-  #context 'create login path with socket' do
-  #  describe 'add login path' do
-  #    pp = <<-MANIFEST
-  #      mysql_login_path { 'local_socket':
-  #        host => 'localhost',
-  #        user => 'root',
-  #        password => 'secure',
-  #        socket => '/var/run/mysql/mysql.sock',
-  #        ensure => present,
-  #      }
-  #    MANIFEST
-  #    it 'works without errors' do
-  #      apply_manifest(pp, catch_failures: true)
-  #    end
-  #
-  #    it 'finds the login path #stdout' do
-  #      run_shell("mysql_config_editor print -G local_socket") do |r|
-  #        expect(r.stdout).to match(%r{^1$})
-  #        expect(r.stderr).to be_empty
-  #      end
-  #    end
-  #  end
-  #end
+  context 'login path for user loginpath_test' do
+    describe 'add login path' do
+      pp = <<-MANIFEST
+        mysql_login_path { 'local_tcp':
+          owner    => loginpath_test,
+          host     => '10.0.0.2',
+          user     => 'other',
+          password => 'sensitive',
+          port     => 3306,
+          ensure   => present,
+        }
+      MANIFEST
+      it 'works without errors' do
+        apply_manifest(pp, catch_failures: true)
+      end
+      it 'finds the login path #stdout' do
+        run_shell("MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf mysql_config_editor print -G local_tcp") do |r|
+          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
+          expect(r.stdout).to match(%r{host = 10.0.0.2\n})
+          expect(r.stdout).to match(%r{user = other\n})
+          expect(r.stdout).to match(%r{port = 3306\n})
+          expect(r.stderr).to be_empty
+        end
+      end
+      it 'finds the login path password #stdout' do
+        run_shell("MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf my_print_defaults print -s local_tcp") do |r|
+          expect(r.stdout).to match(%r{--password=sensitive\n})
+        end
+      end
+    end
+
+    describe 'update login path' do
+      pp = <<-MANIFEST
+        mysql_login_path { 'local_tcp-loginpath_test':
+          host     => '10.0.0.3',
+          user     => 'other2',
+          password => 'password',
+          port     => 3307,
+          ensure   => present,
+        }
+      MANIFEST
+      it 'works without errors' do
+        apply_manifest(pp, catch_failures: true)
+      end
+      it 'finds the login path #stdout' do
+        run_shell("MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf mysql_config_editor print -G local_tcp") do |r|
+          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
+          expect(r.stdout).to match(%r{host = 10.0.0.3\n})
+          expect(r.stdout).to match(%r{user = other2\n})
+          expect(r.stdout).to match(%r{port = 3307\n})
+          expect(r.stderr).to be_empty
+        end
+      end
+      it 'finds the login path password #stdout' do
+        run_shell("MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf my_print_defaults -s local_tcp") do |r|
+          expect(r.stdout).to match(%r{--password=password\n})
+        end
+      end
+    end
+
+    describe 'delete login path' do
+      pp = <<-MANIFEST
+        mysql_login_path { 'local_tcp':
+          owner  => loginpath_test,
+          ensure => absent,
+        }
+      MANIFEST
+      it 'works without errors' do
+        apply_manifest(pp, catch_failures: true)
+      end
+      it 'finds the login path #stdout' do
+        run_shell("MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf mysql_config_editor print --all") do |r|
+          expect(r.stdout).not_to match(%r{^\[local_tcp\]\n})
+          expect(r.stderr).to be_empty
+        end
+      end
+    end
+  end
 
 end
