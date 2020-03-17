@@ -9,7 +9,7 @@ Puppet::ResourceApi.register_type(
 @summary Manage a MySQL login path.
 @example
 mysql_login_path { 'local_socket':
-  uid      => 'root',
+  owner    => 'root',
   host     => 'localhost',
   user     => 'root',
   password => 'secure',

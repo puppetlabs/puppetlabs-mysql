@@ -129,18 +129,15 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   end
 
   def create(context, name, should)
-    context.notice("Creating '#{name}' with #{should.inspect}")
     save_login_path(context, name, should)
   end
 
   def update(context, name, should)
-    context.notice("Updating '#{name}' with #{should.inspect}")
     delete_login_path(context, name)
     save_login_path(context, name, should)
   end
 
   def delete(context, name)
-    context.notice("Deleting '#{name}'")
     delete_login_path(context, name)
   end
 end
