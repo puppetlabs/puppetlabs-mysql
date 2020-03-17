@@ -10,31 +10,59 @@ RSpec.describe Puppet::Provider::MysqlLoginPath::MysqlLoginPath do
 
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
 
+  before :each do
+    allow(provider).to receive(:get_homedir).with(context, 'root').and_return('/root')
+
+    allow(provider).to receive(:mysql_config_editor_cmd).with(context, 'root', 'print', '--all').and_return(
+        "[local_tcp]\nuser = root\npassword = *****\nhost = 127.0.0.1\nport = 3306"
+    )
+    allow(provider).to receive(:mysql_config_editor_cmd).with(
+        context, 'root', 'remove', '-G', 'local_socket'
+    ).and_return('')
+
+    allow(provider).to receive(:my_print_defaults_cmd).with(
+        context, 'root', '-s', 'local_tcp'
+    ).and_return("--user=root\n--password=secure\n--host=127.0.0.1\n--port=3306")
+    allow(provider).to receive(:my_print_defaults_cmd).with(
+        context, 'root', '-s', 'local_socket'
+    ).and_return("--user=root\n--password=more_secure\n--host=localhost\n--socket=/var/run/mysql.sock")
+
+    allow(provider).to receive(:mysql_config_editor_set_cmd).with(
+        context, 'root', 'more_secure',
+        %w(set --skip-warn -G local_socket -h localhost -u root -S /var/run/mysql/mysql.sock -p)
+    ).and_return('')
+    allow(provider).to receive(:mysql_config_editor_set_cmd).with(
+        context, 'root', 'more_secure',
+        %w(set --skip-warn -G local_socket -h 127.0.0.1 -u root -P 3306 -p)
+    ).and_return('')
+  end
+
   describe '#get' do
     it 'processes resources' do
-      expect(context).to receive(:debug).with('Returning pre-canned example data')
-      expect(provider.get(context)).to eq [
+      expect(provider.get(context, [{:owner => 'root'}])).to eq [
         {
-          name: 'foo',
-          ensure: 'present',
-        },
-        {
-          name: 'bar',
-          ensure: 'present',
-        },
+            :ensure=>"present",
+            :host=>"127.0.0.1",
+            :name=>"local_tcp",
+            :owner=>"root",
+            :password=>"secure",
+            :port=>3306,
+            :socket=>nil,
+            :title=>"local_tcp-root",
+            :user=>"root"
+        }
       ]
     end
   end
 
   describe 'create(context, name, should)' do
     it 'creates the resource' do
-      expect(context).to receive(:notice).with(%r{\ACreating 'local'})
-
-      provider.create(context, 'local',
-                      name: 'local',
+      provider.create(context, {:name =>'local_socket', :owner => 'root'},
+                      name: 'local_socket',
+                      owner: 'root',
                       host: 'localhost',
                       user: 'root',
-                      password: 'secure',
+                      password: 'more_secure',
                       socket: '/var/run/mysql/mysql.sock',
                       ensure: 'present'
       )
@@ -43,13 +71,12 @@ RSpec.describe Puppet::Provider::MysqlLoginPath::MysqlLoginPath do
 
   describe 'update(context, name, should)' do
     it 'updates the resource' do
-      expect(context).to receive(:notice).with(%r{\AUpdating 'local'})
-
-      provider.update(context, 'local',
-                      name: 'local',
+      provider.update(context, {:name =>'local_socket', :owner => 'root'},
+                      name: 'local_socket',
+                      owner: 'root',
                       host: '127.0.0.1',
                       user: 'root',
-                      password: 'secure',
+                      password: 'more_secure',
                       port: 3306,
                       ensure: 'present'
       )
@@ -58,9 +85,10 @@ RSpec.describe Puppet::Provider::MysqlLoginPath::MysqlLoginPath do
 
   describe 'delete(context, name)' do
     it 'deletes the resource' do
-      expect(context).to receive(:notice).with(%r{\ADeleting 'local'})
-
-      provider.delete(context, 'local')
+      provider.delete(context, {:name =>'local_socket', :owner => 'root'})
     end
   end
+
 end
+
+
