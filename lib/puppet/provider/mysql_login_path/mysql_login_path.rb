@@ -124,7 +124,6 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   def get(context, name)
     uid = name.first.fetch(:owner)
     login_paths = list_login_paths(context, uid)
-    puts login_paths
     login_paths
   end
 
