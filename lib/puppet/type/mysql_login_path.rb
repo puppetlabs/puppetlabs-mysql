@@ -21,7 +21,7 @@ This type provides Puppet with the capabilities to store authentication credenti
 named .mylogin.cnf created with the mysql_config_editor utility.
 
 EOS
-  features: ['simple_get_filter'],
+  features: ['simple_get_filter', 'canonicalize'],
   title_patterns: [
     {
       pattern: %r{^(?<name>.*[^-])-(?<owner>.*)$},

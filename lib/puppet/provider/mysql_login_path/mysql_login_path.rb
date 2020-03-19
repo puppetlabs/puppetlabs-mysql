@@ -77,8 +77,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
         result = line.sub(/\-\-password=/, "")
       end
     end
-    p "-->#{result}<---"
-    result.chomp('')
+    result
   end
 
   def list_login_paths(context, uid)
@@ -93,7 +92,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
                       title: section + "-" + uid.to_s,
                       host: ini[section]["host"].nil? ? nil : ini[section]["host"],
                       user: ini[section]["user"].nil? ? nil : ini[section]["user"],
-                      password: ini[section]["password"].nil? ? nil : Puppet::Pops::Types::PSensitiveType::Sensitive.new(get_password(context, uid, section)),
+                      password: ini[section]["password"].nil? ? nil : Puppet::Provider::MysqlLoginPath::Sensitive.new(get_password(context, uid, section)),
                       socket: ini[section]["socket"].nil? ? nil : ini[section]["socket"],
                       port: ini[section]["port"].nil? ? nil : ini[section]["port"],
                   })
@@ -102,8 +101,6 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   end
 
   def save_login_path(context, name, should)
-    #p should[:password].unwrap
-
     uid = name.fetch(:owner)
 
     args = ['set', '--skip-warn']
@@ -125,29 +122,17 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   end
 
   def get(context, name)
+    #TODO: login paths for each owner - since name is an array
     uid = name.first.fetch(:owner)
     login_paths = list_login_paths(context, uid)
     login_paths
   end
 
   def create(context, name, should)
-    #p "Create"
     save_login_path(context, name, should)
   end
 
   def update(context, name, should)
-    #p context.inspect
-    #context.updating(name) do
-    #  context.warning('Original key not found')
-    #
-    #  context.attribute_changed(name, 'password', 'secret', 'secret',
-    #                            message: "Replaced with content hash")
-    #end
-
-
-    #p "update"
-    #p should
-    #context.
     delete_login_path(context, name)
     save_login_path(context, name, should)
   end
@@ -156,60 +141,12 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     delete_login_path(context, name)
   end
 
-  def set(context, changes)
-    p changes
-    changes.each do |name, change|
-      p "is pw-->#{change[:is][:password].unwrap}<---"
-      p "should pw --->#{change[:should][:password].unwrap}<----"
-
-      if change[:is][:password].unwrap == change[:should][:password].unwrap
-        p "are equal passwords"
+  def canonicalize(context, resources)
+    resources.each do |r|
+      if r.has_key? :password
+        r[:password] = Puppet::Provider::MysqlLoginPath::Sensitive.new(r[:password].unwrap)
       end
-
     end
-
-    super(context, changes)
-    #p changes
-    #changes.each do |name, change|
-    #  is = if context.type.feature?('simple_get_filter')
-    #         change.key?(:is) ? change[:is] : (get(context, [name]) || []).find { |r| r[:name] == name }
-    #       else
-    #         change.key?(:is) ? change[:is] : (get(context) || []).find { |r| r[:name] == name }
-    #       end
-    #  context.type.check_schema(is) unless change.key?(:is)
-    #
-    #  should = change[:should]
-    #
-    #  raise 'SimpleProvider cannot be used with a Type that is not ensurable' unless context.type.ensurable?
-    #
-    #  is = SimpleProvider.create_absent(:name, name) if is.nil?
-    #  should = SimpleProvider.create_absent(:name, name) if should.nil?
-    #
-    #  name_hash = if context.type.namevars.length > 1
-    #                # pass a name_hash containing the values of all namevars
-    #                name_hash = {}
-    #                context.type.namevars.each do |namevar|
-    #                  name_hash[namevar] = change[:should][namevar]
-    #                end
-    #                name_hash
-    #              else
-    #                name
-    #              end
-    #
-    #  if is[:ensure].to_s == 'absent' && should[:ensure].to_s == 'present'
-    #    context.creating(name) do
-    #      create(context, name_hash, should)
-    #    end
-    #  elsif is[:ensure].to_s == 'present' && should[:ensure].to_s == 'present'
-    #    #context.updating(name) do
-    #    #  update(context, name_hash, should)
-    #    #end
-    #  elsif is[:ensure].to_s == 'present' && should[:ensure].to_s == 'absent'
-    #    context.deleting(name) do
-    #      delete(context, name_hash)
-    #    end
-    #  end
-    #end
   end
 
 end
