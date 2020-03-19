@@ -57,7 +57,7 @@ EOS
       desc:      'Username to be entered into the login path.',
     },
     password: {
-      type:      'Optional[String]',
+      type:      'Optional[Sensitive[String[1]]]',
       desc:      'Password to be entered into login path',
     },
     socket: {
