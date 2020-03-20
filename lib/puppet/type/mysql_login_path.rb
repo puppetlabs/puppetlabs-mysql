@@ -12,7 +12,7 @@ mysql_login_path { 'local_socket':
   owner    => 'root',
   host     => 'localhost',
   user     => 'root',
-  password => 'secure',
+  password => Sensitive('secure'),
   socket   => '/var/run/mysql/mysql.sock',
   ensure   => present,
 }
@@ -25,7 +25,7 @@ EOS
   title_patterns: [
     {
       pattern: %r{^(?<name>.*[^-])-(?<owner>.*)$},
-      desc: 'Where the name of the and the uid are provided with a hyphen seperator',
+      desc: 'Where the name of the and the owner are provided with a hyphen seperator',
     },
     {
       pattern: %r{^(?<name>.*)$},
@@ -36,7 +36,6 @@ EOS
     ensure: {
       type:    'Enum[present, absent]',
       desc:    'Whether this resource should be present or absent on the target system.',
-      default: 'present',
     },
     name: {
       type:      'String',
@@ -47,6 +46,7 @@ EOS
       type:      'String',
       desc:      'The user to whom the logon path should belong.',
       behaviour: :namevar,
+      default:   'root',
     },
     host: {
       type:      'Optional[String]',

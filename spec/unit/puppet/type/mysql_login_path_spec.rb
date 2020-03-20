@@ -19,7 +19,7 @@ describe Puppet::Type.type(:mysql_login_path) do
         name: 'local_socket',
         host: 'localhost',
         user: 'root',
-        password: 'secure',
+        password: Puppet::Pops::Types::PSensitiveType::Sensitive.new('secure'),
         socket: '/var/run/mysql/mysql.sock')
     }
 
@@ -29,8 +29,8 @@ describe Puppet::Type.type(:mysql_login_path) do
     end
 
     it 'accepts a host' do
-      login_path[:host] = 'localhost'
-      expect(login_path[:host]).to eq('localhost')
+      login_path[:host] = '10.0.0.1'
+      expect(login_path[:host]).to eq('10.0.0.1')
     end
 
     it 'accepts a user' do
@@ -39,8 +39,8 @@ describe Puppet::Type.type(:mysql_login_path) do
     end
 
     it 'accepts a password' do
-      login_path[:password] = 'even_more_secure'
-      expect(login_path[:password]).to eq('even_more_secure')
+      login_path[:password] = Puppet::Pops::Types::PSensitiveType::Sensitive.new('even_more_secure')
+      expect(login_path[:password].unwrap).to eq('even_more_secure')
     end
 
   end
@@ -50,7 +50,7 @@ describe Puppet::Type.type(:mysql_login_path) do
         name: 'local_tcp',
         host: '127.0.0.1',
         user: 'root',
-        password: 'secure',
+        password: Puppet::Pops::Types::PSensitiveType::Sensitive.new('secure'),
         port: 3306)
     }
 
