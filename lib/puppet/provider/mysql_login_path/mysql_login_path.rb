@@ -10,7 +10,7 @@ require 'open3'
 class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::SimpleProvider
 
   def get_homedir(context, uid)
-    result =  Puppet::Util::Execution.execute(['/usr/bin/getent', 'passwd', uid], failonfail: true)
+    result = Puppet::Util::Execution.execute(['/usr/bin/getent', 'passwd', uid], failonfail: true)
     return result.split(':')[5]
   end
 
@@ -80,6 +80,36 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result
   end
 
+  def save_login_path(context, name, should)
+    uid = name.fetch(:owner)
+
+    args = ['set', '--skip-warn']
+    args.push('-G', should[:name].to_s) if should[:name]
+    args.push('-h', should[:host].to_s) if should[:host]
+    args.push('-u', should[:user].to_s) if should[:user]
+    args.push('-S', should[:socket].to_s) if should[:socket]
+    args.push('-P', should[:port].to_s) if should[:port]
+    args.push('-p') if should[:password] && extract_pw(should[:password])
+    password = should[:password] && extract_pw(should[:password]) ? extract_pw(should[:password]) : nil
+
+    mysql_config_editor_set_cmd(context, uid, password, args)
+  end
+
+  def delete_login_path(context, name)
+    login_path = name.fetch(:name)
+    uid = name.fetch(:owner)
+    mysql_config_editor_cmd(context, uid, 'remove', '-G', login_path)
+  end
+
+  def gen_pw(pw)
+    return Puppet::Provider::MysqlLoginPath::Sensitive.new(pw)
+  end
+
+  def extract_pw(sensitive)
+    return sensitive.unwrap
+  end
+
+
   def list_login_paths(context, uid)
     result = []
     output = mysql_config_editor_cmd(context, uid, 'print', '--all')
@@ -92,7 +122,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
                       title: section + "-" + uid.to_s,
                       host: ini[section]["host"].nil? ? nil : ini[section]["host"],
                       user: ini[section]["user"].nil? ? nil : ini[section]["user"],
-                      password: ini[section]["password"].nil? ? nil : Puppet::Provider::MysqlLoginPath::Sensitive.new(get_password(context, uid, section)),
+                      password: ini[section]["password"].nil? ? nil : gen_pw(get_password(context, uid, section)),
                       socket: ini[section]["socket"].nil? ? nil : ini[section]["socket"],
                       port: ini[section]["port"].nil? ? nil : ini[section]["port"],
                   })
@@ -100,32 +130,14 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result
   end
 
-  def save_login_path(context, name, should)
-    uid = name.fetch(:owner)
-
-    args = ['set', '--skip-warn']
-    args.push('-G', should[:name].to_s) if should[:name]
-    args.push('-h', should[:host].to_s) if should[:host]
-    args.push('-u', should[:user].to_s) if should[:user]
-    args.push('-S', should[:socket].to_s) if should[:socket]
-    args.push('-P', should[:port].to_s) if should[:port]
-    args.push('-p') if should[:password].unwrap
-    password = should[:password].unwrap ? should[:password].unwrap: nil
-
-    mysql_config_editor_set_cmd(context, uid, password, args)
-  end
-
-  def delete_login_path(context, name)
-    login_path = name.fetch(:name)
-    uid = name.fetch(:owner)
-    mysql_config_editor_cmd(context, uid, 'remove', '-G', login_path)
-  end
-
   def get(context, name)
-    #TODO: login paths for each owner - since name is an array
-    uid = name.first.fetch(:owner)
-    login_paths = list_login_paths(context, uid)
-    login_paths
+    result = []
+    owner = name.empty? ? owner = ['root'] : name.map {|item| item[:owner] }.compact.uniq
+    owner.each do |uid|
+      login_paths = list_login_paths(context, uid)
+      result += login_paths
+    end
+    result
   end
 
   def create(context, name, should)
@@ -143,8 +155,8 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
 
   def canonicalize(context, resources)
     resources.each do |r|
-      if r.has_key? :password
-        r[:password] = Puppet::Provider::MysqlLoginPath::Sensitive.new(r[:password].unwrap)
+      if r.has_key?(:password) && r[:password].is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
+        r[:password] = gen_pw(extract_pw(r[:password]))
       end
     end
   end

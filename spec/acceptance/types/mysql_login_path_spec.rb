@@ -87,6 +87,12 @@ describe 'mysql_login_path' do
           ensure   => present,
         }
       MANIFEST
+      pp2 = <<-MANIFEST
+        mysql_login_path { 'local_tcp-root':
+          ensure  => present,
+          host    => '192.168.0.1'
+        }
+      MANIFEST
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
@@ -104,20 +110,29 @@ describe 'mysql_login_path' do
           expect(r.stdout).to match(%r{--password=Fort_kn0X\n})
         end
       end
+
       it 'it applies idempotent' do
         idempotent_apply(pp)
       end
 
-      #pp = <<-MANIFEST
-      #  mysql_login_path { 'local_tcp-root':
-      #    owner    => root,
-      #    ensure   => present,
-      #  }
-      #MANIFEST
-      #it 'removes values' do
-      #  apply_manifest(pp, catch_failures: true)
-      #end
-
+      it 'removes values' do
+        apply_manifest(pp2, catch_failures: true)
+      end
+      it 'ensure values are removed #stdout' do
+        run_shell("mysql_config_editor print -G local_tcp") do |r|
+          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
+          expect(r.stdout).to match(%r{host = 192.168.0.1\n})
+          expect(r.stdout).not_to match(%r{host = 10.0.0.1\n})
+          expect(r.stdout).not_to match(%r{user = network2\n})
+          expect(r.stdout).not_to match(%r{port = 3307\n})
+          expect(r.stderr).to be_empty
+        end
+      end
+      it 'ensure password removed from the login path #stdout' do
+        run_shell("my_print_defaults -s local_tcp") do |r|
+          expect(r.stdout).not_to match(%r{--password=Fort_kn0X\n})
+        end
+      end
     end
 
     describe 'delete login path' do
@@ -221,4 +236,5 @@ describe 'mysql_login_path' do
       end
     end
   end
+
 end
