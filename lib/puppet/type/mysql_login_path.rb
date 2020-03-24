@@ -17,7 +17,7 @@ mysql_login_path { 'local_socket':
   ensure   => present,
 }
 
-This type provides Puppet with the capabilities to store authentication credentials in an obfuscated login path file 
+This type provides Puppet with the capabilities to store authentication credentials in an obfuscated login path file
 named .mylogin.cnf created with the mysql_config_editor utility.
 
 EOS

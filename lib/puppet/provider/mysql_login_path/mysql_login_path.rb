@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require File.expand_path(File.join(File.dirname(__FILE__), 'inifile'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'sensitive'))
 require 'puppet/resource_api/simple_provider'
 require 'puppet/util/execution'
 require 'puppet/util/suidmanager'
@@ -8,10 +9,9 @@ require 'open3'
 
 # Implementation for the mysql_login_path type using the Resource API.
 class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::SimpleProvider
-
-  def get_homedir(context, uid)
+  def get_homedir(_context, uid)
     result = Puppet::Util::Execution.execute(['/usr/bin/getent', 'passwd', uid], failonfail: true)
-    return result.split(':')[5]
+    result.split(':')[5]
   end
 
   def mysql_config_editor_set_cmd(context, uid, password = nil, *args)
@@ -20,7 +20,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
 
     if args.is_a?(Array)
       command = args.flatten.map(&:to_s)
-      command_str = command.join(" ")
+      command_str = command.join(' ')
     elsif args.is_a?(String)
       command_str = command
     end
@@ -39,10 +39,11 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
 
     if @exit_status.success? == false
       raise Puppet::ExecutionFailure, _(
-          "Execution of '%{str}' returned %{exit_status}: %{output}") % {
-          str: command_str,
-          exit_status: @exit_status,
-          output: @captured_stderr.strip
+        "Execution of '%{str}' returned %{exit_status}: %{output}",
+      ) % {
+        str: command_str,
+        exit_status: @exit_status,
+        output: @captured_stderr.strip,
       }
     end
     @captured_stdout
@@ -51,30 +52,31 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   def mysql_config_editor_cmd(context, uid, *args)
     args.unshift('/usr/bin/mysql_config_editor')
     homedir = get_homedir(context, uid)
-    return Puppet::Util::Execution.execute(
-        args,
-        failonfail: true,
-        uid: uid,
-        custom_environment: { 'HOME' => homedir }
+    Puppet::Util::Execution.execute(
+      args,
+      failonfail: true,
+      uid: uid,
+      custom_environment: { 'HOME' => homedir },
     )
   end
 
   def my_print_defaults_cmd(context, uid, *args)
     args.unshift('/usr/bin/my_print_defaults')
     homedir = get_homedir(context, uid)
-    return Puppet::Util::Execution.execute(
-        args,
-        failonfail: true,
-        uid: uid,
-        custom_environment: { 'HOME' => homedir })
+    Puppet::Util::Execution.execute(
+      args,
+      failonfail: true,
+      uid: uid,
+      custom_environment: { 'HOME' => homedir },
+    )
   end
 
   def get_password(context, uid, name)
     result = ''
     output = my_print_defaults_cmd(context, uid, '-s', name)
     output.split("\n").each do |line|
-      if line.match(/\-\-password/)
-        result = line.sub(/\-\-password=/, "")
+      if line =~ %r{\-\-password}
+        result = line.sub(%r{\-\-password=}, '')
       end
     end
     result
@@ -90,7 +92,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     args.push('-S', should[:socket].to_s) if should[:socket]
     args.push('-P', should[:port].to_s) if should[:port]
     args.push('-p') if should[:password] && extract_pw(should[:password])
-    password = should[:password] && extract_pw(should[:password]) ? extract_pw(should[:password]) : nil
+    password = (should[:password] && extract_pw(should[:password])) ? extract_pw(should[:password]) : nil
 
     mysql_config_editor_set_cmd(context, uid, password, args)
   end
@@ -102,37 +104,34 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   end
 
   def gen_pw(pw)
-    return Puppet::Provider::MysqlLoginPath::Sensitive.new(pw)
+    Puppet::Provider::MysqlLoginPath::Sensitive.new(pw)
   end
 
   def extract_pw(sensitive)
-    return sensitive.unwrap
+    sensitive.unwrap
   end
-
 
   def list_login_paths(context, uid)
     result = []
     output = mysql_config_editor_cmd(context, uid, 'print', '--all')
-    ini = Puppet::Provider::MysqlLoginPath::IniFile.new( :content => output )
+    ini = Puppet::Provider::MysqlLoginPath::IniFile.new(content: output)
     ini.each_section do |section|
-      result.push({
-                      ensure: 'present',
-                      name: section,
-                      owner: uid.to_s,
-                      title: section + "-" + uid.to_s,
-                      host: ini[section]["host"].nil? ? nil : ini[section]["host"],
-                      user: ini[section]["user"].nil? ? nil : ini[section]["user"],
-                      password: ini[section]["password"].nil? ? nil : gen_pw(get_password(context, uid, section)),
-                      socket: ini[section]["socket"].nil? ? nil : ini[section]["socket"],
-                      port: ini[section]["port"].nil? ? nil : ini[section]["port"],
-                  })
+      result.push(ensure: 'present',
+                  name: section,
+                  owner: uid.to_s,
+                  title: section + '-' + uid.to_s,
+                  host: ini[section]['host'].nil? ? nil : ini[section]['host'],
+                  user: ini[section]['user'].nil? ? nil : ini[section]['user'],
+                  password: ini[section]['password'].nil? ? nil : gen_pw(get_password(context, uid, section)),
+                  socket: ini[section]['socket'].nil? ? nil : ini[section]['socket'],
+                  port: ini[section]['port'].nil? ? nil : ini[section]['port'])
     end
     result
   end
 
   def get(context, name)
     result = []
-    owner = name.empty? ? owner = ['root'] : name.map {|item| item[:owner] }.compact.uniq
+    owner = name.empty? ? ['root'] : name.map { |item| item[:owner] }.compact.uniq
     owner.each do |uid|
       login_paths = list_login_paths(context, uid)
       result += login_paths
@@ -153,12 +152,11 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     delete_login_path(context, name)
   end
 
-  def canonicalize(context, resources)
+  def canonicalize(_context, resources)
     resources.each do |r|
-      if r.has_key?(:password) && r[:password].is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
+      if r.key?(:password) && r[:password].is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
         r[:password] = gen_pw(extract_pw(r[:password]))
       end
     end
   end
-
 end
