@@ -1,4 +1,5 @@
-#encoding: UTF-8
+# encoding: UTF-8
+
 # See: https://github.com/puppetlabs/puppet/blob/master/lib/puppet/util/inifile.rb
 # This class represents the INI file and can be used to parse, modify,
 # and write INI files.
@@ -6,7 +7,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   include Enumerable
 
   class Error < StandardError; end
-  #VERSION = '3.0.0'
+  # VERSION = '3.0.0'
 
   # Public: Open an INI file and load the contents.
   #
@@ -26,9 +27,9 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #   #=> nil
   #
   # Returns an IniFile instance or nil if the file could not be opened.
-  def self.load( filename, opts = {} )
+  def self.load(filename, opts = {})
     return unless File.file? filename
-    new(opts.merge(:filename => filename))
+    new(opts.merge(filename: filename))
   end
 
   # Get and set the filename
@@ -65,7 +66,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #   IniFile.new( :content => "[global]\nfoo=bar", :comment => '#' )
   #   #=> an IniFile instance
   #
-  def initialize( opts = {} )
+  def initialize(opts = {})
     @comment  = opts.fetch(:comment, ';#')
     @param    = opts.fetch(:parameter, '=')
     @encoding = opts.fetch(:encoding, nil)
@@ -73,7 +74,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     @filename = opts.fetch(:filename, nil)
     content   = opts.fetch(:content, nil)
 
-    @ini = Hash.new {|h,k| h[k] = Hash.new}
+    @ini = Hash.new { |h, k| h[k] = {} }
 
     if    content.is_a?(Hash) then merge!(content)
     elsif content             then parse(content)
@@ -90,22 +91,22 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #        :encoding - The encoding as a String
   #
   # Returns this IniFile instance.
-  def write( opts = {} )
+  def write(opts = {})
     filename = opts.fetch(:filename, @filename)
     encoding = opts.fetch(:encoding, @encoding)
-    mode = encoding ? "w:#{encoding}" : "w"
+    mode = encoding ? "w:#{encoding}" : 'w'
 
     File.open(filename, mode) do |f|
-      @ini.each do |section,hash|
+      @ini.each do |section, hash|
         f.puts "[#{section}]"
-        hash.each {|param,val| f.puts "#{param} #{@param} #{escape_value val}"}
+        hash.each { |param, val| f.puts "#{param} #{@param} #{escape_value val}" }
         f.puts
       end
     end
 
     self
   end
-  alias :save :write
+  alias save write
 
   # Public: Read the contents of the INI file from the file system and replace
   # and set the state of this IniFile instance. If left unspecified the
@@ -119,24 +120,24 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #
   # Returns this IniFile instance if the read was successful; nil is returned
   # if the file could not be read.
-  def read( opts = {} )
+  def read(opts = {})
     filename = opts.fetch(:filename, @filename)
     encoding = opts.fetch(:encoding, @encoding)
     return unless File.file? filename
 
-    mode = encoding ? "r:#{encoding}" : "r"
+    mode = encoding ? "r:#{encoding}" : 'r'
     File.open(filename, mode) { |fd| parse fd }
     self
   end
-  alias :restore :read
+  alias restore read
 
   # Returns this IniFile converted to a String.
   def to_s
     s = []
-    @ini.each do |section,hash|
+    @ini.each do |section, hash|
       s << "[#{section}]"
-      hash.each {|param,val| s << "#{param} #{@param} #{escape_value val}"}
-      s << ""
+      hash.each { |param, val| s << "#{param} #{@param} #{escape_value val}" }
+      s << ''
     end
     s.join("\n")
   end
@@ -152,8 +153,8 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # other - The other IniFile.
   #
   # Returns a new IniFile.
-  def merge( other )
-    self.dup.merge!(other)
+  def merge(other)
+    dup.merge!(other)
   end
 
   # Public: Merges other_inifile into this inifile, overwriting existing
@@ -163,7 +164,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # other - The other IniFile.
   #
   # Returns this IniFile.
-  def merge!( other )
+  def merge!(other)
     return self if other.nil?
 
     my_keys = @ini.keys
@@ -216,8 +217,8 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def each
     return unless block_given?
-    @ini.each do |section,hash|
-      hash.each do |param,val|
+    @ini.each do |section, hash|
+      hash.each do |param, val|
         yield section, param, val
       end
     end
@@ -238,7 +239,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def each_section
     return unless block_given?
-    @ini.each_key {|section| yield section}
+    @ini.each_key { |section| yield section }
     self
   end
 
@@ -247,7 +248,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # section - The section name as a String.
   #
   # Returns the deleted section Hash.
-  def delete_section( section )
+  def delete_section(section)
     @ini.delete section.to_s
   end
 
@@ -262,7 +263,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #   #=> global section Hash
   #
   # Returns the Hash of parameter/value pairs for this section.
-  def []( section )
+  def [](section)
     return nil if section.nil?
     @ini[section.to_s]
   end
@@ -278,7 +279,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #   #=> { 'gritty' => 'yes' }
   #
   # Returns the value Hash.
-  def []=( section, value )
+  def []=(section, value)
     @ini[section.to_s] = value
   end
 
@@ -294,7 +295,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #
   # Return a Hash containing only those sections that match the given regular
   # expression.
-  def match( regex )
+  def match(regex)
     @ini.dup.delete_if { |section, _| section !~ regex }
   end
 
@@ -303,8 +304,8 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # section - The section name as a String.
   #
   # Returns true if the section exists in the IniFile.
-  def has_section?( section )
-    @ini.has_key? section.to_s
+  def section?(section)
+    @ini.key? section.to_s
   end
 
   # Returns an Array of section names contained in this IniFile.
@@ -318,7 +319,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def freeze
     super
-    @ini.each_value {|h| h.freeze}
+    @ini.each_value { |h| h.freeze }
     @ini.freeze
     self
   end
@@ -329,7 +330,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def taint
     super
-    @ini.each_value {|h| h.taint}
+    @ini.each_value { |h| h.taint }
     @ini.taint
     self
   end
@@ -341,9 +342,9 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns a new IniFile.
   def dup
     other = super
-    other.instance_variable_set(:@ini, Hash.new {|h,k| h[k] = Hash.new})
-    @ini.each_pair {|s,h| other[s].merge! h}
-    other.taint if self.tainted?
+    other.instance_variable_set(:@ini, Hash.new { |h, k| h[k] = {} })
+    @ini.each_pair { |s, h| other[s].merge! h }
+    other.taint if tainted?
     other
   end
 
@@ -355,7 +356,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns a new IniFile.
   def clone
     other = dup
-    other.freeze if self.frozen?
+    other.freeze if frozen?
     other
   end
 
@@ -366,25 +367,25 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # other - The other IniFile.
   #
   # Returns true if the INI files are equivalent and false if they differ.
-  def eql?( other )
+  def eql?(other)
     return true if equal? other
     return false unless other.instance_of? self.class
     @ini == other.instance_variable_get(:@ini)
   end
-  alias :== :eql?
+  alias == eql?
 
   # Escape special characters.
   #
   # value - The String value to escape.
   #
   # Returns the escaped value.
-  def escape_value( value )
+  def escape_value(value)
     value = value.to_s.dup
-    value.gsub!(%r/\\([0nrt])/, '\\\\\1')
-    value.gsub!(%r/\n/, '\n')
-    value.gsub!(%r/\r/, '\r')
-    value.gsub!(%r/\t/, '\t')
-    value.gsub!(%r/\0/, '\0')
+    value.gsub!(%r{\\([0nrt])}, '\\\\\1')
+    value.gsub!(%r{\n}, '\n')
+    value.gsub!(%r{\r}, '\r')
+    value.gsub!(%r{\t}, '\t')
+    value.gsub!(%r{\0}, '\0')
     value
   end
 
@@ -395,7 +396,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # content - A String or a file descriptor (must respond to `each_line`)
   #
   # Returns this IniFile.
-  def parse( content )
+  def parse(content)
     parser = Parser.new(@ini, @param, @comment, @default)
     parser.parse(content)
     self
@@ -406,7 +407,6 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # parsed must respond to `each_line` - this includes Strings and any IO
   # object.
   class Parser
-
     attr_writer :section
     attr_accessor :property
     attr_accessor :value
@@ -419,27 +419,27 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     # comment - String containing the comment character(s)
     # default - The String name of the default global section
     #
-    def initialize( hash, param, comment, default )
+    def initialize(hash, param, comment, default)
       @hash = hash
       @default = default
 
-      comment = comment.to_s.empty? ? "\\z" : "\\s*(?:[#{comment}].*)?\\z"
+      comment = comment.to_s.empty? ? '\\z' : "\\s*(?:[#{comment}].*)?\\z"
 
-      @section_regexp  = %r/\A\s*\[([^\]]+)\]#{comment}/
-      @ignore_regexp   = %r/\A#{comment}/
-      @property_regexp = %r/\A(.*?)(?<!\\)#{param}(.*)\z/
+      @section_regexp  = %r{\A\s*\[([^\]]+)\]#{comment}}
+      @ignore_regexp   = %r{\A#{comment}}
+      @property_regexp = %r{\A(.*?)(?<!\\)#{param}(.*)\z}
 
-      @open_quote      = %r/\A\s*(".*)\z/
-      @close_quote     = %r/\A(.*(?<!\\)")#{comment}/
-      @full_quote      = %r/\A\s*(".*(?<!\\)")#{comment}/
-      @trailing_slash  = %r/\A(.*)(?<!\\)\\#{comment}/
-      @normal_value    = %r/\A(.*?)#{comment}/
+      @open_quote      = %r{\A\s*(".*)\z}
+      @close_quote     = %r{\A(.*(?<!\\)")#{comment}}
+      @full_quote      = %r{\A\s*(".*(?<!\\)")#{comment}}
+      @trailing_slash  = %r{\A(.*)(?<!\\)\\#{comment}}
+      @normal_value    = %r{\A(.*?)#{comment}}
     end
 
     # Returns `true` if the current value starts with a leading double quote.
     # Otherwise returns false.
     def leading_quote?
-      value && value =~ %r/\A"/
+      value && value.start_with?('"')
     end
 
     # Given a string, attempt to parse out a value from that string. This
@@ -450,7 +450,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     #
     # Returns `true` if the next line is also part of the current value.
     # Returns `fase` if the string contained a complete value.
-    def parse_value( string )
+    def parse_value(string)
       continuation = false
 
       # if our value starts with a double quote, then we are in a
@@ -458,7 +458,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       if leading_quote?
         # check for a closing quote at the end of the string
         if string =~ @close_quote
-          value << $1
+          value << Regexp.last_match(1)
 
           # otherwise just append the string to the value
         else
@@ -470,18 +470,18 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       else
         case string
         when @full_quote
-          self.value = $1
+          self.value = Regexp.last_match(1)
 
         when @open_quote
-          self.value = $1
+          self.value = Regexp.last_match(1)
           continuation = true
 
         when @trailing_slash
-          self.value ?  self.value << $1 : self.value = $1
+          value ? value << Regexp.last_match(1) : self.value = Regexp.last_match(1)
           continuation = true
 
         when @normal_value
-          self.value ?  self.value << $1 : self.value = $1
+          value ? value << Regexp.last_match(1) : self.value = Regexp.last_match(1)
 
         else
           error
@@ -489,7 +489,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       end
 
       if continuation
-        self.value << $/ if leading_quote?
+        value << $INPUT_RECORD_SEPARATOR if leading_quote?
       else
         process_property
       end
@@ -503,7 +503,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     # content - Any object that responds to `each_line`
     #
     # Returns nil.
-    def parse( content )
+    def parse(content)
       return unless content
 
       continuation = false
@@ -522,12 +522,12 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
           when @ignore_regexp
             nil
           when @section_regexp
-            self.section = @hash[$1]
+            self.section = @hash[Regexp.last_match(1)]
           when @property_regexp
-            self.property = $1.strip
+            self.property = Regexp.last_match(1).strip
             error if property.empty?
 
-            continuation = parse_value $2
+            continuation = parse_value Regexp.last_match(2)
           else
             error
           end
@@ -537,7 +537,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       # check here if we have a dangling value ... usually means we have an
       # unmatched open quote
       if leading_quote?
-        error "Unmatched open quote"
+        error 'Unmatched open quote'
       elsif property && value
         process_property
       elsif value
@@ -555,7 +555,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       property.strip!
       value.strip!
 
-      self.value = $1 if value =~ %r/\A"(.*)(?<!\\)"\z/m
+      self.value = Regexp.last_match(1) if value =~ %r{\A"(.*)(?<!\\)"\z}m
 
       section[property] = typecast(value)
 
@@ -574,7 +574,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     # msg - The message String to use.
     #
     # Raises IniFile::Error
-    def error( msg = 'Could not parse line' )
+    def error(msg = 'Could not parse line')
       raise Error, "#{msg}: #{@line.inspect}"
     end
 
@@ -590,15 +590,21 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     #  "foo"   -->  "foo"
     #
     # Returns the typecast value.
-    def typecast( value )
+    def typecast(value)
       case value
-      when %r/\Atrue\z/i;  true
-      when %r/\Afalse\z/i; false
-      when %r/\A\s*\z/i;   nil
+      when %r{\Atrue\z}i then  true
+      when %r{\Afalse\z}i then false
+      when %r{\A\s*\z}i then   nil
       else
-        Integer(value) rescue \
-        Float(value)   rescue \
-        unescape_value(value)
+        begin
+          begin
+                    Integer(value)
+                  rescue
+                    Float(value)
+                  end
+        rescue
+          unescape_value(value)
+        end
       end
     end
 
@@ -609,19 +615,18 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     # value - The String value to unescape.
     #
     # Returns the unescaped value.
-    def unescape_value( value )
+    def unescape_value(value)
       value = value.to_s
-      value.gsub!(%r/\\[0nrt\\]/) { |char|
+      value.gsub!(%r{\\[0nrt\\]}) do |char|
         case char
-        when '\0';   "\0"
-        when '\n';   "\n"
-        when '\r';   "\r"
-        when '\t';   "\t"
-        when '\\\\'; "\\"
+        when '\0' then   "\0"
+        when '\n' then   "\n"
+        when '\r' then   "\r"
+        when '\t' then   "\t"
+        when '\\\\' then '\\'
         end
-      }
+      end
       value
     end
   end
-
-end  # IniFile
+end # IniFile
