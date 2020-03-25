@@ -41,7 +41,6 @@ Rakefile:
   requires:
   - puppet_pot_generator/rake_tasks
 spec/spec_helper.rb:
-  mock_with: ':rspec'
   spec_overrides:
   - require 'spec_helper_local'
   coverage_report: true

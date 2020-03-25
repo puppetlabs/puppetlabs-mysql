@@ -8,45 +8,36 @@ require 'puppet/provider/mysql_login_path/mysql_login_path'
 RSpec.describe Puppet::Provider::MysqlLoginPath::MysqlLoginPath do
   subject(:provider) { described_class.new }
 
-  let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-  let(:wait_thr) { instance_double('wait_thr') }
-  let(:wait_thr_value) { instance_double('wait_thr_value') }
+  let(:context) { mock('Puppet::ResourceApi::BaseContext') }
+  let(:wait_thr) { mock('wait_thr') }
+  let(:wait_thr_value) { mock('wait_thr_value') }
   let(:sensitive_secure) { Puppet::Provider::MysqlLoginPath::Sensitive.new('secure') }
   let(:sensitive_more_secure) { Puppet::Provider::MysqlLoginPath::Sensitive.new('more_secure') }
 
   before :each do
-    allow(Puppet::Util::Execution).to receive(:execute)
-      .with(['/usr/bin/getent', 'passwd', 'root'], failonfail: true)
-      .and_return('root:x:0:0:root:/root:/bin/bash')
-    allow(Puppet::Util::Execution).to receive(:execute)
-      .with(['/usr/bin/mysql_config_editor', 'print', '--all'], failonfail: true,
-                                                                uid: 'root',
-                                                                custom_environment: { 'HOME' => '/root' })
-      .and_return("[local_tcp]\nuser = root\npassword = *****\nhost = 127.0.0.1\nport = 3306")
-    allow(Puppet::Util::Execution).to receive(:execute)
-      .with(['/usr/bin/mysql_config_editor', 'remove', '-G', 'local_socket'], failonfail: true,
-                                                                              uid: 'root',
-                                                                              custom_environment: { 'HOME' => '/root' })
-      .and_return(true)
-    allow(Puppet::Util::Execution).to receive(:execute)
-      .with(['/usr/bin/my_print_defaults', '-s', 'local_tcp'], failonfail: true,
-                                                               uid: 'root',
-                                                               custom_environment: { 'HOME' => '/root' })
-      .and_return("--user=root\n--password=secure\n--host=127.0.0.1\n--port=3306")
-    allow(Puppet::Util::Execution).to receive(:execute)
-      .with(['/usr/bin/my_print_defaults', '-s', 'local_socket'], failonfail: true,
-                                                                  uid: 'root',
-                                                                  custom_environment: { 'HOME' => '/root' })
-      .and_return("--user=root\n--password=more_secure\n--host=localhost\n--socket=/var/run/mysql.sock")
-    allow(wait_thr_value).to receive(:success?).and_return(true)
-    allow(wait_thr).to receive(:value).and_return(wait_thr_value)
-    allow(Open3).to receive(:popen3)
-      .with({ 'HOME' => '/root' },
-            '/usr/bin/mysql_config_editor set --skip-warn -G local_socket -h localhost -u root ' \
-                '-S /var/run/mysql/mysql.sock -p').and_return(wait_thr_value)
-    allow(Open3).to receive(:popen3)
-      .with({ 'HOME' => '/root' },
-            '/usr/bin/mysql_config_editor set --skip-warn -G local_socket -h 127.0.0.1 -u root -P 3306 -p').and_return(wait_thr_value)
+    Puppet::Util::Execution.stubs(:execute).with(['/usr/bin/getent', 'passwd', 'root'], failonfail: true).returns('root:x:0:0:root:/root:/bin/bash')
+
+    Puppet::Util::Execution.stubs(:execute).with(['/usr/bin/mysql_config_editor', 'print', '--all'], failonfail: true, uid: 'root', custom_environment: { 'HOME' => '/root' })
+                           .returns("[local_tcp]\nuser = root\npassword = *****\nhost = 127.0.0.1\nport = 3306")
+    Puppet::Util::Execution.stubs(:execute).with(['/usr/bin/mysql_config_editor', 'remove', '-G', 'local_socket'], failonfail: true, uid: 'root', custom_environment: { 'HOME' => '/root' })
+
+    Puppet::Util::Execution.stubs(:execute).with(['/usr/bin/my_print_defaults', '-s', 'local_tcp'], failonfail: true, uid: 'root', custom_environment: { 'HOME' => '/root' })
+                           .returns("--user=root\n--password=secure\n--host=127.0.0.1\n--port=3306")
+    Puppet::Util::Execution.stubs(:execute).with(['/usr/bin/my_print_defaults', '-s', 'local_socket'], failonfail: true, uid: 'root', custom_environment: { 'HOME' => '/root' })
+                           .returns("--user=root\n--password=more_secure\n--host=localhost\n--socket=/var/run/mysql.sock")
+
+    wait_thr_value.stubs(:success?).returns(true)
+    wait_thr.stubs(:value).returns(wait_thr_value)
+    Open3.stubs(:popen3)
+         .with({ 'HOME' => '/root' },
+               '/usr/bin/mysql_config_editor set --skip-warn -G local_socket -h localhost -u root ' \
+                 '-S /var/run/mysql/mysql.sock -p')
+         .returns(wait_thr_value)
+
+    Open3.stubs(:popen3)
+         .with({ 'HOME' => '/root' },
+               '/usr/bin/mysql_config_editor set --skip-warn -G local_socket -h 127.0.0.1 -u root -P 3306 -p')
+         .returns(wait_thr_value)
   end
 
   describe '#get' do
