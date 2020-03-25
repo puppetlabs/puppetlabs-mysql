@@ -1,8 +1,7 @@
 require 'spec_helper_acceptance'
 
-describe 'mysql_login_path' do
-  describe 'setup' do
-    pp = <<-MANIFEST
+if os[:family] == 'redhat'
+  pp_repo = <<-MANIFEST
       yumrepo { 'repo.mysql.com':
         descr    => 'repo.mysql.com',
         baseurl  => 'http://repo.mysql.com/yum/mysql-5.6-community/el/#{host_inventory['facter']['os']['release']['major']}/$basearch/',
@@ -10,19 +9,72 @@ describe 'mysql_login_path' do
         enabled  => 1,
         gpgcheck => 1,
       }
-      class { '::mysql::server':
+  MANIFEST
+  pp_repo_cleanup = <<-MANIFEST
+        yumrepo { 'repo.mysql.com':
+          ensure => absent,
+        }
+  MANIFEST
+elsif os[:family]  =~ /debian|ubuntu/
+  pp_repo = <<-MANIFEST
+      include apt
+      apt::source { 'repo.mysql.com':
+        location => "http://repo.mysql.com/apt/#{os[:family]}",
+        release  => $::lsbdistcodename,
+        repos    => 'mysql-5.6',
+        key      => {
+          id     => 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
+          server => 'hkp://keyserver.ubuntu.com:80',
+        },
+        include => {
+          src   => false,
+          deb   => true,
+        },
+      }
+  MANIFEST
+  pp_repo_cleanup = <<-MANIFEST
+        include apt
+        apt::source { 'repo.mysql.com':
+          ensure => absent,
+        }
+  MANIFEST
+end
+
+describe 'mysql_login_path' do
+  before(:all) do
+    if os[:family] =~ /debian|ubuntu/
+      run_shell('puppet module install puppetlabs-apt')
+    end
+  end
+
+  after(:all) do
+    pp = <<-MANIFEST
+      #{pp_repo_cleanup}
+      user { 'loginpath_test':
+        ensure => absent,
+      }
+    MANIFEST
+    apply_manifest(pp, catch_failures: true)
+    if os[:family] =~ /debian|ubuntu/
+      run_shell('puppet module uninstall puppetlabs-apt')
+    end
+  end
+
+  describe 'setup' do
+    pp = <<-MANIFEST
+      #{pp_repo}
+      -> class { '::mysql::server':
         service_manage => false,
         service_name   => 'mysqld',
         package_name   => 'mysql-community-server',
       }
-      class {'::mysql::client':
+      -> class {'::mysql::client':
         package_name => 'mysql-community-client',
       }
       user { 'loginpath_test':
         ensure => present,
+        managehome => true,
       }
-      Yumrepo['repo.mysql.com']->Class['::mysql::server']
-      Yumrepo['repo.mysql.com']->Class['::mysql::client']
     MANIFEST
     it 'works with no errors' do
       apply_manifest(pp, catch_failures: true)
