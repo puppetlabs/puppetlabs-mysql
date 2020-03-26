@@ -1,10 +1,19 @@
 require 'spec_helper_acceptance'
 
+mysql_server_pkg_name = 'mysql-community-server'
+mysql_client_pkg_name = 'mysql-community-client'
+mysql_version = '5.6'
+
 if os[:family] == 'redhat'
+  if os[:release].to_i == 8
+    mysql_version = '8.0'
+    mysql_server_pkg_name = "mysql-server"
+    mysql_client_pkg_name = "mysql-client"
+  end
   pp_repo = <<-MANIFEST
       yumrepo { 'repo.mysql.com':
         descr    => 'repo.mysql.com',
-        baseurl  => 'http://repo.mysql.com/yum/mysql-5.6-community/el/#{host_inventory['facter']['os']['release']['major']}/$basearch/',
+        baseurl  => 'http://repo.mysql.com/yum/mysql-#{mysql_version}-community/el/#{os[:release].to_i}/$basearch/',
         gpgkey   => 'http://repo.mysql.com/RPM-GPG-KEY-mysql',
         enabled  => 1,
         gpgcheck => 1,
@@ -15,14 +24,24 @@ if os[:family] == 'redhat'
           ensure => absent,
         }
   MANIFEST
-  package_task = { name: 'yum', action: 'update' }
 elsif os[:family]  =~ /debian|ubuntu/
+  if os[:family] == 'debian' && os[:release] =~/10/
+    mysql_version = '8.0'
+  elsif os[:family] == 'ubuntu' && os[:release] =~/14\.04/
+    mysql_server_pkg_name = "mysql-server-#{mysql_version}"
+    mysql_client_pkg_name = "mysql-client-#{mysql_version}"
+  elsif os[:family] == 'ubuntu' && os[:release] =~/16\.04|18\.04/
+    mysql_version = '5.7'
+  end
+
+  mysql_repo = "mysql-#{mysql_version}"
+
   pp_repo = <<-MANIFEST
       include apt
       apt::source { 'repo.mysql.com':
         location => "http://repo.mysql.com/apt/#{os[:family]}",
         release  => $::lsbdistcodename,
-        repos    => 'mysql-5.6',
+        repos    => '#{mysql_repo}',
         key      => {
           id     => 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
           server => 'hkp://keyserver.ubuntu.com:80',
@@ -31,6 +50,7 @@ elsif os[:family]  =~ /debian|ubuntu/
           src   => false,
           deb   => true,
         },
+        notify => Exec['apt_update']
       }
   MANIFEST
   pp_repo_cleanup = <<-MANIFEST
@@ -39,7 +59,6 @@ elsif os[:family]  =~ /debian|ubuntu/
           ensure => absent,
         }
   MANIFEST
-  package_task = { name: 'apt', action: 'update' }
 end
 
 describe 'mysql_login_path' do
@@ -64,13 +83,14 @@ describe 'mysql_login_path' do
 
   describe 'setup' do
     pp = <<-MANIFEST
-      class { '::mysql::server':
+      #{pp_repo}
+      -> class { '::mysql::server':
         service_manage => false,
         service_name   => 'mysqld',
-        package_name   => 'mysql-community-server',
+        package_name   => '#{mysql_server_pkg_name}',
       }
-      class {'::mysql::client':
-        package_name => 'mysql-community-client',
+      -> class {'::mysql::client':
+        package_name => '#{mysql_client_pkg_name}',
       }
       user { 'loginpath_test':
         ensure => present,
@@ -78,8 +98,6 @@ describe 'mysql_login_path' do
       }
     MANIFEST
     it 'works with no errors' do
-      apply_manifest(pp_repo, catch_failures: true)
-      run_bolt_task(package_task[:name], package_task[:action])
       apply_manifest(pp, catch_failures: true)
     end
   end
