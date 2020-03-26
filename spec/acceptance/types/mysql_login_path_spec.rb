@@ -15,6 +15,7 @@ if os[:family] == 'redhat'
           ensure => absent,
         }
   MANIFEST
+  package_task = { name: 'yum', action: 'update' }
 elsif os[:family]  =~ /debian|ubuntu/
   pp_repo = <<-MANIFEST
       include apt
@@ -38,6 +39,7 @@ elsif os[:family]  =~ /debian|ubuntu/
           ensure => absent,
         }
   MANIFEST
+  package_task = { name: 'apt', action: 'update' }
 end
 
 describe 'mysql_login_path' do
@@ -62,13 +64,12 @@ describe 'mysql_login_path' do
 
   describe 'setup' do
     pp = <<-MANIFEST
-      #{pp_repo}
-      -> class { '::mysql::server':
+      class { '::mysql::server':
         service_manage => false,
         service_name   => 'mysqld',
         package_name   => 'mysql-community-server',
       }
-      -> class {'::mysql::client':
+      class {'::mysql::client':
         package_name => 'mysql-community-client',
       }
       user { 'loginpath_test':
@@ -77,6 +78,8 @@ describe 'mysql_login_path' do
       }
     MANIFEST
     it 'works with no errors' do
+      apply_manifest(pp_repo, catch_failures: true)
+      run_bolt_task(package_task[:name], package_task[:action])
       apply_manifest(pp, catch_failures: true)
     end
   end
