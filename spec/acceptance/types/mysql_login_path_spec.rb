@@ -8,7 +8,7 @@ if os[:family] == 'redhat'
   if os[:release].to_i == 8
     mysql_version = '8.0'
     mysql_server_pkg_name = "mysql-server"
-    mysql_client_pkg_name = "mysql-client"
+    mysql_client_pkg_name = "mysql"
   end
   pp_repo = <<-MANIFEST
       yumrepo { 'repo.mysql.com':
@@ -61,7 +61,7 @@ elsif os[:family]  =~ /debian|ubuntu/
   MANIFEST
 end
 
-describe 'mysql_login_path' do
+describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ /redhat\-5|suse/) do
   before(:all) do
     if os[:family] =~ /debian|ubuntu/
       run_shell('puppet module install puppetlabs-apt')
@@ -88,6 +88,15 @@ describe 'mysql_login_path' do
         service_manage => false,
         service_name   => 'mysqld',
         package_name   => '#{mysql_server_pkg_name}',
+        override_options => {
+          mysqld => {
+            log-error => '/var/log/mysqld.log',
+            pid-file  => '/var/run/mysqld/mysqld.pid',
+          },
+          mysqld_safe => {
+            log-error => '/var/log/mysqld.log',
+          },
+        }
       }
       -> class {'::mysql::client':
         package_name => '#{mysql_client_pkg_name}',
