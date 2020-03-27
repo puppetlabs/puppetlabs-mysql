@@ -7,8 +7,8 @@ mysql_version = '5.6'
 if os[:family] == 'redhat'
   if os[:release].to_i == 8
     mysql_version = '8.0'
-    mysql_server_pkg_name = "mysql-server"
-    mysql_client_pkg_name = "mysql"
+    mysql_server_pkg_name = 'mysql-server'
+    mysql_client_pkg_name = 'mysql'
   end
   pp_repo = <<-MANIFEST
       yumrepo { 'repo.mysql.com':
@@ -24,13 +24,13 @@ if os[:family] == 'redhat'
           ensure => absent,
         }
   MANIFEST
-elsif os[:family]  =~ /debian|ubuntu/
-  if os[:family] == 'debian' && os[:release] =~/10/
+elsif os[:family] =~ %r{debian|ubuntu}
+  if os[:family] == 'debian' && os[:release] =~ %r{10}
     mysql_version = '8.0'
-  elsif os[:family] == 'ubuntu' && os[:release] =~/14\.04/
+  elsif os[:family] == 'ubuntu' && os[:release] =~ %r{14\.04}
     mysql_server_pkg_name = "mysql-server-#{mysql_version}"
     mysql_client_pkg_name = "mysql-client-#{mysql_version}"
-  elsif os[:family] == 'ubuntu' && os[:release] =~/16\.04|18\.04/
+  elsif os[:family] == 'ubuntu' && os[:release] =~ %r{16\.04|18\.04}
     mysql_version = '5.7'
   end
 
@@ -61,9 +61,9 @@ elsif os[:family]  =~ /debian|ubuntu/
   MANIFEST
 end
 
-describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ /redhat\-5|suse/) do
+describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %r{redhat\-5|suse}) do
   before(:all) do
-    if os[:family] =~ /debian|ubuntu/
+    if os[:family] =~ %r{debian|ubuntu}
       run_shell('puppet module install puppetlabs-apt')
     end
   end
@@ -76,7 +76,7 @@ describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ /
       }
     MANIFEST
     apply_manifest(pp, catch_failures: true)
-    if os[:family] =~ /debian|ubuntu/
+    if os[:family] =~ %r{debian|ubuntu}
       run_shell('puppet module uninstall puppetlabs-apt')
     end
   end
