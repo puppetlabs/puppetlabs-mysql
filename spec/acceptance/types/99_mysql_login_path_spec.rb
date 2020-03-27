@@ -118,12 +118,12 @@ describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %
       -> class { '::mysql::server':
         service_manage => false,
         service_name   => 'mysqld',
-        server_package_manage => false,
+        package_manage => false,
         package_name   => '#{mysql_server_pkg_name}',
         #{override_options}
       }
       -> class {'::mysql::client':
-        client_package_manage => false,
+        package_manage => false,
         package_name => '#{mysql_client_pkg_name}',
       }
       user { 'loginpath_test':
