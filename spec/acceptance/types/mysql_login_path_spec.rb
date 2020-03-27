@@ -3,12 +3,24 @@ require 'spec_helper_acceptance'
 mysql_server_pkg_name = 'mysql-community-server'
 mysql_client_pkg_name = 'mysql-community-client'
 mysql_version = '5.6'
+override_options = ''
 
 if os[:family] == 'redhat'
   if os[:release].to_i == 8
     mysql_version = '8.0'
     mysql_server_pkg_name = 'mysql-server'
     mysql_client_pkg_name = 'mysql'
+    override_options = <<-MANIFEST
+      override_options => {
+          mysqld => {
+              log-error => '/var/log/mysqld.log',
+              pid-file  => '/var/run/mysqld/mysqld.pid',
+          },
+          mysqld_safe => {
+              log-error => '/var/log/mysqld.log',
+          },
+      }
+    MANIFEST
   end
   pp_repo = <<-MANIFEST
       yumrepo { 'repo.mysql.com':
@@ -18,6 +30,13 @@ if os[:family] == 'redhat'
         enabled  => 1,
         gpgcheck => 1,
       }
+      package { ['#{mysql_server_pkg_name}', '#{mysql_client_pkg_name}']:
+        ensure   => 'present',
+        provider => 'yum',
+        require => [
+          Yumrepo['repo.mysql.com']
+        ]
+      }
   MANIFEST
   pp_repo_cleanup = <<-MANIFEST
         yumrepo { 'repo.mysql.com':
@@ -25,7 +44,7 @@ if os[:family] == 'redhat'
         }
   MANIFEST
 elsif os[:family] =~ %r{debian|ubuntu}
-  if os[:family] == 'debian' && os[:release] =~ %r{10}
+  if os[:family] == 'debian' && os[:release] =~ %r{9|10}
     mysql_version = '8.0'
   elsif os[:family] == 'ubuntu' && os[:release] =~ %r{14\.04}
     mysql_server_pkg_name = "mysql-server-#{mysql_version}"
@@ -50,7 +69,19 @@ elsif os[:family] =~ %r{debian|ubuntu}
           src   => false,
           deb   => true,
         },
-        notify => Exec['apt_update']
+        notify => Exec['apt-get update']
+      }
+      exec { 'apt-get update':
+        path        => '/usr/bin:/usr/sbin:/bin:/sbin',
+        refreshonly => true,
+      }
+      package { ['#{mysql_server_pkg_name}', '#{mysql_client_pkg_name}']:
+        ensure   => 'present',
+        provider => 'apt',
+        require => [
+          Apt::Source['repo.mysql.com'],
+          Exec['apt-get update']
+        ]
       }
   MANIFEST
   pp_repo_cleanup = <<-MANIFEST
@@ -87,18 +118,12 @@ describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %
       -> class { '::mysql::server':
         service_manage => false,
         service_name   => 'mysqld',
+        server_package_manage => false,
         package_name   => '#{mysql_server_pkg_name}',
-        override_options => {
-          mysqld => {
-            log-error => '/var/log/mysqld.log',
-            pid-file  => '/var/run/mysqld/mysqld.pid',
-          },
-          mysqld_safe => {
-            log-error => '/var/log/mysqld.log',
-          },
-        }
+        #{override_options}
       }
       -> class {'::mysql::client':
+        client_package_manage => false,
         package_name => '#{mysql_client_pkg_name}',
       }
       user { 'loginpath_test':
