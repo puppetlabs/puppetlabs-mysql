@@ -131,6 +131,7 @@ branches:
     - master
     - /^v\d/
     - release
+    - mysql_login_path
 notifications:
   email: false
   #slack:
