@@ -1,133 +1,31 @@
 require 'spec_helper_acceptance'
 
-mysql_server_pkg_name = 'mysql-community-server'
-mysql_client_pkg_name = 'mysql-community-client'
 mysql_version = '5.6'
-override_options = ''
-
-if os[:family] == 'redhat'
-  if os[:release].to_i == 8
-    mysql_version = '8.0'
-    mysql_server_pkg_name = 'mysql-server'
-    mysql_client_pkg_name = 'mysql'
-    override_options = <<-MANIFEST
-      override_options => {
-          mysqld => {
-              log-error => '/var/log/mysqld.log',
-              pid-file  => '/var/run/mysqld/mysqld.pid',
-          },
-          mysqld_safe => {
-              log-error => '/var/log/mysqld.log',
-          },
-      }
-    MANIFEST
-  end
-  pp_repo = <<-MANIFEST
-      yumrepo { 'repo.mysql.com':
-        descr    => 'repo.mysql.com',
-        baseurl  => 'http://repo.mysql.com/yum/mysql-#{mysql_version}-community/el/#{os[:release].to_i}/$basearch/',
-        gpgkey   => 'http://repo.mysql.com/RPM-GPG-KEY-mysql',
-        enabled  => 1,
-        gpgcheck => 1,
-      }
-      package { ['#{mysql_server_pkg_name}', '#{mysql_client_pkg_name}']:
-        ensure   => 'present',
-        provider => 'yum',
-        require => [
-          Yumrepo['repo.mysql.com']
-        ]
-      }
-  MANIFEST
-  pp_repo_cleanup = <<-MANIFEST
-        yumrepo { 'repo.mysql.com':
-          ensure => absent,
-        }
-  MANIFEST
-elsif os[:family] =~ %r{debian|ubuntu}
-  if os[:family] == 'debian' && os[:release] =~ %r{9|10}
-    mysql_version = '8.0'
-  elsif os[:family] == 'ubuntu' && os[:release] =~ %r{14\.04}
-    mysql_server_pkg_name = "mysql-server-#{mysql_version}"
-    mysql_client_pkg_name = "mysql-client-#{mysql_version}"
-  elsif os[:family] == 'ubuntu' && os[:release] =~ %r{16\.04|18\.04}
-    mysql_version = '5.7'
-  end
-
-  mysql_repo = "mysql-#{mysql_version}"
-
-  pp_repo = <<-MANIFEST
-      include apt
-      apt::source { 'repo.mysql.com':
-        location => "http://repo.mysql.com/apt/#{os[:family]}",
-        release  => $::lsbdistcodename,
-        repos    => '#{mysql_repo}',
-        key      => {
-          id     => 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
-          server => 'hkp://keyserver.ubuntu.com:80',
-        },
-        include => {
-          src   => false,
-          deb   => true,
-        },
-        notify => Exec['apt-get update']
-      }
-      exec { 'apt-get update':
-        path        => '/usr/bin:/usr/sbin:/bin:/sbin',
-        refreshonly => true,
-      }
-      package { ['#{mysql_server_pkg_name}', '#{mysql_client_pkg_name}']:
-        ensure   => 'present',
-        provider => 'apt',
-        require => [
-          Apt::Source['repo.mysql.com'],
-          Exec['apt-get update']
-        ]
-      }
-  MANIFEST
-  pp_repo_cleanup = <<-MANIFEST
-        include apt
-        apt::source { 'repo.mysql.com':
-          ensure => absent,
-        }
-  MANIFEST
+support_bin_dir = '/root/mysql_login_path'
+if os[:family] == 'redhat' && os[:release].to_i == 8
+  mysql_version = '8.0'
+elsif os[:family] == 'debian' && os[:release] =~ %r{9|10}
+  mysql_version = '8.0'
+elsif os[:family] == 'ubuntu' && os[:release] =~ %r{16\.04|18\.04}
+  mysql_version = '5.7'
 end
 
 describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %r{redhat\-5|suse}) do
   before(:all) do
-    if os[:family] =~ %r{debian|ubuntu}
-      run_shell('puppet module install puppetlabs-apt')
-    end
+    run_shell("rm -rf #{support_bin_dir}")
+    bolt_upload_file('spec/support/mysql_login_path', support_bin_dir)
+    run_shell("cp #{support_bin_dir}/mysql-#{mysql_version}/my_print_defaults /usr/bin/.")
+    run_shell("cp #{support_bin_dir}/mysql-#{mysql_version}/mysql_config_editor /usr/bin/.")
   end
 
   after(:all) do
-    pp = <<-MANIFEST
-      #{pp_repo_cleanup}
-      user { 'loginpath_test':
-        ensure => absent,
-      }
-    MANIFEST
-    apply_manifest(pp, catch_failures: true)
-    if os[:family] =~ %r{debian|ubuntu}
-      run_shell('puppet module uninstall puppetlabs-apt')
-    end
+    run_shell("rm -rf #{support_bin_dir}")
   end
 
   describe 'setup' do
     pp = <<-MANIFEST
       if versioncmp($::puppetversion, '6.0.0') < 0 {
         include resource_api
-      }
-      #{pp_repo}
-      -> class { '::mysql::server':
-        service_manage => false,
-        service_name   => 'mysqld',
-        package_manage => false,
-        package_name   => '#{mysql_server_pkg_name}',
-        #{override_options}
-      }
-      -> class {'::mysql::client':
-        package_manage => false,
-        package_name => '#{mysql_client_pkg_name}',
       }
       user { 'loginpath_test':
         ensure => present,
@@ -137,9 +35,19 @@ describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %
     it 'works with no errors' do
       apply_manifest(pp, catch_failures: true)
     end
+    it 'finds mysql_config_editor binary for the provider' do
+      run_shell('mysql_config_editor -V') do |r|
+        expect(r.stdout).to match(%r{Ver.*#{mysql_version}.*x86_64})
+      end
+    end
+    it 'finds my_print_defaults binary for the provider' do
+      run_shell('my_print_defaults -V') do |r|
+        expect(r.exit_status).to eq(0)
+      end
+    end
   end
 
-  context 'login path for user root' do
+  context 'for user root' do
     describe 'add login path' do
       pp = <<-MANIFEST
         mysql_login_path { 'local_socket':
@@ -268,7 +176,7 @@ describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %
     end
   end
 
-  context 'login path for user loginpath_test' do
+  context 'for user loginpath_test' do
     describe 'add login path' do
       pp = <<-MANIFEST
         mysql_login_path { 'local_tcp':
