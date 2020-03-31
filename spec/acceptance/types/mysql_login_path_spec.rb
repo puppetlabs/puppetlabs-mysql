@@ -19,6 +19,15 @@ describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %
   end
 
   after(:all) do
+    pp_cleanup = <<-MANIFEST
+      user { 'loginpath_test':
+        ensure => absent,
+      }
+      file { '/root/.mylogin.cnf':
+        ensure => absent,
+      }
+    MANIFEST
+    apply_manifest(pp_cleanup, catch_failures: true)
     run_shell("rm -rf #{support_bin_dir}")
   end
 
