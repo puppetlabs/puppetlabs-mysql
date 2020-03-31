@@ -114,6 +114,9 @@ describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %
 
   describe 'setup' do
     pp = <<-MANIFEST
+      if versioncmp($::puppetversion, '6.0.0') < 0 {
+        include resource_api
+      }
       #{pp_repo}
       -> class { '::mysql::server':
         service_manage => false,
