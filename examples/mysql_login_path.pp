@@ -1,18 +1,18 @@
 # Debian MySQL Commiunity Server 8.0
 include apt
 apt::source { 'repo.mysql.com':
-  location => "http://repo.mysql.com/apt/debian",
+  location => 'http://repo.mysql.com/apt/debian',
   release  => $::lsbdistcodename,
   repos    => 'mysql-8.0',
   key      => {
     id     => 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
     server => 'hkp://keyserver.ubuntu.com:80',
   },
-  include => {
-    src   => false,
-    deb   => true,
+  include  => {
+    src => false,
+    deb => true,
   },
-  notify => Exec['apt-get update']
+  notify   => Exec['apt-get update']
 }
 exec { 'apt-get update':
   path        => '/usr/bin:/usr/sbin:/bin:/sbin',
@@ -21,15 +21,15 @@ exec { 'apt-get update':
 
 $root_pw = 'password'
 class { '::mysql::server':
-  root_password  => $root_pw,
-  service_name   => 'mysql',
-  package_name   => 'mysql-community-server',
+  root_password      => $root_pw,
+  service_name       => 'mysql',
+  package_name       => 'mysql-community-server',
   create_root_my_cnf => false,
-  require => [
+  require            => [
     Apt::Source['repo.mysql.com'],
     Exec['apt-get update']
   ],
-  notify => Mysql_login_path['client']
+  notify             => Mysql_login_path['client']
 }
 
 class { '::mysql::client':
@@ -39,21 +39,21 @@ class { '::mysql::client':
 }
 
 mysql_login_path { 'client':
-  owner    => root,
+  ensure   => present,
   host     => 'localhost',
   user     => 'root',
   password => Sensitive($root_pw),
   socket   => '/var/run/mysqld/mysqld.sock',
-  ensure   => present,
+  owner    => root,
 }
 
 mysql_login_path { 'local_dan':
-  owner    => root,
+  ensure   => present,
   host     => '127.0.0.1',
   user     => 'dan',
   password => Sensitive('blah'),
   port     => 3306,
-  ensure   => present,
+  owner    => root,
   require  => Class['::mysql::server'],
 }
 
