@@ -46,6 +46,7 @@ _Private Classes_
 _Public Resource types_
 
 * [`mysql_grant`](#mysql_grant): @summary Manage a MySQL user's rights.
+* [`mysql_login_path`](#mysql_login_path): Manage a MySQL login path.
 * [`mysql_plugin`](#mysql_plugin): Manage MySQL plugins.
 * [`mysql_user`](#mysql_user): @summary Manage a MySQL user. This includes management of users password as well as privileges.
 
@@ -56,11 +57,16 @@ _Private Resource types_
 
 **Functions**
 
+* [`mysql::mysql_password`](#mysqlmysql_password): @summary
 * [`mysql::normalise_and_deepmerge`](#mysqlnormalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashesh and underscores,
 then returns the resulting hash.
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
 * [`mysql_password`](#mysql_password): DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
+
+**Data types**
+
+* [`Mysql::Options`](#mysqloptions): 
 
 **Data types**
 
@@ -1157,6 +1163,100 @@ namevar
 
 Name to describe the grant.
 
+### mysql_login_path
+
+This type provides Puppet with the capabilities to store authentication credentials in an obfuscated login path file
+named .mylogin.cnf created with the mysql_config_editor utility. Supports only MySQL Community Edition > v5.6.6.
+
+* **See also**
+https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html
+
+#### Examples
+
+##### 
+
+```puppet
+mysql_login_path { 'local_socket':
+  owner    => 'root',
+  host     => 'localhost',
+  user     => 'root',
+  password => Sensitive('secure'),
+  socket   => '/var/run/mysql/mysql.sock',
+  ensure   => present,
+}
+
+mysql_login_path { 'local_tcp':
+  owner    => 'root',
+  host     => '127.0.0.1',
+  user     => 'root',
+  password => Sensitive('more_secure'),
+  port     => 3306,
+  ensure   => present,
+}
+```
+
+#### Properties
+
+The following properties are available in the `mysql_login_path` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+##### `host`
+
+Data type: `Optional[String]`
+
+Host name to be entered into the login path.
+
+##### `user`
+
+Data type: `Optional[String]`
+
+Username to be entered into the login path.
+
+##### `password`
+
+Data type: `Optional[Sensitive[String[1]]]`
+
+Password to be entered into login path
+
+##### `socket`
+
+Data type: `Optional[String]`
+
+Socket path to be entered into login path
+
+##### `port`
+
+Data type: `Optional[Integer[0,65535]]`
+
+Port number to be entered into login path.
+
+#### Parameters
+
+The following parameters are available in the `mysql_login_path` type.
+
+##### `name`
+
+namevar
+
+Data type: `String`
+
+Name of the login path you want to manage.
+
+##### `owner`
+
+namevar
+
+Data type: `String`
+
+The user to whom the logon path should belong.
+
+Default value: root
+
 ### mysql_plugin
 
 Manage MySQL plugins.
@@ -1267,6 +1367,37 @@ namevar
 The name of the user. This uses the 'username@hostname' or username@hostname.
 
 ## Functions
+
+### mysql::mysql_password
+
+Type: Ruby 4.x API
+
+---- original file header ----
+
+     Hash a string as mysql's "PASSWORD()" function would do it
+
+   @param [String] password Plain text password.
+
+   @return [String] the mysql password hash from the clear text password.
+
+#### `mysql::mysql_password(Any *$args)`
+
+---- original file header ----
+
+     Hash a string as mysql's "PASSWORD()" function would do it
+
+   @param [String] password Plain text password.
+
+   @return [String] the mysql password hash from the clear text password.
+
+Returns: `Data type` Describe what the function returns here
+
+##### `*args`
+
+Data type: `Any`
+
+The original array of arguments. Port this to individually managed params
+to get the full benefit of the modern function API.
 
 ### mysql::normalise_and_deepmerge
 
