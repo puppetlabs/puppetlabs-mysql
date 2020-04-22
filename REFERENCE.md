@@ -32,7 +32,7 @@ _Private Classes_
 * `mysql::server::config`: Private class for MySQL server configuration.
 * `mysql::server::install`: Private class for managing MySQL package.
 * `mysql::server::installdb`: Builds initial databases on installation.
-* `mysql::server::managed_dirs`: Binary log configuration requires the mysql user to be present. This must be done after package install
+* `mysql::server::managed_dirs`: Binary log configuration requires the mysql user to be present. This must be done after package install.
 * `mysql::server::providers`: Convenience class to call each of the three providers with the corresponding hashes provided in mysql::server.
 * `mysql::server::root_password`: Private class for managing the root password
 * `mysql::server::service`: Private class for managing the MySQL service
