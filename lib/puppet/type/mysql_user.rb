@@ -47,7 +47,7 @@ Puppet::Type.newtype(:mysql_user) do
   end
 
   newproperty(:password_hash) do
-    desc 'The password hash of the user. Use mysql_password() for creating such a hash.'
+    desc 'The password hash of the user. Use mysql::password() for creating such a hash.'
     newvalue(%r{\w*})
 
     def change_to_s(currentvalue, _newvalue)
