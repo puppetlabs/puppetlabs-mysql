@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'mysql::password' do
+shared_examples 'mysql::password function' do
   it 'exists' do
     is_expected.not_to eq(nil)
   end
@@ -27,5 +27,15 @@ describe 'mysql::password' do
 
   it 'does not convert a password that is already a hash' do
     is_expected.to run.with_params('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19').and_return('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19')
+  end
+end
+
+describe 'mysql::password' do
+  it_behaves_like 'mysql::password function'
+
+  describe 'non-namespaced shim' do
+    describe 'mysql_password', type: :puppet_function do
+      it_behaves_like 'mysql::password function'
+    end
   end
 end

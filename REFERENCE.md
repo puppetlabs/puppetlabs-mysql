@@ -60,7 +60,7 @@ _Private Resource types_
 then returns the resulting hash.
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
-* [`mysql_password`](#mysql_password): Hash a string as mysql's "PASSWORD()" function would do it
+* [`mysql_password`](#mysql_password): DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
 
 **Tasks**
 
@@ -1176,7 +1176,7 @@ Default value: present
 
 Valid values: %r{\w*}
 
-The password hash of the user. Use mysql_password() for creating such a hash.
+The password hash of the user. Use mysql::password() for creating such a hash.
 
 ##### `plugin`
 
@@ -1310,15 +1310,15 @@ Hash to be stripped
 
 ### mysql_password
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-Hash a string as mysql's "PASSWORD()" function would do it
+DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
 
 #### `mysql_password(String $password)`
 
 The mysql_password function.
 
-Returns: `String` the mysql password hash from the clear text password.
+Returns: `String` The mysql password hash from the 4.x function mysql::password.
 
 ##### `password`
 
