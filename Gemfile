@@ -30,8 +30,6 @@ group :development do
   gem "puppet-module-win-dev-r#{minor_version}", '~> 0.4',       require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-lint-i18n",                                        require: false
   gem "github_changelog_generator",                              require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
-  gem 'ed25519', '>= 1.2', '< 2.0'
-  gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
