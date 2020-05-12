@@ -28,6 +28,7 @@ class mysql::backup::mysqldump (
   $optional_args            = [],
   $mysqlbackupdir_ensure    = 'directory',
   $mysqlbackupdir_target    = undef,
+  $incremental_backups      = false,
 ) inherits mysql::params {
 
   unless $::osfamily == 'FreeBSD' {

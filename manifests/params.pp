@@ -38,7 +38,7 @@ class mysql::params {
   $client_dev_package_provider = undef
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
-  $xtrabackup_package_name     = 'percona-xtrabackup'
+  $xtrabackup_package_name_default = 'percona-xtrabackup'
 
 
   case $::osfamily {
@@ -55,8 +55,12 @@ class mysql::params {
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
+            if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+              $xtrabackup_package_name_override = 'percona-xtrabackup-24'
+            }
           } else {
             $provider = 'mysql'
+            $xtrabackup_package_name_override = 'percona-xtrabackup-20'
           }
           if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
             $java_package_name   = 'mariadb-java-client'
@@ -158,6 +162,7 @@ class mysql::params {
       $mycnf_owner         = undef
       $mycnf_group         = undef
       $server_service_name = 'mysql'
+      $xtrabackup_package_name_override = 'xtrabackup'
 
       if $::operatingsystem =~ /(SLES|SLED)/ {
         if versioncmp( $::operatingsystemmajrelease, '12' ) >= 0 {
@@ -236,6 +241,10 @@ class mysql::params {
         $php_package_name = 'php-mysql'
       } else {
         $php_package_name = 'php5-mysql'
+      }
+      if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') < 0) or
+          ($::operatingsystem == 'Debian') {
+        $xtrabackup_package_name_override = 'percona-xtrabackup-24'
       }
 
       $python_package_name = 'python-mysqldb'
@@ -546,6 +555,12 @@ class mysql::params {
     'isamchk'      => {
       'key_buffer_size' => '16M',
     },
+  }
+
+  if defined('$xtrabackup_package_name_override') {
+    $xtrabackup_package_name = pick($xtrabackup_package_name_override, $xtrabackup_package_name_default)
+  } else {
+    $xtrabackup_package_name = $xtrabackup_package_name_default
   }
 
   ## Additional graceful failures
