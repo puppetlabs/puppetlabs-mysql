@@ -2,17 +2,32 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v10.4.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.3.0) (2020-02-27)
+## [v10.5.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.5.0) (2020-05-13)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.3.0...v10.3.0)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.4.0...v10.5.0)
+
+### Added
+
+- Support mariadb's ed25519-based authentication [\#1292](https://github.com/puppetlabs/puppetlabs-mysql/pull/1292) ([dciabrin](https://github.com/dciabrin))
+- Allow changing the mysql-config-file group-ownership [\#1284](https://github.com/puppetlabs/puppetlabs-mysql/pull/1284) ([unki](https://github.com/unki))
+
+### Fixed
+
+- Remove legacy \(old API\) `mysql\_password` function [\#1299](https://github.com/puppetlabs/puppetlabs-mysql/pull/1299) ([alexjfisher](https://github.com/alexjfisher))
+- Improve differences between generated mysql service id values [\#1293](https://github.com/puppetlabs/puppetlabs-mysql/pull/1293) ([ryaner](https://github.com/ryaner))
+- \(MODULES-10023\) Fix multiple xtrabackup regressions [\#1245](https://github.com/puppetlabs/puppetlabs-mysql/pull/1245) ([fraenki](https://github.com/fraenki))
+- Fix binarylog by allowing users to specify managed directories [\#1194](https://github.com/puppetlabs/puppetlabs-mysql/pull/1194) ([elfranne](https://github.com/elfranne))
+
+## [v10.4.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.4.0) (2020-03-02)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.3.0...v10.4.0)
 
 ### Added
 
 - Allow adapting MySQL configuration file's permissions mode [\#1278](https://github.com/puppetlabs/puppetlabs-mysql/pull/1278) ([unki](https://github.com/unki))
 - pdksync - \(FM-8581\) - Debian 10 added to travis and provision file refactored [\#1275](https://github.com/puppetlabs/puppetlabs-mysql/pull/1275) ([david22swan](https://github.com/david22swan))
-- Puppet 4 functions [\#1274](https://github.com/puppetlabs/puppetlabs-mysql/pull/1274) ([binford2k](https://github.com/binford2k))
 - Allow backupcompress for xtrabackup profile [\#1196](https://github.com/puppetlabs/puppetlabs-mysql/pull/1196) ([Spuffnduff](https://github.com/Spuffnduff))
-- Enable module to not use default options [\#1192](https://github.com/puppetlabs/puppetlabs-mysql/pull/1192) ([mauricemeyer](https://github.com/mauricemeyer))
+- Enable module to not use default options [\#1192](https://github.com/puppetlabs/puppetlabs-mysql/pull/1192) ([morremeyer](https://github.com/morremeyer))
 
 ## [v10.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.3.0) (2019-12-11)
 

@@ -29,10 +29,10 @@ _Private Classes_
 * `mysql::client::install`: Private class for MySQL client install.
 * `mysql::params`: Params class.
 * `mysql::server::account_security`: Private class for ensuring localhost accounts do not exist
-* `mysql::server::binarylog`: Binary log configuration requires the mysql user to be present. This must be done after package install
 * `mysql::server::config`: Private class for MySQL server configuration.
 * `mysql::server::install`: Private class for managing MySQL package.
 * `mysql::server::installdb`: Builds initial databases on installation.
+* `mysql::server::managed_dirs`: Binary log configuration requires the mysql user to be present. This must be done after package install
 * `mysql::server::providers`: Convenience class to call each of the three providers with the corresponding hashes provided in mysql::server.
 * `mysql::server::root_password`: Private class for managing the root password
 * `mysql::server::service`: Private class for managing the MySQL service
@@ -61,6 +61,10 @@ then returns the resulting hash.
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
 * [`mysql_password`](#mysql_password): DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
+
+**Data types**
+
+* [`Mysql::Options`](#mysqloptions): 
 
 **Tasks**
 
@@ -411,6 +415,14 @@ The location, as a path, of the MySQL configuration file.
 
 Default value: $mysql::params::config_file
 
+##### `config_file_mode`
+
+Data type: `Any`
+
+The MySQL configuration file's permissions mode.
+
+Default value: $mysql::params::config_file_mode
+
 ##### `includedir`
 
 Data type: `Any`
@@ -442,6 +454,14 @@ Data type: `Any`
 Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
 
 Default value: $mysql::params::manage_config_file
+
+##### `options`
+
+Data type: `Mysql::Options`
+
+A hash of options structured like the override_options, but not merged with the default options. Use this if you don’t want your options merged with the default options.
+
+Default value: {}
 
 ##### `override_options`
 
@@ -514,6 +534,22 @@ Data type: `Any`
 The name of the group of the MySQL daemon user. Can be a group name or a group ID. See more about the [group](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 
 Default value: $mysql::params::mysql_group
+
+##### `mycnf_owner`
+
+Data type: `Any`
+
+Name or user-id who owns the mysql-config-file.
+
+Default value: $mysql::params::mycnf_owner
+
+##### `mycnf_group`
+
+Data type: `Any`
+
+Name or group-id which owns the mysql-config-file.
+
+Default value: $mysql::params::mycnf_group
 
 ##### `root_password`
 
@@ -715,7 +751,7 @@ Default value: $mysql::params::root_group
 
 Data type: `Any`
 
-Whether or not to compress the backup (when using the mysqldump provider)
+Whether or not to compress the backup (when using the mysqldump or xtrabackup provider)
 
 Default value: `true`
 
@@ -790,6 +826,14 @@ Data type: `Any`
 Dump triggers for each dumped table when doing a `file_per_database` backup.
 
 Default value: `false`
+
+##### `incremental_backups`
+
+Data type: `Any`
+
+A flag to activate/deactivate incremental backups. Currently only supported by the xtrabackup provider.
+
+Default value: `true`
 
 ##### `ensure`
 
@@ -1325,6 +1369,14 @@ Returns: `String` The mysql password hash from the 4.x function mysql::password.
 Data type: `String`
 
 Plain text password.
+
+## Data types
+
+### Mysql::Options
+
+The Mysql::Options data type.
+
+Alias of `Hash[String, Hash]`
 
 ## Tasks
 
