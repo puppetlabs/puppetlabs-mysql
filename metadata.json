@@ -76,7 +76,8 @@
       "operatingsystemrelease": [
         "14.04",
         "16.04",
-        "18.04"
+        "18.04",
+        "20.04"
       ]
     }
   ],
@@ -88,6 +89,6 @@
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates#master",
-  "template-ref": "heads/master-0-g095317c",
+  "template-ref": "heads/master-0-g88b05c7",
   "pdk-version": "1.17.0"
 }
