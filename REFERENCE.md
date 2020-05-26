@@ -72,6 +72,10 @@ then returns the resulting hash.
 
 * [`Mysql::Options`](#mysqloptions): 
 
+**Data types**
+
+* [`Mysql::Options`](#mysqloptions): 
+
 **Tasks**
 
 * [`export`](#export): Allows you to backup your database to local file.
