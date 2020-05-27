@@ -184,6 +184,36 @@ mysql::db { 'mydb':
 
 If required, the password can also be an empty string to allow connections without an password.
 
+### Create login paths
+
+This feature works only for the MySQL Community Edition >= 5.6.6.
+
+A login path is a set of options (host, user, password, port and socket) that specify which MySQL server to connect to and which account to authenticate as. The authentication credentials and the other options are stored in an encrypted login file named .mylogin.cnf typically under the users home directory.
+
+More information about MySQL login paths: https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html.
+
+Some example for login paths: 
+```puppet
+mysql_login_path { 'client':
+  owner    => root,
+  host     => 'localhost',
+  user     => 'root',
+  password => Sensitive('secure'),
+  socket   => '/var/run/mysqld/mysqld.sock',
+  ensure   => present,
+}
+
+mysql_login_path { 'remote_db':
+  owner    => root,
+  host     => '10.0.0.1',
+  user     => 'network',
+  password => Sensitive('secure'),
+  port     => 3306,
+  ensure   => present,
+}
+```
+See examples/mysql_login_path.pp for further examples.
+
 ### Install Percona server on CentOS
 
 This example shows how to do a minimal installation of a Percona server on a
@@ -613,3 +643,4 @@ This module is based on work by David Schmitt. The following contributors have c
 * Daniël van Eeden
 * Jan-Otto Kröpke
 * Timothy Sven Nelson
+* Andreas Stürz
