@@ -17,9 +17,9 @@
 #   }
 #
 # @param backupuser
-#   MySQL user with backup administrator privileges.
+#   MySQL user to create with backup administrator privileges.
 # @param backuppassword
-#   Password for `backupuser`.
+#   Password to create for `backupuser`.
 # @param backupdir
 #   Directory to store backup.
 # @param backupdirmode
