@@ -55,6 +55,7 @@ class mysql::server::config {
         }
       }
     }
+    default: {}
   }
 
   if $mysql::server::manage_config_file  {
