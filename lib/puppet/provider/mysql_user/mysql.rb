@@ -23,7 +23,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
       @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
-      @password, @plugin, @authentication_string = mysql_caller(query, 'regular').split(%r{\t})
+      @password, @plugin, @authentication_string = mysql_caller(query, 'regular').chomp.split(%r{\t})
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
       if newer_than('mariadb' => '10.1.21') && @plugin == 'ed25519'
         # Some auth plugins (e.g. ed25519) use authentication_string
