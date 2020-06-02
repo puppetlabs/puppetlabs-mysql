@@ -11,7 +11,7 @@ describe Facter::Util::Fact.to_s do
         Facter.fact(:macaddress).stubs(:value).returns('3c:97:0e:69:fb:e1')
       end
       it do
-        Facter.fact(:mysql_server_id).value.to_s.should == '4116385'
+        Facter.fact(:mysql_server_id).value.to_s.should == '241857808'
       end
     end
 
@@ -20,7 +20,7 @@ describe Facter::Util::Fact.to_s do
         Facter.fact(:macaddress).stubs(:value).returns('00:00:00:00:00:00')
       end
       it do
-        Facter.fact(:mysql_server_id).value.to_s.should == '0'
+        Facter.fact(:mysql_server_id).value.to_s.should == '1'
       end
     end
 

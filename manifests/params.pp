@@ -6,6 +6,7 @@
 class mysql::params {
 
   $manage_config_file     = true
+  $config_file_mode       = '0644'
   $purge_conf_dir         = false
   $restart                = false
   $root_password          = 'UNSET'
@@ -37,7 +38,7 @@ class mysql::params {
   $client_dev_package_provider = undef
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
-  $xtrabackup_package_name     = 'percona-xtrabackup'
+  $xtrabackup_package_name_default = 'percona-xtrabackup'
 
 
   case $::osfamily {
@@ -54,12 +55,18 @@ class mysql::params {
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
+            if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+              $xtrabackup_package_name_override = 'percona-xtrabackup-24'
+            }
           } else {
             $provider = 'mysql'
+            $xtrabackup_package_name_override = 'percona-xtrabackup-20'
           }
           if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+            $java_package_name   = 'mariadb-java-client'
             $python_package_name = 'python3-PyMySQL'
           } else {
+            $java_package_name   = 'mysql-connector-java'
             $python_package_name = 'MySQL-python'
           }
         }
@@ -93,13 +100,15 @@ class mysql::params {
       $datadir                 = '/var/lib/mysql'
       $root_group              = 'root'
       $mysql_group             = 'mysql'
+      $mycnf_owner             = undef
+      $mycnf_group             = undef
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
+      $managed_dirs            = undef
       # mysql::bindings
-      $java_package_name       = 'mysql-connector-java'
       $perl_package_name       = 'perl-DBD-MySQL'
       $php_package_name        = 'php-mysql'
       $ruby_package_name       = 'ruby-mysql'
@@ -150,7 +159,10 @@ class mysql::params {
       }
       $root_group          = 'root'
       $mysql_group         = 'mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysql'
+      $xtrabackup_package_name_override = 'xtrabackup'
 
       if $::operatingsystem =~ /(SLES|SLED)/ {
         if versioncmp( $::operatingsystemmajrelease, '12' ) >= 0 {
@@ -166,6 +178,7 @@ class mysql::params {
       $ssl_cert            = '/etc/mysql/server-cert.pem'
       $ssl_key             = '/etc/mysql/server-key.pem'
       $tmpdir              = '/tmp'
+      $managed_dirs        = undef
       # mysql::bindings
       $java_package_name   = 'mysql-connector-java'
       $perl_package_name   = 'perl-DBD-mysql'
@@ -207,13 +220,21 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'adm'
+      $mycnf_owner             = undef
+      $mycnf_group             = undef
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
+      $managed_dirs            = ['tmpdir','basedir','datadir','innodb_data_home_dir','innodb_log_group_home_dir','innodb_undo_directory','innodb_tmpdir']
+
       # mysql::bindings
-      $java_package_name   = 'libmysql-java'
+      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '10') >= 0 {
+        $java_package_name   = 'libmariadb-java'
+      } else {
+        $java_package_name   = 'libmysql-java'
+      }
       $perl_package_name   = 'libdbd-mysql-perl'
       if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') >= 0) or
           ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9') >= 0) {
@@ -221,11 +242,16 @@ class mysql::params {
       } else {
         $php_package_name = 'php5-mysql'
       }
+      if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') < 0) or
+          ($::operatingsystem == 'Debian') {
+        $xtrabackup_package_name_override = 'percona-xtrabackup-24'
+      }
 
       $python_package_name = 'python-mysqldb'
       $ruby_package_name   = $::lsbdistcodename ? {
         'jessie'           => 'ruby-mysql',
         'stretch'          => 'ruby-mysql2',
+        'buster'           => 'ruby-mysql2',
         'trusty'           => 'ruby-mysql',
         'xenial'           => 'ruby-mysql',
         'bionic'           => 'ruby-mysql2',
@@ -246,12 +272,15 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'mysql'
+      $mycnf_owner             = undef
+      $mycnf_group             = undef
       $server_service_name     = 'mysqld'
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
+      $managed_dirs            = undef
       # mysql::bindings
       $java_package_name       = 'mysql-connector-java'
       $perl_package_name       = 'perl-dbd-mysql'
@@ -271,12 +300,15 @@ class mysql::params {
       $pidfile             = '/run/mysqld/mysqld.pid'
       $root_group          = 'root'
       $mysql_group         = 'mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysql'
       $socket              = '/run/mysqld/mysqld.sock'
       $ssl_ca              = '/etc/mysql/cacert.pem'
       $ssl_cert            = '/etc/mysql/server-cert.pem'
       $ssl_key             = '/etc/mysql/server-key.pem'
       $tmpdir              = '/tmp'
+      $managed_dirs        = undef
       # mysql::bindings
       $java_package_name   = 'dev-java/jdbc-mysql'
       $perl_package_name   = 'dev-perl/DBD-mysql'
@@ -296,12 +328,15 @@ class mysql::params {
       $pidfile             = '/var/run/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = 'mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysql-server'
       $socket              = '/var/db/mysql/mysql.sock'
       $ssl_ca              = undef
       $ssl_cert            = undef
       $ssl_key             = undef
       $tmpdir              = '/tmp'
+      $managed_dirs        = undef
       # mysql::bindings
       $java_package_name   = 'databases/mysql-connector-java'
       $perl_package_name   = 'p5-DBD-mysql'
@@ -324,12 +359,15 @@ class mysql::params {
       $pidfile             = '/var/mysql/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = '_mysql'
+      $mycnf_owner         = undef
+      $mycnf_group         = undef
       $server_service_name = 'mysqld'
       $socket              = '/var/run/mysql/mysql.sock'
       $ssl_ca              = undef
       $ssl_cert            = undef
       $ssl_key             = undef
       $tmpdir              = '/tmp'
+      $managed_dirs        = undef
       # mysql::bindings
       $java_package_name   = undef
       $perl_package_name   = 'p5-DBD-mysql'
@@ -356,6 +394,7 @@ class mysql::params {
       $ssl_cert            = undef
       $ssl_key             = undef
       $tmpdir              = '/tmp'
+      $managed_dirs        = undef
       # mysql::bindings
       $java_package_name   = undef
       $perl_package_name   = undef
@@ -379,12 +418,15 @@ class mysql::params {
           $pidfile             = '/run/mysqld/mysqld.pid'
           $root_group          = 'root'
           $mysql_group         = 'mysql'
+          $mycnf_owner         = undef
+          $mycnf_group         = undef
           $server_service_name = 'mariadb'
           $socket              = '/run/mysqld/mysqld.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'
           $ssl_cert            = '/etc/mysql/server-cert.pem'
           $ssl_key             = '/etc/mysql/server-key.pem'
           $tmpdir              = '/tmp'
+          $managed_dirs        = undef
           $java_package_name   = undef
           $perl_package_name   = 'perl-dbd-mysql'
           $php_package_name    = 'php7-mysqlnd'
@@ -404,12 +446,15 @@ class mysql::params {
           $pidfile             = '/var/run/mysqld/mysqld.pid'
           $root_group          = 'root'
           $mysql_group         = 'mysql'
+          $mycnf_owner         = undef
+          $mycnf_group         = undef
           $server_service_name = 'mysqld'
           $socket              = '/var/lib/mysql/mysql.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'
           $ssl_cert            = '/etc/mysql/server-cert.pem'
           $ssl_key             = '/etc/mysql/server-key.pem'
           $tmpdir              = '/tmp'
+          $managed_dirs        = undef
           # mysql::bindings
           $java_package_name   = 'mysql-connector-java'
           $perl_package_name   = 'perl-DBD-MySQL'
@@ -510,6 +555,12 @@ class mysql::params {
     'isamchk'      => {
       'key_buffer_size' => '16M',
     },
+  }
+
+  if defined('$xtrabackup_package_name_override') {
+    $xtrabackup_package_name = pick($xtrabackup_package_name_override, $xtrabackup_package_name_default)
+  } else {
+    $xtrabackup_package_name = $xtrabackup_package_name_default
   }
 
   ## Additional graceful failures

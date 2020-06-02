@@ -14,6 +14,7 @@
     * [Install Percona server on CentOS](#install-percona-server-on-centos)
     * [Install MariaDB on Ubuntu](#install-mariadb-on-ubuntu)
     * [Install Plugins](#install-plugins)
+    * [Use Percona XtraBackup](#use-percona-xtrabackup)
 4. [Reference - An under-the-hood peek at what the module is doing and how](REFERENCE.md)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
@@ -38,9 +39,13 @@ To customize options, such as the root password or `/etc/my.cnf` settings, you m
 class { '::mysql::server':
   root_password           => 'strongpassword',
   remove_default_accounts => true,
+  restart                 => true,
   override_options        => $override_options
 }
 ```
+
+Nota bene: Configuration changes will only be applied to the running
+MySQL server if you pass true as restart to mysql::server.
 
 See [**Customize Server Options**](#customize-server-options) below for examples of the hash structure for $override_options.
 
@@ -90,6 +95,9 @@ replicate-do-db = base2
 ```
 
 To implement version specific parameters, specify the version, such as [mysqld-5.5]. This allows one config for different versions of MySQL.
+
+If you don’t want to use the default configuration, you can also supply your options to the `$options` parameter instead of `$override_options`.
+Please note that `$options` and `$override_options` are mutually exclusive, you can only use one of them.
 
 ### Create a database
 
@@ -176,6 +184,36 @@ mysql::db { 'mydb':
 
 If required, the password can also be an empty string to allow connections without an password.
 
+### Create login paths
+
+This feature works only for the MySQL Community Edition >= 5.6.6.
+
+A login path is a set of options (host, user, password, port and socket) that specify which MySQL server to connect to and which account to authenticate as. The authentication credentials and the other options are stored in an encrypted login file named .mylogin.cnf typically under the users home directory.
+
+More information about MySQL login paths: https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html.
+
+Some example for login paths: 
+```puppet
+mysql_login_path { 'client':
+  owner    => root,
+  host     => 'localhost',
+  user     => 'root',
+  password => Sensitive('secure'),
+  socket   => '/var/run/mysqld/mysqld.sock',
+  ensure   => present,
+}
+
+mysql_login_path { 'remote_db':
+  owner    => root,
+  host     => '10.0.0.1',
+  user     => 'network',
+  password => Sensitive('secure'),
+  port     => 3306,
+  ensure   => present,
+}
+```
+See examples/mysql_login_path.pp for further examples.
+
 ### Install Percona server on CentOS
 
 This example shows how to do a minimal installation of a Percona server on a
@@ -246,7 +284,7 @@ Class['mysql::bindings']
 
 #### Optional: Install the MariaDB official repo
 
-In this example, we'll use the latest stable (currently 10.1) from the official MariaDB repository, not the one from the distro repository. You could instead use the package from the Ubuntu repository. Make sure you use the repository corresponding to the version you want.
+In this example, we'll use the latest stable (currently 10.3) from the official MariaDB repository, not the one from the distro repository. You could instead use the package from the Ubuntu repository. Make sure you use the repository corresponding to the version you want.
 
 **Note:** `sfo1.mirrors.digitalocean.com` is one of many mirrors available. You can use any official mirror.
 
@@ -254,11 +292,11 @@ In this example, we'll use the latest stable (currently 10.1) from the official 
 include apt
 
 apt::source { 'mariadb':
-  location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu',
+  location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu',
   release  => $::lsbdistcodename,
   repos    => 'main',
   key      => {
-    id     => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+    id     => '177F4010FE56CA3336300305F1656F24C74CD1D8',
     server => 'hkp://keyserver.ubuntu.com:80',
   },
   include => {
@@ -270,7 +308,7 @@ apt::source { 'mariadb':
 
 #### Install the MariaDB server
 
-This example shows MariaDB server installation on Ubuntu Trusty. Adjust the version and the parameters of `my.cnf` as needed. All parameters of the `my.cnf` can be defined using the `override_options` parameter.
+This example shows MariaDB server installation on Ubuntu Xenial. Adjust the version and the parameters of `my.cnf` as needed. All parameters of the `my.cnf` can be defined using the `override_options` parameter.
 
 The folders `/var/log/mysql` and `/var/run/mysqld` are created automatically, but if you are using other custom folders, they should exist as prerequisites for this code.
 
@@ -281,8 +319,8 @@ Specify the version of the package you want with the `package_ensure` parameter.
 ```puppet
 class {'::mysql::server':
   package_name     => 'mariadb-server',
-  package_ensure   => '10.1.14+maria-1~trusty',
-  service_name     => 'mysql',
+  package_ensure   => '1:10.3.21+maria~xenial',
+  service_name     => 'mysqld',
   root_password    => 'AVeryStrongPasswordUShouldEncrypt!',
   override_options => {
     mysqld => {
@@ -312,7 +350,7 @@ Specify the version of the package you want with the `package_ensure` parameter.
 ```puppet
 class {'::mysql::client':
   package_name    => 'mariadb-client',
-  package_ensure  => '10.1.14+maria-1~trusty',
+  package_ensure  => '1:10.3.21+maria~xenial',
   bindings_enable => true,
 }
 
@@ -385,6 +423,69 @@ mysql::server::db:
 ### Install Plugins
 
 Plugins can be installed by using the `mysql_plugin` defined type. See `examples/mysql_plugin.pp` for futher examples.
+
+### Use Percona XtraBackup
+
+This example shows how to configure MySQL backups with Percona XtraBackup. This sets up a weekly cronjob to perform a full backup and additional daily cronjobs for incremental backups. Each backup will create a new directory. A cleanup job will automatically remove backups that are older than 15 days.
+
+```puppet
+yumrepo { 'percona':
+  descr    => 'CentOS $releasever - Percona',
+  baseurl  => 'http://repo.percona.com/release/$releasever/RPMS/$basearch',
+  gpgkey   => 'https://www.percona.com/downloads/RPM-GPG-KEY-percona https://repo.percona.com/yum/PERCONA-PACKAGING-KEY',
+  enabled  => 1,
+  gpgcheck => 1,
+}
+
+class { 'mysql::server::backup':
+  backupuser        => 'myuser',
+  backuppassword    => 'mypassword',
+  backupdir         => '/tmp/backups',
+  provider          => 'xtrabackup',
+  rotate            => 15,
+  execpath          => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
+  time              => ['23', '15'],
+}
+```
+
+If the daily or weekly backup was successful, then the empty file `/tmp/mysqlbackup_success` is created, which makes it easy to monitor the status of the database backup.
+
+After two weeks the backup directory should look similar to the example below.
+
+```
+/tmp/backups/2019-11-10_full
+/tmp/backups/2019-11-11_23-15-01
+/tmp/backups/2019-11-13_23-15-01
+/tmp/backups/2019-11-13_23-15-02
+/tmp/backups/2019-11-14_23-15-01
+/tmp/backups/2019-11-15_23-15-02
+/tmp/backups/2019-11-16_23-15-01
+/tmp/backups/2019-11-17_full
+/tmp/backups/2019-11-18_23-15-01
+/tmp/backups/2019-11-19_23-15-01
+/tmp/backups/2019-11-20_23-15-02
+/tmp/backups/2019-11-21_23-15-01
+/tmp/backups/2019-11-22_23-15-02
+/tmp/backups/2019-11-23_23-15-01
+```
+
+A drawback of using incremental backups is the need to keep at least 7 days of backups, otherwise the full backups is removed early and consecutive incremental backups will fail. Furthermore an incremental backups becomes obsolete once the required full backup was removed.
+
+The next example uses XtraBackup with incremental backups disabled. In this case the daily cronjob will always perform a full backup.
+
+```puppet
+class { 'mysql::server::backup':
+  backupuser          => 'myuser',
+  backuppassword      => 'mypassword',
+  backupdir           => '/tmp/backups',
+  provider            => 'xtrabackup',
+  incremental_backups => false,
+  rotate              => 5,
+  execpath            => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
+  time                => ['23', '15'],
+}
+```
+
 ## Reference
 
 ### Classes
@@ -542,3 +643,4 @@ This module is based on work by David Schmitt. The following contributors have c
 * Daniël van Eeden
 * Jan-Otto Kröpke
 * Timothy Sven Nelson
+* Andreas Stürz

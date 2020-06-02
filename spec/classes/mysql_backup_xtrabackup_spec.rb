@@ -27,30 +27,58 @@ describe 'mysql::backup::xtrabackup' do
           )
         end
 
+        package = if facts[:osfamily] == 'RedHat'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '8') >= 0
+                      'percona-xtrabackup-24'
+                    elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-20'
+                    end
+                  elsif facts[:operatingsystem] == 'Debian'
+                    'percona-xtrabackup-24'
+                  elsif facts[:operatingsystem] == 'Ubuntu'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-24'
+                    end
+                  elsif facts[:osfamily] == 'Suse'
+                    'xtrabackup'
+                  else
+                    'percona-xtrabackup'
+                  end
+
         it 'contains the weekly cronjob' do
           is_expected.to contain_cron('xtrabackup-weekly')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp --backup',
+              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F)_full --backup',
               user: 'root',
               hour: '23',
               minute: '5',
               weekday: '0',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
 
         it 'contains the daily cronjob for weekdays 1-6' do
+          dateformat = case facts[:osfamily]
+                       when 'FreeBSD', 'OpenBSD'
+                         '$(date -v-sun +\%F)_full'
+                       else
+                         '$(date -d "last sunday" +\%F)_full'
+                       end
           is_expected.to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup',
+              command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\\%F_\\\%H-\\\%M-\\\%S) --backup",
               user: 'root',
               hour: '23',
               minute: '5',
               weekday: '1-6',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
       end
 
@@ -84,30 +112,59 @@ describe 'mysql::backup::xtrabackup' do
           { additional_cron_args: '--backup --skip-ssl' }.merge(default_params)
         end
 
+        package = if facts[:osfamily] == 'RedHat'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '8') >= 0
+                      'percona-xtrabackup-24'
+                    elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-20'
+                    end
+                  elsif facts[:operatingsystem] == 'Debian'
+                    'percona-xtrabackup-24'
+                  elsif facts[:operatingsystem] == 'Ubuntu'
+                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
+                      'percona-xtrabackup'
+                    else
+                      'percona-xtrabackup-24'
+                    end
+                  elsif facts[:osfamily] == 'Suse'
+                    'xtrabackup'
+                  else
+                    'percona-xtrabackup'
+                  end
+
+        dateformat = case facts[:osfamily]
+                     when 'FreeBSD', 'OpenBSD'
+                       '$(date -v-sun +\%F)_full'
+                     else
+                       '$(date -d "last sunday" +\%F)_full'
+                     end
+
         it 'contains the weekly cronjob' do
           is_expected.to contain_cron('xtrabackup-weekly')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp --backup --skip-ssl',
+              command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F)_full --backup --skip-ssl',
               user: 'root',
               hour: '23',
               minute: '5',
               weekday: '0',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
 
         it 'contains the daily cronjob for weekdays 1-6' do
           is_expected.to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
-              command: '/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup --skip-ssl',
+              command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\\%F_\\\%H-\\\%M-\\\%S) --backup --skip-ssl",
               user: 'root',
               hour: '23',
               minute: '5',
               weekday: '1-6',
             )
-            .that_requires('Package[percona-xtrabackup]')
+            .that_requires("Package[#{package}]")
         end
       end
 
@@ -123,7 +180,7 @@ describe 'mysql::backup::xtrabackup' do
         it 'contains the daily cronjob with all weekdays' do
           is_expected.to contain_cron('xtrabackup-daily').with(
             ensure: 'present',
-            command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp --backup',
+            command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup',
             user: 'root',
             hour: '23',
             minute: '5',

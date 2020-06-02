@@ -5,8 +5,10 @@
 #
 class mysql::server::config {
 
-  $options = $mysql::server::options
+  $options = $mysql::server::_options
   $includedir = $mysql::server::includedir
+  $managed_dirs = $mysql::server::managed_dirs
+
 
   File {
     owner  => 'root',
@@ -33,11 +35,31 @@ class mysql::server::config {
     }
   }
 
+  #Debian: Creating world readable directories before installing.
+  if $managed_dirs {
+    $managed_dirs.each | $entry | {
+      $dir = $options['mysqld']["${entry}"]
+      if ( $dir and $dir != '/usr' and $dir != '/tmp' ) {
+        exec {"${entry}-managed_dir-mkdir":
+          command => "/bin/mkdir -p ${dir}",
+          unless  => "/usr/bin/dpkg -s ${mysql::server::package_name}",
+          notify  =>  Exec["${entry}-managed_dir-chmod"],
+        }
+        exec {"${entry}-managed_dir-chmod":
+          command     => "/bin/chmod 777 ${dir}",
+          refreshonly => true,
+        }
+      }
+    }
+  }
+
   if $mysql::server::manage_config_file  {
     file { 'mysql-config-file':
       path                    => $mysql::server::config_file,
       content                 => template('mysql/my.cnf.erb'),
-      mode                    => '0644',
+      mode                    => $mysql::server::config_file_mode,
+      owner                   => $mysql::server::mycnf_owner,
+      group                   => $mysql::server::mycnf_group,
       selinux_ignore_defaults => true,
     }
 

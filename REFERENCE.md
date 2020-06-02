@@ -29,10 +29,10 @@ _Private Classes_
 * `mysql::client::install`: Private class for MySQL client install.
 * `mysql::params`: Params class.
 * `mysql::server::account_security`: Private class for ensuring localhost accounts do not exist
-* `mysql::server::binarylog`: Binary log configuration requires the mysql user to be present. This must be done after package install
 * `mysql::server::config`: Private class for MySQL server configuration.
 * `mysql::server::install`: Private class for managing MySQL package.
 * `mysql::server::installdb`: Builds initial databases on installation.
+* `mysql::server::managed_dirs`: Binary log configuration requires the mysql user to be present. This must be done after package install.
 * `mysql::server::providers`: Convenience class to call each of the three providers with the corresponding hashes provided in mysql::server.
 * `mysql::server::root_password`: Private class for managing the root password
 * `mysql::server::service`: Private class for managing the MySQL service
@@ -46,6 +46,7 @@ _Private Classes_
 _Public Resource types_
 
 * [`mysql_grant`](#mysql_grant): @summary Manage a MySQL user's rights.
+* [`mysql_login_path`](#mysql_login_path): Manage a MySQL login path.
 * [`mysql_plugin`](#mysql_plugin): Manage MySQL plugins.
 * [`mysql_user`](#mysql_user): @summary Manage a MySQL user. This includes management of users password as well as privileges.
 
@@ -56,11 +57,24 @@ _Private Resource types_
 
 **Functions**
 
+* [`mysql::mysql_password`](#mysqlmysql_password): @summary
 * [`mysql::normalise_and_deepmerge`](#mysqlnormalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashesh and underscores,
 then returns the resulting hash.
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
-* [`mysql_password`](#mysql_password): Hash a string as mysql's "PASSWORD()" function would do it
+* [`mysql_password`](#mysql_password): DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
+
+**Data types**
+
+* [`Mysql::Options`](#mysqloptions): 
+
+**Data types**
+
+* [`Mysql::Options`](#mysqloptions): 
+
+**Data types**
+
+* [`Mysql::Options`](#mysqloptions): 
 
 **Tasks**
 
@@ -411,6 +425,14 @@ The location, as a path, of the MySQL configuration file.
 
 Default value: $mysql::params::config_file
 
+##### `config_file_mode`
+
+Data type: `Any`
+
+The MySQL configuration file's permissions mode.
+
+Default value: $mysql::params::config_file_mode
+
 ##### `includedir`
 
 Data type: `Any`
@@ -442,6 +464,14 @@ Data type: `Any`
 Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
 
 Default value: $mysql::params::manage_config_file
+
+##### `options`
+
+Data type: `Mysql::Options`
+
+A hash of options structured like the override_options, but not merged with the default options. Use this if you don’t want your options merged with the default options.
+
+Default value: {}
 
 ##### `override_options`
 
@@ -514,6 +544,22 @@ Data type: `Any`
 The name of the group of the MySQL daemon user. Can be a group name or a group ID. See more about the [group](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 
 Default value: $mysql::params::mysql_group
+
+##### `mycnf_owner`
+
+Data type: `Any`
+
+Name or user-id who owns the mysql-config-file.
+
+Default value: $mysql::params::mycnf_owner
+
+##### `mycnf_group`
+
+Data type: `Any`
+
+Name or group-id which owns the mysql-config-file.
+
+Default value: $mysql::params::mycnf_group
 
 ##### `root_password`
 
@@ -709,13 +755,13 @@ Data type: `Any`
 
 Group owner for the backup directory. This parameter is passed directly to the file resource.
 
-Default value: 'root'
+Default value: $mysql::params::root_group
 
 ##### `backupcompress`
 
 Data type: `Any`
 
-Whether or not to compress the backup (when using the mysqldump provider)
+Whether or not to compress the backup (when using the mysqldump or xtrabackup provider)
 
 Default value: `true`
 
@@ -726,6 +772,14 @@ Data type: `Any`
 The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup
 
 Default value: `undef`
+
+##### `backup_success_file_path`
+
+Data type: `Any`
+
+Specify a path where upon successfull backup a file should be created for checking purposes.
+
+Default value: '/tmp/mysqlbackup_success'
 
 ##### `backuprotate`
 
@@ -782,6 +836,14 @@ Data type: `Any`
 Dump triggers for each dumped table when doing a `file_per_database` backup.
 
 Default value: `false`
+
+##### `incremental_backups`
+
+Data type: `Any`
+
+A flag to activate/deactivate incremental backups. Currently only supported by the xtrabackup provider.
+
+Default value: `true`
 
 ##### `ensure`
 
@@ -1105,6 +1167,100 @@ namevar
 
 Name to describe the grant.
 
+### mysql_login_path
+
+This type provides Puppet with the capabilities to store authentication credentials in an obfuscated login path file
+named .mylogin.cnf created with the mysql_config_editor utility. Supports only MySQL Community Edition > v5.6.6.
+
+* **See also**
+https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html
+
+#### Examples
+
+##### 
+
+```puppet
+mysql_login_path { 'local_socket':
+  owner    => 'root',
+  host     => 'localhost',
+  user     => 'root',
+  password => Sensitive('secure'),
+  socket   => '/var/run/mysql/mysql.sock',
+  ensure   => present,
+}
+
+mysql_login_path { 'local_tcp':
+  owner    => 'root',
+  host     => '127.0.0.1',
+  user     => 'root',
+  password => Sensitive('more_secure'),
+  port     => 3306,
+  ensure   => present,
+}
+```
+
+#### Properties
+
+The following properties are available in the `mysql_login_path` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+##### `host`
+
+Data type: `Optional[String]`
+
+Host name to be entered into the login path.
+
+##### `user`
+
+Data type: `Optional[String]`
+
+Username to be entered into the login path.
+
+##### `password`
+
+Data type: `Optional[Sensitive[String[1]]]`
+
+Password to be entered into login path
+
+##### `socket`
+
+Data type: `Optional[String]`
+
+Socket path to be entered into login path
+
+##### `port`
+
+Data type: `Optional[Integer[0,65535]]`
+
+Port number to be entered into login path.
+
+#### Parameters
+
+The following parameters are available in the `mysql_login_path` type.
+
+##### `name`
+
+namevar
+
+Data type: `String`
+
+Name of the login path you want to manage.
+
+##### `owner`
+
+namevar
+
+Data type: `String`
+
+The user to whom the logon path should belong.
+
+Default value: root
+
 ### mysql_plugin
 
 Manage MySQL plugins.
@@ -1168,7 +1324,7 @@ Default value: present
 
 Valid values: %r{\w*}
 
-The password hash of the user. Use mysql_password() for creating such a hash.
+The password hash of the user. Use mysql::password() for creating such a hash.
 
 ##### `plugin`
 
@@ -1215,6 +1371,37 @@ namevar
 The name of the user. This uses the 'username@hostname' or username@hostname.
 
 ## Functions
+
+### mysql::mysql_password
+
+Type: Ruby 4.x API
+
+---- original file header ----
+
+     Hash a string as mysql's "PASSWORD()" function would do it
+
+   @param [String] password Plain text password.
+
+   @return [String] the mysql password hash from the clear text password.
+
+#### `mysql::mysql_password(Any *$args)`
+
+---- original file header ----
+
+     Hash a string as mysql's "PASSWORD()" function would do it
+
+   @param [String] password Plain text password.
+
+   @return [String] the mysql password hash from the clear text password.
+
+Returns: `Data type` Describe what the function returns here
+
+##### `*args`
+
+Data type: `Any`
+
+The original array of arguments. Port this to individually managed params
+to get the full benefit of the modern function API.
 
 ### mysql::normalise_and_deepmerge
 
@@ -1302,21 +1489,29 @@ Hash to be stripped
 
 ### mysql_password
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-Hash a string as mysql's "PASSWORD()" function would do it
+DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
 
 #### `mysql_password(String $password)`
 
 The mysql_password function.
 
-Returns: `String` the mysql password hash from the clear text password.
+Returns: `String` The mysql password hash from the 4.x function mysql::password.
 
 ##### `password`
 
 Data type: `String`
 
 Plain text password.
+
+## Data types
+
+### Mysql::Options
+
+The Mysql::Options data type.
+
+Alias of `Hash[String, Hash]`
 
 ## Tasks
 

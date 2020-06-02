@@ -26,9 +26,9 @@ set -o pipefail
 cleanup()
 {
   <%- if @kernel == 'SunOS' -%>
-    gfind "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | gxargs -0 -r rm -f
+    gfind "${DIR}/" -mindepth 1 -maxdepth 1 -mtime +${ROTATE} -print0 | gxargs -0 -r rm -rf
   <%- else -%>
-    find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+    find "${DIR}/" -mindepth 1 -maxdepth 1 -mtime +${ROTATE} -print0 | xargs -0 -r rm -rf
   <%- end -%>
 }
 
@@ -41,6 +41,10 @@ cleanup
 
 <%- if @backupuser and @backuppassword -%>
   <%- _innobackupex_args = '--user="' + @backupuser + '" --password="' + @backuppassword + '"' -%>
+<%- end -%>
+
+<%- if @backupcompress -%>
+  <%- _innobackupex_args = _innobackupex_args + ' --compress' -%>
 <%- end -%>
 
 <%- if @backupdatabases and @backupdatabases.is_a?(Array) and !@backupdatabases.empty? -%>

@@ -29,7 +29,7 @@
 # @param backupdirgroup
 #   Group owner for the backup directory. This parameter is passed directly to the file resource.
 # @param backupcompress
-#   Whether or not to compress the backup (when using the mysqldump provider)
+#   Whether or not to compress the backup (when using the mysqldump or xtrabackup provider)
 # @param backupmethod
 #   The execution binary for backing up. ex. mysqldump, xtrabackup, mariabackup
 # @param backup_success_file_path
@@ -48,6 +48,8 @@
 #   Dump stored routines (procedures and functions) from dumped databases when doing a `file_per_database` backup.
 # @param include_triggers
 #   Dump triggers for each dumped table when doing a `file_per_database` backup.
+# @param incremental_backups
+#   A flag to activate/deactivate incremental backups. Currently only supported by the xtrabackup provider.
 # @param ensure
 # @param time
 #   An array of two elements to set the backup time. Allows ['23', '5'] (i.e., 23:05) or ['3', '45'] (i.e., 03:45) for HH:MM times.
@@ -88,6 +90,7 @@ class mysql::server::backup (
   $provider                 = 'mysqldump',
   $maxallowedpacket         = '1M',
   $optional_args            = [],
+  $incremental_backups      = true,
 ) inherits mysql::params {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
@@ -120,6 +123,7 @@ class mysql::server::backup (
       'execpath'                 => $execpath,
       'maxallowedpacket'         => $maxallowedpacket,
       'optional_args'            => $optional_args,
+      'incremental_backups'      => $incremental_backups,
     }
   })
 }

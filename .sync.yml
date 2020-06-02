@@ -1,38 +1,47 @@
 ---
-.gitignore:
-  required:
-    - ---.project
-
-.travis.yml:
-  unmanaged: true
-
+".gitlab-ci.yml":
+  delete: true
+".rubocop.yml":
+  default_configs:
+    inherit_from: ".rubocop_todo.yml"
+    require:
+    - rubocop-i18n
+    - rubocop-rspec
+".travis.yml":
+  global_env: 
+    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
+  deploy_to_forge:
+    enabled: false
+  branches:
+  - release
+  use_litmus: true
+  litmus:
+    provision_list:
+      - travis_deb
+      - travis_ub
+      - travis_el6
+      - travis_el7
+      - ---travis_el
+  simplecov: true
+  notifications:
+    slack:
+      secure: XpBD602OXRZHSTDylzzx/OqpfThEJPbx0PLhXctWuES4GpW1EHWnyPgrliNOaJOh0Zb7qMrdaKWLOltfqPT5IanPd0XF7GbT8RrNeLTmLXqvHmC6dDqWxnvFvdSrGwqpj7s7Dbwl79nmszONRj1OlolPmJgY/2kGw88c71biaas=
+appveyor.yml:
+  delete: true
 Gemfile:
   optional:
-    ':development':
-      - gem: puppet-lint-i18n
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
-
-appveyor.yml:
-  unmanaged: true
-
+    ":development":
+    - gem: puppet-lint-i18n
+    - gem: github_changelog_generator
+      git: https://github.com/skywinder/github-changelog-generator
+      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
+      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
+    - gem: puppet-resource_api
 Rakefile:
   requires:
-    - puppet_pot_generator/rake_tasks
-  changelog_user: 'puppetlabs'
-
+  - puppet_pot_generator/rake_tasks
 spec/spec_helper.rb:
   spec_overrides:
-    -  "require 'spec_helper_local'"
-
-.rubocop.yml:
-   default_configs:
-    inherit_from: .rubocop_todo.yml
-    require:
-      - rubocop-i18n
-      - rubocop-rspec
-
-.gitlab-ci.yml:
-  unmanaged: true
+  - require 'spec_helper_local'
+  coverage_report: true
+"  changelog_user": puppetlabs

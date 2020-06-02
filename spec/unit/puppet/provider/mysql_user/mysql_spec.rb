@@ -39,6 +39,18 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
         string: '/usr/sbin/mysqld (mysqld 10.0.23-MariaDB-0+deb8u1)',
         mysql_type: 'mariadb',
       },
+    'mariadb-10.1.44' =>
+      {
+        version: '10.1.44',
+        string: '/usr/sbin/mysqld (mysqld 10.1.44-MariaDB-1~bionic)',
+        mysql_type: 'mariadb',
+      },
+    'mariadb-10.3.22' =>
+      {
+        version: '10.3.22',
+        string: '/usr/sbin/mysqld (mysqld 10.3.22-MariaDB-0+deb10u1)',
+        mysql_type: 'mariadb',
+      },
     'percona-5.5' =>
       {
         version: '5.5.39',
@@ -129,6 +141,14 @@ usvn_user@localhost
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
       parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
+
+      usernames = provider.class.instances.map { |x| x.name }
+      expect(parsed_users).to match_array(usernames)
+    end
+    it 'returns an array of users mariadb >= 10.1.21' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
+      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
+      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD, PLUGIN, AUTHENTICATION_STRING FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Metrics/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
@@ -282,6 +302,25 @@ usvn_user@localhost
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
+    it 'changes the hash to an ed25519 hash mariadb >= 10.1.21 and < 10.2.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
+      resource.stubs(:value).with(:plugin).returns('ed25519')
+      provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET password = '', plugin = 'ed25519', authentication_string = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU' where CONCAT(user, '@', host) = 'joe@localhost'; FLUSH PRIVILEGES", 'system').returns('0') # rubocop:disable Metrics/LineLength
+      provider.expects(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+      provider.password_hash = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'
+    end
+    it 'changes the hash to an ed25519 hash mariadb >= 10.2.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.3.22'][:string])
+      resource.stubs(:value).with(:plugin).returns('ed25519')
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH ed25519 AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+      provider.expects(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+      provider.password_hash = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'
+    end
+    it 'changes the hash to an invalid ed25519 hash mariadb >= 10.1.21' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
+      resource.stubs(:value).with(:plugin).returns('ed25519')
+      expect { provider.password_hash = 'invalid' }.to raise_error(ArgumentError, 'ed25519 hash should be 43 bytes long.')
+    end
     it 'changes the hash percona-5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
       provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
@@ -332,6 +371,30 @@ usvn_user@localhost
 
           provider.expects(:plugin).returns('mysql_native_password')
           provider.plugin = 'mysql_native_password'
+        end
+      end
+    end
+
+    context 'ed25519' do
+      context 'mariadb >= 10.1.21 and < 10.2.0' do
+        it 'changes the authentication plugin' do
+          provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
+          resource.stubs('[]').with(:name).returns('joe@localhost')
+          resource.stubs('[]').with(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET password = '', plugin = 'ed25519', authentication_string = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU' where CONCAT(user, '@', host) = 'joe@localhost'; FLUSH PRIVILEGES", 'system').returns('0') # rubocop:disable Metrics/LineLength
+          provider.expects(:plugin).returns('ed25519')
+          provider.plugin = 'ed25519'
+        end
+      end
+
+      context 'mariadb >= 10.2.0' do
+        it 'changes the authentication plugin' do
+          provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.3.22'][:string])
+          resource.stubs('[]').with(:name).returns('joe@localhost')
+          resource.stubs('[]').with(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'ed25519' AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0') # rubocop:disable Metrics/LineLength
+          provider.expects(:plugin).returns('ed25519')
+          provider.plugin = 'ed25519'
         end
       end
     end
