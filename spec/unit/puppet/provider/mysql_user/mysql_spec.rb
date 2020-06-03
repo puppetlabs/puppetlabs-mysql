@@ -439,6 +439,44 @@ usvn_user@localhost
     end
   end
 
+  describe 'tls_options=required' do
+    it 'adds mTLS option grant in mysql 5.5' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
+    end
+    it 'adds mTLS option grant in mysql 5.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
+    end
+    it 'adds mTLS option grant in mysql < 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
+    end
+    it 'adds mTLS option grant in mysql >= 5.7.6' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
+    end
+    it 'adds mTLS option grant in mariadb-10.0' do
+      provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
+      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+
+      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
+    end
+  end
+
   ['max_user_connections', 'max_connections_per_hour', 'max_queries_per_hour', 'max_updates_per_hour'].each do |property|
     describe property do
       it "returns #{property}" do

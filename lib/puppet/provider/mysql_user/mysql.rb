@@ -244,9 +244,9 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       ['X509']
     elsif ssl_type == 'SPECIFIED'
       options = []
-      options << "CIPHER #{ssl_cipher}" if !ssl_cipher.nil? && !ssl_cipher.empty?
-      options << "ISSUER #{x509_issuer}" if !x509_issuer.nil? && !x509_issuer.empty?
-      options << "SUBJECT #{x509_subject}" if !x509_subject.nil? && !x509_subject.empty?
+      options << "CIPHER '#{ssl_cipher}'" if !ssl_cipher.nil? && !ssl_cipher.empty?
+      options << "ISSUER '#{x509_issuer}'" if !x509_issuer.nil? && !x509_issuer.empty?
+      options << "SUBJECT '#{x509_subject}'" if !x509_subject.nil? && !x509_subject.empty?
       options
     else
       ['NONE']
