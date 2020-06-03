@@ -462,7 +462,7 @@ Data type: `Any`
 Manage MySQL system directories which described in the section `[mysqld]` of the configuration file
 `my.cnf`
 
-Default value: `undef`
+Default value: `$mysql::params::managed_dirs`
 
 ##### `options`
 
