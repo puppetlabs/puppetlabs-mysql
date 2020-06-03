@@ -59,19 +59,13 @@ class mysql::backup::mysqldump (
   }
 
   if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-    package {'crontabs':
-      ensure => present,
-    }
+    ensure_packages('crontabs')
   } elsif $::osfamily == 'RedHat' {
-    package {'cronie':
-      ensure => present,
-    }
+    ensure_packages('cronie')
   } elsif $::osfamily != 'FreeBSD' {
-    package {'cron':
-      ensure => present,
-    }
+    ensure_packages('cron')
   }
-
+  
   cron { 'mysql-backup':
     ensure   => $ensure,
     command  => '/usr/local/sbin/mysqlbackup.sh',
