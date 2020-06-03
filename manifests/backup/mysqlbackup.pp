@@ -28,6 +28,7 @@ class mysql::backup::mysqlbackup (
   $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
   $optional_args            = [],
   $incremental_backups      = false,
+  $install_cron             = true,
 ) inherits mysql::params {
 
   mysql_user { "${backupuser}@localhost":
@@ -65,12 +66,14 @@ class mysql::backup::mysqlbackup (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
-  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-    ensure_packages('crontabs')
-  } elsif $::osfamily == 'RedHat' {
-    ensure_packages('cronie')
-  } elsif $::osfamily != 'FreeBSD' {
-    ensure_packages('cron')
+  if $install_cron {
+    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
+      ensure_packages('crontabs')
+    } elsif $::osfamily == 'RedHat' {
+      ensure_packages('cronie')
+    } elsif $::osfamily != 'FreeBSD' {
+      ensure_packages('cron')
+    }
   }
 
   cron { 'mysqlbackup-weekly':
