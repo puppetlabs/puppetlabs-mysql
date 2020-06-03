@@ -201,20 +201,17 @@ describe 'mysql_user' do
   end
   context 'using user-w-subject@localhost with ISSUER and SUBJECT' do
     describe 'adding user' do
-      pp_six = <<-MANIFEST
-          mysql_user { 'user-w-subject@localhost':
-            plugin        => 'mysql_native_password',
-            password_hash => '',
-            tls_options   => [
-              "SUBJECT '/OU=MySQL Users/CN=username'",
-              "ISSUER '/CN=Certificate Authority'",
-              "CIPHER 'EDH-RSA-DES-CBC3-SHA'",
-            ],
-          }
-      MANIFEST
-
       it 'works without errors' do
-        idempotent_apply(pp_six)
+        pp = <<-MANIFEST
+        mysql_user { 'user-w-subject@localhost':
+          tls_options   => [
+            "SUBJECT '/OU=MySQL Users/CN=username'",
+            "ISSUER '/CN=Certificate Authority'",
+            "CIPHER 'EDH-RSA-DES-CBC3-SHA'",
+          ],
+        }
+        MANIFEST
+        idempotent_apply(pp)
       end
 
       it 'finds the user #stdout' do
