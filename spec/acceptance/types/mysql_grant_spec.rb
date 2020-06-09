@@ -266,7 +266,46 @@ describe 'mysql_grant' do
     end
   end
 
+  # On Ubuntu 20.04 'ALL' now returns as the sum of it's constitute parts and so require a specific test
+  describe 'ALL privilege on newer MySQL versions', if: os[:family] == 'ubuntu' && os[:release] =~ %r{^20\.04} do
+    pp_one = <<-MANIFEST
+        mysql_user { 'all@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'all@localhost/*.*':
+          user       => 'all@localhost',
+          privileges => ['ALL'],
+          table      => '*.*',
+          require    => Mysql_user['all@localhost'],
+        }
+    MANIFEST
+    it "create ['ALL'] privs" do
+      apply_manifest(pp_one, catch_failures: true)
+    end
+
+    pp_two = <<-MANIFEST
+        mysql_user { 'all@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'all@localhost/*.*':
+          user       => 'all@localhost',
+          privileges => ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER', 'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES', 'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER', 'UPDATE'],
+          table      => '*.*',
+          require    => Mysql_user['all@localhost'],
+        }
+    MANIFEST
+    it "create ['ALL'] constitute parts privs" do
+      apply_manifest(pp_two, catch_changes: true)
+    end
+  end
+
   describe 'complex test' do
+    # On Ubuntu 20.04 'ALL' now returns as the sum of it's constitute parts and so is no longer idempotent when set
+    privileges = if os[:family] == 'ubuntu' && os[:release] =~ %r{^20\.04}
+                   "['SELECT', 'INSERT', 'UPDATE']"
+                 else
+                   "['ALL']"
+                 end
     pp = <<-MANIFEST
         $dbSubnet = '10.10.10.%'
 
@@ -284,7 +323,7 @@ describe 'mysql_grant' do
         Mysql_grant {
           ensure     => present,
           options    => ['GRANT'],
-          privileges => ['ALL'],
+          privileges => #{privileges},
           table      => '*.*',
           require    => [ Mysql_database['foo'], Exec['mysql-create-table'] ],
         }
@@ -355,12 +394,12 @@ describe 'mysql_grant' do
         }
         mysql_grant { 'lowercase@localhost/*.*':
           user       => 'lowercase@localhost',
-          privileges => 'ALL',
+          privileges => ['SELECT', 'INSERT', 'UPDATE'],
           table      => '*.*',
           require    => Mysql_user['lowercase@localhost'],
         }
     MANIFEST
-    it 'create ALL privs' do
+    it "create ['SELECT', 'INSERT', 'UPDATE'] privs" do
       apply_manifest(pp_one, catch_failures: true)
     end
 
@@ -370,12 +409,12 @@ describe 'mysql_grant' do
         }
         mysql_grant { 'lowercase@localhost/*.*':
           user       => 'lowercase@localhost',
-          privileges => 'all',
+          privileges => ['select', 'insert', 'update'],
           table      => '*.*',
           require    => Mysql_user['lowercase@localhost'],
         }
     MANIFEST
-    it 'create lowercase all privs' do
+    it "create lowercase ['select', 'insert', 'update'] privs" do
       apply_manifest(pp_two, catch_changes: true)
     end
   end
