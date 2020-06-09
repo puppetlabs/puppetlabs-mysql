@@ -29,7 +29,8 @@ class mysql::backup::xtrabackup (
   $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
   $optional_args            = [],
   $additional_cron_args     = '--backup',
-  $incremental_backups      = true
+  $incremental_backups      = true,
+  $install_cron             = true,
 ) inherits mysql::params {
 
   ensure_packages($xtrabackup_package_name)
@@ -47,6 +48,16 @@ class mysql::backup::xtrabackup (
       table      => '*.*',
       privileges => [ 'RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT' ],
       require    => Mysql_user["${backupuser}@localhost"],
+    }
+  }
+
+  if $install_cron {
+    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
+      ensure_packages('crontabs')
+    } elsif $::osfamily == 'RedHat' {
+      ensure_packages('cronie')
+    } elsif $::osfamily != 'FreeBSD' {
+      ensure_packages('cron')
     }
   }
 

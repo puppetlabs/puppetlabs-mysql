@@ -65,6 +65,8 @@
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
 #   Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
+# @param install_cron
+#   Manage installation of cron package
 class mysql::server::backup (
   $backupuser               = undef,
   $backuppassword           = undef,
@@ -91,6 +93,7 @@ class mysql::server::backup (
   $maxallowedpacket         = '1M',
   $optional_args            = [],
   $incremental_backups      = true,
+  $install_cron             = true,
 ) inherits mysql::params {
 
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
@@ -124,6 +127,7 @@ class mysql::server::backup (
       'maxallowedpacket'         => $maxallowedpacket,
       'optional_args'            => $optional_args,
       'incremental_backups'      => $incremental_backups,
+      'install_cron'             => $install_cron,
     }
   })
 }

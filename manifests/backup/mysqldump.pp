@@ -29,6 +29,7 @@ class mysql::backup::mysqldump (
   $mysqlbackupdir_ensure    = 'directory',
   $mysqlbackupdir_target    = undef,
   $incremental_backups      = false,
+  $install_cron             = true,
 ) inherits mysql::params {
 
   unless $::osfamily == 'FreeBSD' {
@@ -58,17 +59,13 @@ class mysql::backup::mysqldump (
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
-  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-    package {'crontabs':
-      ensure => present,
-    }
-  } elsif $::osfamily == 'RedHat' {
-    package {'cronie':
-      ensure => present,
-    }
-  } elsif $::osfamily != 'FreeBSD' {
-    package {'cron':
-      ensure => present,
+  if $install_cron {
+    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
+      ensure_packages('crontabs')
+    } elsif $::osfamily == 'RedHat' {
+      ensure_packages('cronie')
+    } elsif $::osfamily != 'FreeBSD' {
+      ensure_packages('cron')
     }
   }
 
