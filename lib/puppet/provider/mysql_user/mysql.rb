@@ -211,7 +211,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
         sql << ", authentication_string = '#{@resource[:password_hash]}'"
         sql << " where CONCAT(user, '@', host) = '#{concat_name}'; FLUSH PRIVILEGES"
       end
-    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       sql = "ALTER USER #{merged_name} IDENTIFIED WITH '#{string}'"
       sql << " AS '#{@resource[:password_hash]}'" if string == 'mysql_native_password'
     else
