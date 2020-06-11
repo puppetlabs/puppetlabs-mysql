@@ -6,22 +6,39 @@ on:
       - 'release'
 
 jobs:
-  LitmusAcceptance:
+  LitmusAcceptancePuppet5:
     env:
       HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
       HONEYCOMB_DATASET: litmus tests
     runs-on: self-hosted
-
     strategy:
       matrix:
         ruby_version: [2.5.x]
         puppet_gem_version: [~> 6.0]
-        platform: [release_checks]
-        agent_family: ['puppet5', 'puppet6']
+        platform: [release_checks_5]
+        agent_family: ['puppet5']
 
     steps:
     - uses: actions/checkout@v1
+    - name: Litmus Parallel
+      uses: puppetlabs/action-litmus_parallel@master
+      with:
+        platform: ${{ matrix.platform }}
+        agent_family: ${{ matrix.agent_family }}
+  LitmusAcceptancePuppet6:
+    env:
+      HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
+      HONEYCOMB_DATASET: litmus tests
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        ruby_version: [2.5.x]
+        puppet_gem_version: [~> 6.0]
+        platform: [release_checks_6]
+        agent_family: ['puppet6']
 
+    steps:
+    - uses: actions/checkout@v1
     - name: Litmus Parallel
       uses: puppetlabs/action-litmus_parallel@master
       with:

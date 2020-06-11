@@ -75,7 +75,7 @@ describe 'mysql_grant' do
 
     it 'finds the user #stdout' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
-      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE.*TO 'test2'@'tester'})
+      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE.*TO ['|`]test2['|`]@['|`]tester['|`]})
       expect(result.stderr).to be_empty
     end
   end
@@ -99,7 +99,7 @@ describe 'mysql_grant' do
 
     it 'finds the user #stdout' do
       result = run_shell("mysql -NBe \"SHOW GRANTS FOR 'test-2'@tester\"")
-      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE.*TO 'test-2'@'tester'})
+      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE.*TO ['|`]test-2['|`]@['|`]tester['|`]})
       expect(result.stderr).to be_empty
     end
   end
@@ -124,7 +124,7 @@ describe 'mysql_grant' do
 
     it 'finds the user #stdout' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
-      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE ON `test`.* TO 'test3'@'tester' WITH GRANT OPTION$})
+      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE ON `test`.* TO ['|`]test3['|`]@['|`]tester['|`] WITH GRANT OPTION$})
       expect(result.stderr).to be_empty
     end
   end
@@ -168,7 +168,7 @@ describe 'mysql_grant' do
 
     it 'finds the user #stdout' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test4@tester"')
-      expect(result.stdout).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test4'@'tester' WITH GRANT OPTION})
+      expect(result.stdout).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO ['|`]test4['|`]@['|`]tester['|`] WITH GRANT OPTION})
       expect(result.stderr).to be_empty
     end
   end
@@ -233,40 +233,79 @@ describe 'mysql_grant' do
 
     it 'finds short hostname #stdout' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test@short"')
-      expect(result.stdout).to contain(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'short'})
+      expect(result.stdout).to contain(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]short['|`]})
       expect(result.stderr).to be_empty
     end
 
     it 'finds long hostname #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'long.hostname.com'\"") do |r|
-        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'long.hostname.com'})
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]long.hostname.com['|`]})
         expect(r.stderr).to be_empty
       end
     end
 
     it 'finds ipv4 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.6'\"") do |r|
-        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.6'})
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]192.168.5.6['|`]})
         expect(r.stderr).to be_empty
       end
     end
 
     it 'finds ipv6 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'\"") do |r|
-        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'2607:f0d0:1002:0051:0000:0000:0000:0004'})
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]2607:f0d0:1002:0051:0000:0000:0000:0004['|`]})
         expect(r.stderr).to be_empty
       end
     end
 
     it 'finds short ipv6 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
-        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'::1\/128'})
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]::1\/128['|`]})
         expect(r.stderr).to be_empty
       end
     end
   end
 
+  # On Ubuntu 20.04 'ALL' now returns as the sum of it's constitute parts and so require a specific test
+  describe 'ALL privilege on newer MySQL versions', if: os[:family] == 'ubuntu' && os[:release] =~ %r{^20\.04} do
+    pp_one = <<-MANIFEST
+        mysql_user { 'all@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'all@localhost/*.*':
+          user       => 'all@localhost',
+          privileges => ['ALL'],
+          table      => '*.*',
+          require    => Mysql_user['all@localhost'],
+        }
+    MANIFEST
+    it "create ['ALL'] privs" do
+      apply_manifest(pp_one, catch_failures: true)
+    end
+
+    pp_two = <<-MANIFEST
+        mysql_user { 'all@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'all@localhost/*.*':
+          user       => 'all@localhost',
+          privileges => ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER', 'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES', 'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER', 'UPDATE'],
+          table      => '*.*',
+          require    => Mysql_user['all@localhost'],
+        }
+    MANIFEST
+    it "create ['ALL'] constitute parts privs" do
+      apply_manifest(pp_two, catch_changes: true)
+    end
+  end
+
   describe 'complex test' do
+    # On Ubuntu 20.04 'ALL' now returns as the sum of it's constitute parts and so is no longer idempotent when set
+    privileges = if os[:family] == 'ubuntu' && os[:release] =~ %r{^20\.04}
+                   "['SELECT', 'INSERT', 'UPDATE']"
+                 else
+                   "['ALL']"
+                 end
     pp = <<-MANIFEST
         $dbSubnet = '10.10.10.%'
 
@@ -284,7 +323,7 @@ describe 'mysql_grant' do
         Mysql_grant {
           ensure     => present,
           options    => ['GRANT'],
-          privileges => ['ALL'],
+          privileges => #{privileges},
           table      => '*.*',
           require    => [ Mysql_database['foo'], Exec['mysql-create-table'] ],
         }
@@ -355,12 +394,12 @@ describe 'mysql_grant' do
         }
         mysql_grant { 'lowercase@localhost/*.*':
           user       => 'lowercase@localhost',
-          privileges => 'ALL',
+          privileges => ['SELECT', 'INSERT', 'UPDATE'],
           table      => '*.*',
           require    => Mysql_user['lowercase@localhost'],
         }
     MANIFEST
-    it 'create ALL privs' do
+    it "create ['SELECT', 'INSERT', 'UPDATE'] privs" do
       apply_manifest(pp_one, catch_failures: true)
     end
 
@@ -370,14 +409,13 @@ describe 'mysql_grant' do
         }
         mysql_grant { 'lowercase@localhost/*.*':
           user       => 'lowercase@localhost',
-          privileges => 'all',
+          privileges => ['select', 'insert', 'update'],
           table      => '*.*',
           require    => Mysql_user['lowercase@localhost'],
         }
     MANIFEST
-    it 'create lowercase all privs' do
-      result = apply_manifest(pp_two, catch_failures: true)
-      expect(result.exit_code).to eq(0)
+    it "create lowercase ['select', 'insert', 'update'] privs" do
+      apply_manifest(pp_two, catch_changes: true)
     end
   end
 
@@ -405,7 +443,7 @@ describe 'mysql_grant' do
 
     it 'finds the user #stdout' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
-      expect(result.stdout).to match(%r{GRANT EXECUTE ON PROCEDURE `mysql`.`simpleproc` TO 'test2'@'tester'})
+      expect(result.stdout).to match(%r{GRANT EXECUTE ON PROCEDURE `mysql`.`simpleproc` TO ['|`]test2['|`]@['|`]tester['|`]})
       expect(result.stderr).to be_empty
     end
   end
@@ -436,7 +474,7 @@ describe 'mysql_grant' do
     # rubocop:enable RSpec/ExampleLength
     it 'finds the user' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
-      expect(result.stdout).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO 'test3'@'tester'})
+      expect(result.stdout).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO ['|`]test3['|`]@['|`]tester['|`]})
       expect(result.stderr).to be_empty
     end
     # rubocop:enable RSpec/MultipleExpectations
@@ -464,7 +502,7 @@ describe 'mysql_grant' do
 
       it 'finds the user #stdout' do
         run_shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
-          expect(r.stdout).to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'})
+          expect(r.stdout).to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO ['|`]proxy1['|`]@['|`]tester['|`]})
           expect(r.stderr).to be_empty
         end
       end
@@ -489,7 +527,7 @@ describe 'mysql_grant' do
 
       it 'finds the user #stdout' do
         run_shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
-          expect(r.stdout).not_to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO 'proxy1'@'tester'})
+          expect(r.stdout).not_to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO ['|`]proxy1['|`]@['|`]tester['|`]})
           expect(r.stderr).to be_empty
         end
       end
@@ -617,7 +655,7 @@ describe 'mysql_grant' do
 
     it 'finds ipv4 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'192.168.5.7'\"") do |r|
-        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO 'test'@'192.168.5.7'})
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON `test`.* TO ['|`]test['|`]@['|`]192.168.5.7['|`]})
         expect(r.stderr).to be_empty
       end
     end

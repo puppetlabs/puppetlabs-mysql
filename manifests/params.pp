@@ -255,6 +255,7 @@ class mysql::params {
         'trusty'           => 'ruby-mysql',
         'xenial'           => 'ruby-mysql',
         'bionic'           => 'ruby-mysql2',
+        'focal'            => 'ruby-mysql2',
         default            => 'libmysql-ruby',
       }
     }
