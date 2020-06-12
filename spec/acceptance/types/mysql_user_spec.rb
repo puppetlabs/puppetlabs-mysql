@@ -199,4 +199,55 @@ describe 'mysql_user' do
       end
     end
   end
+  context 'using user-w-subject@localhost with ISSUER and SUBJECT' do
+    describe 'adding user' do
+      it 'works without errors' do
+        pp = <<-MANIFEST
+        mysql_user { 'user-w-subject@localhost':
+          tls_options   => [
+            "SUBJECT '/OU=MySQL Users/CN=username'",
+            "ISSUER '/CN=Certificate Authority'",
+            "CIPHER 'EDH-RSA-DES-CBC3-SHA'",
+          ],
+        }
+        MANIFEST
+        idempotent_apply(pp)
+      end
+
+      it 'finds the user #stdout' do
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'user-w-subject@localhost'\"") do |r|
+          expect(r.stdout).to match(%r{^1$})
+          expect(r.stderr).to be_empty
+        end
+      end
+
+      it 'shows correct ssl_type #stdout' do
+        run_shell("mysql -NBe \"select SSL_TYPE from mysql.user where CONCAT(user, '@', host) = 'user-w-subject@localhost'\"") do |r|
+          expect(r.stdout).to match(%r{^SPECIFIED$})
+          expect(r.stderr).to be_empty
+        end
+      end
+
+      it 'shows correct x509_issuer #stdout' do
+        run_shell("mysql -NBe \"select X509_ISSUER from mysql.user where CONCAT(user, '@', host) = 'user-w-subject@localhost'\"") do |r|
+          expect(r.stdout).to match(%r{^/CN=Certificate Authority$})
+          expect(r.stderr).to be_empty
+        end
+      end
+
+      it 'shows correct x509_subject #stdout' do
+        run_shell("mysql -NBe \"select X509_SUBJECT from mysql.user where CONCAT(user, '@', host) = 'user-w-subject@localhost'\"") do |r|
+          expect(r.stdout).to match(%r{^/OU=MySQL Users/CN=username$})
+          expect(r.stderr).to be_empty
+        end
+      end
+
+      it 'shows correct ssl_cipher #stdout' do
+        run_shell("mysql -NBe \"select SSL_CIPHER from mysql.user where CONCAT(user, '@', host) = 'user-w-subject@localhost'\"") do |r|
+          expect(r.stdout).to match(%r{^EDH-RSA-DES-CBC3-SHA$})
+          expect(r.stderr).to be_empty
+        end
+      end
+    end
+  end
 end
