@@ -88,6 +88,7 @@ class mysql::server (
                   $remove_default_accounts = false,
                   $restart                 = $mysql::params::restart,
                   $root_group              = $mysql::params::root_group,
+                  $managed_dirs            = $mysql::params::managed_dirs,
                   $mysql_group             = $mysql::params::mysql_group,
                   $mycnf_owner             = $mysql::params::mycnf_owner,
                   $mycnf_group             = $mysql::params::mycnf_group,

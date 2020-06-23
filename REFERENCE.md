@@ -465,6 +465,15 @@ Whether the MySQL configuration file should be managed. Valid values are `true`,
 
 Default value: $mysql::params::manage_config_file
 
+##### `managed_dirs`
+
+Data type: `Any`
+
+Manage MySQL system directories which described in the section `[mysqld]` of the configuration file
+`my.cnf`
+
+Default value: `$mysql::params::managed_dirs`
+
 ##### `options`
 
 Data type: `Mysql::Options`
