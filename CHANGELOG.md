@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.6.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.6.0) (2020-06-23)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.5.0...v10.6.0)
+
+### Added
+
+- Handle cron package from different module [\#1306](https://github.com/puppetlabs/puppetlabs-mysql/pull/1306) ([ashish1099](https://github.com/ashish1099))
+- \(IAC-746\) - Add ubuntu 20.04 support [\#1303](https://github.com/puppetlabs/puppetlabs-mysql/pull/1303) ([david22swan](https://github.com/david22swan))
+- \(MODULES-1550\) add new Feature MySQL login paths [\#1295](https://github.com/puppetlabs/puppetlabs-mysql/pull/1295) ([andeman](https://github.com/andeman))
+
+### Fixed
+
+- Add managed\_dirs parameter [\#1305](https://github.com/puppetlabs/puppetlabs-mysql/pull/1305) ([evgenkisel](https://github.com/evgenkisel))
+- change split on whitespace to split on tab in mysql\_user [\#1233](https://github.com/puppetlabs/puppetlabs-mysql/pull/1233) ([koshatul](https://github.com/koshatul))
+
 ## [v10.5.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.5.0) (2020-05-13)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.4.0...v10.5.0)
