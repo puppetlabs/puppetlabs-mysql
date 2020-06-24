@@ -57,20 +57,11 @@ _Private Resource types_
 
 **Functions**
 
-* [`mysql::mysql_password`](#mysqlmysql_password): @summary
 * [`mysql::normalise_and_deepmerge`](#mysqlnormalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashesh and underscores,
 then returns the resulting hash.
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
 * [`mysql_password`](#mysql_password): DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
-
-**Data types**
-
-* [`Mysql::Options`](#mysqloptions): 
-
-**Data types**
-
-* [`Mysql::Options`](#mysqloptions): 
 
 **Data types**
 
@@ -465,15 +456,6 @@ Whether the MySQL configuration file should be managed. Valid values are `true`,
 
 Default value: $mysql::params::manage_config_file
 
-##### `managed_dirs`
-
-Data type: `Any`
-
-Manage MySQL system directories which described in the section `[mysqld]` of the configuration file
-`my.cnf`
-
-Default value: `$mysql::params::managed_dirs`
-
 ##### `options`
 
 Data type: `Mysql::Options`
@@ -673,6 +655,14 @@ Data type: `Any`
 This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter above for details on changing the root password.
 
 Default value: `undef`
+
+##### `managed_dirs`
+
+Data type: `Any`
+
+
+
+Default value: $mysql::params::managed_dirs
 
 ##### `create_root_login_file`
 
@@ -917,6 +907,14 @@ Data type: `Any`
 Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
 
 Default value: []
+
+##### `install_cron`
+
+Data type: `Any`
+
+Manage installation of cron package
+
+Default value: `true`
 
 ### mysql::server::monitor
 
@@ -1380,37 +1378,6 @@ namevar
 The name of the user. This uses the 'username@hostname' or username@hostname.
 
 ## Functions
-
-### mysql::mysql_password
-
-Type: Ruby 4.x API
-
----- original file header ----
-
-     Hash a string as mysql's "PASSWORD()" function would do it
-
-   @param [String] password Plain text password.
-
-   @return [String] the mysql password hash from the clear text password.
-
-#### `mysql::mysql_password(Any *$args)`
-
----- original file header ----
-
-     Hash a string as mysql's "PASSWORD()" function would do it
-
-   @param [String] password Plain text password.
-
-   @return [String] the mysql password hash from the clear text password.
-
-Returns: `Data type` Describe what the function returns here
-
-##### `*args`
-
-Data type: `Any`
-
-The original array of arguments. Port this to individually managed params
-to get the full benefit of the modern function API.
 
 ### mysql::normalise_and_deepmerge
 
