@@ -712,7 +712,7 @@ The following parameters are available in the `mysql::server::backup` class.
 
 Data type: `Any`
 
-MySQL user with backup administrator privileges.
+MySQL user to create with backup administrator privileges.
 
 Default value: `undef`
 
@@ -720,7 +720,7 @@ Default value: `undef`
 
 Data type: `Any`
 
-Password for `backupuser`.
+Password to create for `backupuser`.
 
 Default value: `undef`
 

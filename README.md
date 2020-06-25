@@ -442,7 +442,7 @@ class { 'mysql::server::backup':
   backuppassword    => 'mypassword',
   backupdir         => '/tmp/backups',
   provider          => 'xtrabackup',
-  rotate            => 15,
+  backuprotate      => 15,
   execpath          => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
   time              => ['23', '15'],
 }
@@ -480,7 +480,7 @@ class { 'mysql::server::backup':
   backupdir           => '/tmp/backups',
   provider            => 'xtrabackup',
   incremental_backups => false,
-  rotate              => 5,
+  backuprotate        => 5,
   execpath            => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
   time                => ['23', '15'],
 }
