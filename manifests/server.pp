@@ -22,7 +22,7 @@
 # @param manage_config_file
 #   Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
 # @param options
-#   A hash of options structured like the override_options, but not merged with the default options. Use this if you don’t want your options merged with the default options.
+#   A hash of options structured like the override_options, but not merged with the default options. Use this if you don't want your options merged with the default options.
 # @param override_options
 #   Specifies override options to pass into MySQL. Structured like a hash in the my.cnf file:  See  above for usage details.
 # @param package_ensure
