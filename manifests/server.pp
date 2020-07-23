@@ -31,6 +31,10 @@
 #   Whether to manage the MySQL server package. Defaults to `true`.
 # @param package_name
 #   The name of the MySQL server package to install.
+# @param package_provider
+#   Define a specific provider for package install.
+# @param package_source
+#   The location of the package source (require for some package provider)
 # @param purge_conf_dir
 #   Whether the `includedir` directory should be purged. Valid values are `true`, `false`. Defaults to `false`.
 # @param remove_default_accounts
@@ -84,6 +88,8 @@ class mysql::server (
                   $package_ensure          = $mysql::params::server_package_ensure,
                   $package_manage          = $mysql::params::server_package_manage,
                   $package_name            = $mysql::params::server_package_name,
+                  $package_provider        = undef,
+                  $package_source          = undef,
                   $purge_conf_dir          = $mysql::params::purge_conf_dir,
                   $remove_default_accounts = false,
                   $restart                 = $mysql::params::restart,

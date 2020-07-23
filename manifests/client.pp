@@ -16,15 +16,21 @@
 #   Whether the MySQL package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 # @param package_manage
 #   Whether to manage the MySQL client package. Defaults to `true`.
+# @param service_name
+#   The name of the MySQL server service. Defaults are OS dependent, defined in 'params.pp'.
+# @param service_provider
+#   The provider to use to manage the service. For Ubuntu, defaults to 'upstart'; otherwise, default is undefined.
 # @param package_name
 #   The name of the MySQL client package to install.
 #
 class mysql::client (
-  $bindings_enable = $mysql::params::bindings_enable,
-  $install_options = undef,
-  $package_ensure  = $mysql::params::client_package_ensure,
-  $package_manage  = $mysql::params::client_package_manage,
-  $package_name    = $mysql::params::client_package_name,
+  $bindings_enable  = $mysql::params::bindings_enable,
+  $install_options  = undef,
+  $package_ensure   = $mysql::params::client_package_ensure,
+  $package_manage   = $mysql::params::client_package_manage,
+  $package_name     = $mysql::params::client_package_name,
+  $package_provider = undef,
+  $package_source   = undef,
 ) inherits mysql::params {
 
   include '::mysql::client::install'

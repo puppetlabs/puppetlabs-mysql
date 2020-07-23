@@ -11,6 +11,8 @@ class mysql::client::install {
       ensure          => $mysql::client::package_ensure,
       install_options => $mysql::client::install_options,
       name            => $mysql::client::package_name,
+      provider        => $mysql::client::package_provider,
+      source          => $mysql::client::package_source,
     }
 
   }

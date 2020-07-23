@@ -30,6 +30,22 @@ describe 'mysql::client' do
 
         it { is_expected.not_to contain_package('mysql_client') }
       end
+
+      context 'with package provider' do
+        let(:params) do
+          {
+            package_provider: 'dpkg',
+            package_source: '/somewhere',
+          }
+        end
+
+        it do
+          is_expected.to contain_package('mysql_client').with(
+            provider: 'dpkg',
+            source: '/somewhere',
+          )
+        end
+      end
     end
   end
 end
