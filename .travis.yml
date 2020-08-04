@@ -150,7 +150,7 @@ jobs:
       stage: spec
 branches:
   only:
-    - master
+    - main
     - /^v\d/
     - release
 notifications:
