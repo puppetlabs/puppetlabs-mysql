@@ -104,25 +104,33 @@ release_checks_7:
   - ubuntu-20.04-x86_64
 travis_puppet7_centos_7:
   provisioner: docker
-  images: litmusimage/centos:7
+  images:
+  - litmusimage/centos:7
 travis_puppet7_centos_8:
   provisioner: docker
-  images: litmusimage/centos:8
+  images:
+  - litmusimage/centos:8
 travis_puppet7_oraclelinux_7:
   provisioner: docker
-  images: litmusimage/oraclelinux:7
+  images:
+  - litmusimage/oraclelinux:7
 travis_puppet7_scientificlinux_7:
   provisioner: docker
-  images: litmusimage/scientificlinux:7
+  images:
+  - litmusimage/scientificlinux:7
 travis_puppet7_debian_9:
   provisioner: docker
-  images: litmusimage/debian:9
+  images:
+  - litmusimage/debian:9
 travis_puppet7_debian_10:
   provisioner: docker
-  images: litmusimage/debian:10
+  images:
+  - litmusimage/debian:10
 travis_puppet7_ubuntu_18_04:
   provisioner: docker
-  images: litmusimage/ubuntu:18.04
+  images:
+  - litmusimage/ubuntu:18.04
 travis_puppet7_ubuntu_20_04:
   provisioner: docker
-  images: litmusimage/ubuntu:20.04
+  images:
+  - litmusimage/ubuntu:20.04
