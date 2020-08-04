@@ -53,7 +53,7 @@ if Bundler.rubygems.find_name('github_changelog_generator').any?
     config.header = "# Change log\n\nAll notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org)."
     config.add_pr_wo_labels = true
     config.issues = false
-    config.merge_prefix = "### UNCATEGORIZED PRS; GO LABEL THEM"
+    config.merge_prefix = "### UNCATEGORIZED PRS; LABEL THEM ON GITHUB"
     config.configure_sections = {
       "Changed" => {
         "prefix" => "### Changed",
@@ -61,11 +61,11 @@ if Bundler.rubygems.find_name('github_changelog_generator').any?
       },
       "Added" => {
         "prefix" => "### Added",
-        "labels" => ["feature", "enhancement"],
+        "labels" => ["enhancement", "feature"],
       },
       "Fixed" => {
         "prefix" => "### Fixed",
-        "labels" => ["bugfix"],
+        "labels" => ["bug", "documentation", "bugfix"],
       },
     }
   end
@@ -73,16 +73,15 @@ else
   desc 'Generate a Changelog from GitHub'
   task :changelog do
     raise <<EOM
-The changelog tasks depends on unreleased features of the github_changelog_generator gem.
+The changelog tasks depends on recent features of the github_changelog_generator gem.
 Please manually add it to your .sync.yml for now, and run `pdk update`:
 ---
 Gemfile:
   optional:
     ':development':
       - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
+        version: '~> 1.15'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0')"
 EOM
   end
 end
