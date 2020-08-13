@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.7.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.7.0) (2020-08-12)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.6.0...v10.7.0)
+
+### Added
+
+- pdksync - \(IAC-973\) - Update travis/appveyor to run on new default branch `main` [\#1316](https://github.com/puppetlabs/puppetlabs-mysql/pull/1316) ([david22swan](https://github.com/david22swan))
+- add package provider and source [\#1314](https://github.com/puppetlabs/puppetlabs-mysql/pull/1314) ([fe80](https://github.com/fe80))
+
+### Fixed
+
+- Remove non printable characters [\#1315](https://github.com/puppetlabs/puppetlabs-mysql/pull/1315) ([elmobp](https://github.com/elmobp))
+- Remove control character from manifests/server.pp [\#1312](https://github.com/puppetlabs/puppetlabs-mysql/pull/1312) ([tomkrouper](https://github.com/tomkrouper))
+
 ## [v10.6.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.6.0) (2020-06-23)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.5.0...v10.6.0)
