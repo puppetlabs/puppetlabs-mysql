@@ -27,6 +27,9 @@ RSpec.configure do |c|
     if os[:family] == 'debian' || os[:family] == 'ubuntu'
       # needed for the puppet fact
       LitmusHelper.instance.apply_manifest("package { 'lsb-release': ensure => installed, }", expect_failures: false)
+      LitmusHelper.instance.apply_manifest("package { 'curl': ensure => installed, }", expect_failures: false)
+      LitmusHelper.instance.apply_manifest("package { 'percona-xtrabackup-24': ensure => installed, }", expect_failures: false)
+      LitmusHelper.instance.run_shell('apt update', expect_failures: false)
     end
     # needed for the grant tests, not installed on el7 docker images
     LitmusHelper.instance.apply_manifest("package { 'which': ensure => installed, }", expect_failures: false)
