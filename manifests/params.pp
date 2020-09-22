@@ -51,6 +51,13 @@ class mysql::params {
           }
           $python_package_name = 'MySQL-python'
         }
+        'Amazon': {
+          if versioncmp($::operatingsystemrelease, '2') >= 0 {
+            $provider = 'mariadb'
+          } else {
+            $provider = 'mysql'
+          }
+        }        
         /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
