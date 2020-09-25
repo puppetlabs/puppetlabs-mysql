@@ -148,9 +148,15 @@ context 'with xtrabackup enabled' do
           }
           case $facts['os']['family'] {
             /Debian/: {
+              if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+                $source_url = "http://repo.percona.com/apt/percona-release_1.0-22.generic_all.deb"
+              } else {
+                $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
+              }
+
               file { '/tmp/percona-release_latest.deb':
                 ensure => present,
-                source => "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb",
+                source => $source_url,
               }
               ensure_packages('gnupg')
               ensure_packages('gnupg2')
@@ -270,9 +276,15 @@ context 'with xtrabackup enabled and incremental backups disabled' do
           }
           case $facts['os']['family'] {
             /Debian/: {
+              if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+                $source_url = "http://repo.percona.com/apt/percona-release_1.0-22.generic_all.deb"
+              } else {
+                $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
+              }
+
               file { '/tmp/percona-release_latest.deb':
                 ensure => present,
-                source => "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb",
+                source => $source_url,
               }
               ensure_packages('gnupg')
               ensure_packages('gnupg2')
