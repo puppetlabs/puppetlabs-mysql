@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.7.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.7.0) (2020-09-25)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.7.0...v10.7.0)
+
+### Fixed
+
+- \(IAC-1175\) Pin percona-release to version 1.0-22 for Debian 8  [\#1329](https://github.com/puppetlabs/puppetlabs-mysql/pull/1329) ([pmcmaw](https://github.com/pmcmaw))
+- \[MODULES-10773\] Fix for rh-mysql80 [\#1322](https://github.com/puppetlabs/puppetlabs-mysql/pull/1322) ([carabasdaniel](https://github.com/carabasdaniel))
+
 ## [v10.7.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.7.0) (2020-08-12)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.6.0...v10.7.0)
@@ -29,7 +38,6 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - Add managed\_dirs parameter [\#1305](https://github.com/puppetlabs/puppetlabs-mysql/pull/1305) ([evgenkisel](https://github.com/evgenkisel))
-- change split on whitespace to split on tab in mysql\_user [\#1233](https://github.com/puppetlabs/puppetlabs-mysql/pull/1233) ([koshatul](https://github.com/koshatul))
 
 ## [v10.5.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.5.0) (2020-05-13)
 
