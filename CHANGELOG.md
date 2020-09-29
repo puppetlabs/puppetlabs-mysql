@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file. The format 
 ### Fixed
 
 - Add managed\_dirs parameter [\#1305](https://github.com/puppetlabs/puppetlabs-mysql/pull/1305) ([evgenkisel](https://github.com/evgenkisel))
+- change split on whitespace to split on tab in mysql\_user [\#1233](https://github.com/puppetlabs/puppetlabs-mysql/pull/1233) ([koshatul](https://github.com/koshatul))
 
 ## [v10.5.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.5.0) (2020-05-13)
 
