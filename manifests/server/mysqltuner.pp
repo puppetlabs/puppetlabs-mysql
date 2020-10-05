@@ -9,7 +9,7 @@
 #   Source path for the mysqltuner package.
 # @param tuner_location
 #   Destination for the mysqltuner package.
-class mysql::server::mysqltuner(
+class mysql::server::mysqltuner (
   $ensure  = 'present',
   $version = 'v1.3.0',
   $source  = undef,

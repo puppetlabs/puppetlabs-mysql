@@ -4,7 +4,6 @@
 # @api private
 #
 class mysql::server::root_password {
-
   $options = $mysql::server::_options
   $secret_file = $mysql::server::install_secret_file
   $login_file = $mysql::server::login_file
@@ -14,13 +13,13 @@ class mysql::server::root_password {
   # below exec will remove this default password. If the user has supplied a root
   # password it will be set further down with the mysql_user resource.
   $rm_pass_cmd = join([
-    "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' ${secret_file}) password ''",
-    "rm -f ${secret_file}"
+      "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' ${secret_file}) password ''",
+      "rm -f ${secret_file}",
   ], ' && ')
   exec { 'remove install pass':
     command => $rm_pass_cmd,
     onlyif  => "test -f ${secret_file}",
-    path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin'
+    path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
   }
 
   # manage root password if it is set
@@ -28,7 +27,7 @@ class mysql::server::root_password {
     mysql_user { 'root@localhost':
       ensure        => present,
       password_hash => mysql::password($mysql::server::root_password),
-      require       => Exec['remove install pass']
+      require       => Exec['remove install pass'],
     }
   }
 

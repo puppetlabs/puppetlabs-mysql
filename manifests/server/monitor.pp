@@ -13,7 +13,6 @@ class mysql::server::monitor (
   $mysql_monitor_password = '',
   $mysql_monitor_hostname = ''
 ) {
-
   Anchor['mysql::server::end'] -> Class['mysql::server::monitor']
 
   mysql_user { "${mysql_monitor_username}@${mysql_monitor_hostname}":
@@ -26,8 +25,7 @@ class mysql::server::monitor (
     ensure     => present,
     user       => "${mysql_monitor_username}@${mysql_monitor_hostname}",
     table      => '*.*',
-    privileges => [ 'PROCESS', 'SUPER' ],
+    privileges => ['PROCESS', 'SUPER'],
     require    => Mysql_user["${mysql_monitor_username}@${mysql_monitor_hostname}"],
   }
-
 }

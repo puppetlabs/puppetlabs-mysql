@@ -4,28 +4,28 @@ class { 'mysql::server':
   root_password => 'password',
 }
 
-mysql_user{ 'redmine@localhost':
+mysql_user { 'redmine@localhost':
   ensure        => present,
   password_hash => mysql::password('redmine'),
   require       => Class['mysql::server'],
 }
 
-mysql_user{ 'dan@localhost':
-  ensure        => present,
-  password_hash => mysql::password('blah')
-}
-
-mysql_user{ 'dan@%':
+mysql_user { 'dan@localhost':
   ensure        => present,
   password_hash => mysql::password('blah'),
 }
 
-mysql_user{ 'socketplugin@%':
+mysql_user { 'dan@%':
+  ensure        => present,
+  password_hash => mysql::password('blah'),
+}
+
+mysql_user { 'socketplugin@%':
   ensure => present,
   plugin => 'unix_socket',
 }
 
-mysql_user{ 'socketplugin@%':
+mysql_user { 'socketplugin@%':
   ensure        => present,
   password_hash => mysql::password('blah'),
   plugin        => 'mysql_native_password',

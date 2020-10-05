@@ -30,7 +30,6 @@ class mysql::backup::mysqlbackup (
   $incremental_backups      = false,
   $install_cron             = true,
 ) inherits mysql::params {
-
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql::password($backuppassword),
@@ -46,7 +45,7 @@ class mysql::backup::mysqlbackup (
     ensure     => $ensure,
     user       => "${backupuser}@localhost",
     table      => '*.*',
-    privileges => [ 'RELOAD', 'SUPER', 'REPLICATION CLIENT' ],
+    privileges => ['RELOAD', 'SUPER', 'REPLICATION CLIENT'],
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
@@ -54,7 +53,7 @@ class mysql::backup::mysqlbackup (
     ensure     => $ensure,
     user       => "${backupuser}@localhost",
     table      => 'mysql.backup_progress',
-    privileges => [ 'CREATE', 'INSERT', 'DROP', 'UPDATE' ],
+    privileges => ['CREATE', 'INSERT', 'DROP', 'UPDATE'],
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
@@ -62,7 +61,7 @@ class mysql::backup::mysqlbackup (
     ensure     => $ensure,
     user       => "${backupuser}@localhost",
     table      => 'mysql.backup_history',
-    privileges => [ 'CREATE', 'INSERT', 'SELECT', 'DROP', 'UPDATE' ],
+    privileges => ['CREATE', 'INSERT', 'SELECT', 'DROP', 'UPDATE'],
     require    => Mysql_user["${backupuser}@localhost"],
   }
 
@@ -104,7 +103,7 @@ class mysql::backup::mysqlbackup (
       'incremental_backup_dir' => $backupdir,
       'user'                   => $backupuser,
       'password'               => $backuppassword,
-    }
+    },
   }
   $options = mysql::normalise_and_deepmerge($default_options, $mysql::server::override_options)
 

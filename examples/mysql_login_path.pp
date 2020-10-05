@@ -12,7 +12,7 @@ apt::source { 'repo.mysql.com':
     src => false,
     deb => true,
   },
-  notify   => Exec['apt-get update']
+  notify   => Exec['apt-get update'],
 }
 exec { 'apt-get update':
   path        => '/usr/bin:/usr/sbin:/bin:/sbin',
@@ -20,7 +20,7 @@ exec { 'apt-get update':
 }
 
 $root_pw = 'password'
-class { '::mysql::server':
+class { 'mysql::server':
   root_password      => $root_pw,
   service_name       => 'mysql',
   package_name       => 'mysql-community-server',
@@ -29,10 +29,10 @@ class { '::mysql::server':
     Apt::Source['repo.mysql.com'],
     Exec['apt-get update']
   ],
-  notify             => Mysql_login_path['client']
+  notify             => Mysql_login_path['client'],
 }
 
-class { '::mysql::client':
+class { 'mysql::client':
   package_manage => false,
   package_name   => 'mysql-community-client',
   require        => Class['::mysql::server'],
@@ -62,7 +62,3 @@ mysql_user { 'dan@localhost':
   password_hash => mysql::password('blah'),
   require       => Mysql_login_path['client'],
 }
-
-
-
-

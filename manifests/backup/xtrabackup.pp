@@ -32,7 +32,6 @@ class mysql::backup::xtrabackup (
   $incremental_backups      = true,
   $install_cron             = true,
 ) inherits mysql::params {
-
   ensure_packages($xtrabackup_package_name)
 
   if $backupuser and $backuppassword {
@@ -46,7 +45,7 @@ class mysql::backup::xtrabackup (
       ensure     => $ensure,
       user       => "${backupuser}@localhost",
       table      => '*.*',
-      privileges => [ 'RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT' ],
+      privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
       require    => Mysql_user["${backupuser}@localhost"],
     }
   }

@@ -32,8 +32,7 @@ class mysql::client (
   $package_provider = undef,
   $package_source   = undef,
 ) inherits mysql::params {
-
-  include '::mysql::client::install'
+  include 'mysql::client::install'
 
   if $bindings_enable {
     class { 'mysql::bindings':
