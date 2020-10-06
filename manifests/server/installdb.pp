@@ -7,7 +7,6 @@ class mysql::server::installdb {
   $options = $mysql::server::_options
 
   if $mysql::server::package_manage {
-
     # Build the initial databases.
     $mysqluser = $mysql::server::_options['mysqld']['user']
     $datadir = $mysql::server::_options['mysqld']['datadir']
@@ -21,15 +20,15 @@ class mysql::server::installdb {
       $_config_file=undef
     }
 
-  if $options['mysqld']['log-error'] {
-    file { $options['mysqld']['log-error']:
-      ensure => present,
-      owner  => $mysqluser,
-      group  => $::mysql::server::mysql_group,
-      mode   => 'u+rw',
-      before => Mysql_datadir[ $datadir ],
+    if $options['mysqld']['log-error'] {
+      file { $options['mysqld']['log-error']:
+        ensure => file,
+        owner  => $mysqluser,
+        group  => $mysql::server::mysql_group,
+        mode   => 'u+rw',
+        before => Mysql_datadir[$datadir],
+      }
     }
-  }
 
     mysql_datadir { $datadir:
       ensure              => 'present',
@@ -46,5 +45,4 @@ class mysql::server::installdb {
       }
     }
   }
-
 }

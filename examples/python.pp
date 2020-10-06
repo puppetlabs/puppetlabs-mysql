@@ -1,1 +1,1 @@
-class { 'mysql::bindings::python':}
+class { 'mysql::bindings::python': }

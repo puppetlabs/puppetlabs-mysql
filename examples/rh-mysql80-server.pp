@@ -1,5 +1,5 @@
-file {'/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-SCLo':
-  source => 'https://raw.githubusercontent.com/sclorg/centos-release-scl/master/centos-release-scl/RPM-GPG-KEY-CentOS-SIG-SCLo'
+file { '/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-SCLo':
+  source => 'https://raw.githubusercontent.com/sclorg/centos-release-scl/master/centos-release-scl/RPM-GPG-KEY-CentOS-SIG-SCLo',
 }
 
 yumrepo { 'centos-sclo-rh':
@@ -12,11 +12,11 @@ yumrepo { 'centos-sclo-rh':
   gpgcheck   => true,
   gpgkey     => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-SCLo',
 }
-class {'mysql::server':
+class { 'mysql::server':
   package_name   => 'rh-mysql80',
   package_ensure => 'installed',
   service_name   => 'rh-mysql80-mysqld',
   config_file    => '/etc/my.cnf',
   includedir     => '/etc/my.cnf.d',
-  options        => { mysqld => { log_error => '/var/log/mysqld.log', datadir => '/var/lib/mysql' } }
+  options        => { mysqld => { log_error => '/var/log/mysqld.log', datadir => '/var/lib/mysql' } },
 }

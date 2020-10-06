@@ -100,32 +100,30 @@ class mysql::bindings (
   $daemon_dev_package_name     = $mysql::params::daemon_dev_package_name,
   $daemon_dev_package_provider = $mysql::params::daemon_dev_package_provider
 ) inherits mysql::params {
-
   case $::osfamily {
     'Archlinux': {
-      if $java_enable   { fail(translate('::mysql::bindings::java cannot be managed by puppet on %{osfamily}
+      if $java_enable { fail(translate('::mysql::bindings::java cannot be managed by puppet on %{osfamily}
                           as it is not in official repositories. Please disable java mysql binding.',
-                          {'osfamily' => $::osfamily })) }
-      if $perl_enable   { include '::mysql::bindings::perl' }
-      if $php_enable    { warning(translate('::mysql::bindings::php does not need to be managed by puppet on %{osfamily}
+      { 'osfamily' => $::osfamily })) }
+      if $perl_enable { include 'mysql::bindings::perl' }
+      if $php_enable { warning(translate('::mysql::bindings::php does not need to be managed by puppet on %{osfamily}
                           as it is included in mysql package by default.',
-                          {'osfamily' => $::osfamily })) }
-      if $python_enable { include '::mysql::bindings::python' }
-      if $ruby_enable   { fail(translate('::mysql::bindings::ruby cannot be managed by puppet on %{osfamily}
+      { 'osfamily' => $::osfamily })) }
+      if $python_enable { include 'mysql::bindings::python' }
+      if $ruby_enable { fail(translate('::mysql::bindings::ruby cannot be managed by puppet on %{osfamily}
                           as it is not in official repositories. Please disable ruby mysql binding.',
-                          {'osfamily' => $::osfamily } )) }
+      { 'osfamily' => $::osfamily })) }
     }
 
     default: {
-      if $java_enable   { include '::mysql::bindings::java' }
-      if $perl_enable   { include '::mysql::bindings::perl' }
-      if $php_enable    { include '::mysql::bindings::php' }
-      if $python_enable { include '::mysql::bindings::python' }
-      if $ruby_enable   { include '::mysql::bindings::ruby' }
+      if $java_enable { include 'mysql::bindings::java' }
+      if $perl_enable { include 'mysql::bindings::perl' }
+      if $php_enable { include 'mysql::bindings::php' }
+      if $python_enable { include 'mysql::bindings::python' }
+      if $ruby_enable { include 'mysql::bindings::ruby' }
     }
   }
 
-  if $client_dev    { include '::mysql::bindings::client_dev' }
-  if $daemon_dev    { include '::mysql::bindings::daemon_dev' }
-
+  if $client_dev { include 'mysql::bindings::client_dev' }
+  if $daemon_dev { include 'mysql::bindings::daemon_dev' }
 }

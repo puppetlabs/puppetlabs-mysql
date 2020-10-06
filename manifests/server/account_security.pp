@@ -5,27 +5,27 @@
 #
 class mysql::server::account_security {
   mysql_user {
-    [ 'root@127.0.0.1',
+    ['root@127.0.0.1',
       'root@::1',
       '@localhost',
-      '@%']:
-    ensure  => 'absent',
-    require => Anchor['mysql::server::end'],
+    '@%']:
+      ensure  => 'absent',
+      require => Anchor['mysql::server::end'],
   }
   if ($::fqdn != 'localhost.localdomain') {
     mysql_user {
-      [ 'root@localhost.localdomain',
-        '@localhost.localdomain']:
-      ensure  => 'absent',
-      require => Anchor['mysql::server::end'],
+      ['root@localhost.localdomain',
+      '@localhost.localdomain']:
+        ensure  => 'absent',
+        require => Anchor['mysql::server::end'],
     }
   }
   if ($::fqdn and $::fqdn != 'localhost') {
     mysql_user {
-      [ "root@${::fqdn}",
-        "@${::fqdn}"]:
-      ensure  => 'absent',
-      require => Anchor['mysql::server::end'],
+      ["root@${::fqdn}",
+      "@${::fqdn}"]:
+        ensure  => 'absent',
+        require => Anchor['mysql::server::end'],
     }
   }
   if ($::fqdn != $::hostname) {

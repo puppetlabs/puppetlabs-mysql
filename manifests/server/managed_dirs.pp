@@ -4,7 +4,6 @@
 # @api private
 #
 class mysql::server::managed_dirs {
-
   $options = $mysql::server::_options
   $includedir = $mysql::server::includedir
   $managed_dirs = $mysql::server::managed_dirs
@@ -15,7 +14,7 @@ class mysql::server::managed_dirs {
     $managed_dirs.each | $entry | {
       $dir = $options['mysqld']["${entry}"]
       if ( $dir and $dir != '/usr' and $dir != '/tmp' ) {
-        file {"${entry}-managed_dir":
+        file { "${entry}-managed_dir":
           ensure => directory,
           path   => $dir,
           mode   => '0700',

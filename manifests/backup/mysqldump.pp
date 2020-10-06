@@ -31,7 +31,6 @@ class mysql::backup::mysqldump (
   $incremental_backups      = false,
   $install_cron             = true,
 ) inherits mysql::params {
-
   unless $::osfamily == 'FreeBSD' {
     if $backupcompress {
       ensure_packages(['bzip2'])
@@ -45,10 +44,10 @@ class mysql::backup::mysqldump (
     require       => Class['mysql::server::root_password'],
   }
 
-  if $include_triggers  {
-    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ]
+  if $include_triggers {
+    $privs = ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER']
   } else {
-    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ]
+    $privs = ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
   }
 
   mysql_grant { "${backupuser}@localhost/*.*":
@@ -106,5 +105,4 @@ class mysql::backup::mysqldump (
       group  => $backupdirgroup,
     }
   }
-
 }

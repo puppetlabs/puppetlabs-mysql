@@ -1,1 +1,1 @@
-class { 'mysql::java':}
+class { 'mysql::java': }

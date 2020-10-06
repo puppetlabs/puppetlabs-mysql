@@ -95,39 +95,38 @@ class mysql::server::backup (
   $incremental_backups      = true,
   $install_cron             = true,
 ) inherits mysql::params {
-
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
     warning(translate("The 'prescript' option is not currently implemented for the %{provider} backup provider.",
-            {'provider' => $provider}))
+    { 'provider' => $provider }))
   }
 
   create_resources('class', {
-    "mysql::backup::${provider}" => {
-      'backupuser'               => $backupuser,
-      'backuppassword'           => $backuppassword,
-      'backupdir'                => $backupdir,
-      'backupdirmode'            => $backupdirmode,
-      'backupdirowner'           => $backupdirowner,
-      'backupdirgroup'           => $backupdirgroup,
-      'backupcompress'           => $backupcompress,
-      'backuprotate'             => $backuprotate,
-      'backupmethod'             => $backupmethod,
-      'backup_success_file_path' => $backup_success_file_path,
-      'ignore_events'            => $ignore_events,
-      'delete_before_dump'       => $delete_before_dump,
-      'backupdatabases'          => $backupdatabases,
-      'file_per_database'        => $file_per_database,
-      'include_routines'         => $include_routines,
-      'include_triggers'         => $include_triggers,
-      'ensure'                   => $ensure,
-      'time'                     => $time,
-      'prescript'                => $prescript,
-      'postscript'               => $postscript,
-      'execpath'                 => $execpath,
-      'maxallowedpacket'         => $maxallowedpacket,
-      'optional_args'            => $optional_args,
-      'incremental_backups'      => $incremental_backups,
-      'install_cron'             => $install_cron,
-    }
+      "mysql::backup::${provider}" => {
+        'backupuser'               => $backupuser,
+        'backuppassword'           => $backuppassword,
+        'backupdir'                => $backupdir,
+        'backupdirmode'            => $backupdirmode,
+        'backupdirowner'           => $backupdirowner,
+        'backupdirgroup'           => $backupdirgroup,
+        'backupcompress'           => $backupcompress,
+        'backuprotate'             => $backuprotate,
+        'backupmethod'             => $backupmethod,
+        'backup_success_file_path' => $backup_success_file_path,
+        'ignore_events'            => $ignore_events,
+        'delete_before_dump'       => $delete_before_dump,
+        'backupdatabases'          => $backupdatabases,
+        'file_per_database'        => $file_per_database,
+        'include_routines'         => $include_routines,
+        'include_triggers'         => $include_triggers,
+        'ensure'                   => $ensure,
+        'time'                     => $time,
+        'prescript'                => $prescript,
+        'postscript'               => $postscript,
+        'execpath'                 => $execpath,
+        'maxallowedpacket'         => $maxallowedpacket,
+        'optional_args'            => $optional_args,
+        'incremental_backups'      => $incremental_backups,
+        'install_cron'             => $install_cron,
+      }
   })
 }

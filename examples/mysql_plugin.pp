@@ -1,9 +1,9 @@
 class { 'mysql::server':
-  root_password => 'password'
+  root_password => 'password',
 }
 
 $validate_password_soname = $::osfamily ? {
-  windows => 'validate_password.dll',
+  'windows' => 'validate_password.dll',
   default => 'validate_password.so'
 }
 
@@ -13,7 +13,7 @@ mysql_plugin { 'validate_password':
 }
 
 $auth_socket_soname = $::osfamily ? {
-  windows => 'auth_socket.dll',
+  'windows' => 'auth_socket.dll',
   default => 'auth_socket.so'
 }
 
