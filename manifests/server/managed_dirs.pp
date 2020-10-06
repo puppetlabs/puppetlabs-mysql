@@ -32,7 +32,7 @@ class mysql::server::managed_dirs {
     $logbindir = dirname($logbin)
 
     #Stop puppet from managing directory if just a filename/prefix is specified or is not already managed
-    if ($logbindir != '.' and !($logbindir in $managed_dirs_path)) {
+    if ($logbindir != '.' or !($logbindir in $managed_dirs_path)) {
       file { $logbindir:
         ensure => directory,
         mode   => '0700',

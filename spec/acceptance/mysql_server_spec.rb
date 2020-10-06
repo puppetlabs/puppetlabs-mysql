@@ -51,20 +51,17 @@ describe 'mysql class' do
       let(:pp) do
         <<-MANIFEST
         class { '::mysql::server':
-        root_password           => 'strongpassword',
-        remove_default_accounts => true,
-        restart                 => true,
         override_options => {
                   'mysqld' => {
                   'log-bin' => '/var/log/mariadb/mariadb-bin.log',}
            }
           }
           MANIFEST
-        end
+      end
 
-        it 'can be set' do
-          apply_manifest(pp, catch_failures: true) do |r|
-            expect(r.stderr).to be_empty
+      it 'can be set' do
+        apply_manifest(pp, catch_failures: true) do |r|
+          expect(r.stderr).to be_empty
         end
       end
     end
