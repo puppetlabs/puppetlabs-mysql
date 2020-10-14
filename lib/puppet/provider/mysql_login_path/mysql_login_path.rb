@@ -43,11 +43,11 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
       end
     rescue => e
       raise Puppet::ExecutionFailure, _(
-          "Execution of '%{str}' returned %{exit_status}: %{output}",
-          ) % {
-          str: command_str,
-          exit_status: $?.exitstatus,
-          output: e.message,
+        "Execution of '%{str}' returned %{exit_status}: %{output}",
+      ) % {
+        str: command_str,
+        exit_status: $?.exitstatus,
+        output: e.message,
       }
     end
   end
@@ -56,22 +56,22 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     args.unshift('/usr/bin/mysql_config_editor')
     homedir = get_homedir(context, uid)
     Puppet::Util::Execution.execute(
-        args,
-        failonfail: true,
-        uid: uid,
-        custom_environment: { 'HOME' => homedir },
-        )
+      args,
+      failonfail: true,
+      uid: uid,
+      custom_environment: { 'HOME' => homedir },
+    )
   end
 
   def my_print_defaults_cmd(context, uid, *args)
     args.unshift('/usr/bin/my_print_defaults')
     homedir = get_homedir(context, uid)
     Puppet::Util::Execution.execute(
-        args,
-        failonfail: true,
-        uid: uid,
-        custom_environment: { 'HOME' => homedir },
-        )
+      args,
+      failonfail: true,
+      uid: uid,
+      custom_environment: { 'HOME' => homedir },
+    )
   end
 
   def get_password(context, uid, name)
