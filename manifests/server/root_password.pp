@@ -13,8 +13,8 @@ class mysql::server::root_password {
   # below exec will remove this default password. If the user has supplied a root
   # password it will be set further down with the mysql_user resource.
   $rm_pass_cmd = join([
-      "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' ${secret_file}) password ''",
-      "rm -f ${secret_file}",
+      "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' ${secret_file}) password \"${mysql::server::root_password}\"",
+      "rm -f ${secret_file}"
   ], ' && ')
   exec { 'remove install pass':
     command => $rm_pass_cmd,
