@@ -6,6 +6,10 @@ require 'puppet/resource_api/simple_provider'
 require 'puppet/util/execution'
 require 'puppet/util/suidmanager'
 require 'open3'
+require 'pty'
+require 'expect'
+require 'fileutils'
+require 'English'
 
 # Implementation for the mysql_login_path type using the Resource API.
 class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::SimpleProvider
@@ -17,6 +21,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
   def mysql_config_editor_set_cmd(context, uid, password = nil, *args)
     args.unshift('/usr/bin/mysql_config_editor')
     homedir = get_homedir(context, uid)
+    login_file_path = "#{homedir}/.mylogin.cnf"
 
     if args.is_a?(Array)
       command = args.flatten.map(&:to_s)
@@ -25,28 +30,27 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
       command_str = command
     end
 
-    Puppet::Util::SUIDManager.asuser(uid) do
-      @exit_status = Open3.popen3({ 'HOME' => homedir }, command_str) do |stdin, stdout, stderr, wait_thr|
-        if password
-          stdin.puts(password + "\r\n")
-          stdin.close
-        end
-        @captured_stdout = stdout.read
-        @captured_stderr = stderr.read
-        wait_thr.value
+    begin
+      Puppet::Util::SUIDManager.asuser(uid) do
+        FileUtils.touch login_file_path
+        FileUtils.chmod 0o600, login_file_path
       end
-    end
 
-    if @exit_status.success? == false
+      PTY.spawn({ 'HOME' => homedir }, command_str) do |input, output, _pid|
+        if password
+          input.expect(%r{Enter password:})
+          output.puts password
+        end
+      end
+    rescue => e
       raise Puppet::ExecutionFailure, _(
         "Execution of '%{str}' returned %{exit_status}: %{output}",
       ) % {
         str: command_str,
-        exit_status: @exit_status,
-        output: @captured_stderr.strip,
+        exit_status: $CHILD_STATUS.exitstatus,
+        output: e.message,
       }
     end
-    @captured_stdout
   end
 
   def mysql_config_editor_cmd(context, uid, *args)
