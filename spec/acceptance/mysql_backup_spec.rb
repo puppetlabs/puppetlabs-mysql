@@ -160,6 +160,7 @@ context 'with xtrabackup enabled' do
               }
               ensure_packages('gnupg')
               ensure_packages('gnupg2')
+              ensure_packages('curl')
               ensure_packages('percona-release',{
                 ensure   => present,
                 provider => 'dpkg',
