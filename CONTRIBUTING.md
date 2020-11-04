@@ -108,7 +108,7 @@ process as easy as possible.
 
       To submit your changes via a GitHub pull request, we _highly_
       recommend that you have them on a topic branch, instead of
-      directly on "master".
+      directly on "main".
       It makes things much easier to keep track of, especially if
       you decide to work on another thing before your first change
       is merged in.

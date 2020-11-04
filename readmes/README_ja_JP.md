@@ -513,7 +513,7 @@ MySQLモジュールにはサンプルタスクがあり、ユーザはデータ
 
 ## 制約事項
 
-サポートされているオペレーティングシステムの一覧については、[metadata.json](https://github.com/puppetlabs/puppetlabs-mysql/blob/master/metadata.json)を参照してください。
+サポートされているオペレーティングシステムの一覧については、[metadata.json](https://github.com/puppetlabs/puppetlabs-mysql/blob/main/metadata.json)を参照してください。
 
 **注意：** mysqlbackup.shは、MySQL 5.7以降では動作せず、サポートされていません。
 
