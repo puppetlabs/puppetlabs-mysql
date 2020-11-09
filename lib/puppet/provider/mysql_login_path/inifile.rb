@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-# See: https://github.com/puppetlabs/puppet/blob/master/lib/puppet/util/inifile.rb
+# See: https://github.com/puppetlabs/puppet/blob/main/lib/puppet/util/inifile.rb
 # This class represents the INI file and can be used to parse, modify,
 # and write INI files.
 class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider

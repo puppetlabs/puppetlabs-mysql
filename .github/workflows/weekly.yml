@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Litmus Parallel
-      uses: puppetlabs/action-litmus_parallel@master
+      uses: puppetlabs/action-litmus_parallel@main
       with:
         platform: ${{ matrix.platform }}
         agent_family: ${{ matrix.agent_family }}
@@ -39,7 +39,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Litmus Parallel
-      uses: puppetlabs/action-litmus_parallel@master
+      uses: puppetlabs/action-litmus_parallel@main
       with:
         platform: ${{ matrix.platform }}
         agent_family: ${{ matrix.agent_family }}
@@ -58,7 +58,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Spec Tests
-      uses: puppetlabs/action-litmus_spec@master
+      uses: puppetlabs/action-litmus_spec@main
       with:
         puppet_gem_version: ${{ matrix.puppet_gem_version }}
         check: ${{ matrix.check }}
