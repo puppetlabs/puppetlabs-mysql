@@ -56,3 +56,7 @@ spec/spec_helper.rb:
   - require 'spec_helper_local'
   coverage_report: true
 "  changelog_user": puppetlabs
+.gitpod.Dockerfile:
+  unmanaged: false
+.gitpod.yml:
+  unmanaged: false
