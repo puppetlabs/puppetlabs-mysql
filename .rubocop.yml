@@ -43,7 +43,7 @@ Style/BlockDelimiters:
 Style/BracesAroundHashParameters:
   Description: Braces are required by Ruby 2.7. Cop removed from RuboCop v0.80.0.
     See https://github.com/rubocop-hq/rubocop/pull/7643
-  Enabled: true
+  Enabled: false
 Style/ClassAndModuleChildren:
   Description: Compact style reduces the required amount of indentation.
   EnforcedStyle: compact
