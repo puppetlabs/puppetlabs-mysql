@@ -1,4 +1,4 @@
-# @summary 
+# @summary
 #   Private class for managing the root password
 #
 # @api private
@@ -24,7 +24,7 @@ class mysql::server::root_password {
 
   # manage root password if it is set
   if $mysql::server::create_root_user == true and $mysql::server::root_password != 'UNSET' {
-    mysql_user { 'root@localhost':
+    mysql_user { ['root@localhost', 'root@127.0.0.1', 'root@::1']:
       ensure        => present,
       password_hash => mysql::password($mysql::server::root_password),
       require       => Exec['remove install pass'],
