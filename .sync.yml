@@ -60,3 +60,7 @@ spec/spec_helper.rb:
   unmanaged: false
 .gitpod.yml:
   unmanaged: false
+.github/workflows/nightly.yml:
+  unmanaged: false
+.github/workflows/pr_test.yml:
+  unmanaged: false
