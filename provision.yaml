@@ -27,11 +27,6 @@ travis_ub_6:
   - litmusimage/ubuntu:16.04
   - litmusimage/ubuntu:18.04
   - litmusimage/ubuntu:20.04
-travis_el6:
-  provisioner: docker_exp
-  images:
-  - litmusimage/centos:6
-  - litmusimage/scientificlinux:6
 travis_el7:
   provisioner: docker_exp
   images:
