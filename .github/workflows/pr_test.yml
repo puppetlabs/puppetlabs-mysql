@@ -170,6 +170,12 @@ jobs:
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
         echo ::endgroup::
 
+    - name: Start SSH session
+      uses: luchihoratiu/debug-via-ssh@main
+      with:
+       NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+       SSH_PASS: ${{ secrets.SSH_PASS }}
+
     - name: Run acceptance tests
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:acceptance:parallel' -- bundle exec rake 'litmus:acceptance:parallel'
