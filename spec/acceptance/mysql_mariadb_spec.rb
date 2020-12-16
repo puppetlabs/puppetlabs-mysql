@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'mysql server class', if: ((os[:family] == 'debian' && os[:release].to_i > 8) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do

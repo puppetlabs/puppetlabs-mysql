@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL databases.'

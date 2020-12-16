@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # run a test task
 require 'spec_helper_acceptance'
 

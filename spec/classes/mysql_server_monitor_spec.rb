@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe 'mysql::server::monitor' do
   on_supported_os.each do |os, facts|

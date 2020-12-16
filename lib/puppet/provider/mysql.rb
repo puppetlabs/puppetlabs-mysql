@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Puppet provider for mysql
 class Puppet::Provider::Mysql < Puppet::Provider
   # Without initvars commands won't work.

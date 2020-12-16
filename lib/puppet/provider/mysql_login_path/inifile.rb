@@ -1,4 +1,5 @@
 # encoding: UTF-8
+# frozen_string_literal: true
 
 # See: https://github.com/puppetlabs/puppet/blob/main/lib/puppet/util/inifile.rb
 # This class represents the INI file and can be used to parse, modify,

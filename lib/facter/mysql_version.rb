@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Facter.add('mysql_version') do
   confine { Facter::Core::Execution.which('mysql') }
   setcode do

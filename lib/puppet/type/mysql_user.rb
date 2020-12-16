@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This has to be a separate type to enable collecting
 Puppet::Type.newtype(:mysql_user) do
   @doc = <<-PUPPET

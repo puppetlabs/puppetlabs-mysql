@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.newtype(:mysql_grant) do
   @doc = <<-PUPPET
     @summary

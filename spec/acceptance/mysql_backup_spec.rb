@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'mysql::server::backup class' do
@@ -136,7 +138,7 @@ context 'with one file per database' do
 end
 
 context 'with xtrabackup enabled' do
-  context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
+  context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
     pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
@@ -215,7 +217,7 @@ context 'with xtrabackup enabled' do
     end
   end
 
-  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
+  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
     before(:all) do
       pre_run
     end
@@ -242,7 +244,7 @@ context 'with xtrabackup enabled' do
 
     it 'runs xtrabackup.sh incremental backup with no errors' do
       run_shell('sleep 1')
-      run_shell('/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/xtrabackups/$(date +%F)_full --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup_inc.log') do |r| # rubocop:disable Metrics/LineLength
+      run_shell('/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/xtrabackups/$(date +%F)_full --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup_inc.log') do |r| # rubocop:disable Layout/LineLength
         expect(r.exit_code).to be_zero
       end
     end
@@ -265,7 +267,7 @@ context 'with xtrabackup enabled' do
 end
 
 context 'with xtrabackup enabled and incremental backups disabled' do
-  context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
+  context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
     pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
@@ -344,7 +346,7 @@ context 'with xtrabackup enabled and incremental backups disabled' do
     end
   end
 
-  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
+  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
     before(:all) do
       pre_run
     end

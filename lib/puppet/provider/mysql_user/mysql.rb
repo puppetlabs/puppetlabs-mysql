@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'manage users for a mysql database.'
@@ -12,7 +14,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     users.map do |name|
       if mysqld_version.nil?
         ## Default ...
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
@@ -35,7 +37,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
         # https://jira.mariadb.org/browse/MDEV-16238 https://jira.mariadb.org/browse/MDEV-16774
         @password = @authentication_string
       end
-      # rubocop:enable Metrics/LineLength
+      # rubocop:enable Layout/LineLength
       new(name: name,
           ensure: :present,
           password_hash: @password,
@@ -91,13 +93,13 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       @property_hash[:ensure] = :present
       @property_hash[:password_hash] = password_hash
     end
-    # rubocop:disable Metrics/LineLength
+    # rubocop:disable Layout/LineLength
     if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       self.class.mysql_caller("ALTER USER IF EXISTS '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
     else
       self.class.mysql_caller("GRANT USAGE ON *.* TO '#{merged_name}' WITH MAX_USER_CONNECTIONS #{max_user_connections} MAX_CONNECTIONS_PER_HOUR #{max_connections_per_hour} MAX_QUERIES_PER_HOUR #{max_queries_per_hour} MAX_UPDATES_PER_HOUR #{max_updates_per_hour}", 'system')
     end
-    # rubocop:enable Metrics/LineLength
+    # rubocop:enable Layout/LineLength
     @property_hash[:max_user_connections] = max_user_connections
     @property_hash[:max_connections_per_hour] = max_connections_per_hour
     @property_hash[:max_queries_per_hour] = max_queries_per_hour

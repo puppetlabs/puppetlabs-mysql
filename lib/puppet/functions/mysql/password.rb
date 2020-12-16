@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'digest/sha1'
 # @summary
 #   Hash a string as mysql's "PASSWORD()" function would do it
