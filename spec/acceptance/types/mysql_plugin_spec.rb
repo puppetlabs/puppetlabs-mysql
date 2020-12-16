@@ -18,7 +18,7 @@ if os[:family] == 'redhat'
   end
 elsif os[:family] == 'debian'
   if os[:family] == 'ubuntu'
-    if os[:release] =~ %r{^16\.04|^18\.04}
+    if %r{^16\.04|^18\.04}.match?(os[:release])
       # On Xenial running 5.7.12, the example plugin does not appear to be available.
       plugin = 'validate_password'
       plugin_lib = 'validate_password.so'

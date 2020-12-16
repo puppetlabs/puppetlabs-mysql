@@ -79,7 +79,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result = ''
     output = my_print_defaults_cmd(context, uid, '-s', name)
     output.split("\n").each do |line|
-      if line =~ %r{\-\-password}
+      if %r{\-\-password}.match?(line)
         result = line.sub(%r{\-\-password=}, '')
       end
     end

@@ -19,7 +19,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         # Default root user created by mysql_install_db on a host with fqdn
         # of myhost.mydomain.my: root@myhost.mydomain.my, when MySQL is started
         # with --skip-name-resolve.
-        next if e.inspect =~ %r{There is no such grant defined for user}
+        next if %r{There is no such grant defined for user}.match?(e.inspect)
         raise Puppet::Error, _('#mysql had an error ->  %{inspect}') % { inspect: e.inspect }
       end
       # Once we have the list of grants generate entries for each.
@@ -46,7 +46,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           end
         end
         # Same here, but to remove OPTION leaving just GRANT.
-        options = if rest =~ %r{WITH\sGRANT\sOPTION}
+        options = if %r{WITH\sGRANT\sOPTION}.match?(rest)
                     ['GRANT']
                   else
                     ['NONE']

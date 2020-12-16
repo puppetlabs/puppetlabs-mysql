@@ -199,8 +199,7 @@ usvn_user@localhost
     it 'creates a user using IF NOT EXISTS' do
       provider.class.instance_variable_set(:@mysqld_version_string, '5.7.6')
 
-      provider.class.expects(:mysql_caller).with("CREATE USER IF NOT EXISTS 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system') # rubocop:disable Layout/LineLength
-      provider.class.expects(:mysql_caller).with("ALTER USER IF EXISTS 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
+      provider.class.expects(:mysql_caller).with("CREATE USER IF NOT EXISTS 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system')       provider.class.expects(:mysql_caller).with("ALTER USER IF EXISTS 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
       provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system')
       provider.expects(:exists?).returns(true)
       expect(provider.create).to be_truthy
@@ -292,7 +291,7 @@ usvn_user@localhost
     end
     it 'changes the hash MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0') # rubocop:disable Layout/LineLength
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
 
       provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
@@ -314,7 +313,7 @@ usvn_user@localhost
     it 'changes the hash to an ed25519 hash mariadb >= 10.2.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.3.22'][:string])
       resource.stubs(:value).with(:plugin).returns('ed25519')
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH ed25519 AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0') # rubocop:disable Layout/LineLength
+      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH ed25519 AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0')
       provider.expects(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
       provider.password_hash = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'
     end
@@ -369,7 +368,7 @@ usvn_user@localhost
       context 'MySQL >= 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system').returns('0') # rubocop:disable Layout/LineLength
+          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system').returns('0')
 
           provider.expects(:plugin).returns('mysql_native_password')
           provider.plugin = 'mysql_native_password'
@@ -394,7 +393,7 @@ usvn_user@localhost
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.3.22'][:string])
           resource.stubs('[]').with(:name).returns('joe@localhost')
           resource.stubs('[]').with(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
-          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'ed25519' AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0') # rubocop:disable Layout/LineLength
+          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'ed25519' AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0')
           provider.expects(:plugin).returns('ed25519')
           provider.plugin = 'ed25519'
         end

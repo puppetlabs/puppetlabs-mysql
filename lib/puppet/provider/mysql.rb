@@ -71,7 +71,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.mysqld_version
-    # note: be prepared for '5.7.6-rc-log' etc results
+    # NOTE: be prepared for '5.7.6-rc-log' etc results
     #       versioncmp detects 5.7.6-log to be newer then 5.7.6
     #       this is why we need the trimming.
     mysqld_version_string.scan(%r{\d+\.\d+\.\d+}).first unless mysqld_version_string.nil?

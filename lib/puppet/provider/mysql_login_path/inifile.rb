@@ -600,8 +600,8 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
         begin
           begin
                     Integer(value)
-                  rescue
-                    Float(value)
+          rescue
+            Float(value)
                   end
         rescue
           unescape_value(value)
