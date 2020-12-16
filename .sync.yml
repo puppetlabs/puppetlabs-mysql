@@ -1,14 +1,8 @@
 ---
 ".gitlab-ci.yml":
   delete: true
-".rubocop.yml":
-  default_configs:
-    inherit_from: ".rubocop_todo.yml"
-    require:
-    - rubocop-i18n
-    - rubocop-rspec
 ".travis.yml":
-  global_env: 
+  global_env:
     - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
   deploy_to_forge:
     enabled: false
@@ -41,15 +35,7 @@ appveyor.yml:
 Gemfile:
   optional:
     ":development":
-    - gem: puppet-lint-i18n
     - gem: github_changelog_generator
-      git: https://github.com/skywinder/github-changelog-generator
-      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
-      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
-    - gem: puppet-resource_api
-Rakefile:
-  requires:
-  - puppet_pot_generator/rake_tasks
 spec/spec_helper.rb:
   spec_overrides:
   - require 'spec_helper_local'
