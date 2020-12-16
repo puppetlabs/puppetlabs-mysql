@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.9.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.9.0) (2020-12-16)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.8.0...v10.9.0)
+
+### Added
+
+- \(FEAT\) Add support for Puppet 7 [\#1347](https://github.com/puppetlabs/puppetlabs-mysql/pull/1347) ([daianamezdrea](https://github.com/daianamezdrea))
+- \(IAC-996\) Removal of inappropriate terminology [\#1340](https://github.com/puppetlabs/puppetlabs-mysql/pull/1340) ([pmcmaw](https://github.com/pmcmaw))
+
 ## [v10.8.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.8.0) (2020-11-03)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.7.1...v10.8.0)
