@@ -74,7 +74,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
     # NOTE: be prepared for '5.7.6-rc-log' etc results
     #       versioncmp detects 5.7.6-log to be newer then 5.7.6
     #       this is why we need the trimming.
-    mysqld_version_string.scan(%r{\d+\.\d+\.\d+}).first unless mysqld_version_string.nil?
+    mysqld_version_string&.scan(%r{\d+\.\d+\.\d+})&.first
   end
 
   def mysqld_version
@@ -82,7 +82,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.newer_than(forks_versions)
-    forks_versions.keys.include?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) >= 0
+    forks_versions.key?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) >= 0
   end
 
   def newer_than(forks_versions)
@@ -90,7 +90,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.older_than(forks_versions)
-    forks_versions.keys.include?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) < 0
+    forks_versions.key?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) < 0
   end
 
   def older_than(forks_versions)

@@ -82,65 +82,25 @@ Performance/BigDecimalWithNumericArgument:
   Enabled: true
 Performance/BlockGivenWithExplicitBlock:
   Enabled: true
-Performance/Caller:
-  Enabled: true
 Performance/CaseWhenSplat:
-  Enabled: true
-Performance/Casecmp:
-  Enabled: true
-Performance/CollectionLiteralInLoop:
-  Enabled: true
-Performance/CompareWithBlock:
   Enabled: true
 Performance/ConstantRegexp:
   Enabled: true
-Performance/Count:
-  Enabled: true
-Performance/Detect:
-  Enabled: true
-Performance/DoubleStartEndWith:
-  Enabled: true
-Performance/EndWith:
-  Enabled: true
-Performance/FixedSize:
-  Enabled: true
-Performance/FlatMap:
-  Enabled: true
 Performance/MethodObjectAsBlock:
-  Enabled: true
-Performance/RangeInclude:
-  Enabled: true
-Performance/RedundantBlockCall:
-  Enabled: true
-Performance/RedundantMatch:
-  Enabled: true
-Performance/RedundantMerge:
   Enabled: true
 Performance/RedundantSortBlock:
   Enabled: true
 Performance/RedundantStringChars:
   Enabled: true
-Performance/RegexpMatch:
-  Enabled: true
-Performance/ReverseEach:
-  Enabled: true
 Performance/ReverseFirst:
-  Enabled: true
-Performance/Size:
   Enabled: true
 Performance/SortReverse:
   Enabled: true
 Performance/Squeeze:
   Enabled: true
-Performance/StartWith:
-  Enabled: true
 Performance/StringInclude:
   Enabled: true
-Performance/StringReplacement:
-  Enabled: true
 Performance/Sum:
-  Enabled: true
-Performance/TimesMap:
   Enabled: true
 Style/CollectionMethods:
   Enabled: true
@@ -198,19 +158,11 @@ Lint/DeprecatedOpenSSLConstant:
   Enabled: false
 Lint/DisjunctiveAssignmentInConstructor:
   Enabled: false
-Lint/DuplicateBranch:
-  Enabled: false
 Lint/DuplicateElsifCondition:
-  Enabled: false
-Lint/DuplicateRegexpCharacterClassElement:
   Enabled: false
 Lint/DuplicateRequire:
   Enabled: false
 Lint/DuplicateRescueException:
-  Enabled: false
-Lint/EmptyBlock:
-  Enabled: false
-Lint/EmptyClass:
   Enabled: false
 Lint/EmptyConditionalBody:
   Enabled: false
@@ -231,8 +183,6 @@ Lint/MissingCopEnableDirective:
 Lint/MixedRegexpCaptureTypes:
   Enabled: false
 Lint/NestedPercentLiteral:
-  Enabled: false
-Lint/NoReturnInBeginEndBlocks:
   Enabled: false
 Lint/NonDeterministicRequireOrder:
   Enabled: false
@@ -268,17 +218,11 @@ Lint/ShadowedArgument:
   Enabled: false
 Lint/StructNewOverride:
   Enabled: false
-Lint/ToEnumArguments:
-  Enabled: false
 Lint/ToJSON:
   Enabled: false
 Lint/TopLevelReturnWithArgument:
   Enabled: false
 Lint/TrailingCommaInAttributeDeclaration:
-  Enabled: false
-Lint/UnexpectedBlockArity:
-  Enabled: false
-Lint/UnmodifiedReduceAccumulator:
   Enabled: false
 Lint/UnreachableLoop:
   Enabled: false
@@ -294,6 +238,8 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
   Enabled: false
+Metrics/BlockNesting:
+  Enabled: false
 Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
@@ -308,6 +254,8 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Migration/DepartmentName:
   Enabled: false
+Naming/AccessorMethodName:
+  Enabled: false
 Naming/BlockParameterName:
   Enabled: false
 Naming/HeredocDelimiterCase:
@@ -319,6 +267,18 @@ Naming/MemoizedInstanceVariableName:
 Naming/MethodParameterName:
   Enabled: false
 Naming/RescuedExceptionsVariableName:
+  Enabled: false
+Performance/BindCall:
+  Enabled: false
+Performance/DeletePrefix:
+  Enabled: false
+Performance/DeleteSuffix:
+  Enabled: false
+Performance/InefficientHashSearch:
+  Enabled: false
+Performance/UnfreezeString:
+  Enabled: false
+Performance/UriDefaultParser:
   Enabled: false
 RSpec/Be:
   Enabled: false
@@ -408,8 +368,6 @@ Style/AccessModifierDeclarations:
   Enabled: false
 Style/AccessorGrouping:
   Enabled: false
-Style/ArgumentsForwarding:
-  Enabled: false
 Style/AsciiComments:
   Enabled: false
 Style/BisectedAttrAccessor:
@@ -418,8 +376,6 @@ Style/CaseLikeIf:
   Enabled: false
 Style/ClassEqualityComparison:
   Enabled: false
-Style/CollectionCompact:
-  Enabled: false
 Style/ColonMethodDefinition:
   Enabled: false
 Style/CombinableLoops:
@@ -427,8 +383,6 @@ Style/CombinableLoops:
 Style/CommentedKeyword:
   Enabled: false
 Style/Dir:
-  Enabled: false
-Style/DocumentDynamicEvalDefinition:
   Enabled: false
 Style/DoubleCopDisableDirective:
   Enabled: false
@@ -468,11 +422,7 @@ Style/MixinUsage:
   Enabled: false
 Style/MultilineWhenThen:
   Enabled: false
-Style/NegatedIfElseCondition:
-  Enabled: false
 Style/NegatedUnless:
-  Enabled: false
-Style/NilLambda:
   Enabled: false
 Style/NumericPredicate:
   Enabled: false
@@ -481,8 +431,6 @@ Style/OptionalBooleanParameter:
 Style/OrAssignment:
   Enabled: false
 Style/RandomWithOffset:
-  Enabled: false
-Style/RedundantArgument:
   Enabled: false
 Style/RedundantAssignment:
   Enabled: false
@@ -516,8 +464,6 @@ Style/StringConcatenation:
   Enabled: false
 Style/Strip:
   Enabled: false
-Style/SwapValues:
-  Enabled: false
 Style/SymbolProc:
   Enabled: false
 Style/TrailingBodyOnClass:
@@ -531,4 +477,36 @@ Style/TrailingCommaInHashLiteral:
 Style/TrailingMethodEndStatement:
   Enabled: false
 Style/UnpackFirst:
+  Enabled: false
+Lint/DuplicateBranch:
+  Enabled: false
+Lint/DuplicateRegexpCharacterClassElement:
+  Enabled: false
+Lint/EmptyBlock:
+  Enabled: false
+Lint/EmptyClass:
+  Enabled: false
+Lint/NoReturnInBeginEndBlocks:
+  Enabled: false
+Lint/ToEnumArguments:
+  Enabled: false
+Lint/UnexpectedBlockArity:
+  Enabled: false
+Lint/UnmodifiedReduceAccumulator:
+  Enabled: false
+Performance/CollectionLiteralInLoop:
+  Enabled: false
+Style/ArgumentsForwarding:
+  Enabled: false
+Style/CollectionCompact:
+  Enabled: false
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false
+Style/NegatedIfElseCondition:
+  Enabled: false
+Style/NilLambda:
+  Enabled: false
+Style/RedundantArgument:
+  Enabled: false
+Style/SwapValues:
   Enabled: false

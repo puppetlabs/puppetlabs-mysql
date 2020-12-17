@@ -55,7 +55,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   def self.prefetch(resources)
     users = instances
     # rubocop:disable Lint/AssignmentInCondition
-    resources.keys.each do |name|
+    resources.each_key do |name|
       if provider = users.find { |user| user.name == name }
         resources[name].provider = provider
       end
