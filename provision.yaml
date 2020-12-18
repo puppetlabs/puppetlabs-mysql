@@ -40,11 +40,9 @@ travis_el8:
 release_checks_5:
   provisioner: abs
   images:
-  - redhat-5-x86_64
   - redhat-6-x86_64
   - redhat-7-x86_64
   - redhat-8-x86_64
-  - centos-5-x86_64
   - centos-6-x86_64
   - centos-7-x86_64
   - centos-8-x86_64
@@ -62,11 +60,9 @@ release_checks_5:
 release_checks_6:
   provisioner: abs
   images:
-  - redhat-5-x86_64
   - redhat-6-x86_64
   - redhat-7-x86_64
   - redhat-8-x86_64
-  - centos-5-x86_64
   - centos-6-x86_64
   - centos-7-x86_64
   - centos-8-x86_64
