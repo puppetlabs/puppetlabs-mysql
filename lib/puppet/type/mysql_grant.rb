@@ -116,4 +116,9 @@ Puppet::Type.newtype(:mysql_grant) do
   newproperty(:options, array_matching: :all) do
     desc 'Options to grant.'
   end
+
+  newproperty(:bin_log) do
+    desc 'Indicates if SQL_LOG_BIN should be used for this user. Helpful for slaves.'
+    newvalue(%r{\w*})
+  end
 end

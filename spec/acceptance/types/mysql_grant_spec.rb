@@ -80,6 +80,31 @@ describe 'mysql_grant' do
     end
   end
 
+  describe 'adding privileges with bin_log=no' do
+    pp = <<-MANIFEST
+        mysql_user { 'test2@tester':
+          ensure => present,
+        }
+        mysql_grant { 'test2@tester/test.*':
+          ensure     => 'present',
+          bin_log    => 'no',
+          table      => 'test.*',
+          user       => 'test2@tester',
+          privileges => ['SELECT', 'UPDATE'],
+          require    => Mysql_user['test2@tester'],
+        }
+    MANIFEST
+    it 'works without errors' do
+      apply_manifest(pp, catch_failures: true)
+    end
+
+    it 'finds the user #stdout' do
+      result = run_shell('mysql -NBe "SHOW GRANTS FOR test2@tester"')
+      expect(result.stdout).to contain(%r{GRANT SELECT, UPDATE.*TO ['|`]test2['|`]@['|`]tester['|`]})
+      expect(result.stderr).to be_empty
+    end
+  end
+
   describe 'adding privileges with special character in name' do
     pp = <<-MANIFEST
         mysql_user { 'test-2@tester':

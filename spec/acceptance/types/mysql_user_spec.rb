@@ -117,6 +117,27 @@ describe 'mysql_user' do
     end
   end
 
+  context 'using ashp-dash@localhost' do
+    describe 'adding user with bin_log=no' do
+      pp_three = <<-MANIFEST
+          mysql_user { 'ashp-dash-nobinlog@localhost':
+            password_hash => '*F9A8E96790775D196D12F53BCC88B8048FF62ED5',
+            bin_log => "no"
+          }
+      MANIFEST
+      it 'works without errors' do
+        apply_manifest(pp_three, catch_failures: true)
+      end
+
+      it 'finds the user #stdout' do
+        run_shell("mysql -NBe \"select '1' from mysql.user where CONCAT(user, '@', host) = 'ashp-dash-nobinlog@localhost'\"") do |r|
+          expect(r.stdout).to match(%r{^1$})
+          expect(r.stderr).to be_empty
+        end
+      end
+    end
+  end
+
   context 'using ashp@LocalHost' do
     describe 'adding user' do
       pp_four = <<-MANIFEST

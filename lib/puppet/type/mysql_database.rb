@@ -26,4 +26,10 @@ Puppet::Type.newtype(:mysql_database) do
     defaultto :utf8_general_ci
     newvalue(%r{^\S+$})
   end
+
+  newproperty(:bin_log) do
+    desc 'Disables SQL_LOG_BIN usage. Can be helpful for saving replication state'
+    defaultto "yes"
+    newvalue(%r{\w*})
+  end
 end

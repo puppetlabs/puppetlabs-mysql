@@ -29,17 +29,21 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
   end
 
   def create
-    self.class.mysql_caller("create database if not exists `#{@resource[:name]}` character set `#{@resource[:charset]}` collate `#{@resource[:collate]}`", 'regular')
+    bin_log = @resource[:bin_log] || "yes"
+
+    self.class.mysql_caller("create database if not exists `#{@resource[:name]}` character set `#{@resource[:charset]}` collate `#{@resource[:collate]}`", 'regular', bin_log)
 
     @property_hash[:ensure]  = :present
     @property_hash[:charset] = @resource[:charset]
     @property_hash[:collate] = @resource[:collate]
+    @property_hash[:bin_log] = bin_log
 
     exists? ? (return true) : (return false)
   end
 
   def destroy
-    self.class.mysql_caller("drop database if exists `#{@resource[:name]}`", 'regular')
+    bin_log = @resource[:bin_log] || "yes"
+    self.class.mysql_caller("drop database if exists `#{@resource[:name]}`", 'regular', bin_log)
 
     @property_hash.clear
     exists? ? (return false) : (return true)
@@ -52,13 +56,15 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
   mk_resource_methods
 
   def charset=(value)
-    self.class.mysql_caller("alter database `#{resource[:name]}` CHARACTER SET #{value}", 'regular')
+    bin_log = @resource[:bin_log] || "yes"
+    self.class.mysql_caller("alter database `#{resource[:name]}` CHARACTER SET #{value}", 'regular', bin_log)
     @property_hash[:charset] = value
     (charset == value) ? (return true) : (return false)
   end
 
   def collate=(value)
-    self.class.mysql_caller("alter database `#{resource[:name]}` COLLATE #{value}", 'regular')
+    bin_log = @resource[:bin_log] || "yes"
+    self.class.mysql_caller("alter database `#{resource[:name]}` COLLATE #{value}", 'regular', bin_log)
     @property_hash[:collate] = value
     (collate == value) ? (return true) : (return false)
   end

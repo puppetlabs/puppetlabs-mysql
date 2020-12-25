@@ -82,7 +82,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     query << " ON #{table_string}"
     query << " TO #{user_string}"
     query << self.class.cmd_options(options) unless options.nil?
-    self.class.mysql_caller(query, 'system')
+
+    bin_log = @resource[:bin_log] || "yes"
+
+    self.class.mysql_caller(query, 'system', bin_log)
   end
 
   def create
@@ -93,6 +96,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     @property_hash[:user]       = @resource[:user]
     @property_hash[:options]    = @resource[:options] if @resource[:options]
     @property_hash[:privileges] = @resource[:privileges]
+    @property_hash[:bin_log]    = @resource[:bin_log]
 
     exists? ? (return true) : (return false)
   end
@@ -101,6 +105,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     user_string = self.class.cmd_user(user)
     table_string = revoke_privileges.include?('PROXY') ? self.class.cmd_user(table) : self.class.cmd_table(table)
     priv_string = self.class.cmd_privs(revoke_privileges)
+
+    bin_log = @resource[:bin_log] || "0"
+
     # revoke grant option needs to be a extra query, because
     # "REVOKE ALL PRIVILEGES, GRANT OPTION [..]" is only valid mysql syntax
     # if no ON clause is used.
@@ -108,10 +115,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     # exist to be executed successfully
     if revoke_privileges.include?('ALL') && !revoke_privileges.include?('PROXY')
       query = "REVOKE GRANT OPTION ON #{table_string} FROM #{user_string}"
-      self.class.mysql_caller(query, 'system')
+      self.class.mysql_caller(query, 'system', bin_log)
     end
     query = "REVOKE #{priv_string} ON #{table_string} FROM #{user_string}"
-    self.class.mysql_caller(query, 'system')
+    self.class.mysql_caller(query, 'system', bin_log)
   end
 
   def destroy

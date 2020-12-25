@@ -99,21 +99,37 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.defaults_file
   end
 
-  def self.mysql_caller(text_of_sql, type)
+  def self.mysql_caller(text_of_sql, type, bin_log = 'yes')
+    opt = []
     if type.eql? 'system'
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
         ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
-        mysql_raw([system_database, '-e', text_of_sql].flatten.compact).scrub
       else
-        mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact).scrub
+        opt.push(defaults_file)
       end
+      opt.push(system_database)
+
+      if bin_log.eql? 'no'
+        opt.push("--init-command=SET SESSION SQL_LOG_BIN = 0;")
+      end
+      opt.push('-e')
+      opt.push(text_of_sql)
+
+      mysql_raw(opt.flatten.compact).scrub
     elsif type.eql? 'regular'
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
         ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
-        mysql_raw(['-NBe', text_of_sql].flatten.compact).scrub
       else
-        mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact).scrub
+        opt.push(defaults_file)
       end
+      if bin_log.eql? 'no'
+        opt.push("--init-command=SET SESSION SQL_LOG_BIN = 0;")
+      end
+
+      opt.push('-NBe')
+      opt.push(text_of_sql)
+
+      mysql_raw(opt.flatten.compact).scrub
     else
       raise Puppet::Error, _("#mysql_caller: Unrecognised type '%{type}'" % { type: type })
     end
