@@ -145,7 +145,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
     table_string = ''
 
     # We can't escape *.* so special case this.
-    table_string << if table == '*.*'
+    table_string += if table == '*.*'
                       '*.*'
                     # Special case also for FUNCTIONs and PROCEDUREs
                     elsif table.start_with?('FUNCTION ', 'PROCEDURE ')
@@ -160,7 +160,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
     return 'ALL PRIVILEGES' if privileges.include?('ALL')
     priv_string = ''
     privileges.each do |priv|
-      priv_string << "#{priv}, "
+      priv_string += "#{priv}, "
     end
     # Remove trailing , from the last element.
     priv_string.sub(%r{, $}, '')
@@ -170,7 +170,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   def self.cmd_options(options)
     option_string = ''
     options.each do |opt|
-      option_string << ' WITH GRANT OPTION' if opt == 'GRANT'
+      option_string += ' WITH GRANT OPTION' if opt == 'GRANT'
     end
     option_string
   end

@@ -159,8 +159,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       else
         concat_name = @resource[:name]
         sql = "UPDATE mysql.user SET password = '', plugin = 'ed25519'"
-        sql << ", authentication_string = '#{string}'"
-        sql << " where CONCAT(user, '@', host) = '#{concat_name}'; FLUSH PRIVILEGES"
+        sql += ", authentication_string = '#{string}'"
+        sql += " where CONCAT(user, '@', host) = '#{concat_name}'; FLUSH PRIVILEGES"
       end
       self.class.mysql_caller(sql, 'system')
     elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
@@ -210,17 +210,17 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       else
         concat_name = @resource[:name]
         sql = "UPDATE mysql.user SET password = '', plugin = '#{string}'"
-        sql << ", authentication_string = '#{@resource[:password_hash]}'"
-        sql << " where CONCAT(user, '@', host) = '#{concat_name}'; FLUSH PRIVILEGES"
+        sql += ", authentication_string = '#{@resource[:password_hash]}'"
+        sql += " where CONCAT(user, '@', host) = '#{concat_name}'; FLUSH PRIVILEGES"
       end
     elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       sql = "ALTER USER #{merged_name} IDENTIFIED WITH '#{string}'"
-      sql << " AS '#{@resource[:password_hash]}'" if string == 'mysql_native_password'
+      sql += " AS '#{@resource[:password_hash]}'" if string == 'mysql_native_password'
     else
       # See https://bugs.mysql.com/bug.php?id=67449
       sql = "UPDATE mysql.user SET plugin = '#{string}'"
-      sql << ((string == 'mysql_native_password') ? ", password = '#{@resource[:password_hash]}'" : ", password = ''")
-      sql << " WHERE CONCAT(user, '@', host) = '#{@resource[:name]}'"
+      sql += ((string == 'mysql_native_password') ? ", password = '#{@resource[:password_hash]}'" : ", password = ''")
+      sql += " WHERE CONCAT(user, '@', host) = '#{@resource[:name]}'"
     end
 
     self.class.mysql_caller(sql, 'system')

@@ -461,11 +461,11 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       if leading_quote?
         # check for a closing quote at the end of the string
         if string =~ @close_quote
-          value << Regexp.last_match(1)
+          self.value += Regexp.last_match(1)
 
           # otherwise just append the string to the value
         else
-          value << string
+          self.value += string
           continuation = true
         end
 
@@ -480,11 +480,19 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
           continuation = true
 
         when @trailing_slash
-          value ? value << Regexp.last_match(1) : self.value = Regexp.last_match(1)
+          if self.value
+            self.value += Regexp.last_match(1)
+          else
+            self.value = Regexp.last_match(1)
+          end
           continuation = true
 
         when @normal_value
-          value ? value << Regexp.last_match(1) : self.value = Regexp.last_match(1)
+          if self.value
+            self.value += Regexp.last_match(1)
+          else
+            self.value = Regexp.last_match(1)
+          end
 
         else
           error
@@ -492,7 +500,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       end
 
       if continuation
-        value << $INPUT_RECORD_SEPARATOR if leading_quote?
+        self.value += $INPUT_RECORD_SEPARATOR if leading_quote?
       else
         process_property
       end

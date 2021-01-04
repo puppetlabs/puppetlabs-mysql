@@ -81,9 +81,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     priv_string = self.class.cmd_privs(privileges)
     table_string = privileges.include?('PROXY') ? self.class.cmd_user(table) : self.class.cmd_table(table)
     query = "GRANT #{priv_string}"
-    query << " ON #{table_string}"
-    query << " TO #{user_string}"
-    query << self.class.cmd_options(options) unless options.nil?
+    query += " ON #{table_string}"
+    query += " TO #{user_string}"
+    query += self.class.cmd_options(options) unless options.nil?
     self.class.mysql_caller(query, 'system')
   end
 
