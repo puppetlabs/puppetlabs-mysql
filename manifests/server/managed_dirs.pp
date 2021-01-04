@@ -23,6 +23,8 @@ class mysql::server::managed_dirs {
         }
       }
     }
+  } else {
+    $managed_dirs_path = []
   }
 
   $logbin = pick($options['mysqld']['log-bin'], $options['mysqld']['log_bin'], false)
