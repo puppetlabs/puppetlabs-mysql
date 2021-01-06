@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v10.9.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.9.1) (2021-01-06)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.9.0...v10.9.1)
+
+### Fixed
+
+- Repair check of logbindir [\#1348](https://github.com/puppetlabs/puppetlabs-mysql/pull/1348) ([qha](https://github.com/qha))
+
 ## [v10.9.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.9.0) (2020-12-16)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.8.0...v10.9.0)
@@ -25,7 +33,6 @@ All notable changes to this project will be documented in this file. The format 
 - \(MODULES-10788\) - fix for password prompt when creating mysql\_login\_path resource [\#1334](https://github.com/puppetlabs/puppetlabs-mysql/pull/1334) ([andeman](https://github.com/andeman))
 - \(MODULES-10790\) - Setting logbin results in error Unknown variable: 'managed\_dirs\_path' [\#1325](https://github.com/puppetlabs/puppetlabs-mysql/pull/1325) ([pmcmaw](https://github.com/pmcmaw))
 - Fix package for python bindings on Ubuntu 20.04 [\#1323](https://github.com/puppetlabs/puppetlabs-mysql/pull/1323) ([tobias-urdin](https://github.com/tobias-urdin))
-- Remove non printable characters [\#1315](https://github.com/puppetlabs/puppetlabs-mysql/pull/1315) ([elmobp](https://github.com/elmobp))
 
 ## [v10.7.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.7.1) (2020-09-25)
 
@@ -47,6 +54,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
+- Remove non printable characters [\#1315](https://github.com/puppetlabs/puppetlabs-mysql/pull/1315) ([elmobp](https://github.com/elmobp))
 - Remove control character from manifests/server.pp [\#1312](https://github.com/puppetlabs/puppetlabs-mysql/pull/1312) ([tomkrouper](https://github.com/tomkrouper))
 
 ## [v10.6.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.6.0) (2020-06-23)
