@@ -1,13 +1,13 @@
 class { 'mysql::server':
   root_password => 'password',
 }
-mysql::db { 'mydb':
+mysql_database { 'mydb':
   user     => 'myuser',
   password => 'mypass',
   host     => 'localhost',
   grant    => ['SELECT', 'UPDATE'],
 }
-mysql::db { "mydb_${fqdn}":
+mysql_database { "mydb_${fqdn}":
   user     => 'myuser',
   password => 'mypass',
   dbname   => 'mydb',
