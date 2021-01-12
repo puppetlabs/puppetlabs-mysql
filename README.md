@@ -154,6 +154,24 @@ mysql::db { 'mydb':
 
 To add custom MySQL configuration, place additional files into `includedir`. This allows you to override settings or add additional ones, which is helpful if you don't use `override_options` in `mysql::server`. The `includedir` location is by default set to `/etc/mysql/conf.d`.
 
+### Managing Root Passwords
+
+If you want the password managed by puppet for `127.0.0.1` and `::1` as an end user you would need to explicitly manage them with additional manifest entries. For example:
+
+```puppet
+mysql_user{ '[root@127.0.0.1]':       
+    ensure        => present,       
+    password_hash => mysql::password($mysql::server::root_password),           
+}    
+ 
+mysql_user{ 'root@::1':       
+    ensure        => present,       
+    password_hash => mysql::password($mysql::server::root_password),    
+} 
+```
+
+**Note:** This module is not designed to carry out additional DNS and aliasing.
+
 ### Work with an existing server
 
 To instantiate databases and users on an existing MySQL server, you need a `.my.cnf` file in `root`'s home directory. This file must specify the remote server address and credentials. For example:
