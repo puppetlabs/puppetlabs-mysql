@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def mysql_id_get
   # Convert the existing mac to an integer
   macval = Facter.value(:macaddress).delete(':').to_i(16)

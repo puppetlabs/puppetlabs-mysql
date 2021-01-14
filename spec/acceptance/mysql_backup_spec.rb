@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'mysql::server::backup class' do
@@ -63,12 +65,10 @@ describe 'mysql::server::backup class' do
       end
     end
   end
-  # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
-end
 
-context 'with one file per database' do
-  context 'should work with no errors' do
-    pp = <<-MANIFEST
+  context 'with one file per database' do
+    context 'should work with no errors' do
+      pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
             'backup1',
@@ -93,51 +93,50 @@ context 'with one file per database' do
             execpath          => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
           }
       MANIFEST
-    it 'when configuring mysql backups' do
-      idempotent_apply(pp)
-    end
-  end
-
-  describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
-    before(:all) do
-      pre_run
-    end
-
-    it 'runs mysqlbackup.sh with no errors without root credentials' do
-      run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh') do |r|
-        expect(r.stderr).to eq('')
+      it 'when configuring mysql backups' do
+        idempotent_apply(pp)
       end
     end
 
-    it 'creates one file per database' do
-      ['backup1', 'backup2'].each do |database|
-        run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-          expect(r.stdout).to match(%r{1})
-          expect(r.exit_code).to be_zero
+    describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
+      before(:all) do
+        pre_run
+      end
+
+      it 'runs mysqlbackup.sh with no errors without root credentials' do
+        run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh') do |r|
+          expect(r.stderr).to eq('')
+        end
+      end
+
+      it 'creates one file per database' do
+        ['backup1', 'backup2'].each do |database|
+          run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
+            expect(r.stdout).to match(%r{1})
+            expect(r.exit_code).to be_zero
+          end
+        end
+      end
+
+      it 'executes mysqlbackup.sh a second time' do
+        run_shell('sleep 1')
+        run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
+      end
+
+      it 'has one file per database per run' do
+        ['backup1', 'backup2'].each do |database|
+          run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
+            expect(r.stdout).to match(%r{2})
+            expect(r.exit_code).to be_zero
+          end
         end
       end
     end
-
-    it 'executes mysqlbackup.sh a second time' do
-      run_shell('sleep 1')
-      run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh')
-    end
-
-    it 'has one file per database per run' do
-      ['backup1', 'backup2'].each do |database|
-        run_shell("ls -l /tmp/backups/mysql_backup_#{database}_*-*.sql.bz2 | wc -l") do |r|
-          expect(r.stdout).to match(%r{2})
-          expect(r.exit_code).to be_zero
-        end
-      end
-    end
-    # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
   end
-end
 
-context 'with xtrabackup enabled' do
-  context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
-    pp = <<-MANIFEST
+  context 'with xtrabackup enabled' do
+    context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+      pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
             'backup1',
@@ -210,63 +209,62 @@ context 'with xtrabackup enabled' do
             execpath       => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
           }
       MANIFEST
-    it 'when configuring mysql backup' do
-      idempotent_apply(pp)
+      it 'when configuring mysql backup' do
+        idempotent_apply(pp)
+      end
+    end
+
+    describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+      before(:all) do
+        pre_run
+      end
+
+      it 'runs xtrabackup.sh full backup with no errors' do
+        run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F)_full --backup 2>&1 | tee /tmp/xtrabackup_full.log') do |r|
+          expect(r.exit_code).to be_zero
+        end
+      end
+
+      it 'xtrabackup reports success for the full backup' do
+        # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
+        run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup_full.log') do |r|
+          expect(r.exit_code).to be_zero
+        end
+      end
+
+      it 'creates a subdirectory for the full backup' do
+        run_shell('find /tmp/xtrabackups -mindepth 1 -maxdepth 1 -type d -name $(date +%Y)\*full | wc -l') do |r|
+          expect(r.stdout).to match(%r{1})
+          expect(r.exit_code).to be_zero
+        end
+      end
+
+      it 'runs xtrabackup.sh incremental backup with no errors' do
+        run_shell('sleep 1')
+        run_shell('/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/xtrabackups/$(date +%F)_full --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup_inc.log') do |r| # rubocop:disable Layout/LineLength
+          expect(r.exit_code).to be_zero
+        end
+      end
+
+      it 'xtrabackup reports success for the incremental backup' do
+        # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
+        run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup_inc.log') do |r|
+          expect(r.exit_code).to be_zero
+        end
+      end
+
+      it 'creates a new subdirectory for each backup' do
+        run_shell('find /tmp/xtrabackups -mindepth 1 -maxdepth 1 -type d -name $(date +%Y)\* | wc -l') do |r|
+          expect(r.stdout).to match(%r{2})
+          expect(r.exit_code).to be_zero
+        end
+      end
     end
   end
 
-  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
-    before(:all) do
-      pre_run
-    end
-
-    it 'runs xtrabackup.sh full backup with no errors' do
-      run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F)_full --backup 2>&1 | tee /tmp/xtrabackup_full.log') do |r|
-        expect(r.exit_code).to be_zero
-      end
-    end
-
-    it 'xtrabackup reports success for the full backup' do
-      # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
-      run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup_full.log') do |r|
-        expect(r.exit_code).to be_zero
-      end
-    end
-
-    it 'creates a subdirectory for the full backup' do
-      run_shell('find /tmp/xtrabackups -mindepth 1 -maxdepth 1 -type d -name $(date +%Y)\*full | wc -l') do |r|
-        expect(r.stdout).to match(%r{1})
-        expect(r.exit_code).to be_zero
-      end
-    end
-
-    it 'runs xtrabackup.sh incremental backup with no errors' do
-      run_shell('sleep 1')
-      run_shell('/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/xtrabackups/$(date +%F)_full --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup_inc.log') do |r| # rubocop:disable Metrics/LineLength
-        expect(r.exit_code).to be_zero
-      end
-    end
-
-    it 'xtrabackup reports success for the incremental backup' do
-      # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
-      run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup_inc.log') do |r|
-        expect(r.exit_code).to be_zero
-      end
-    end
-
-    it 'creates a new subdirectory for each backup' do
-      run_shell('find /tmp/xtrabackups -mindepth 1 -maxdepth 1 -type d -name $(date +%Y)\* | wc -l') do |r|
-        expect(r.stdout).to match(%r{2})
-        expect(r.exit_code).to be_zero
-      end
-    end
-  end
-  # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
-end
-
-context 'with xtrabackup enabled and incremental backups disabled' do
-  context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
-    pp = <<-MANIFEST
+  context 'with xtrabackup enabled and incremental backups disabled' do
+    context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+      pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
             'backup1',
@@ -339,28 +337,28 @@ context 'with xtrabackup enabled and incremental backups disabled' do
             execpath            => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
           }
       MANIFEST
-    it 'when configuring mysql backup' do
-      idempotent_apply(pp)
-    end
-  end
-
-  describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Metrics/LineLength
-    before(:all) do
-      pre_run
-    end
-
-    it 'runs xtrabackup.sh with no errors' do
-      run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup.log') do |r|
-        expect(r.exit_code).to be_zero
+      it 'when configuring mysql backup' do
+        idempotent_apply(pp)
       end
     end
 
-    it 'xtrabackup reports success for the backup' do
-      # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
-      run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup.log') do |r|
-        expect(r.exit_code).to be_zero
+    describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+      before(:all) do
+        pre_run
+      end
+
+      it 'runs xtrabackup.sh with no errors' do
+        run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup.log') do |r|
+          expect(r.exit_code).to be_zero
+        end
+      end
+
+      it 'xtrabackup reports success for the backup' do
+        # NOTE: Once support for CentOS 6 is dropped, we should check for "completed OK" instead.
+        run_shell('grep "xtrabackup: Transaction log of lsn" /tmp/xtrabackup.log') do |r|
+          expect(r.exit_code).to be_zero
+        end
       end
     end
   end
-  # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength
 end

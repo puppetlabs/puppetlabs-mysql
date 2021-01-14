@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:mysql_database).provider(:mysql) do
@@ -28,14 +30,14 @@ test
     Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
     File.stubs(:file?).with('/root/.my.cnf').returns(true)
     provider.class.stubs(:mysql_caller).with('show databases', 'regular').returns('new_database')
-    provider.class.stubs(:mysql_caller).with(["show variables like '%_database'", 'new_database'], 'regular').returns("character_set_database latin1\ncollation_database latin1_swedish_ci\nskip_show_database OFF") # rubocop:disable Metrics/LineLength
+    provider.class.stubs(:mysql_caller).with(["show variables like '%_database'", 'new_database'], 'regular').returns("character_set_database latin1\ncollation_database latin1_swedish_ci\nskip_show_database OFF") # rubocop:disable Layout/LineLength
   end
 
   describe 'self.instances' do
     it 'returns an array of databases' do
       provider.class.stubs(:mysql_caller).with('show databases', 'regular').returns(raw_databases)
       raw_databases.each_line do |db|
-        provider.class.stubs(:mysql_caller).with(["show variables like '%_database'", db.chomp], 'regular').returns("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Metrics/LineLength
+        provider.class.stubs(:mysql_caller).with(["show variables like '%_database'", db.chomp], 'regular').returns("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Layout/LineLength
       end
       databases = provider.class.instances.map { |x| x.name }
       expect(parsed_databases).to match_array(databases)

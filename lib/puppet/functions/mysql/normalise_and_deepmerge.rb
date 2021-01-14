@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # @summary Recursively merges two or more hashes together, normalises keys with differing use of dashesh and underscores,
 #   then returns the resulting hash.
 #
@@ -39,7 +41,7 @@ Puppet::Functions.create_function(:'mysql::normalise_and_deepmerge') do
 
   def normalized?(hash, key)
     return true if hash.key?(key)
-    return false unless key =~ %r{-|_}
+    return false unless %r{-|_}.match?(key)
     other_key = key.include?('-') ? key.tr('-', '_') : key.tr('_', '-')
     return false unless hash.key?(other_key)
     hash[key] = hash.delete(other_key)

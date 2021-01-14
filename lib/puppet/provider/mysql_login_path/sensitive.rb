@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A Puppet Language type that makes the Sensitive Type comparable
 #
 class Puppet::Provider::MysqlLoginPath::Sensitive < Puppet::Pops::Types::PSensitiveType::Sensitive

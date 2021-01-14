@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Set grants for users in MySQL.'
@@ -17,7 +19,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         # Default root user created by mysql_install_db on a host with fqdn
         # of myhost.mydomain.my: root@myhost.mydomain.my, when MySQL is started
         # with --skip-name-resolve.
-        next if e.inspect =~ %r{There is no such grant defined for user}
+        next if %r{There is no such grant defined for user}.match?(e.inspect)
         raise Puppet::Error, _('#mysql had an error ->  %{inspect}') % { inspect: e.inspect }
       end
       # Once we have the list of grants generate entries for each.
@@ -44,7 +46,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           end
         end
         # Same here, but to remove OPTION leaving just GRANT.
-        options = if rest =~ %r{WITH\sGRANT\sOPTION}
+        options = if %r{WITH\sGRANT\sOPTION}.match?(rest)
                     ['GRANT']
                   else
                     ['NONE']
@@ -67,7 +69,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
   def self.prefetch(resources)
     users = instances
-    resources.keys.each do |name|
+    resources.each_key do |name|
       if provider = users.find { |user| user.name == name } # rubocop:disable Lint/AssignmentInCondition
         resources[name].provider = provider
       end
@@ -79,9 +81,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     priv_string = self.class.cmd_privs(privileges)
     table_string = privileges.include?('PROXY') ? self.class.cmd_user(table) : self.class.cmd_table(table)
     query = "GRANT #{priv_string}"
-    query << " ON #{table_string}"
-    query << " TO #{user_string}"
-    query << self.class.cmd_options(options) unless options.nil?
+    query += " ON #{table_string}"
+    query += " TO #{user_string}"
+    query += self.class.cmd_options(options) unless options.nil?
     self.class.mysql_caller(query, 'system')
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'digest/sha1'
 # @summary
 #   Hash a string as mysql's "PASSWORD()" function would do it
@@ -16,7 +18,7 @@ Puppet::Functions.create_function(:'mysql::password') do
 
   def password(password)
     return '' if password.empty?
-    return password if password =~ %r{\*[A-F0-9]{40}$}
+    return password if %r{\*[A-F0-9]{40}$}.match?(password)
     '*' + Digest::SHA1.hexdigest(Digest::SHA1.digest(password)).upcase
   end
 end
