@@ -497,6 +497,9 @@ class mysql::params {
     'Alpine': {
       $server_service_provider = 'rc-service'
     }
+    'FreeBSD': {
+      $server_service_provider = 'freebsd'
+    }
     default: {
       $server_service_provider = undef
     }
