@@ -27,82 +27,90 @@ stages:
 jobs:
   fast_finish: true
   include:
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_ub_6]'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_ub_6_puppet6
+      env:
+        PLATFORMS: travis_ub_6_puppet6
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_ub_5]'"
       - "bundle exec rake 'litmus:install_agent[puppet5]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_ub_5_puppet5
+      env:
+        PLATFORMS: travis_ub_5_puppet5
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_deb]'"
       - "bundle exec rake 'litmus:install_agent[puppet5]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_deb_puppet5
+      env:
+        PLATFORMS: travis_deb_puppet5
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_el7]'"
       - "bundle exec rake 'litmus:install_agent[puppet5]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_el7_puppet5
+      env:
+        PLATFORMS: travis_el7_puppet5
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_el8]'"
       - "bundle exec rake 'litmus:install_agent[puppet5]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_el8_puppet5
+      env:
+        PLATFORMS: travis_el8_puppet5
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_deb]'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_deb_puppet6
+      env:
+        PLATFORMS: travis_deb_puppet6
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_el7]'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_el7_puppet6
+      env:
+        PLATFORMS: travis_el7_puppet6
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
-    - bundler_args: --with system_tests
-      before_script:
+    - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_el8]'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
-      env: PLATFORMS=travis_el8_puppet6
+      env:
+        PLATFORMS: travis_el8_puppet6
+        BUNDLE_WITH: system_tests
       rvm: 2.5.7
       script: ["travis_wait 45 bundle exec rake litmus:acceptance:parallel"]
       services: docker
