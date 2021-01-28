@@ -71,3 +71,4 @@ extra_gemfiles.each do |gemfile|
   end
 end
 # vim: syntax=ruby
+gem "puppet_litmus",                                           require: false, git: 'https://github.com/carabasdaniel/puppet_litmus', ref: 'fixdockerexp' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.7.0')
