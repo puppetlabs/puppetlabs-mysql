@@ -56,10 +56,11 @@ describe 'mysql::backup::mysqldump' do
       context 'with compression_command' do
         let(:params) do
           {
-            compression_command: "TEST -TEST",
-            compression_extension: ".TEST"
+            compression_command: 'TEST -TEST',
+            compression_extension: '.TEST'
           }.merge(default_params)
         end
+
         it {
           is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{(\| TEST -TEST)},
@@ -67,7 +68,7 @@ describe 'mysql::backup::mysqldump' do
           is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{(\.TEST)},
           )
-          is_expected.to_not contain_package('bzip2')
+          is_expected.not_to contain_package('bzip2')
         }
       end
     end
