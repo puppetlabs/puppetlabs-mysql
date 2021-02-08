@@ -52,6 +52,24 @@ describe 'mysql::backup::mysqldump' do
           )
         }
       end
+
+      context 'with compression_command' do
+        let(:params) do
+          {
+            compression_command: "TEST -TEST",
+            compression_extension: ".TEST"
+          }.merge(default_params)
+        end
+        it {
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
+            %r{(\| TEST -TEST)},
+          )
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
+            %r{(\.TEST)},
+          )
+          is_expected.to_not contain_package('bzip2')
+        }
+      end
     end
   end
   # rubocop:enable RSpec/NestedGroups

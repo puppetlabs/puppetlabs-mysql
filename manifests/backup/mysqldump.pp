@@ -30,9 +30,11 @@ class mysql::backup::mysqldump (
   $mysqlbackupdir_target    = undef,
   $incremental_backups      = false,
   $install_cron             = true,
+  $compression_command      = 'bzcat -zc',
+  $compression_extension    = '.bz2'
 ) inherits mysql::params {
   unless $::osfamily == 'FreeBSD' {
-    if $backupcompress {
+    if $backupcompress and $compression_command == 'bzcat -zc' {
       ensure_packages(['bzip2'])
       Package['bzip2'] -> File['mysqlbackup.sh']
     }
