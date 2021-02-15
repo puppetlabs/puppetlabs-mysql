@@ -31,6 +31,8 @@ class mysql::backup::xtrabackup (
   $additional_cron_args     = '--backup',
   $incremental_backups      = true,
   $install_cron             = true,
+  $compression_command      = undef,
+  $compression_extension    = undef,
 ) inherits mysql::params {
   ensure_packages($xtrabackup_package_name)
 

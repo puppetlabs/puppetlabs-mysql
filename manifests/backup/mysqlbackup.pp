@@ -29,6 +29,8 @@ class mysql::backup::mysqlbackup (
   $optional_args            = [],
   $incremental_backups      = false,
   $install_cron             = true,
+  $compression_command      = undef,
+  $compression_extension    = undef,
 ) inherits mysql::params {
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
