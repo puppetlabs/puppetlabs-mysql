@@ -68,7 +68,8 @@
 # @param install_cron
 #   Manage installation of cron package
 # @param compression_command
-#   Configure the command used to compress the backup (when using the mysqldump provider)
+#   Configure the command used to compress the backup (when using the mysqldump provider). Make sure the command exists
+#   on the target system. Packages for it are NOT automatically installed.
 # @param compression_extension
 #   Configure the file extension for the compressed backup (when using the mysqldump provider)
 class mysql::server::backup (
