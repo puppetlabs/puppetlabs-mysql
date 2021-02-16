@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: "Honeycomb: Start recording"
-      uses: kvrhdn/gha-buildevents@5be4636b81803713c94d7cb7e3a4b85d759df112 # pin@v1.0.2
+      uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
         apikey: ${{ env.HONEYCOMB_WRITEKEY }}
         dataset: ${{ env.HONEYCOMB_DATASET }}
@@ -23,7 +23,7 @@ jobs:
 
     - name: "Honeycomb: Start first step"
       run: |
-        echo STEP_ID=0 >> $GITHUB_ENV
+        echo STEP_ID=setup-environment >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
     - name: Checkout Source
@@ -31,33 +31,28 @@ jobs:
       if: ${{ github.repository_owner == 'puppetlabs' }}
 
     - name: Activate Ruby 2.7
-      uses: actions/setup-ruby@v1
+      uses: ruby/setup-ruby@v1
       if: ${{ github.repository_owner == 'puppetlabs' }}
       with:
         ruby-version: "2.7"
+        bundler-cache: true
 
-    - name: Cache gems
-      uses: actions/cache@v2
-      if: ${{ github.repository_owner == 'puppetlabs' }}
-      with:
-        path: vendor/gems
-        key: ${{ runner.os }}-${{ github.event_name }}-${{ hashFiles('**/Gemfile') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ github.event_name }}-
-          ${{ runner.os }}-
-
-    - name: Install gems
+    - name: Print bundle environment
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle config path vendor/gems' -- bundle config path vendor/gems
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle config jobs 8' -- bundle config jobs 8
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle config retry 3' -- bundle config retry 3
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle install' -- bundle install
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle clean' -- bundle clean
+        echo ::group::bundler environment
+        buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
+        echo ::endgroup::
+
+    - name: "Honeycomb: Record Setup Environment time"
+      if: ${{ github.repository_owner == 'puppetlabs' }}
+      run: |
+        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
+        echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
+        echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
     - name: Setup Acceptance Test Matrix
       id: get-matrix
-      if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
           buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata
@@ -65,7 +60,7 @@ jobs:
           echo  "::set-output name=matrix::{}"
         fi
 
-    - name: "Honeycomb: Record setup time"
+    - name: "Honeycomb: Record Setup Test Matrix time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
@@ -73,6 +68,7 @@ jobs:
   Acceptance:
     needs:
       - setup_matrix
+    if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
 
     runs-on: ubuntu-20.04
     strategy:
@@ -88,7 +84,7 @@ jobs:
         echo 'collection=${{ matrix.collection }}' >> $BUILDEVENT_FILE
 
     - name: "Honeycomb: Start recording"
-      uses: kvrhdn/gha-buildevents@5be4636b81803713c94d7cb7e3a4b85d759df112 # pin@v1.0.2
+      uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
         apikey: ${{ env.HONEYCOMB_WRITEKEY }}
         dataset: ${{ env.HONEYCOMB_DATASET }}
@@ -104,42 +100,22 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Activate Ruby 2.7
-      uses: actions/setup-ruby@v1
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: "2.7"
+        bundler-cache: true
 
-    - name: Cache gems
-      uses: actions/cache@v2
-      with:
-        path: vendor/gems
-        key: ${{ runner.os }}-${{ github.event_name }}-${{ hashFiles('**/Gemfile') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ github.event_name }}-
-          ${{ runner.os }}-
-
-    - name: "Honeycomb: Record cache setup time"
-      if: ${{ always() }}
+    - name: Print bundle environment
       run: |
-        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Cache retrieval'
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
-        echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
-    - name: Bundler Setup
-      run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle config path vendor/gems' -- bundle config path vendor/gems
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle config jobs 8' -- bundle config jobs 8
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle config retry 3' -- bundle config retry 3
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle install' -- bundle install
-        buildevents cmd $TRACE_ID $STEP_ID 'bundle clean' -- bundle clean
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
 
-    - name: "Honeycomb: Record Bundler Setup time"
+    - name: "Honeycomb: Record Setup Environment time"
       if: ${{ always() }}
       run: |
-        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Bundler Setup'
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-3 >> $GITHUB_ENV
+        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
+        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
     - name: Provision test environment
@@ -166,7 +142,7 @@ jobs:
       run: |
         echo ::group::honeycomb step
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Deploy test system'
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-4 >> $GITHUB_ENV
+        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-3 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
         echo ::endgroup::
 
@@ -178,11 +154,12 @@ jobs:
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Run acceptance tests'
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-5 >> $GITHUB_ENV
+        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-4 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
     - name: Remove test environment
       if: ${{ always() }}
+      continue-on-error: true
       run: |
         if [ -f inventory.yaml ]; then
           buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:tear_down' -- bundle exec rake 'litmus:tear_down'
