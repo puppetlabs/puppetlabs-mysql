@@ -44,3 +44,5 @@ spec/spec_helper.rb:
   unmanaged: false
 .github/workflows/pr_test.yml:
   unmanaged: false
+.github/workflows/auto_release.yml:
+  unmanaged: false
