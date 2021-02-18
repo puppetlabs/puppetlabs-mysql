@@ -29,6 +29,9 @@ RSpec/BeforeAfterAll:
 RSpec/HookArgument:
   Description: Prefer explicit :each argument, matching existing module's style
   EnforcedStyle: each
+RSpec/DescribeSymbol:
+  Exclude:
+  - spec/unit/facter/**/*.rb
 Style/BlockDelimiters:
   Description: Prefer braces for chaining. Mostly an aesthetical choice. Better to
     be consistent then.
@@ -268,6 +271,8 @@ Naming/MethodParameterName:
   Enabled: false
 Naming/RescuedExceptionsVariableName:
   Enabled: false
+Naming/VariableNumber:
+  Enabled: false
 Performance/BindCall:
   Enabled: false
 Performance/DeletePrefix:
@@ -401,6 +406,8 @@ Style/ExplicitBlockArgument:
 Style/ExponentialNotation:
   Enabled: false
 Style/FloatDivision:
+  Enabled: false
+Style/FrozenStringLiteralComment:
   Enabled: false
 Style/GlobalStdStream:
   Enabled: false

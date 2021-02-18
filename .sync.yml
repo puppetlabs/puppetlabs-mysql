@@ -21,11 +21,6 @@
         - puppet6
         provision_list:
         - travis_ub_6
-    - collection:
-        puppet_collection:
-        - puppet5
-        provision_list:
-        - travis_ub_5
   simplecov: true
   notifications:
     slack:
@@ -48,4 +43,6 @@ spec/spec_helper.rb:
 .github/workflows/nightly.yml:
   unmanaged: false
 .github/workflows/pr_test.yml:
+  unmanaged: false
+.github/workflows/auto_release.yml:
   unmanaged: false
