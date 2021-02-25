@@ -55,7 +55,7 @@ jobs:
       id: get-matrix
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata
+          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2
         else
           echo  "::set-output name=matrix::{}"
         fi
@@ -66,6 +66,7 @@ jobs:
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
 
   Acceptance:
+    name: "${{matrix.platforms.label}}, ${{matrix.collection}}"
     needs:
       - setup_matrix
     if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
@@ -80,8 +81,9 @@ jobs:
 
     steps:
     - run: |
-        echo 'platform=${{ matrix.platform }}' >> $BUILDEVENT_FILE
+        echo 'platform=${{ matrix.platforms.image }}' >> $BUILDEVENT_FILE
         echo 'collection=${{ matrix.collection }}' >> $BUILDEVENT_FILE
+        echo 'label=${{ matrix.platforms.label }}' >> $BUILDEVENT_FILE
 
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
@@ -89,11 +91,11 @@ jobs:
         apikey: ${{ env.HONEYCOMB_WRITEKEY }}
         dataset: ${{ env.HONEYCOMB_DATASET }}
         job-status: ${{ job.status }}
-        matrix-key: ${{ matrix.platform }}-${{ matrix.collection }}
+        matrix-key: ${{ matrix.platforms.label }}-${{ matrix.collection }}
 
     - name: "Honeycomb: start first step"
       run: |
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-1 >> $GITHUB_ENV
+        echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-1 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
     - name: Checkout Source
@@ -115,12 +117,12 @@ jobs:
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
+        echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
     - name: Provision test environment
       run: |
-        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision ${{ matrix.platform }}' -- bundle exec rake 'litmus:provision[provision::provision_service,${{ matrix.platform }}]'
+        buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision ${{ matrix.platforms.image }}' -- bundle exec rake 'litmus:provision[${{matrix.platforms.provider}},${{ matrix.platforms.image }}]'
         echo ::group::=== REQUEST ===
         cat request.json || true
         echo
@@ -142,7 +144,7 @@ jobs:
       run: |
         echo ::group::honeycomb step
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Deploy test system'
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-3 >> $GITHUB_ENV
+        echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-3 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
         echo ::endgroup::
 
@@ -154,7 +156,7 @@ jobs:
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Run acceptance tests'
-        echo STEP_ID=${{ matrix.platform }}-${{ matrix.collection }}-4 >> $GITHUB_ENV
+        echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-4 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
     - name: Remove test environment
