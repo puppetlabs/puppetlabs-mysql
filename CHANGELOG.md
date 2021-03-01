@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v11.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.0) (2021-03-01)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.10.0...v11.0.0)
+
+### Changed
+
+- pdksync - \(MAINT\) Remove SLES 11 support [\#1370](https://github.com/puppetlabs/puppetlabs-mysql/pull/1370) ([sanfrancrisko](https://github.com/sanfrancrisko))
+- pdksync - \(MAINT\) Remove RHEL 5 family support [\#1369](https://github.com/puppetlabs/puppetlabs-mysql/pull/1369) ([sanfrancrisko](https://github.com/sanfrancrisko))
+- pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [\#1366](https://github.com/puppetlabs/puppetlabs-mysql/pull/1366) ([carabasdaniel](https://github.com/carabasdaniel))
+
+### Added
+
+- Support compression command and extension [\#1363](https://github.com/puppetlabs/puppetlabs-mysql/pull/1363) ([dploeger](https://github.com/dploeger))
+
 ## [v10.10.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.10.0) (2021-02-11)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.9.1...v10.10.0)
@@ -73,7 +87,6 @@ All notable changes to this project will be documented in this file. The format 
 
 - Handle cron package from different module [\#1306](https://github.com/puppetlabs/puppetlabs-mysql/pull/1306) ([ashish1099](https://github.com/ashish1099))
 - \(IAC-746\) - Add ubuntu 20.04 support [\#1303](https://github.com/puppetlabs/puppetlabs-mysql/pull/1303) ([david22swan](https://github.com/david22swan))
-- \(MODULES-1550\) add new Feature MySQL login paths [\#1295](https://github.com/puppetlabs/puppetlabs-mysql/pull/1295) ([andeman](https://github.com/andeman))
 
 ### Fixed
 
@@ -86,6 +99,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 
+- \(MODULES-1550\) add new Feature MySQL login paths [\#1295](https://github.com/puppetlabs/puppetlabs-mysql/pull/1295) ([andeman](https://github.com/andeman))
 - Support mariadb's ed25519-based authentication [\#1292](https://github.com/puppetlabs/puppetlabs-mysql/pull/1292) ([dciabrin](https://github.com/dciabrin))
 - Allow changing the mysql-config-file group-ownership [\#1284](https://github.com/puppetlabs/puppetlabs-mysql/pull/1284) ([unki](https://github.com/unki))
 

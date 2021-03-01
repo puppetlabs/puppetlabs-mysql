@@ -852,6 +852,8 @@ The following parameters are available in the `mysql::server::backup` class:
 * [`maxallowedpacket`](#maxallowedpacket)
 * [`optional_args`](#optional_args)
 * [`install_cron`](#install_cron)
+* [`compression_command`](#compression_command)
+* [`compression_extension`](#compression_extension)
 
 ##### <a name="backupuser"></a>`backupuser`
 
@@ -1060,6 +1062,23 @@ Data type: `Any`
 Manage installation of cron package
 
 Default value: ``true``
+
+##### <a name="compression_command"></a>`compression_command`
+
+Data type: `Any`
+
+Configure the command used to compress the backup (when using the mysqldump provider). Make sure the command exists
+on the target system. Packages for it are NOT automatically installed.
+
+Default value: ``undef``
+
+##### <a name="compression_extension"></a>`compression_extension`
+
+Data type: `Any`
+
+Configure the file extension for the compressed backup (when using the mysqldump provider)
+
+Default value: ``undef``
 
 ### <a name="mysqlservermonitor"></a>`mysql::server::monitor`
 
