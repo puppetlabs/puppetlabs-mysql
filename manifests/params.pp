@@ -147,8 +147,7 @@ class mysql::params {
           }
         }
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{os}.',
-          { 'module_name' => $module_name, 'os' => $::operatingsystem }))
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::operatingsystem}.")
         }
       }
       $config_file         = '/etc/my.cnf'
@@ -478,8 +477,7 @@ class mysql::params {
         }
 
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{osfamily} or %{os}.',
-          { 'module_name' => $module_name, 'os' => $::operatingsystem, 'osfamily' => $::osfamily }))
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::osfamily} or ${::operatingsystem}.")
         }
       }
     }
@@ -579,6 +577,6 @@ class mysql::params {
 
   ## Additional graceful failures
   if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
-    fail(translate('Unsupported platform: puppetlabs-%{module_name} only supports RedHat 5.0 and beyond.', { 'module_name' => $module_name }))
+    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 5.0 and beyond.")
   }
 }

@@ -13,10 +13,6 @@
       "version_requirement": ">= 3.2.0 < 8.0.0"
     },
     {
-      "name": "puppetlabs/translate",
-      "version_requirement": ">= 1.0.0 < 3.0.0"
-    },
-    {
       "name": "puppetlabs/resource_api",
       "version_requirement": ">= 1.0.0 < 2.0.0"
     }

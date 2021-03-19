@@ -103,8 +103,7 @@ class mysql::server::backup (
   $compression_extension    = undef
 ) inherits mysql::params {
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
-    warning(translate("The 'prescript' option is not currently implemented for the %{provider} backup provider.",
-    { 'provider' => $provider }))
+    warning("The 'prescript' option is not currently implemented for the ${provider} backup provider.")
   }
 
   create_resources('class', {
