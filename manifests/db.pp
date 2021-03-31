@@ -54,7 +54,7 @@ define mysql::db (
   $import_timeout                             = 300,
   $import_cat_cmd                             = 'cat',
   $mysql_exec_path                            = $mysql::params::exec_path,
-) {
+) inherits mysql::params {
   $table = "${dbname}.*"
 
   $sql_inputs = join([$sql], ' ')
