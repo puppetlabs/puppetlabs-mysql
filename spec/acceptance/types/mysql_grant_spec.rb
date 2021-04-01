@@ -369,12 +369,12 @@ describe 'mysql_grant' do
           user       => "web@${dbSubnet}",
           require    => Mysql_user["web@${dbSubnet}"],
         }
-        mysql_user { "web@${fqdn}":
+        mysql_user { "web@${::networking['ip']}":
           ensure => present,
         }
-        mysql_grant { "web@${fqdn}/*.*":
-          user       => "web@${fqdn}",
-          require    => Mysql_user["web@${fqdn}"],
+        mysql_grant { "web@${::networking['ip']}/*.*":
+          user       => "web@${::networking['ip']}",
+          require    => Mysql_user["web@${::networking['ip']}"],
         }
         mysql_user { 'web@localhost':
           ensure => present,
