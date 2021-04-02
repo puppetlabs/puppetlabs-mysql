@@ -81,6 +81,6 @@
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "heads/main-0-g44cc7ed",
+  "template-ref": "heads/main-0-g12a5dea",
   "pdk-version": "1.18.1"
 }
