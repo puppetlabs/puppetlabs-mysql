@@ -20,7 +20,6 @@ describe Facter::Util::Fact.to_s do
     context 'node with lo only' do
       before :each do
         allow(Facter.fact(:macaddress)).to receive(:value).and_return('00:00:00:00:00:00')
-
       end
       it do
         Facter.fact(:mysql_server_id).value.to_s.should == '1'

@@ -26,19 +26,18 @@ test
   end
 
   before :each do
-    allow(Facter.fact(:value)).to receive(:root_home).and_return('/root')    
+    allow(Facter.fact(:value)).to receive(:root_home).and_return('/root')
     allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
     allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
     allow(provider.class).to receive(:mysql_caller).with('show databases', 'regular').and_return('new_database')
     allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", 'new_database'], 'regular').and_return("character_set_database latin1\ncollation_database latin1_swedish_ci\nskip_show_database OFF") # rubocop:disable Layout/LineLength
-
   end
 
   describe 'self.instances' do
     it 'returns an array of databases' do
-       allow(provider.class).to receive(:mysql_caller).with('show databases', 'regular').and_return(raw_databases)
+      allow(provider.class).to receive(:mysql_caller).with('show databases', 'regular').and_return(raw_databases)
       raw_databases.each_line do |db|
-       allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", db.chomp], 'regular').and_return("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Layout/LineLength
+        allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", db.chomp], 'regular').and_return("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Layout/LineLength
       end
       databases = provider.class.instances.map { |x| x.name }
       expect(parsed_databases).to match_array(databases)
@@ -62,7 +61,7 @@ test
 
   describe 'destroy' do
     it 'removes a database if present' do
-      expect( provider.class).to receive(:mysql_caller).with("drop database if exists `#{resource[:name]}`", 'regular')
+      expect(provider.class).to receive(:mysql_caller).with("drop database if exists `#{resource[:name]}`", 'regular')
       expect(provider).to receive(:exists?).and_return(false)
       expect(provider.destroy).to be_truthy
     end
@@ -75,7 +74,7 @@ test
   end
 
   describe 'self.defaults_file' do
-    before :each do 
+    before :each do
       allow(Facter).to receive(:value).with(:root_home).and_return('/root')
     end
     it 'sets --defaults-extra-file' do
