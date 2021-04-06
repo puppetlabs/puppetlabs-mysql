@@ -17,7 +17,7 @@ describe Puppet::Type.type(:mysql_grant) do
 
   context 'PROXY privilege with mysql greater than or equal to 5.5.0' do
     before :each do
-      Facter.stubs(:value).with(:mysql_version).returns('5.5.0')
+      allow(Facter).to receive(:value).with(:mysql_version).and_return('5.5.0')
     end
 
     it 'does not raise error' do
@@ -29,7 +29,7 @@ describe Puppet::Type.type(:mysql_grant) do
 
   context 'PROXY privilege with mysql greater than or equal to 5.4.0' do
     before :each do
-      Facter.stubs(:value).with(:mysql_version).returns('5.4.0')
+      allow(Facter).to receive(:value).with(:mysql_version).and_return('5.4.0')
     end
 
     it 'raises error' do

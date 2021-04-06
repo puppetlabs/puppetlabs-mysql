@@ -96,69 +96,69 @@ usvn_user@localhost
 
   before :each do
     # Set up the stubs for an instances call.
-    Facter.stubs(:value).with(:root_home).returns('/root')
-    Facter.stubs(:value).with(:mysql_version).returns('5.6.24')
+    allow(Facter).to receive(:value).with(:root_home).and_return('/root')
+    allow(Facter).to receive(:value).with(:mysql_version).and_return('5.6.24')
     provider.class.instance_variable_set(:@mysqld_version_string, '5.6.24')
-    Puppet::Util.stubs(:which).with('mysql').returns('/usr/bin/mysql')
-    Puppet::Util.stubs(:which).with('mysqld').returns('/usr/sbin/mysqld')
-    File.stubs(:file?).with('/root/.my.cnf').returns(true)
-    provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns('joe@localhost')
-    provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').returns('10	10	10	10					*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Layout/LineLength
+    allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
+    allow(Puppet::Util).to receive(:which).with('mysqld').and_return('/usr/sbin/mysqld')
+    allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
+    allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return('joe@localhost')
+    allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').and_return('10	10	10	10					*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Layout/LineLength
   end
 
   describe 'self.instances' do
     it 'returns an array of users MySQL 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users MySQL 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users MySQL >= 5.7.0 < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users mariadb 10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users mariadb >= 10.1.21' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD, PLUGIN, AUTHENTICATION_STRING FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD, PLUGIN, AUTHENTICATION_STRING FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
     it 'returns an array of users percona 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
-      provider.class.stubs(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').returns(raw_users)
-      parsed_users.each { |user| provider.class.stubs(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').returns('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
@@ -190,33 +190,33 @@ usvn_user@localhost
 
   describe 'create' do
     it 'makes a user' do
-      provider.class.expects(:mysql_caller).with("CREATE USER 'joe'@'localhost' IDENTIFIED BY PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system')
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system')
-      provider.expects(:exists?).returns(true)
+      expect(provider.class).to receive(:mysql_caller).with("CREATE USER 'joe'@'localhost' IDENTIFIED BY PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system')
+      expect(provider).to receive(:exists?).and_return(true)
       expect(provider.create).to be_truthy
     end
     it 'creates a user using IF NOT EXISTS' do
       provider.class.instance_variable_set(:@mysqld_version_string, '5.7.6')
 
-      provider.class.expects(:mysql_caller).with("CREATE USER IF NOT EXISTS 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system')
-      provider.class.expects(:mysql_caller).with("ALTER USER IF EXISTS 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system')
-      provider.expects(:exists?).returns(true)
+      expect(provider.class).to receive(:mysql_caller).with("CREATE USER IF NOT EXISTS 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system')
+      expect(provider.class).to receive(:mysql_caller).with("ALTER USER IF EXISTS 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
+      expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system')
+      expect(provider).to receive(:exists?).and_return(true)
       expect(provider.create).to be_truthy
     end
   end
 
   describe 'destroy' do
     it 'removes a user if present' do
-      provider.class.expects(:mysql_caller).with("DROP USER 'joe'@'localhost'", 'system')
-      provider.expects(:exists?).returns(false)
+      expect(provider.class).to receive(:mysql_caller).with("DROP USER 'joe'@'localhost'", 'system')
+      expect(provider).to receive(:exists?).and_return(false)
       expect(provider.destroy).to be_truthy
     end
     it 'removes a user using IF EXISTS' do
       provider.class.instance_variable_set(:@mysqld_version_string, '5.7.1')
 
-      provider.class.expects(:mysql_caller).with("DROP USER IF EXISTS 'joe'@'localhost'", 'system')
+      expect(provider.class).to receive(:mysql_caller).with("DROP USER IF EXISTS 'joe'@'localhost'", 'system')
       expect(provider.destroy).to be_truthy
     end
   end
@@ -230,7 +230,7 @@ usvn_user@localhost
   describe 'self.mysqld_version' do
     it 'uses the mysqld_version fact if unset' do
       provider.class.instance_variable_set(:@mysqld_version_string, nil)
-      Facter.stubs(:value).with(:mysqld_version).returns('5.6.24')
+      allow(Facter).to receive(:value).with(:mysqld_version).and_return('5.6.24')
       expect(provider.mysqld_version).to eq '5.6.24'
     end
     it 'returns 5.7.6 for "mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))"' do
@@ -253,11 +253,11 @@ usvn_user@localhost
 
   describe 'self.defaults_file' do
     it 'sets --defaults-extra-file' do
-      File.stubs(:file?).with('/root/.my.cnf').returns(true)
+      allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
       expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'
     end
     it 'fails if file missing' do
-      File.expects(:file?).with('/root/.my.cnf').returns(false)
+      expect(File).to receive(:file?).with('/root/.my.cnf').and_return(false)
       expect(provider.defaults_file).to be_nil
     end
   end
@@ -271,63 +271,63 @@ usvn_user@localhost
   describe 'password_hash=' do
     it 'changes the hash mysql 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
 
-      provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+      expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
 
-      provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+      expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
 
-      provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+      expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
 
-      provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+      expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
 
-      provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+      expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
     it 'changes the hash to an ed25519 hash mariadb >= 10.1.21 and < 10.2.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
-      resource.stubs(:value).with(:plugin).returns('ed25519')
-      provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET password = '', plugin = 'ed25519', authentication_string = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU' where CONCAT(user, '@', host) = 'joe@localhost'; FLUSH PRIVILEGES", 'system').returns('0') # rubocop:disable Layout/LineLength
-      provider.expects(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+      allow(resource).to receive(:value).with(:plugin).and_return('ed25519')
+      expect(provider.class).to receive(:mysql_caller).with("UPDATE mysql.user SET password = '', plugin = 'ed25519', authentication_string = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU' where CONCAT(user, '@', host) = 'joe@localhost'; FLUSH PRIVILEGES", 'system').and_return('0') # rubocop:disable Layout/LineLength
+      expect(provider).to receive(:password_hash).and_return('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
       provider.password_hash = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'
     end
     it 'changes the hash to an ed25519 hash mariadb >= 10.2.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.3.22'][:string])
-      resource.stubs(:value).with(:plugin).returns('ed25519')
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH ed25519 AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0')
-      provider.expects(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+      allow(resource).to receive(:value).with(:plugin).and_return('ed25519')
+      expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH ed25519 AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').and_return('0')
+      expect(provider).to receive(:password_hash).and_return('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
       provider.password_hash = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'
     end
     it 'changes the hash to an invalid ed25519 hash mariadb >= 10.1.21' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
-      resource.stubs(:value).with(:plugin).returns('ed25519')
+      allow(resource).to receive(:value).with(:plugin).and_return('ed25519')
       expect { provider.password_hash = 'invalid' }.to raise_error(ArgumentError, 'ed25519 hash should be 43 bytes long.')
     end
     it 'changes the hash percona-5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
-      provider.class.expects(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
 
-      provider.expects(:password_hash).returns('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
+      expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
   end
@@ -337,9 +337,9 @@ usvn_user@localhost
       context 'MySQL < 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET plugin = 'auth_socket', password = '' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').returns('0')
+          expect(provider.class).to receive(:mysql_caller).with("UPDATE mysql.user SET plugin = 'auth_socket', password = '' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').and_return('0')
 
-          provider.expects(:plugin).returns('auth_socket')
+          expect(provider).to receive(:plugin).and_return('auth_socket')
           provider.plugin = 'auth_socket'
         end
       end
@@ -347,9 +347,9 @@ usvn_user@localhost
       context 'MySQL >= 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'auth_socket'", 'system').returns('0')
+          expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'auth_socket'", 'system').and_return('0')
 
-          provider.expects(:plugin).returns('auth_socket')
+          expect(provider).to receive(:plugin).and_return('auth_socket')
           provider.plugin = 'auth_socket'
         end
       end
@@ -359,9 +359,9 @@ usvn_user@localhost
       context 'MySQL < 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET plugin = 'mysql_native_password', password = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').returns('0') # rubocop:disable Layout/LineLength
+          expect(provider.class).to receive(:mysql_caller).with("UPDATE mysql.user SET plugin = 'mysql_native_password', password = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').and_return('0') # rubocop:disable Layout/LineLength
 
-          provider.expects(:plugin).returns('mysql_native_password')
+          expect(provider).to receive(:plugin).and_return('mysql_native_password')
           provider.plugin = 'mysql_native_password'
         end
       end
@@ -369,9 +369,9 @@ usvn_user@localhost
       context 'MySQL >= 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system').returns('0')
+          expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system').and_return('0')
 
-          provider.expects(:plugin).returns('mysql_native_password')
+          expect(provider).to receive(:plugin).and_return('mysql_native_password')
           provider.plugin = 'mysql_native_password'
         end
       end
@@ -381,10 +381,10 @@ usvn_user@localhost
       context 'mariadb >= 10.1.21 and < 10.2.0' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
-          resource.stubs('[]').with(:name).returns('joe@localhost')
-          resource.stubs('[]').with(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
-          provider.class.expects(:mysql_caller).with("UPDATE mysql.user SET password = '', plugin = 'ed25519', authentication_string = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU' where CONCAT(user, '@', host) = 'joe@localhost'; FLUSH PRIVILEGES", 'system').returns('0') # rubocop:disable Layout/LineLength
-          provider.expects(:plugin).returns('ed25519')
+          allow(resource).to receive('[]').with(:name).and_return('joe@localhost')
+          allow(resource).to receive('[]').with(:password_hash).and_return('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+          expect(provider.class).to receive(:mysql_caller).with("UPDATE mysql.user SET password = '', plugin = 'ed25519', authentication_string = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU' where CONCAT(user, '@', host) = 'joe@localhost'; FLUSH PRIVILEGES", 'system').and_return('0') # rubocop:disable Layout/LineLength
+          expect(provider).to receive(:plugin).and_return('ed25519')
           provider.plugin = 'ed25519'
         end
       end
@@ -392,10 +392,10 @@ usvn_user@localhost
       context 'mariadb >= 10.2.0' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.3.22'][:string])
-          resource.stubs('[]').with(:name).returns('joe@localhost')
-          resource.stubs('[]').with(:password_hash).returns('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
-          provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'ed25519' AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').returns('0')
-          provider.expects(:plugin).returns('ed25519')
+          allow(resource).to receive('[]').with(:name).and_return('joe@localhost')
+          expect(resource).to receive('[]').with(:password_hash).and_return('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
+          expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'ed25519' AS 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'", 'system').and_return('0')
+          expect(provider).to receive(:plugin).and_return('ed25519')
           provider.plugin = 'ed25519'
         end
       end
@@ -406,37 +406,37 @@ usvn_user@localhost
   describe 'tls_options=' do
     it 'adds SSL option grant in mysql 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['NONE'])
+      expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['NONE'])
+      expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['NONE'])
+      expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mysql >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['NONE'])
+      expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
     it 'adds SSL option grant in mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['NONE'])
+      expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
   end
@@ -444,37 +444,37 @@ usvn_user@localhost
   describe 'tls_options=required' do
     it 'adds mTLS option grant in mysql 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
     it 'adds mTLS option grant in mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
     it 'adds mTLS option grant in mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
     it 'adds mTLS option grant in mysql >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      provider.class.expects(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
     it 'adds mTLS option grant in mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').returns('0')
+      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'", 'system').and_return('0')
 
-      provider.expects(:tls_options).returns(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
+      expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
   end
@@ -488,8 +488,8 @@ usvn_user@localhost
 
     describe "#{property}=" do
       it "changes #{property}" do
-        provider.class.expects(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' WITH #{property.upcase} 42", 'system').returns('0')
-        provider.expects(property.to_sym).returns('42')
+        expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' WITH #{property.upcase} 42", 'system').and_return('0')
+        expect(provider).to receive(property.to_sym).and_return('42')
         provider.send("#{property}=".to_sym, '42')
       end
     end
