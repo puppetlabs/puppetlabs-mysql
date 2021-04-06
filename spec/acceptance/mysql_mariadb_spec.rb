@@ -12,7 +12,7 @@ describe 'mysql server class', if: ((os[:family] == 'debian' && os[:release].to_
           gpgkey => 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB',
           descr    => "MariaDB 10.4",
           enabled  => 1,
-          gpgcheck => 1,
+          gpgcheck => 0,
         }->
         class { '::mysql::server':
           require                => Yumrepo['mariadb'],
