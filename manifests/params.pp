@@ -257,7 +257,8 @@ class mysql::params {
       } else {
         $python_package_name = 'python-mysqldb'
       }
-
+     
+      notice($::lsbdistcodename)
       $ruby_package_name   = $::lsbdistcodename ? {
         'jessie'           => 'ruby-mysql',
         'stretch'          => 'ruby-mysql2',
@@ -268,6 +269,7 @@ class mysql::params {
         'focal'            => 'ruby-mysql2',
         default            => 'libmysql-ruby',
       }
+      notice($ruby_package_name)
     }
 
     'Archlinux': {
