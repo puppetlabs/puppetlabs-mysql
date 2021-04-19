@@ -1314,7 +1314,7 @@ Data type: `Any`
 
 
 
-Default value: `$mysql::params::exec_path`
+Default value: ``undef``
 
 ## Resource types
 
