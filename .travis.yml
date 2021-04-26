@@ -29,6 +29,7 @@ jobs:
   include:
     - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_ub_6]'"
+      - "bundle exec bolt command run 'apt-get install wget -y || yum install wget -y' --inventoryfile inventory.yaml --targets='localhost*'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
       env:
@@ -40,6 +41,7 @@ jobs:
       stage: acceptance
     - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_deb]'"
+      - "bundle exec bolt command run 'apt-get install wget -y || yum install wget -y' --inventoryfile inventory.yaml --targets='localhost*'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
       env:
@@ -51,6 +53,7 @@ jobs:
       stage: acceptance
     - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_el7]'"
+      - "bundle exec bolt command run 'apt-get install wget -y || yum install wget -y' --inventoryfile inventory.yaml --targets='localhost*'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
       env:
@@ -62,6 +65,7 @@ jobs:
       stage: acceptance
     - before_script:
       - "bundle exec rake 'litmus:provision_list[travis_el8]'"
+      - "bundle exec bolt command run 'apt-get install wget -y || yum install wget -y' --inventoryfile inventory.yaml --targets='localhost*'"
       - "bundle exec rake 'litmus:install_agent[puppet6]'"
       - "bundle exec rake litmus:install_module"
       env:

@@ -25,6 +25,7 @@
 .project
 .envrc
 /inventory.yaml
+/spec/fixtures/litmus_inventory.yaml
 /appveyor.yml
 /.fixtures.yml
 /Gemfile
@@ -42,3 +43,4 @@
 /spec/
 /.vscode/
 /.sync.yml
+/.devcontainer/
