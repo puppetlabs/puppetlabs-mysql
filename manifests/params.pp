@@ -267,6 +267,8 @@ class mysql::params {
        '20.04' => 'ruby-mysql2', # focal
        default => 'libmysql-ruby',
      }
+     notice("************************************")
+     notice($ruby_package_name)
    }
 
     'Archlinux': {
