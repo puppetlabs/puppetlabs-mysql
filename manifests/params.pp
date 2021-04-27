@@ -257,17 +257,17 @@ class mysql::params {
         $python_package_name = 'python-mysqldb'
       }
 
-      $ruby_package_name   = $::lsbdistcodename ? {
-        'jessie'           => 'ruby-mysql',
-        'stretch'          => 'ruby-mysql2',
-        'buster'           => 'ruby-mysql2',
-        'trusty'           => 'ruby-mysql',
-        'xenial'           => 'ruby-mysql',
-        'bionic'           => 'ruby-mysql2',
-        'focal'            => 'ruby-mysql2',
-        default            => 'libmysql-ruby',
-      }
-    }
+      $ruby_package_name = $facts['operatingsystemmajrelease'] ? {
+       '8'     => 'ruby-mysql', # jessie
+       '9'     => 'ruby-mysql2', # stretch
+       '10'    => 'ruby-mysql2', # buster
+       '14.04' => 'ruby-mysql', # trusty
+       '16.04' => 'ruby-mysql', # xenial
+       '18.04' => 'ruby-mysql2', # bionic
+       '20.04' => 'ruby-mysql2', # focal
+       default => 'libmysql-ruby',
+     }
+   }
 
     'Archlinux': {
       $daemon_dev_package_name = undef
