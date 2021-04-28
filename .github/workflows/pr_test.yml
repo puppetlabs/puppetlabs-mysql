@@ -84,7 +84,7 @@ jobs:
         echo 'platform=${{ matrix.platforms.image }}' >> $BUILDEVENT_FILE
         echo 'collection=${{ matrix.collection }}' >> $BUILDEVENT_FILE
         echo 'label=${{ matrix.platforms.label }}' >> $BUILDEVENT_FILE
-        
+
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
@@ -177,7 +177,7 @@ jobs:
           echo
           echo ::endgroup::
         fi
-        
+
     - name: "Honeycomb: Record removal times"
       if: ${{ always() }}
       run: |

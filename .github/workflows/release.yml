@@ -38,10 +38,10 @@ jobs:
           ref: ${{ github.ref }}
           clean: true
       - name: "PDK Build"
-        uses: docker://puppet/pdk:nightly
+        uses: docker://puppet/pdk:2.1.0.0
         with:
           args: 'build'
       - name: "Push to Forge"
-        uses: docker://puppet/pdk:nightly
+        uses: docker://puppet/pdk:2.1.0.0
         with:
           args: 'release publish --forge-token ${{ secrets.FORGE_API_KEY }} --force'

@@ -257,7 +257,7 @@ class mysql::params {
         $python_package_name = 'python-mysqldb'
       }
 
-      $ruby_package_name = $facts['operatingsystemmajrelease'] ? {
+      $ruby_package_name   =  $facts['operatingsystemmajrelease']  ? {
        '8'     => 'ruby-mysql', # jessie
        '9'     => 'ruby-mysql2', # stretch
        '10'    => 'ruby-mysql2', # buster
@@ -267,7 +267,8 @@ class mysql::params {
        '20.04' => 'ruby-mysql2', # focal
        default => 'libmysql-ruby',
      }
-   }
+      
+    }
 
     'Archlinux': {
       $daemon_dev_package_name = undef
