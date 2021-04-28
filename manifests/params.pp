@@ -147,8 +147,7 @@ class mysql::params {
           }
         }
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{os}.',
-          { 'module_name' => $module_name, 'os' => $::operatingsystem }))
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::operatingsystem}.")
         }
       }
       $config_file         = '/etc/my.cnf'
@@ -257,20 +256,18 @@ class mysql::params {
       } else {
         $python_package_name = 'python-mysqldb'
       }
-     
-      notice($::lsbdistcodename)
-      $ruby_package_name   = $::lsbdistcodename ? {
-        'jessie'           => 'ruby-mysql',
-        'stretch'          => 'ruby-mysql2',
-        'buster'           => 'ruby-mysql2',
-        'trusty'           => 'ruby-mysql',
-        'xenial'           => 'ruby-mysql',
-        'bionic'           => 'ruby-mysql2',
-        'focal'            => 'ruby-mysql2',
-        default            => 'libmysql-ruby',
-      }
-      notice($ruby_package_name)
-    }
+
+      $ruby_package_name = $facts['operatingsystemmajrelease'] ? {
+       '8'     => 'ruby-mysql', # jessie
+       '9'     => 'ruby-mysql2', # stretch
+       '10'    => 'ruby-mysql2', # buster
+       '14.04' => 'ruby-mysql', # trusty
+       '16.04' => 'ruby-mysql', # xenial
+       '18.04' => 'ruby-mysql2', # bionic
+       '20.04' => 'ruby-mysql2', # focal
+       default => 'libmysql-ruby',
+     }
+   }
 
     'Archlinux': {
       $daemon_dev_package_name = undef
@@ -480,8 +477,7 @@ class mysql::params {
         }
 
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{osfamily} or %{os}.',
-          { 'module_name' => $module_name, 'os' => $::operatingsystem, 'osfamily' => $::osfamily }))
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::osfamily} or ${::operatingsystem}.")
         }
       }
     }
@@ -581,6 +577,6 @@ class mysql::params {
 
   ## Additional graceful failures
   if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
-    fail(translate('Unsupported platform: puppetlabs-%{module_name} only supports RedHat 5.0 and beyond.', { 'module_name' => $module_name }))
+    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 5.0 and beyond.")
   }
 }
