@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v11.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.1) (2021-04-19)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.0...v11.0.1)
+
+### Fixed
+
+- Fix: Puppet Unknown variable: 'mysql::params::exec\_path' [\#1378](https://github.com/puppetlabs/puppetlabs-mysql/pull/1378) ([JvGinkel](https://github.com/JvGinkel))
+- \(IAC-1497\) - Removal of unsupported `translate` dependency [\#1375](https://github.com/puppetlabs/puppetlabs-mysql/pull/1375) ([david22swan](https://github.com/david22swan))
+- \(MODULES-10926\) Fix Java binding package for Ubuntu 20.04 [\#1373](https://github.com/puppetlabs/puppetlabs-mysql/pull/1373) ([treydock](https://github.com/treydock))
+
 ## [v11.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.0) (2021-03-01)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.10.0...v11.0.0)
@@ -87,6 +97,7 @@ All notable changes to this project will be documented in this file. The format 
 
 - Handle cron package from different module [\#1306](https://github.com/puppetlabs/puppetlabs-mysql/pull/1306) ([ashish1099](https://github.com/ashish1099))
 - \(IAC-746\) - Add ubuntu 20.04 support [\#1303](https://github.com/puppetlabs/puppetlabs-mysql/pull/1303) ([david22swan](https://github.com/david22swan))
+- \(MODULES-1550\) add new Feature MySQL login paths [\#1295](https://github.com/puppetlabs/puppetlabs-mysql/pull/1295) ([andeman](https://github.com/andeman))
 
 ### Fixed
 
@@ -99,13 +110,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 
-- \(MODULES-1550\) add new Feature MySQL login paths [\#1295](https://github.com/puppetlabs/puppetlabs-mysql/pull/1295) ([andeman](https://github.com/andeman))
 - Support mariadb's ed25519-based authentication [\#1292](https://github.com/puppetlabs/puppetlabs-mysql/pull/1292) ([dciabrin](https://github.com/dciabrin))
 - Allow changing the mysql-config-file group-ownership [\#1284](https://github.com/puppetlabs/puppetlabs-mysql/pull/1284) ([unki](https://github.com/unki))
 
 ### Fixed
 
-- Remove legacy \(old API\) `mysql\_password` function [\#1299](https://github.com/puppetlabs/puppetlabs-mysql/pull/1299) ([alexjfisher](https://github.com/alexjfisher))
+- Remove legacy \(old API\) `mysql_password` function [\#1299](https://github.com/puppetlabs/puppetlabs-mysql/pull/1299) ([alexjfisher](https://github.com/alexjfisher))
 - Improve differences between generated mysql service id values [\#1293](https://github.com/puppetlabs/puppetlabs-mysql/pull/1293) ([ryaner](https://github.com/ryaner))
 - \(MODULES-10023\) Fix multiple xtrabackup regressions [\#1245](https://github.com/puppetlabs/puppetlabs-mysql/pull/1245) ([fraenki](https://github.com/fraenki))
 - Fix binarylog by allowing users to specify managed directories [\#1194](https://github.com/puppetlabs/puppetlabs-mysql/pull/1194) ([elfranne](https://github.com/elfranne))
@@ -133,10 +143,6 @@ All notable changes to this project will be documented in this file. The format 
 
 - Fix java and ruby binding packages for Debian 10 [\#1264](https://github.com/puppetlabs/puppetlabs-mysql/pull/1264) ([treydock](https://github.com/treydock))
 - \(MODULES-10114\) Confine fact for only when mysql is in PATH [\#1256](https://github.com/puppetlabs/puppetlabs-mysql/pull/1256) ([bFekete](https://github.com/bFekete))
-
-# Change log
-
-All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
 ## [v10.2.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.2.1) (2019-10-30)
 

@@ -12,6 +12,6 @@ class mysql::bindings::client_dev {
       provider        => $mysql::bindings::client_dev_package_provider,
     }
   } else {
-    warning(translate('No MySQL client development package configured for %{os}.', { 'os' => $::operatingsystem }))
+    warning("No MySQL client development package configured for ${os}.")
   }
 }

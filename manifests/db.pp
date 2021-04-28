@@ -53,13 +53,19 @@ define mysql::db (
   Enum['absent', 'present'] $ensure           = 'present',
   $import_timeout                             = 300,
   $import_cat_cmd                             = 'cat',
-  $mysql_exec_path                            = $mysql::params::exec_path,
+  $mysql_exec_path                            = undef,
 ) {
   $table = "${dbname}.*"
 
   $sql_inputs = join([$sql], ' ')
 
   include 'mysql::client'
+
+  if ($mysql_exec_path) {
+    $_mysql_exec_path = $mysql_exec_path
+  } else {
+    $_mysql_exec_path = $mysql::params::exec_path
+  }
 
   $db_resource = {
     ensure   => $ensure,
@@ -98,7 +104,7 @@ define mysql::db (
         logoutput   => true,
         environment => "HOME=${::root_home}",
         refreshonly => $refresh,
-        path        => "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:${mysql_exec_path}",
+        path        => "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:${_mysql_exec_path}",
         require     => Mysql_grant["${user}@${host}/${table}"],
         subscribe   => Mysql_database[$dbname],
         timeout     => $import_timeout,

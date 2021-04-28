@@ -66,7 +66,7 @@ class mysql::backup::xtrabackup (
     # Warn if old backups are removed too soon. Incremental backups will fail
     # if the full backup is no longer available.
     if ($backuprotate.convert_to(Integer) < 7) {
-      warning(translate('The value for `backuprotate` is too low, it must be set to at least 7 days when using incremental backups.'))
+      warning('The value for `backuprotate` is too low, it must be set to at least 7 days when using incremental backups.')
     }
 
     # The --target-dir uses a more predictable value for the full backup so

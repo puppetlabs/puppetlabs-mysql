@@ -12,6 +12,6 @@ class mysql::bindings::daemon_dev {
       provider        => $mysql::bindings::daemon_dev_package_provider,
     }
   } else {
-    warning(translate('No MySQL daemon development package configured for %{os}.', { 'os' => $::operatingsystem }))
+    warning("No MySQL daemon development package configured for ${os}.")
   }
 }
