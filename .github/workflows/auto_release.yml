@@ -36,7 +36,7 @@ jobs:
         persist-credentials: false
 
     - name: "PDK Release prep"
-      uses: docker://puppet/pdk:nightly
+      uses: docker://puppet/iac_release:ci
       with:
         args: 'release prep --force'
       env:
@@ -46,12 +46,12 @@ jobs:
       if: ${{ github.repository_owner == 'puppetlabs' }}
       id: gv
       run: |
-        echo "::set-output name=ver::$(cat metadata.json | jq .version | tr -d \")"
+        echo "::set-output name=ver::$(jq --raw-output .version metadata.json)"
 
     - name: "Commit changes"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
-        git config --local user.email "action@github.com"
+        git config --local user.email "${{ github.repository_owner }}@users.noreply.github.com"
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "Release prep v${{ steps.gv.outputs.ver }}"
@@ -66,7 +66,12 @@ jobs:
         branch: "release-prep"
         delete-branch: true
         title: "Release prep v${{ steps.gv.outputs.ver }}"
-        body: "Automated release-prep through [pdk-templates](https://github.com/puppetlabs/pdk-templates/blob/main/moduleroot/.github/workflows/auto_release.yml.erb)"
+        body: |
+          Automated release-prep through [pdk-templates](https://github.com/puppetlabs/pdk-templates/blob/main/moduleroot/.github/workflows/auto_release.yml.erb) from commit ${{ github.sha }}. 
+          Please verify before merging:
+          - [ ] last [nightly](https://github.com/${{ github.repository }}/actions/workflows/nightly.yml) run is green
+          - [ ] [Changelog](https://github.com/${{ github.repository }}/blob/release-prep/CHANGELOG.md) is readable and has no unlabeled pull requests
+          - [ ] Ensure the [changelog](https://github.com/${{ github.repository }}/blob/release-prep/CHANGELOG.md) version and [metadata](https://github.com/${{ github.repository }}/blob/release-prep/metadata.json) version match
         labels: "maintenance"
 
     - name: PR outputs

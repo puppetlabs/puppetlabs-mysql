@@ -52,14 +52,6 @@
       ]
     },
     {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": [
-        "8",
-        "9",
-        "10"
-      ]
-    },
-    {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
         "14.04",
@@ -77,6 +69,6 @@
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "heads/main-0-g44cc7ed",
-  "pdk-version": "1.18.1"
+  "template-ref": "heads/main-0-ge04486b",
+  "pdk-version": "2.1.0"
 }
