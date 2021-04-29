@@ -258,16 +258,15 @@ class mysql::params {
       }
 
       $ruby_package_name   =  $facts['operatingsystemmajrelease']  ? {
-       '8'     => 'ruby-mysql', # jessie
-       '9'     => 'ruby-mysql2', # stretch
-       '10'    => 'ruby-mysql2', # buster
-       '14.04' => 'ruby-mysql', # trusty
-       '16.04' => 'ruby-mysql', # xenial
-       '18.04' => 'ruby-mysql2', # bionic
-       '20.04' => 'ruby-mysql2', # focal
-       default => 'libmysql-ruby',
-     }
-      
+        '8'     => 'ruby-mysql', # jessie
+        '9'     => 'ruby-mysql2', # stretch
+        '10'    => 'ruby-mysql2', # buster
+        '14.04' => 'ruby-mysql', # trusty
+        '16.04' => 'ruby-mysql', # xenial
+        '18.04' => 'ruby-mysql2', # bionic
+        '20.04' => 'ruby-mysql2', # focal
+        default => 'libmysql-ruby',
+      }
     }
 
     'Archlinux': {
