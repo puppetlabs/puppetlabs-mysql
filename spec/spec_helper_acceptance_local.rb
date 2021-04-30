@@ -37,10 +37,11 @@ end
 
 RSpec.configure do |c|
   c.before :suite do
-    if os[:family] == 'debian' || os[:family] == 'ubuntu'
+    if os[:family] == 'debian'
       # needed for the puppet fact
       LitmusHelper.instance.apply_manifest("package { 'lsb-release': ensure => installed, }", expect_failures: false)
       LitmusHelper.instance.apply_manifest("package { 'ap': ensure => installed, }", expect_failures: false)
+      LitmusHelper.instance.apply_manifest('sudo chmod -R 755 /var/run/mysqld/') if [9, 10].include?(os[:release].to_i)
     end
     # needed for the grant tests, not installed on el7 docker images
     LitmusHelper.instance.apply_manifest("package { 'which': ensure => installed, }", expect_failures: false)
