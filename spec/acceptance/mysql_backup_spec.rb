@@ -176,7 +176,7 @@ describe 'mysql::server::backup class' do
               # of the repository are still available.
               if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
                 $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
-                $epel_url = "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
+                $epel_url = "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
               } else {
                 $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-3.noarch.rpm'
                 $epel_url = 'https://archives.fedoraproject.org/pub/archive/epel/epel-release-latest-5.noarch.rpm'
@@ -303,7 +303,7 @@ describe 'mysql::server::backup class' do
               # of the repository are still available.
               if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
                 $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
-                $epel_url = "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
+                $epel_url = "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
               } else {
                 $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-3.noarch.rpm'
                 $epel_url = 'https://archives.fedoraproject.org/pub/archive/epel/epel-release-latest-5.noarch.rpm'
