@@ -3,7 +3,7 @@ class { 'mysql::server':
 }
 mysql::db { ['test1', 'test2', 'test3']:
   ensure  => present,
-  charset => 'utf8',
+  charset => 'utf8mb4',
   require => Class['mysql::server'],
 }
 mysql::db { 'test4':

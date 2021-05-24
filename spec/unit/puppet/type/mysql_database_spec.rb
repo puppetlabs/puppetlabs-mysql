@@ -3,7 +3,7 @@
 require 'puppet'
 require 'puppet/type/mysql_database'
 describe Puppet::Type.type(:mysql_database) do
-  let(:user) { Puppet::Type.type(:mysql_database).new(name: 'test', charset: 'utf8', collate: 'utf8_blah_ci') }
+  let(:user) { Puppet::Type.type(:mysql_database).new(name: 'test', charset: 'utf8mb4', collate: 'utf8_blah_ci') }
 
   it 'accepts a database name' do
     expect(user[:name]).to eq('test')

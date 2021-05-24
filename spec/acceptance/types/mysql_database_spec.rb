@@ -37,8 +37,8 @@ describe 'mysql_database' do
           collate => 'latin1_swedish_ci',
         }
         mysql_database { 'spec_utf8':
-          charset => 'utf8',
-          collate => 'utf8_general_ci',
+          charset => 'utf8mb4',
+          collate => 'utf8mb4_unicode_ci',
         }
     MANIFEST
     it 'creates two db of different types idempotently' do
@@ -54,7 +54,7 @@ describe 'mysql_database' do
 
     it 'finds utf8 db #stdout' do
       run_shell("mysql -NBe \"SHOW VARIABLES LIKE '%_database'\" spec_utf8") do |r|
-        expect(r.stdout).to match(%r{^character_set_database\tutf8\ncollation_database\tutf8_general_ci$})
+        expect(r.stdout).to match(%r{^character_set_database\tutf8mb4\ncollation_database\tutf8mb4_unicode_ci$})
         expect(r.stderr).to be_empty
       end
     end

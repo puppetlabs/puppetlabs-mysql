@@ -60,8 +60,8 @@ describe 'mysql::db', type: :define do
       end
 
       it 'creates with an appropriate collate and charset' do
-        params.merge!('charset' => 'utf8', 'collate' => 'utf8_danish_ci')
-        is_expected.to contain_mysql_database('test_db').with('charset' => 'utf8',
+        params.merge!('charset' => 'utf8mb4', 'collate' => 'utf8_danish_ci')
+        is_expected.to contain_mysql_database('test_db').with('charset' => 'utf8mb4',
                                                               'collate' => 'utf8_danish_ci')
       end
 
