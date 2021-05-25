@@ -250,7 +250,7 @@ class mysql::params {
       if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') < 0) or
       ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
       ($::operatingsystem == 'Debian') {
-        $xtrabackup_package_name_override = 'percona-xtrabackup-24'
+        $xtrabackup_package_name_override = 'mariadb-backup'
       }
       if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) {
         $python_package_name = 'python3-mysqldb'
