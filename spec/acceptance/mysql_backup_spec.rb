@@ -34,10 +34,6 @@ describe 'mysql::server::backup class' do
   end
 
   describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
-    before(:all) do
-      LitmusHelper.instance.apply_manifest("class { 'mysql::server': root_password => 'password' }", catch_failures: true)
-    end
-
     it 'runs mysqlbackup.sh with no errors' do
       run_shell('/usr/local/sbin/mysqlbackup.sh') do |r|
         expect(r.stderr).to eq('')
@@ -100,7 +96,6 @@ describe 'mysql::server::backup class' do
 
     describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
       before(:all) do
-        
       end
 
       it 'runs mysqlbackup.sh with no errors without root credentials' do
@@ -215,10 +210,6 @@ describe 'mysql::server::backup class' do
     end
 
     describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
-      before(:all) do
-        idempotent_apply("class { 'mysql::server': root_password => 'password' }")
-      end
-
       it 'runs xtrabackup.sh full backup with no errors' do
         run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F)_full --backup 2>&1 | tee /tmp/xtrabackup_full.log') do |r|
           expect(r.exit_code).to be_zero
@@ -343,10 +334,6 @@ describe 'mysql::server::backup class' do
     end
 
     describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
-      before(:all) do
-        idempotent_apply("class { 'mysql::server': root_password => 'password' }")
-      end
-
       it 'runs xtrabackup.sh with no errors' do
         run_shell('/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/xtrabackups/$(date +%F_%H-%M-%S) --backup 2>&1 | tee /tmp/xtrabackup.log') do |r|
           expect(r.exit_code).to be_zero

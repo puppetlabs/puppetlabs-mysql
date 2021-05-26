@@ -64,7 +64,6 @@ describe 'mysql_user' do
       end
 
       it 'does not have a password', if: (os[:family] != 'sles' && os[:release].to_i == 15) do
-        idempotent_apply("class { 'mysql::server': root_password => 'password' }")
         table = if Gem::Version.new(mysql_version) > Gem::Version.new('5.7.0')
                   'authentication_string'
                 else
