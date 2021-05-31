@@ -252,7 +252,8 @@ class mysql::params {
       ($::operatingsystem == 'Debian') {
         $xtrabackup_package_name_override = 'percona-xtrabackup-24'
       }
-      if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) {
+      if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
+      ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '11') >= 0){
         $python_package_name = 'python3-mysqldb'
       } else {
         $python_package_name = 'python-mysqldb'
