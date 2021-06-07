@@ -1649,7 +1649,7 @@ Hash a string as mysql's "PASSWORD()" function would do it
 
 #### `mysql::password(String $password)`
 
-The mysql::password function.
+Hash a string as mysql's "PASSWORD()" function would do it
 
 Returns: `String` hash
 The mysql password hash from the clear text password.

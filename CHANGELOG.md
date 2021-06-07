@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v11.0.2](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.2) (2021-06-07)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.1...v11.0.2)
+
+### Fixed
+
+- \(bugfix\) - Pull python3-mysqldb in Debian Bullseye [\#1396](https://github.com/puppetlabs/puppetlabs-mysql/pull/1396) ([thomasgoirand](https://github.com/thomasgoirand))
+- Update xtrabackup package name for Ubuntu 20.04 [\#1387](https://github.com/puppetlabs/puppetlabs-mysql/pull/1387) ([rsynnest](https://github.com/rsynnest))
+
 ## [v11.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.1) (2021-04-19)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.0...v11.0.1)
