@@ -83,6 +83,7 @@ jobs:
     env:
       BUILDEVENT_FILE: '../buildevents.txt'
       PUPPET_GEM_VERSION: ${{ matrix.puppet_version }}
+      FACTER_GEM_VERSION: 'https://github.com/puppetlabs/facter#main'
 
     steps:
       - run: |

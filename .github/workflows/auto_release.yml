@@ -1,8 +1,6 @@
 name: "Auto release"
 
 on:
-  schedule:
-    - cron: '0 3 * * 6'
   workflow_dispatch:
 
 env:
