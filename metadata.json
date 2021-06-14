@@ -23,6 +23,13 @@
       ]
     },
     {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "9",
+        "10"
+      ]
+    },
+    {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "6",
@@ -56,7 +63,8 @@
       "operatingsystemrelease": [
         "14.04",
         "16.04",
-        "18.04"
+        "18.04",
+        "20.04"
       ]
     }
   ],
