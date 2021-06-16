@@ -12,6 +12,6 @@ class mysql::bindings::daemon_dev {
       provider        => $mysql::bindings::daemon_dev_package_provider,
     }
   } else {
-    warning("No MySQL daemon development package configured for ${os}.")
+    warning("No MySQL daemon development package configured for ${::facts['os']['family']}.")
   }
 }
