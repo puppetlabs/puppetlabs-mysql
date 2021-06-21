@@ -16,10 +16,6 @@
 #   Whether the MySQL package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 # @param package_manage
 #   Whether to manage the MySQL client package. Defaults to `true`.
-# @param service_name
-#   The name of the MySQL server service. Defaults are OS dependent, defined in 'params.pp'.
-# @param service_provider
-#   The provider to use to manage the service. For Ubuntu, defaults to 'upstart'; otherwise, default is undefined.
 # @param package_name
 #   The name of the MySQL client package to install.
 #
