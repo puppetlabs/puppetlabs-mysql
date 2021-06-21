@@ -31,16 +31,16 @@ This module manages both the installation and configuration of MySQL, as well as
 
 To install a server with the default options:
 
-`include '::mysql::server'`.
+`include mysql::server`.
 
 To customize options, such as the root password or `/etc/my.cnf` settings, you must also pass in an override hash:
 
 ```puppet
-class { '::mysql::server':
+class { 'mysql::server':
   root_password           => 'strongpassword',
   remove_default_accounts => true,
   restart                 => true,
-  override_options        => $override_options
+  override_options        => $override_options,
 }
 ```
 
@@ -61,7 +61,7 @@ To define server options, structure a hash structure of overrides in `mysql::ser
 $override_options = {
   'section' => {
     'item' => 'thing',
-  }
+  },
 }
 ```
 
@@ -82,7 +82,7 @@ If an option needs multiple instances, pass an array. For example,
 $override_options = {
   'mysqld' => {
     'replicate-do-db' => ['base1', 'base2'],
-  }
+  },
 }
 ```
 
@@ -139,14 +139,14 @@ If you have installed the mysql client in a non standard bin/sbin path you can s
 
 ```puppet
 mysql::db { 'mydb':
-  user     => 'myuser',
-  password => 'mypass',
-  host     => 'localhost',
-  grant    => ['SELECT', 'UPDATE'],
-  sql      => '/path/to/sqlfile.gz',
-  import_cat_cmd => 'zcat',
-  import_timeout => 900,
-  mysql_exec_path => '/opt/rh/rh-myql57/root/bin'
+  user            => 'myuser',
+  password        => 'mypass',
+  host            => 'localhost',
+  grant           => ['SELECT', 'UPDATE'],
+  sql             => '/path/to/sqlfile.gz',
+  import_cat_cmd  => 'zcat',
+  import_timeout  => 900,
+  mysql_exec_path => '/opt/rh/rh-myql57/root/bin',
 }
 ```
 
@@ -159,15 +159,15 @@ To add custom MySQL configuration, place additional files into `includedir`. Thi
 If you want the password managed by puppet for `127.0.0.1` and `::1` as an end user you would need to explicitly manage them with additional manifest entries. For example:
 
 ```puppet
-mysql_user{ '[root@127.0.0.1]':       
-    ensure        => present,       
-    password_hash => mysql::password($mysql::server::root_password),           
-}    
- 
-mysql_user{ 'root@::1':       
-    ensure        => present,       
-    password_hash => mysql::password($mysql::server::root_password),    
-} 
+mysql_user { '[root@127.0.0.1]':
+  ensure        => present,
+  password_hash => mysql::password($mysql::server::root_password),
+}
+
+mysql_user { 'root@::1':
+  ensure        => present,
+  password_hash => mysql::password($mysql::server::root_password),
+}
 ```
 
 **Note:** This module is not designed to carry out additional DNS and aliasing.
@@ -210,7 +210,8 @@ A login path is a set of options (host, user, password, port and socket) that sp
 
 More information about MySQL login paths: https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html.
 
-Some example for login paths: 
+Some example for login paths:
+
 ```puppet
 mysql_login_path { 'client':
   owner    => root,
@@ -270,21 +271,21 @@ class {'mysql::server':
 
 # Note: Installing Percona-Server-server-57 also installs Percona-Server-client-57.
 # This shows how to install the Percona MySQL client on its own
-class {'mysql::client':
-  package_name   => 'Percona-Server-client-57'
+class { 'mysql::client':
+  package_name => 'Percona-Server-client-57',
 }
 
 # These packages are normally installed along with Percona-Server-server-57
 # If you needed to install the bindings, however, you could do so with this code
 class { 'mysql::bindings':
-  client_dev_package_name   => 'Percona-Server-shared-57',
-  client_dev                => true,
-  daemon_dev_package_name   => 'Percona-Server-devel-57',
-  daemon_dev                => true,
-  perl_enable               => true,
-  perl_package_name         => 'perl-DBD-MySQL',
-  python_enable             => true,
-  python_package_name       => 'MySQL-python',
+  client_dev_package_name => 'Percona-Server-shared-57',
+  client_dev              => true,
+  daemon_dev_package_name => 'Percona-Server-devel-57',
+  daemon_dev              => true,
+  perl_enable             => true,
+  perl_package_name       => 'perl-DBD-MySQL',
+  python_enable           => true,
+  python_package_name     => 'MySQL-python',
 }
 
 # Dependencies definition
@@ -311,7 +312,7 @@ include apt
 
 apt::source { 'mariadb':
   location => 'http://sfo1.mirrors.digitalocean.com/mariadb/repo/10.3/ubuntu',
-  release  => $::lsbdistcodename,
+  release  => $::facts['os']['codename'],
   repos    => 'main',
   key      => {
     id     => '177F4010FE56CA3336300305F1656F24C74CD1D8',
@@ -335,7 +336,7 @@ All the values set here are an example of a working minimal configuration.
 Specify the version of the package you want with the `package_ensure` parameter.
 
 ```puppet
-class {'::mysql::server':
+class { 'mysql::server':
   package_name     => 'mariadb-server',
   package_ensure   => '1:10.3.21+maria~xenial',
   service_name     => 'mysqld',
@@ -355,7 +356,7 @@ class {'::mysql::server':
 # as shown in the Preliminary step of this example.
 Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
-Class['::mysql::server']
+Class['mysql::server']
 
 ```
 
@@ -637,7 +638,7 @@ For an extensive list of supported operating systems, see [metadata.json](https:
 
 ## Development
 
-We are experimenting with a new tool for running acceptance tests. Its name is [puppet_litmus](https://github.com/puppetlabs/puppet_litmus) this replaces beaker as the test runner. To run the acceptance tests follow the instructions from this point [here](https://github.com/puppetlabs/puppet_litmus/wiki/Tutorial:-use-Litmus-to-execute-acceptance-tests-with-a-sample-module-(MoTD)#install-the-necessary-gems-for-the-module).
+We are experimenting with a new tool for running acceptance tests. Its name is [puppet_litmus](https://github.com/puppetlabs/puppet_litmus) this replaces beaker as the test runner. To run the acceptance tests follow the [instructions](https://puppetlabs.github.io/litmus/Running-acceptance-tests.html) from the Litmus documentation.
 
 Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
 
@@ -647,18 +648,4 @@ Check out our the complete [module contribution guide](https://puppet.com/docs/p
 
 ### Authors
 
-This module is based on work by David Schmitt. The following contributors have contributed to this module (beyond Puppet Labs):
-
-* Larry Ludwig
-* Christian G. Warden
-* Daniel Black
-* Justin Ellison
-* Lowe Schmidt
-* Matthias Pigulla
-* William Van Hevelingen
-* Michael Arnold
-* Chris Weyl
-* Daniël van Eeden
-* Jan-Otto Kröpke
-* Timothy Sven Nelson
-* Andreas Stürz
+This module is based on work by David Schmitt. Thank you to all of our [contributors](https://github.com/puppetlabs/puppetlabs-mysql/graphs/contributors).
