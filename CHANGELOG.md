@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v11.0.3](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.3) (2021-06-21)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.2...v11.0.3)
+
+### Fixed
+
+- \(IAC-1430\) - Minor docs updating [\#1401](https://github.com/puppetlabs/puppetlabs-mysql/pull/1401) ([pmcmaw](https://github.com/pmcmaw))
+
 ## [v11.0.2](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.2) (2021-06-07)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.1...v11.0.2)
