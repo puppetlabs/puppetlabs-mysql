@@ -58,15 +58,14 @@
 
 ### Functions
 
-* [`mysql::normalise_and_deepmerge`](#mysqlnormalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashesh and underscores,
-then returns the resulting hash.
+* [`mysql::normalise_and_deepmerge`](#mysqlnormalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashes and underscores.
 * [`mysql::password`](#mysqlpassword): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysqlstrip_hash): When given a hash this function strips out all blank entries.
 * [`mysql_password`](#mysql_password): DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
 
 ### Data types
 
-* [`Mysql::Options`](#mysqloptions)
+* [`Mysql::Options`](#mysqloptions): A hash of options structured like the override_options, but not merged with the default options.
 
 ### Tasks
 
@@ -382,8 +381,6 @@ The following parameters are available in the `mysql::client` class:
 * [`install_options`](#install_options)
 * [`package_ensure`](#package_ensure)
 * [`package_manage`](#package_manage)
-* [`service_name`](#service_name)
-* [`service_provider`](#service_provider)
 * [`package_name`](#package_name)
 * [`package_provider`](#package_provider)
 * [`package_source`](#package_source)
@@ -419,14 +416,6 @@ Data type: `Any`
 Whether to manage the MySQL client package. Defaults to `true`.
 
 Default value: `$mysql::params::client_package_manage`
-
-##### <a name="service_name"></a>`service_name`
-
-The name of the MySQL server service. Defaults are OS dependent, defined in 'params.pp'.
-
-##### <a name="service_provider"></a>`service_provider`
-
-The provider to use to manage the service. For Ubuntu, defaults to 'upstart'; otherwise, default is undefined.
 
 ##### <a name="package_name"></a>`package_name`
 
@@ -1621,7 +1610,8 @@ $merged_hash = mysql::normalise_and_deepmerge($hash1, $hash2)
 - When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
 - When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate), the rightmost style will win.
 
-Returns: `Any`
+Returns: `Any` hash
+The given hash normalised
 
 ##### Examples
 
@@ -1639,7 +1629,7 @@ $merged_hash = mysql::normalise_and_deepmerge($hash1, $hash2)
 
 Data type: `Any`
 
-
+Hash to be normalised
 
 ### <a name="mysqlpassword"></a>`mysql::password`
 
@@ -1701,7 +1691,7 @@ Plain text password.
 
 ### <a name="mysqloptions"></a>`Mysql::Options`
 
-The Mysql::Options data type.
+Use this if you don’t want your options merged with the default options.
 
 Alias of
 

@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "11.0.2",
+  "version": "11.0.3",
   "author": "puppetlabs",
   "summary": "Installs, configures, and manages the MySQL service.",
   "license": "Apache-2.0",
