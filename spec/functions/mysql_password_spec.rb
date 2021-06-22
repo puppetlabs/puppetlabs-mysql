@@ -11,12 +11,22 @@ shared_examples 'mysql::password function' do
     is_expected.to run.with_params.and_raise_error(ArgumentError)
   end
 
-  it 'raises a ArgumentError if there is more than 1 arguments' do
-    is_expected.to run.with_params('foo', 'bar').and_raise_error(ArgumentError)
+  it 'raises a ArgumentError if there is more than 2 arguments' do
+    is_expected.to run.with_params('foo', false, 'bar').and_raise_error(ArgumentError)
   end
 
   it 'converts password into a hash' do
     is_expected.to run.with_params('password').and_return('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19')
+  end
+
+  it 'accept password as Sensitive' do
+    is_expected.to run.with_params(sensitive('password')).and_return('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19')
+  end
+
+  # Test of a Returnvalue of Datatype Sensitive does not work
+  it 'returns Sensitive with sensitive=true' do
+    pending 'should have a Returnvalue of Datatype Sensitive'
+    is_expected.to run.with_params('password', true).and_return(sensitive('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
   end
 
   it 'password should be String' do

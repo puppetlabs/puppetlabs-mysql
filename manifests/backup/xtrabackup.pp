@@ -5,7 +5,7 @@
 class mysql::backup::xtrabackup (
   $xtrabackup_package_name  = $mysql::params::xtrabackup_package_name,
   $backupuser               = undef,
-  $backuppassword           = undef,
+  Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
   $backupdir                = '',
   $maxallowedpacket         = '1M',
   $backupmethod             = 'xtrabackup',
@@ -35,6 +35,12 @@ class mysql::backup::xtrabackup (
   $compression_extension    = undef,
 ) inherits mysql::params {
   ensure_packages($xtrabackup_package_name)
+
+  $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
+    $backuppassword.unwrap
+  } else {
+    $backuppassword
+  }
 
   if $backupuser and $backuppassword {
     mysql_user { "${backupuser}@localhost":
@@ -121,6 +127,7 @@ class mysql::backup::xtrabackup (
     group  => $backupdirgroup,
   }
 
+  # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
   file { 'xtrabackup.sh':
     ensure  => $ensure,
     path    => '/usr/local/sbin/xtrabackup.sh',

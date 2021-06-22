@@ -259,7 +259,7 @@ class mysql::params {
         $python_package_name = 'python-mysqldb'
       }
 
-      $ruby_package_name   =  $facts['operatingsystemmajrelease']  ? {
+      $ruby_package_name   =  $facts['os']['release']['major']  ? {
         '8'     => 'ruby-mysql', # jessie
         '9'     => 'ruby-mysql2', # stretch
         '10'    => 'ruby-mysql2', # buster
