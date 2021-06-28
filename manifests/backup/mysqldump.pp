@@ -67,9 +67,7 @@ class mysql::backup::mysqldump (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-      ensure_packages('crontabs')
-    } elsif $::osfamily == 'RedHat' {
+    if $::osfamily == 'RedHat' {
       ensure_packages('cronie')
     } elsif $::osfamily != 'FreeBSD' {
       ensure_packages('cron')

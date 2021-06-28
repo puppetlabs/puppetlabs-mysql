@@ -135,7 +135,7 @@ describe 'mysql::server::backup class' do
   end
 
   context 'with xtrabackup enabled' do
-    context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+    context 'should work with no errors', if: ((os[:family] == 'debian') || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do
       pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
@@ -214,7 +214,7 @@ describe 'mysql::server::backup class' do
       end
     end
 
-    describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+    describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 9) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
       before(:all) do
         pre_run
       end
@@ -263,7 +263,7 @@ describe 'mysql::server::backup class' do
   end
 
   context 'with xtrabackup enabled and incremental backups disabled' do
-    context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+    context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 9) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
       pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
@@ -275,11 +275,7 @@ describe 'mysql::server::backup class' do
           }
           case $facts['os']['family'] {
             /Debian/: {
-              if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
-                $source_url = "http://repo.percona.com/apt/percona-release_1.0-22.generic_all.deb"
-              } else {
-                $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
-              }
+              $source_url = "http://repo.percona.com/apt/percona-release_1.0-22.generic_all.deb"
 
               file { '/tmp/percona-release_latest.deb':
                 ensure => present,
@@ -299,15 +295,8 @@ describe 'mysql::server::backup class' do
               }
             }
             /RedHat/: {
-              # RHEL/CentOS 5 is no longer supported by Percona, but older versions
-              # of the repository are still available.
-              if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
-                $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
-                $epel_url = "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
-              } else {
-                $percona_url = 'http://repo.percona.com/yum/release/5/os/noarch/percona-release-0.1-3.noarch.rpm'
-                $epel_url = 'https://archives.fedoraproject.org/pub/archive/epel/epel-release-latest-5.noarch.rpm'
-              }
+              $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
+              $epel_url = "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
               ensure_packages('percona-release',{
                 ensure   => present,
                 provider => 'rpm',
@@ -342,7 +331,7 @@ describe 'mysql::server::backup class' do
       end
     end
 
-    describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 8) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
+    describe 'xtrabackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') && ((os[:family] == 'debian' && os[:release].to_i >= 9) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do # rubocop:disable Layout/LineLength
       before(:all) do
         pre_run
       end
