@@ -512,7 +512,6 @@ class { 'mysql::server::backup':
 #### Public classes
 
 * [`mysql::server`](#mysqlserver): Installs and configures MySQL.
-* [`mysql::server::monitor`](#mysqlservermonitor): Sets up a monitoring user.
 * [`mysql::server::mysqltuner`](#mysqlservermysqltuner): Installs MySQL tuner script.
 * [`mysql::server::backup`](#mysqlserverbackup): Sets up MySQL backups via cron.
 * [`mysql::bindings`](#mysqlbindings): Installs various MySQL language bindings.
