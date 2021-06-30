@@ -98,7 +98,7 @@ class mysql::server (
   $mysql_group             = $mysql::params::mysql_group,
   $mycnf_owner             = $mysql::params::mycnf_owner,
   $mycnf_group             = $mysql::params::mycnf_group,
-  Variant[String, Sensitive[String]] $root_password = $mysql::params::root_password,
+  $root_password           = $mysql::params::root_password,
   $service_enabled         = $mysql::params::server_service_enabled,
   $service_manage          = $mysql::params::server_service_manage,
   $service_name            = $mysql::params::server_service_name,

@@ -1,20 +1,9 @@
-# @summary
+# @summary 
 #   Private class for managing the root password
 #
 # @api private
 #
 class mysql::server::root_password {
-  if $mysql::server::root_password =~ Sensitive {
-    $root_password = $mysql::server::root_password.unwrap
-  } else {
-    $root_password = $mysql::server::root_password
-  }
-  if $root_password == 'UNSET' {
-    $root_password_set = false
-  } else {
-    $root_password_set = true
-  }
-
   $options = $mysql::server::_options
   $secret_file = $mysql::server::install_secret_file
   $login_file = $mysql::server::login_file
@@ -34,7 +23,7 @@ class mysql::server::root_password {
   }
 
   # manage root password if it is set
-  if $mysql::server::create_root_user and $root_password_set {
+  if $mysql::server::create_root_user == true and $mysql::server::root_password != 'UNSET' {
     mysql_user { 'root@localhost':
       ensure        => present,
       password_hash => mysql::password($mysql::server::root_password),
@@ -42,8 +31,7 @@ class mysql::server::root_password {
     }
   }
 
-  if $mysql::server::create_root_my_cnf and $root_password_set {
-    # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
+  if $mysql::server::create_root_my_cnf == true and $mysql::server::root_password != 'UNSET' {
     file { "${::root_home}/.my.cnf":
       content => template('mysql/my.cnf.pass.erb'),
       owner   => 'root',
@@ -54,12 +42,12 @@ class mysql::server::root_password {
     if versioncmp($::puppetversion, '3.0') >= 0 {
       File["${::root_home}/.my.cnf"] { show_diff => false }
     }
-    if $mysql::server::create_root_user {
+    if $mysql::server::create_root_user == true {
       Mysql_user['root@localhost'] -> File["${::root_home}/.my.cnf"]
     }
   }
 
-  if $mysql::server::create_root_login_file and $root_password_set {
+  if $mysql::server::create_root_login_file == true and $mysql::server::root_password != 'UNSET' {
     file { "${::root_home}/.mylogin.cnf":
       source => $login_file,
       owner  => 'root',

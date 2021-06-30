@@ -74,8 +74,6 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     max_updates_per_hour     = @resource.value(:max_updates_per_hour) || 0
     tls_options              = @resource.value(:tls_options) || ['NONE']
 
-    password_hash = password_hash.unwrap if password_hash.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
-
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
     if !plugin.nil?

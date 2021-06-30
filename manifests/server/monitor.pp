@@ -10,7 +10,7 @@
 #
 class mysql::server::monitor (
   $mysql_monitor_username = '',
-  Optional[Variant[String, Sensitive[String]]] $mysql_monitor_password = '',
+  $mysql_monitor_password = '',
   $mysql_monitor_hostname = ''
 ) {
   Anchor['mysql::server::end'] -> Class['mysql::server::monitor']

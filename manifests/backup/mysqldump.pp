@@ -4,7 +4,7 @@
 #
 class mysql::backup::mysqldump (
   $backupuser               = '',
-  Variant[String, Sensitive[String]] $backuppassword = '',
+  $backuppassword           = '',
   $backupdir                = '',
   $maxallowedpacket         = '1M',
   $backupdirmode            = '0700',
@@ -33,12 +33,6 @@ class mysql::backup::mysqldump (
   $compression_command      = 'bzcat -zc',
   $compression_extension    = '.bz2'
 ) inherits mysql::params {
-  $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
-    $backuppassword.unwrap
-  } else {
-    $backuppassword
-  }
-
   unless $::osfamily == 'FreeBSD' {
     if $backupcompress and $compression_command == 'bzcat -zc' {
       ensure_packages(['bzip2'])
@@ -88,7 +82,6 @@ class mysql::backup::mysqldump (
     require  => File['mysqlbackup.sh'],
   }
 
-  # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
   file { 'mysqlbackup.sh':
     ensure  => $ensure,
     path    => '/usr/local/sbin/mysqlbackup.sh',

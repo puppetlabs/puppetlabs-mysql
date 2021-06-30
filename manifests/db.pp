@@ -40,7 +40,7 @@
 #
 define mysql::db (
   $user,
-  Variant[String, Sensitive[String]] $password,
+  $password,
   $tls_options                                = undef,
   $dbname                                     = $name,
   $charset                                    = 'utf8',

@@ -15,7 +15,7 @@
 ##### START CONFIG ###################################################
 
 USER=<%= @backupuser %>
-PASS='<%= @backuppassword_unsensitive %>'
+PASS='<%= @backuppassword %>'
 MAX_ALLOWED_PACKET=<%= @maxallowedpacket %>
 DIR=<%= @backupdir %>
 ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>

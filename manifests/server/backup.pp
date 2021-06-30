@@ -74,7 +74,7 @@
 #   Configure the file extension for the compressed backup (when using the mysqldump provider)
 class mysql::server::backup (
   $backupuser               = undef,
-  Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
+  $backuppassword           = undef,
   $backupdir                = undef,
   $backupdirmode            = '0700',
   $backupdirowner           = 'root',

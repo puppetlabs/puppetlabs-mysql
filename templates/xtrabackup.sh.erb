@@ -39,8 +39,8 @@ cleanup
 
 <%- _innobackupex_args = '' -%>
 
-<%- if @backupuser and @backuppassword_unsensitive -%>
-  <%- _innobackupex_args = '--user="' + @backupuser + '" --password="' + @backuppassword_unsensitive + '"' -%>
+<%- if @backupuser and @backuppassword -%>
+  <%- _innobackupex_args = '--user="' + @backupuser + '" --password="' + @backuppassword + '"' -%>
 <%- end -%>
 
 <%- if @backupcompress -%>
