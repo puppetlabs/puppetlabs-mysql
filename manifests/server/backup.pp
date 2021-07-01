@@ -18,6 +18,8 @@
 #
 # @param backupuser
 #   MySQL user to create with backup administrator privileges.
+# @param backupcronuser
+#   User to use for backup cron jobs. Defaults to root.
 # @param backuppassword
 #   Password to create for `backupuser`.
 # @param backupdir
@@ -74,6 +76,7 @@
 #   Configure the file extension for the compressed backup (when using the mysqldump provider)
 class mysql::server::backup (
   $backupuser               = undef,
+  $backupcronuser           = $mysql::params::backupcronuser,
   Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
   $backupdir                = undef,
   $backupdirmode            = '0700',
@@ -109,10 +112,11 @@ class mysql::server::backup (
   create_resources('class', {
       "mysql::backup::${provider}" => {
         'backupuser'               => $backupuser,
+	'backupcronuser'           => $backupcronuser,
         'backuppassword'           => $backuppassword,
         'backupdir'                => $backupdir,
         'backupdirmode'            => $backupdirmode,
-        'backupdirowner'           => $backupdirowner,
+        'backupdirowner'           => $backupcronuser,
         'backupdirgroup'           => $backupdirgroup,
         'backupcompress'           => $backupcompress,
         'backuprotate'             => $backuprotate,

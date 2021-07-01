@@ -6,6 +6,7 @@ class mysql::backup::xtrabackup (
   $xtrabackup_package_name  = $mysql::params::xtrabackup_package_name,
   $backupuser               = undef,
   Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
+  $backupcronuser           = $mysql::params::backupcronuser,
   $backupdir                = '',
   $maxallowedpacket         = '1M',
   $backupmethod             = 'xtrabackup',
@@ -81,7 +82,7 @@ class mysql::backup::xtrabackup (
     cron { 'xtrabackup-weekly':
       ensure  => $ensure,
       command => "/usr/local/sbin/xtrabackup.sh --target-dir=${backupdir}/$(date +\\%F)_full ${additional_cron_args}",
-      user    => 'root',
+      user    => $backupcronuser,
       hour    => $time[0],
       minute  => $time[1],
       weekday => '0',
@@ -113,7 +114,7 @@ class mysql::backup::xtrabackup (
   cron { 'xtrabackup-daily':
     ensure  => $ensure,
     command => "/usr/local/sbin/xtrabackup.sh ${daily_cron_data['directories']} ${additional_cron_args}",
-    user    => 'root',
+    user    => $backupcronuser,
     hour    => $time[0],
     minute  => $time[1],
     weekday => $daily_cron_data['weekday'],
@@ -132,7 +133,7 @@ class mysql::backup::xtrabackup (
     ensure  => $ensure,
     path    => '/usr/local/sbin/xtrabackup.sh',
     mode    => '0700',
-    owner   => 'root',
+    owner   => $backupcronuser,
     group   => $mysql::params::root_group,
     content => template($backupscript_template),
   }

@@ -6,6 +6,7 @@
 class mysql::params {
   $manage_config_file     = true
   $config_file_mode       = '0644'
+  $backupcronuser         = 'root'
   $purge_conf_dir         = false
   $restart                = false
   $root_password          = 'UNSET'

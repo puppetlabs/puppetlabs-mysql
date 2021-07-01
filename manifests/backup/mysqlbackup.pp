@@ -6,6 +6,7 @@
 class mysql::backup::mysqlbackup (
   $backupuser               = '',
   Variant[String, Sensitive[String]] $backuppassword = '',
+  $backupcronuser           = $mysql::params::backupcronuser,
   $maxallowedpacket         = '1M',
   $backupdir                = '',
   $backupdirmode            = '0700',
@@ -85,7 +86,7 @@ class mysql::backup::mysqlbackup (
   cron { 'mysqlbackup-weekly':
     ensure  => $ensure,
     command => 'mysqlbackup backup',
-    user    => 'root',
+    user    => $backupcronuser,
     hour    => $time[0],
     minute  => $time[1],
     weekday => '0',
@@ -95,7 +96,7 @@ class mysql::backup::mysqlbackup (
   cron { 'mysqlbackup-daily':
     ensure  => $ensure,
     command => 'mysqlbackup --incremental backup',
-    user    => 'root',
+    user    => $backupcronuser,
     hour    => $time[0],
     minute  => $time[1],
     weekday => '1-6',
