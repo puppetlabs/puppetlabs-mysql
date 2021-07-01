@@ -23,11 +23,12 @@ shared_examples 'mysql::password function' do
     is_expected.to run.with_params(sensitive('password')).and_return('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19')
   end
 
-  # Test of a Returnvalue of Datatype Sensitive does not work
-  it 'returns Sensitive with sensitive=true' do
-    pending 'should have a Returnvalue of Datatype Sensitive'
-    is_expected.to run.with_params('password', true).and_return(sensitive('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
-  end
+  # Commented out due to: IAC-1677
+  # Test of a Returnvalue of Datatype Sensitive does not work IAC-1679
+  # it 'returns Sensitive with sensitive=true' do
+  # pending 'should have a Returnvalue of Datatype Sensitive'
+  # is_expected.to run.with_params('password', true).and_return(sensitive('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
+  # end
 
   it 'password should be String' do
     is_expected.to run.with_params(123).and_raise_error(ArgumentError)
