@@ -26,7 +26,7 @@ shared_examples 'mysql::password function' do
   # Test of a Returnvalue of Datatype Sensitive does not work
   it 'returns Sensitive with sensitive=true' do
     pending 'should have a Returnvalue of Datatype Sensitive'
-    is_expected.to run.with_params('password', true).and_return(sensitive('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
+    #is_expected.to run.with_params('password', true).and_return(sensitive('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19'))
   end
 
   it 'password should be String' do
