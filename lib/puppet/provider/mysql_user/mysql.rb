@@ -177,29 +177,41 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
 
   def max_user_connections=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_USER_CONNECTIONS #{int}", 'system').chomp
-
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
+      self.class.mysql_caller("ALTER USER #{merged_name} WITH MAX_USER_CONNECTIONS #{int}", 'system').chomp
+    else
+      self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_USER_CONNECTIONS #{int}", 'system').chomp
+    end
     (max_user_connections == int) ? (return true) : (return false)
   end
 
   def max_connections_per_hour=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_CONNECTIONS_PER_HOUR #{int}", 'system').chomp
-
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
+      self.class.mysql_caller("ALTER USER #{merged_name} WITH MAX_CONNECTIONS_PER_HOUR #{int}", 'system').chomp
+    else
+      self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_CONNECTIONS_PER_HOUR #{int}", 'system').chomp
+    end
     (max_connections_per_hour == int) ? (return true) : (return false)
   end
 
   def max_queries_per_hour=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_QUERIES_PER_HOUR #{int}", 'system').chomp
-
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
+      self.class.mysql_caller("ALTER USER #{merged_name} WITH MAX_QUERIES_PER_HOUR #{int}", 'system').chomp
+    else
+      self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_QUERIES_PER_HOUR #{int}", 'system').chomp
+    end
     (max_queries_per_hour == int) ? (return true) : (return false)
   end
 
   def max_updates_per_hour=(int)
     merged_name = self.class.cmd_user(@resource[:name])
-    self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}", 'system').chomp
-
+    if newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
+      self.class.mysql_caller("ALTER USER #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}", 'system').chomp
+    else
+      self.class.mysql_caller("GRANT USAGE ON *.* TO #{merged_name} WITH MAX_UPDATES_PER_HOUR #{int}", 'system').chomp
+    end
     (max_updates_per_hour == int) ? (return true) : (return false)
   end
 
