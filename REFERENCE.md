@@ -661,7 +661,7 @@ Default value: `$mysql::params::mycnf_group`
 
 ##### <a name="root_password"></a>`root_password`
 
-Data type: `Any`
+Data type: `Variant[String, Sensitive[String]]`
 
 The MySQL root password. Puppet attempts to set the root password and update `/root/.my.cnf` with it. This is required if `create_root_user` or `create_root_my_cnf` are true. If `root_password` is 'UNSET', then `create_root_user` and `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created. Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password.
 
@@ -854,7 +854,7 @@ Default value: ``undef``
 
 ##### <a name="backuppassword"></a>`backuppassword`
 
-Data type: `Any`
+Data type: `Optional[Variant[String, Sensitive[String]]]`
 
 Password to create for `backupuser`.
 
@@ -1091,7 +1091,7 @@ Default value: `''`
 
 ##### <a name="mysql_monitor_password"></a>`mysql_monitor_password`
 
-Data type: `Any`
+Data type: `Optional[Variant[String, Sensitive[String]]]`
 
 The password to create for MySQL monitoring.
 
@@ -1197,7 +1197,7 @@ The user for the database you're creating.
 
 ##### <a name="password"></a>`password`
 
-Data type: `Any`
+Data type: `Variant[String, Sensitive[String]]`
 
 The password for $user for the database you're creating.
 
@@ -1637,18 +1637,24 @@ Type: Ruby 4.x API
 
 Hash a string as mysql's "PASSWORD()" function would do it
 
-#### `mysql::password(String $password)`
+#### `mysql::password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive)`
 
 Hash a string as mysql's "PASSWORD()" function would do it
 
-Returns: `String` hash
+Returns: `Variant[String, Sensitive[String]]` hash
 The mysql password hash from the clear text password.
 
 ##### `password`
 
-Data type: `String`
+Data type: `Variant[String, Sensitive[String]]`
 
 Plain text password.
+
+##### `sensitive`
+
+Data type: `Optional[Boolean]`
+
+If the Postgresql-Passwordhash should be of Datatype Sensitive[String]
 
 ### <a name="mysqlstrip_hash"></a>`mysql::strip_hash`
 
@@ -1675,17 +1681,23 @@ Type: Ruby 4.x API
 
 DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
 
-#### `mysql_password(String $password)`
+#### `mysql_password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive)`
 
 The mysql_password function.
 
-Returns: `String` The mysql password hash from the 4.x function mysql::password.
+Returns: `Variant[String, Sensitive[String]]` The mysql password hash from the 4.x function mysql::password.
 
 ##### `password`
 
-Data type: `String`
+Data type: `Variant[String, Sensitive[String]]`
 
 Plain text password.
+
+##### `sensitive`
+
+Data type: `Optional[Boolean]`
+
+
 
 ## Data types
 
