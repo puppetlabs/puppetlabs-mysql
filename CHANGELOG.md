@@ -1,5 +1,22 @@
 # Change log
 
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+
+## [v11.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.1.0) (2021-07-05)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.3...v11.1.0)
+
+### Added
+
+- \(MODULES-11115\) add Rocky Linux 8 compatibility [\#1405](https://github.com/puppetlabs/puppetlabs-mysql/pull/1405) ([vchepkov](https://github.com/vchepkov))
+- Use Puppet-Datatype Sensitive [\#1400](https://github.com/puppetlabs/puppetlabs-mysql/pull/1400) ([cocker-cc](https://github.com/cocker-cc))
+
+### Fixed
+
+- Fix mysql\_user parameters update on modern MySQL [\#1415](https://github.com/puppetlabs/puppetlabs-mysql/pull/1415) ([weastur](https://github.com/weastur))
+- \(IAC-1677\) Fix issue with deprecated rspec [\#1414](https://github.com/puppetlabs/puppetlabs-mysql/pull/1414) ([ghoneycutt](https://github.com/ghoneycutt))
+- Fix broken link and style in documentation [\#1403](https://github.com/puppetlabs/puppetlabs-mysql/pull/1403) ([ghoneycutt](https://github.com/ghoneycutt))
+
 ## v11.0.3
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.2...v11.0.3)
