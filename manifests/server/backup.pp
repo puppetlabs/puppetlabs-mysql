@@ -112,7 +112,7 @@ class mysql::server::backup (
   create_resources('class', {
       "mysql::backup::${provider}" => {
         'backupuser'               => $backupuser,
-	'backupcronuser'           => $backupcronuser,
+        'backupcronuser'           => $backupcronuser,
         'backuppassword'           => $backuppassword,
         'backupdir'                => $backupdir,
         'backupdirmode'            => $backupdirmode,
