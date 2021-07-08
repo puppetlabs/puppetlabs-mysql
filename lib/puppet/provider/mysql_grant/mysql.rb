@@ -7,7 +7,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
   commands mysql_raw: 'mysql'
 
   def self.instances
-    instances = []
+    instance_configs = {}
     users.map do |user|
       user_string = cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
@@ -54,15 +54,31 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         # fix double backslash that MySQL prints, so resources match
         table.gsub!('\\\\', '\\')
         # We need to return an array of instances so capture these
-        instances << new(
-          name: "#{user}@#{host}/#{table}",
-          ensure: :present,
-          privileges: stripped_privileges.sort,
+        name = "#{user}@#{host}/#{table}"
+        if instance_configs.key?(name)
+          instance_config = instance_configs[name]
+          stripped_privileges.concat instance_config[:privileges]
+          options.concat instance_config[:options]
+        end
+
+        instance_configs[name] = {
+          privileges: stripped_privileges.uniq.sort,
           table: table,
           user: "#{user}@#{host}",
-          options: options,
-        )
+          options: options.uniq,
+        }
       end
+    end
+    instances = []
+    instance_configs.map do |name, config|
+      instances << new(
+        name: name,
+        ensure: :present,
+        privileges: config[:privileges],
+        table: config[:table],
+        user: config[:user],
+        options: config[:options],
+      )
     end
     instances
   end
@@ -90,10 +106,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
   def create
     grant(@resource[:user], @resource[:table], @resource[:privileges], @resource[:options])
 
-    @property_hash[:ensure]     = :present
-    @property_hash[:table]      = @resource[:table]
-    @property_hash[:user]       = @resource[:user]
-    @property_hash[:options]    = @resource[:options] if @resource[:options]
+    @property_hash[:ensure] = :present
+    @property_hash[:table] = @resource[:table]
+    @property_hash[:user] = @resource[:user]
+    @property_hash[:options] = @resource[:options] if @resource[:options]
     @property_hash[:privileges] = @resource[:privileges]
 
     exists? ? (return true) : (return false)
