@@ -11,19 +11,16 @@ vagrant:
 travis_deb:
   provisioner: docker
   images:
-  - litmusimage/debian:8
   - litmusimage/debian:9
   - litmusimage/debian:10
 travis_ub_5:
   provisioner: docker
   images:
-  - litmusimage/ubuntu:14.04
   - litmusimage/ubuntu:16.04
   - litmusimage/ubuntu:18.04
 travis_ub_6:
   provisioner: docker
   images:
-  - litmusimage/ubuntu:14.04
   - litmusimage/ubuntu:16.04
   - litmusimage/ubuntu:18.04
   - litmusimage/ubuntu:20.04
@@ -51,10 +48,8 @@ release_checks_5:
   - oracle-7-x86_64
   - scientific-6-x86_64
   - scientific-7-x86_64
-  - debian-8-x86_64
   - debian-9-x86_64
   - debian-10-x86_64
-  - ubuntu-1404-x86_64
   - ubuntu-1604-x86_64
   - ubuntu-1804-x86_64
 release_checks_6:
@@ -71,10 +66,8 @@ release_checks_6:
   - oracle-7-x86_64
   - scientific-6-x86_64
   - scientific-7-x86_64
-  - debian-8-x86_64
   - debian-9-x86_64
   - debian-10-x86_64
-  - ubuntu-1404-x86_64
   - ubuntu-1604-x86_64
   - ubuntu-1804-x86_64
   - ubuntu-2004-x86_64

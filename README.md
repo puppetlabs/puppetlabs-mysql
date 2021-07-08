@@ -67,7 +67,7 @@ $override_options = {
 
 For options that you would traditionally represent in this format:
 
-```
+```ini
 [section]
 thing = X
 ```
@@ -88,7 +88,7 @@ $override_options = {
 
 produces
 
-```puppet
+```ini
 [mysqld]
 replicate-do-db = base1
 replicate-do-db = base2
@@ -176,7 +176,7 @@ mysql_user { 'root@::1':
 
 To instantiate databases and users on an existing MySQL server, you need a `.my.cnf` file in `root`'s home directory. This file must specify the remote server address and credentials. For example:
 
-```puppet
+```ini
 [client]
 user=root
 host=localhost
@@ -252,7 +252,7 @@ yumrepo { 'percona':
   gpgcheck => 1,
 }
 
-class {'mysql::server':
+class { 'mysql::server':
   package_name     => 'Percona-Server-server-57',
   service_name     => 'mysql',
   config_file      => '/etc/my.cnf',
@@ -266,7 +266,7 @@ class {'mysql::server':
     mysqld_safe => {
       log-error => '/var/log/mysqld.log',
     },
-  }
+  },
 }
 
 # Note: Installing Percona-Server-server-57 also installs Percona-Server-client-57.
@@ -349,7 +349,7 @@ class { 'mysql::server':
     mysqld_safe => {
       'log-error' => '/var/log/mysql/mariadb.log',
     },
-  }
+  },
 }
 
 # Dependency management. Only use that part if you are installing the repository
@@ -367,7 +367,7 @@ This example shows how to install the MariaDB client and all of the bindings at 
 Specify the version of the package you want with the `package_ensure` parameter.
 
 ```puppet
-class {'::mysql::client':
+class { 'mysql::client':
   package_name    => 'mariadb-client',
   package_ensure  => '1:10.3.21+maria~xenial',
   bindings_enable => true,
@@ -376,7 +376,7 @@ class {'::mysql::client':
 # Dependency management. Only use that part if you are installing the repository as shown in the Preliminary step of this example.
 Apt::Source['mariadb'] ~>
 Class['apt::update'] ->
-Class['::mysql::client']
+Class['mysql::client']
 ```
 
 ### Install MySQL Community server on CentOS
@@ -391,7 +391,7 @@ You can install MySQL Community Server on CentOS using the mysql module and Hier
 In Puppet:
 
 ```puppet
-include ::mysql::server
+include mysql::server
 
 create_resources(yumrepo, hiera('yumrepo', {}))
 
@@ -602,11 +602,11 @@ When the `/root/.mylogin.cnf` exists the environment variable `MYSQL_TEST_LOGIN_
 This is required if `create_root_user` and `create_root_login_file` are true. If `root_password` is 'UNSET', then `create_root_user` and `create_root_login_file` are assumed to be false --- that is, the MySQL root user and `/root/.mylogin.cnf` are not created.
 
 ```puppet
-class { '::mysql::server':
-root_password          => 'password',
-create_root_my_cnf     => false,
-create_root_login_file => true,
-login_file             => "puppet:///modules/${module_name}/mylogin.cnf",
+class { 'mysql::server':
+  root_password          => 'password',
+  create_root_my_cnf     => false,
+  create_root_login_file => true,
+  login_file             => 'puppet:///modules/${module_name}/mylogin.cnf',
 }
 ```
 

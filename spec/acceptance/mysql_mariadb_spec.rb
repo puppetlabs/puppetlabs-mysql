@@ -2,7 +2,7 @@
 
 require 'spec_helper_acceptance'
 
-describe 'mysql server class', if: ((os[:family] == 'debian' && os[:release].to_i > 8) || (os[:family] == 'redhat' && os[:release].to_i > 6)) do
+describe 'mysql server class', if: ((os[:family] == 'debian') || (os[:family] == 'redhat' && os[:release].to_i > 6)) do
   describe 'mariadb' do
     let(:pp) do
       <<-MANIFEST
