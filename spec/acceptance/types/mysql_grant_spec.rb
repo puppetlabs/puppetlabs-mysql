@@ -483,8 +483,6 @@ describe 'mysql_grant' do
   end
 
   describe 'proxy privilieges' do
-    pre_run
-
     describe 'adding proxy privileges', if: Gem::Version.new(mysql_version) > Gem::Version.new('5.5.0') do
       pp = <<-MANIFEST
         mysql_user { 'proxy1@tester':
@@ -648,7 +646,6 @@ describe 'mysql_grant' do
     end
 
     it 'fails with fqdn' do
-      pre_run
       unless Gem::Version.new(mysql_version) > Gem::Version.new('5.7.0')
         result = run_shell('mysql -NBe "SHOW GRANTS FOR test@fqdn.com"', expect_failures: true)
         expect(result.stderr).to contain(%r{There is no such grant defined for user 'test' on host 'fqdn.com'})
