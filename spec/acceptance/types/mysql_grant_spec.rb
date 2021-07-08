@@ -423,6 +423,11 @@ describe 'mysql_grant' do
 
   describe 'adding procedure privileges' do
     pp = <<-MANIFEST
+#        class { 'mysql::server':
+#          root_password => 'password',
+#          before        => Exec['simpleproc-create'],
+#        }
+
         exec { 'simpleproc-create':
           command => 'mysql --user="root" --password="password" --database=mysql --delimiter="//" -NBe "CREATE PROCEDURE simpleproc (OUT param1 INT) BEGIN SELECT COUNT(*) INTO param1 FROM t; end//"',
           path    => '/usr/bin/',
@@ -453,6 +458,12 @@ describe 'mysql_grant' do
   describe 'adding function privileges' do
     it 'works without errors' do
       pp = <<-EOS
+
+#        class { 'mysql::server':
+#          root_password => 'password',
+#          before        => Exec['simplefunc-create'],
+#        }
+
         exec { 'simplefunc-create':
           command => '/usr/bin/mysql --user="root" --password="password" --database=mysql -NBe "CREATE FUNCTION simplefunc (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT(\\'Hello, \\', s, \\'!\\')"',
           before  => Mysql_user['test3@tester'],
@@ -483,8 +494,6 @@ describe 'mysql_grant' do
   end
 
   describe 'proxy privilieges' do
-    pre_run
-
     describe 'adding proxy privileges', if: Gem::Version.new(mysql_version) > Gem::Version.new('5.5.0') do
       pp = <<-MANIFEST
         mysql_user { 'proxy1@tester':
@@ -648,7 +657,6 @@ describe 'mysql_grant' do
     end
 
     it 'fails with fqdn' do
-      pre_run
       unless Gem::Version.new(mysql_version) > Gem::Version.new('5.7.0')
         result = run_shell('mysql -NBe "SHOW GRANTS FOR test@fqdn.com"', expect_failures: true)
         expect(result.stderr).to contain(%r{There is no such grant defined for user 'test' on host 'fqdn.com'})
