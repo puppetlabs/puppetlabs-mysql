@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper_acceptance'
+export_locales
 
 describe 'mysql class' do
   describe 'advanced config' do
@@ -62,7 +63,6 @@ describe 'mysql class' do
       end
 
       it 'can be set' do
-        export_locales
         apply_manifest(pp, catch_failures: true) do |r|
           expect(r.stderr).to be_empty
         end
