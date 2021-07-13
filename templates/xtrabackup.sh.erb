@@ -25,11 +25,7 @@ set -o pipefail
 
 cleanup()
 {
-  <%- if @kernel == 'SunOS' -%>
-    gfind "${DIR}/" -mindepth 1 -maxdepth 1 -mtime +${ROTATE} -print0 | gxargs -0 -r rm -rf
-  <%- else -%>
     find "${DIR}/" -mindepth 1 -maxdepth 1 -mtime +${ROTATE} -print0 | xargs -0 -r rm -rf
-  <%- end -%>
 }
 
 <% if @delete_before_dump -%>
