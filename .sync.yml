@@ -30,3 +30,4 @@ spec/spec_helper.rb:
   unmanaged: false
 .travis.yml:
   delete: true
+changelog_since_tag: 'v11.0.0'

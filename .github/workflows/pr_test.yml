@@ -51,6 +51,11 @@ jobs:
         echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
+    - name: Run validation steps
+      run: |
+        bundle exec rake validate
+      if: ${{ github.repository_owner == 'puppetlabs' }}
+
     - name: Setup Acceptance Test Matrix
       id: get-matrix
       run: |
