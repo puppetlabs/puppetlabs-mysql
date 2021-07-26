@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v12.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.0) (2021-07-26)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.1.0...v12.0.0)
+
+### Changed
+
+- Deprecate mysql::server::mysqltuner and show it as an example [\#1409](https://github.com/puppetlabs/puppetlabs-mysql/pull/1409) ([ghoneycutt](https://github.com/ghoneycutt))
+- Deprecate mysql::server::monitor and show as an example [\#1408](https://github.com/puppetlabs/puppetlabs-mysql/pull/1408) ([ghoneycutt](https://github.com/ghoneycutt))
+- Remove EOL platforms Debian 8 and Ubuntu 14.04 [\#1406](https://github.com/puppetlabs/puppetlabs-mysql/pull/1406) ([ghoneycutt](https://github.com/ghoneycutt))
+
 ## [v11.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.1.0) (2021-07-05)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.3...v11.1.0)
