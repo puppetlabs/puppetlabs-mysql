@@ -12,8 +12,6 @@
 * [`mysql::client`](#mysqlclient): Installs and configures the MySQL client.
 * [`mysql::server`](#mysqlserver): Installs and configures the MySQL server.
 * [`mysql::server::backup`](#mysqlserverbackup): Create and manage a MySQL backup.
-* [`mysql::server::monitor`](#mysqlservermonitor): This is a helper class to add a monitoring user to the database
-* [`mysql::server::mysqltuner`](#mysqlservermysqltuner): Manage the MySQLTuner package.
 
 #### Private Classes
 
@@ -1069,87 +1067,6 @@ Configure the file extension for the compressed backup (when using the mysqldump
 
 Default value: ``undef``
 
-### <a name="mysqlservermonitor"></a>`mysql::server::monitor`
-
-This is a helper class to add a monitoring user to the database
-
-#### Parameters
-
-The following parameters are available in the `mysql::server::monitor` class:
-
-* [`mysql_monitor_username`](#mysql_monitor_username)
-* [`mysql_monitor_password`](#mysql_monitor_password)
-* [`mysql_monitor_hostname`](#mysql_monitor_hostname)
-
-##### <a name="mysql_monitor_username"></a>`mysql_monitor_username`
-
-Data type: `Any`
-
-The username to create for MySQL monitoring.
-
-Default value: `''`
-
-##### <a name="mysql_monitor_password"></a>`mysql_monitor_password`
-
-Data type: `Optional[Variant[String, Sensitive[String]]]`
-
-The password to create for MySQL monitoring.
-
-Default value: `''`
-
-##### <a name="mysql_monitor_hostname"></a>`mysql_monitor_hostname`
-
-Data type: `Any`
-
-The hostname from which the monitoring user requests are allowed access.
-
-Default value: `''`
-
-### <a name="mysqlservermysqltuner"></a>`mysql::server::mysqltuner`
-
-Manage the MySQLTuner package.
-
-#### Parameters
-
-The following parameters are available in the `mysql::server::mysqltuner` class:
-
-* [`ensure`](#ensure)
-* [`version`](#version)
-* [`source`](#source)
-* [`tuner_location`](#tuner_location)
-
-##### <a name="ensure"></a>`ensure`
-
-Data type: `Any`
-
-Ensures that the resource exists. Valid values are 'present', 'absent'. Defaults to 'present'.
-
-Default value: `'present'`
-
-##### <a name="version"></a>`version`
-
-Data type: `Any`
-
-The version to install from the major/MySQLTuner-perl github repository. Must be a valid tag. Defaults to 'v1.3.0'.
-
-Default value: `'v1.3.0'`
-
-##### <a name="source"></a>`source`
-
-Data type: `Any`
-
-Source path for the mysqltuner package.
-
-Default value: ``undef``
-
-##### <a name="tuner_location"></a>`tuner_location`
-
-Data type: `Any`
-
-Destination for the mysqltuner package.
-
-Default value: `'/usr/local/bin/mysqltuner'`
-
 ## Defined types
 
 ### <a name="mysqldb"></a>`mysql::db`
@@ -1639,7 +1556,7 @@ Hash a string as mysql's "PASSWORD()" function would do it
 
 #### `mysql::password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive)`
 
-Hash a string as mysql's "PASSWORD()" function would do it
+The mysql::password function.
 
 Returns: `Variant[String, Sensitive[String]]` hash
 The mysql password hash from the clear text password.
