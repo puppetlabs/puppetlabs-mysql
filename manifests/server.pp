@@ -183,4 +183,5 @@ class mysql::server (
   -> Class['mysql::server::service']
   -> Class['mysql::server::root_password']
   -> Class['mysql::server::providers']
--> Anchor['mysql::server::end'] }
+  -> Anchor['mysql::server::end']
+}
