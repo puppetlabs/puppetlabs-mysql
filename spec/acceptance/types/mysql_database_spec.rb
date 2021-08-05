@@ -15,7 +15,8 @@ describe 'mysql_database' do
   describe 'creating database' do
     pp = <<-MANIFEST
         mysql_database { 'spec_db':
-          ensure => present,
+          ensure  => present,
+          charset => #{$charset},
         }
     MANIFEST
     it 'works without errors' do
@@ -37,7 +38,7 @@ describe 'mysql_database' do
           collate => 'latin1_swedish_ci',
         }
         mysql_database { 'spec_utf8':
-          charset => 'utf8',
+          charset => #{$charset},
           collate => 'utf8_general_ci',
         }
     MANIFEST
@@ -54,7 +55,7 @@ describe 'mysql_database' do
 
     it 'finds utf8 db #stdout' do
       run_shell("mysql -NBe \"SHOW VARIABLES LIKE '%_database'\" spec_utf8") do |r|
-        expect(r.stdout).to match(%r{^character_set_database\tutf8\ncollation_database\tutf8_general_ci$})
+        expect(r.stdout).to match(%r{^character_set_database\tutf8(mb3)?\ncollation_database\tutf8_general_ci$})
         expect(r.stderr).to be_empty
       end
     end

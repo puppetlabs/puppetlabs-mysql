@@ -45,6 +45,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
             (priv == 'ALL PRIVILEGES') ? 'ALL' : priv.strip
           end
         end
+        sorted_privileges = stripped_privileges.sort
+        if self.newer_than('mysql' => '8.0.0')
+          sorted_privileges = (sorted_privileges == ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER', 'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES', 'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER', 'UPDATE']) ? ['ALL'] : sorted_privileges
+        end
         # Same here, but to remove OPTION leaving just GRANT.
         options = if %r{WITH\sGRANT\sOPTION}.match?(rest)
                     ['GRANT']
@@ -57,7 +61,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         instances << new(
           name: "#{user}@#{host}/#{table}",
           ensure: :present,
-          privileges: stripped_privileges.sort,
+          privileges: sorted_privileges,
           table: table,
           user: "#{user}@#{host}",
           options: options,
