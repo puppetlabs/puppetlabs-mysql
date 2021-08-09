@@ -174,7 +174,7 @@ class mysql::server (
                 if you are forced to use a mysql version compiled without SSL support',
     }
   }
-  
+
   Anchor['mysql::server::start']
   -> Class['mysql::server::config']
   -> Class['mysql::server::install']
