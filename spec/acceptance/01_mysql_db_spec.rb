@@ -4,7 +4,6 @@ require 'spec_helper_acceptance'
 
 describe 'mysql::db define' do
   describe 'creating a database' do
-
     let(:pp) do
       <<-MANIFEST
         class { 'mysql::server':
@@ -15,7 +14,7 @@ describe 'mysql::db define' do
         mysql::db { 'spec1':
           user            => 'root1',
           password        => 'password',
-          charset         => #{$charset},
+          charset         => #{fetch_charset},
         }
       MANIFEST
     end
@@ -44,7 +43,7 @@ describe 'mysql::db define' do
           user     => 'root1',
           password => 'password',
           sql      => '/tmp/spec.sql',
-          charset  => #{$charset},
+          charset  => #{fetch_charset},
         }
       MANIFEST
     end
@@ -69,7 +68,7 @@ describe 'mysql::db define' do
           user     => 'root1',
           password => 'password',
           dbname   => 'realdb',
-          charset  => #{$charset},
+          charset  => #{fetch_charset},
         }
       MANIFEST
     end

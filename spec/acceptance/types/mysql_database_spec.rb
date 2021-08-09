@@ -16,7 +16,7 @@ describe 'mysql_database' do
     pp = <<-MANIFEST
         mysql_database { 'spec_db':
           ensure  => present,
-          charset => #{$charset},
+          charset => #{fetch_charset},
         }
     MANIFEST
     it 'works without errors' do
@@ -38,7 +38,7 @@ describe 'mysql_database' do
           collate => 'latin1_swedish_ci',
         }
         mysql_database { 'spec_utf8':
-          charset => #{$charset},
+          charset => #{fetch_charset},
           collate => 'utf8_general_ci',
         }
     MANIFEST

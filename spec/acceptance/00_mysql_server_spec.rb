@@ -39,7 +39,7 @@ describe 'mysql class' do
           databases => {
             'somedb' => {
               ensure  => 'present',
-              charset => #{$charset},
+              charset => #{fetch_charset},
             },
           }
         }

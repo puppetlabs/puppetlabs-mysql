@@ -274,7 +274,7 @@ describe 'mysql_grant' do
 
         mysql_database { 'foo':
           ensure  => present,
-          charset => '#{$charset}',
+          charset => '#{fetch_charset}',
         }
 
         exec { 'mysql-create-table':
@@ -686,7 +686,7 @@ describe 'mysql_grant' do
           user     => 'root1',
           password => 'password',
           sql      => '/tmp/grant_spec_table.sql',
-          charset  => #{$charset},
+          charset  => #{fetch_charset},
         }
     MANIFEST
     it 'creates table' do

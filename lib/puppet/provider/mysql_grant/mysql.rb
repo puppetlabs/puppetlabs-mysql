@@ -46,8 +46,11 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           end
         end
         sorted_privileges = stripped_privileges.sort
-        if self.newer_than('mysql' => '8.0.0')
-          sorted_privileges = (sorted_privileges == ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER', 'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES', 'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER', 'UPDATE']) ? ['ALL'] : sorted_privileges
+        if newer_than('mysql' => '8.0.0') && sorted_privileges == ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER',
+                                                                   'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES',
+                                                                   'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER',
+                                                                   'UPDATE']
+          sorted_privileges = ['ALL']
         end
         # Same here, but to remove OPTION leaving just GRANT.
         options = if %r{WITH\sGRANT\sOPTION}.match?(rest)
