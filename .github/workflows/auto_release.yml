@@ -1,0 +1,84 @@
+name: "Auto release"
+
+on:
+  workflow_dispatch:
+
+env:
+  HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6 
+  HONEYCOMB_DATASET: litmus tests
+  CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  auto_release:
+    name: "Automatic release prep"
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: "Honeycomb: Start recording"
+      uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
+      with:
+        apikey: ${{ env.HONEYCOMB_WRITEKEY }}
+        dataset: ${{ env.HONEYCOMB_DATASET }}
+        job-status: ${{ job.status }}
+
+    - name: "Honeycomb: start first step"
+      run: |
+        echo STEP_ID="auto-release" >> $GITHUB_ENV
+        echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
+    - name: "Checkout Source"
+      if: ${{ github.repository_owner == 'puppetlabs' }}
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: "PDK Release prep"
+      uses: docker://puppet/iac_release:ci
+      with:
+        args: 'release prep --force'
+      env:
+        CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: "Get Version"
+      if: ${{ github.repository_owner == 'puppetlabs' }}
+      id: gv
+      run: |
+        echo "::set-output name=ver::$(jq --raw-output .version metadata.json)"
+
+    - name: "Commit changes"
+      if: ${{ github.repository_owner == 'puppetlabs' }}
+      run: |
+        git config --local user.email "${{ github.repository_owner }}@users.noreply.github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Release prep v${{ steps.gv.outputs.ver }}"
+
+    - name: Create Pull Request
+      id: cpr
+      uses: puppetlabs/peter-evans-create-pull-request@v3
+      if: ${{ github.repository_owner == 'puppetlabs' }}
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Release prep v${{ steps.gv.outputs.ver }}"
+        branch: "release-prep"
+        delete-branch: true
+        title: "Release prep v${{ steps.gv.outputs.ver }}"
+        body: |
+          Automated release-prep through [pdk-templates](https://github.com/puppetlabs/pdk-templates/blob/main/moduleroot/.github/workflows/auto_release.yml.erb) from commit ${{ github.sha }}. 
+          Please verify before merging:
+          - [ ] last [nightly](https://github.com/${{ github.repository }}/actions/workflows/nightly.yml) run is green
+          - [ ] [Changelog](https://github.com/${{ github.repository }}/blob/release-prep/CHANGELOG.md) is readable and has no unlabeled pull requests
+          - [ ] Ensure the [changelog](https://github.com/${{ github.repository }}/blob/release-prep/CHANGELOG.md) version and [metadata](https://github.com/${{ github.repository }}/blob/release-prep/metadata.json) version match
+        labels: "maintenance"
+
+    - name: PR outputs
+      if: ${{ github.repository_owner == 'puppetlabs' }}
+      run: |
+        echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+        echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+
+    - name: "Honeycomb: Record finish step"
+      if: ${{ always() }}
+      run: |
+        buildevents step $TRACE_ID $STEP_ID $STEP_START 'Finished auto release workflow'

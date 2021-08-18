@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Facter::Util::Fact.to_s do
@@ -8,8 +10,9 @@ describe Facter::Util::Fact.to_s do
   describe 'mysqld_version' do
     context 'with value' do
       before :each do
-        Facter::Core::Execution.stubs(:which).with('mysqld').returns('/usr/sbin/mysqld')
-        Facter::Util::Resolution.stubs(:exec).with('mysqld --no-defaults -V 2>/dev/null').returns('mysqld  Ver 5.5.49-37.9 for Linux on x86_64 (Percona Server (GPL), Release 37.9, Revision efa0073)')
+        allow(Facter::Core::Execution).to receive(:which).with('mysqld').and_return('/usr/sbin/mysqld')
+        allow(Facter::Util::Resolution).to receive(:exec).with('mysqld --no-defaults -V 2>/dev/null')
+                                                         .and_return('mysqld  Ver 5.5.49-37.9 for Linux on x86_64 (Percona Server (GPL), Release 37.9, Revision efa0073)')
       end
       it {
         expect(Facter.fact(:mysqld_version).value).to eq('mysqld  Ver 5.5.49-37.9 for Linux on x86_64 (Percona Server (GPL), Release 37.9, Revision efa0073)')

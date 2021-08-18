@@ -25,13 +25,16 @@
 .project
 .envrc
 /inventory.yaml
+/spec/fixtures/litmus_inventory.yaml
 /appveyor.yml
+/.editorconfig
 /.fixtures.yml
 /Gemfile
 /.gitattributes
 /.gitignore
 /.gitlab-ci.yml
 /.pdkignore
+/.puppet-lint.rc
 /Rakefile
 /rakelib/
 /.rspec
@@ -40,3 +43,5 @@
 /.yardopts
 /spec/
 /.vscode/
+/.sync.yml
+/.devcontainer/

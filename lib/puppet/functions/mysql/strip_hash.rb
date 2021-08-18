@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # @summary
 #   When given a hash this function strips out all blank entries.
 #

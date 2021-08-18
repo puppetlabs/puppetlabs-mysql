@@ -50,7 +50,14 @@ class mysql::params {
           }
           $python_package_name = 'MySQL-python'
         }
-        /^(RedHat|CentOS|Scientific|OracleLinux)$/: {
+        'Amazon': {
+          if versioncmp($::operatingsystemrelease, '2') >= 0 {
+            $provider = 'mariadb'
+          } else {
+            $provider = 'mysql'
+          }
+        }
+        /^(RedHat|Rocky|CentOS|Scientific|OracleLinux)$/: {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
             if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
@@ -116,61 +123,38 @@ class mysql::params {
     'Suse': {
       case $::operatingsystem {
         'OpenSuSE': {
-          if versioncmp( $::operatingsystemmajrelease, '12' ) >= 0 {
-            $client_package_name = 'mariadb-client'
-            $server_package_name = 'mariadb'
-            # First service start fails if this is set. Runs fine without
-            # it being set, in any case. Leaving it as-is for the mysql.
-            $basedir             = undef
-          } else {
-            $client_package_name = 'mysql-community-server-client'
-            $server_package_name = 'mysql-community-server'
-            $basedir             = '/usr'
-          }
+          $socket = '/var/run/mysql/mysql.sock'
+          $log_error = '/var/log/mysql/mysqld.log'
+          $pidfile = '/var/run/mysql/mysqld.pid'
+          $ruby_package_name = 'rubygem-mysql'
+          $client_package_name = 'mariadb-client'
+          $server_package_name = 'mariadb'
+          # First service start fails if this is set. Runs fine without
+          # it being set, in any case. Leaving it as-is for the mysql.
+          $basedir             = undef
         }
         'SLES','SLED': {
-          if versioncmp($::operatingsystemrelease, '12') >= 0 {
-            $client_package_name = 'mariadb-client'
-            $server_package_name = 'mariadb'
-            $basedir             = undef
-          } else {
-            $client_package_name = 'mysql-client'
-            $server_package_name = 'mysql'
-            $basedir             = '/usr'
-          }
+          $socket = '/run/mysql/mysql.sock'
+          $log_error = '/var/log/mysqld.log'
+          $pidfile = '/var/lib/mysql/mysqld.pid'
+          $ruby_package_name = 'ruby-mysql'
+          $client_package_name = 'mariadb-client'
+          $server_package_name = 'mariadb'
+          $basedir             = undef
         }
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{os}.',
-          { 'module_name' => $module_name, 'os' => $::operatingsystem }))
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::operatingsystem}.")
         }
       }
       $config_file         = '/etc/my.cnf'
       $includedir          = '/etc/my.cnf.d'
       $datadir             = '/var/lib/mysql'
-      $log_error           = $::operatingsystem ? {
-        /OpenSuSE/         => '/var/log/mysql/mysqld.log',
-        /(SLES|SLED)/      => '/var/log/mysqld.log',
-      }
-      $pidfile             = $::operatingsystem ? {
-        /OpenSuSE/         => '/var/run/mysql/mysqld.pid',
-        /(SLES|SLED)/      => '/var/lib/mysql/mysqld.pid',
-      }
       $root_group          = 'root'
       $mysql_group         = 'mysql'
       $mycnf_owner         = undef
       $mycnf_group         = undef
       $server_service_name = 'mysql'
       $xtrabackup_package_name_override = 'xtrabackup'
-
-      if $::operatingsystem =~ /(SLES|SLED)/ {
-        if versioncmp( $::operatingsystemmajrelease, '12' ) >= 0 {
-          $socket = '/run/mysql/mysql.sock'
-        } else {
-          $socket = '/var/lib/mysql/mysql.sock'
-        }
-      } else {
-        $socket = '/var/run/mysql/mysql.sock'
-      }
 
       $ssl_ca              = '/etc/mysql/cacert.pem'
       $ssl_cert            = '/etc/mysql/server-cert.pem'
@@ -182,18 +166,14 @@ class mysql::params {
       $perl_package_name   = 'perl-DBD-mysql'
       $php_package_name    = 'apache2-mod_php53'
       $python_package_name = 'python-mysql'
-      $ruby_package_name   = $::operatingsystem ? {
-        /OpenSuSE/         => 'rubygem-mysql',
-        /(SLES|SLED)/      => 'ruby-mysql',
-      }
       $client_dev_package_name = 'libmysqlclient-devel'
       $daemon_dev_package_name = 'mysql-devel'
     }
 
     'Debian': {
-      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9') >= 0 {
+      if $::operatingsystem == 'Debian' {
         $provider = 'mariadb'
-      } else {
+      } else { # Ubuntu
         $provider = 'mysql'
       }
       if $provider == 'mariadb' {
@@ -228,33 +208,38 @@ class mysql::params {
       $managed_dirs            = ['tmpdir','basedir','datadir','innodb_data_home_dir','innodb_log_group_home_dir','innodb_undo_directory','innodb_tmpdir']
 
       # mysql::bindings
-      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '10') >= 0 {
+      if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '10') >= 0) or
+      ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) {
         $java_package_name   = 'libmariadb-java'
       } else {
         $java_package_name   = 'libmysql-java'
       }
       $perl_package_name   = 'libdbd-mysql-perl'
       if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') >= 0) or
-      ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9') >= 0) {
+      ($::operatingsystem == 'Debian') {
         $php_package_name = 'php-mysql'
       } else {
         $php_package_name = 'php5-mysql'
       }
       if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') < 0) or
+      ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
       ($::operatingsystem == 'Debian') {
         $xtrabackup_package_name_override = 'percona-xtrabackup-24'
       }
+      if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
+      ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '11') >= 0){
+        $python_package_name = 'python3-mysqldb'
+      } else {
+        $python_package_name = 'python-mysqldb'
+      }
 
-      $python_package_name = 'python-mysqldb'
-      $ruby_package_name   = $::lsbdistcodename ? {
-        'jessie'           => 'ruby-mysql',
-        'stretch'          => 'ruby-mysql2',
-        'buster'           => 'ruby-mysql2',
-        'trusty'           => 'ruby-mysql',
-        'xenial'           => 'ruby-mysql',
-        'bionic'           => 'ruby-mysql2',
-        'focal'            => 'ruby-mysql2',
-        default            => 'libmysql-ruby',
+      $ruby_package_name   =  $facts['os']['release']['major']  ? {
+        '9'     => 'ruby-mysql2', # stretch
+        '10'    => 'ruby-mysql2', # buster
+        '16.04' => 'ruby-mysql', # xenial
+        '18.04' => 'ruby-mysql2', # bionic
+        '20.04' => 'ruby-mysql2', # focal
+        default => 'libmysql-ruby',
       }
     }
 
@@ -317,8 +302,8 @@ class mysql::params {
     }
 
     'FreeBSD': {
-      $client_package_name = 'databases/mysql56-client'
-      $server_package_name = 'databases/mysql56-server'
+      $client_package_name = 'databases/mysql57-client'
+      $server_package_name = 'databases/mysql57-server'
       $basedir             = '/usr/local'
       $config_file         = '/usr/local/etc/my.cnf'
       $includedir          = '/usr/local/etc/my.cnf.d'
@@ -466,8 +451,7 @@ class mysql::params {
         }
 
         default: {
-          fail(translate('Unsupported platform: puppetlabs-%{module_name} currently doesn\'t support %{osfamily} or %{os}.',
-          { 'module_name' => $module_name, 'os' => $::operatingsystem, 'osfamily' => $::osfamily }))
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::osfamily} or ${::operatingsystem}.")
         }
       }
     }
@@ -475,16 +459,13 @@ class mysql::params {
 
   case $::operatingsystem {
     'Ubuntu': {
-      # lint:ignore:only_variable_string
-      if versioncmp("${::operatingsystemmajrelease}", '14.10') > 0 {
-        # lint:endignore
-        $server_service_provider = 'systemd'
-      } else {
-        $server_service_provider = 'upstart'
-      }
+      $server_service_provider = 'systemd'
     }
     'Alpine': {
       $server_service_provider = 'rc-service'
+    }
+    'FreeBSD': {
+      $server_service_provider = 'freebsd'
     }
     default: {
       $server_service_provider = undef
@@ -564,6 +545,6 @@ class mysql::params {
 
   ## Additional graceful failures
   if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
-    fail(translate('Unsupported platform: puppetlabs-%{module_name} only supports RedHat 5.0 and beyond.', { 'module_name' => $module_name }))
+    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 6.0 and beyond.")
   }
 }

@@ -5,7 +5,7 @@
 #
 class mysql::backup::mysqlbackup (
   $backupuser               = '',
-  $backuppassword           = '',
+  Variant[String, Sensitive[String]] $backuppassword = '',
   $maxallowedpacket         = '1M',
   $backupdir                = '',
   $backupdirmode            = '0700',
@@ -29,7 +29,14 @@ class mysql::backup::mysqlbackup (
   $optional_args            = [],
   $incremental_backups      = false,
   $install_cron             = true,
+  $compression_command      = undef,
+  $compression_extension    = undef,
 ) inherits mysql::params {
+  $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
+    $backuppassword.unwrap
+  } else {
+    $backuppassword
+  }
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => mysql::password($backuppassword),
@@ -66,9 +73,7 @@ class mysql::backup::mysqlbackup (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-      ensure_packages('crontabs')
-    } elsif $::osfamily == 'RedHat' {
+    if $::osfamily == 'RedHat' {
       ensure_packages('cronie')
     } elsif $::osfamily != 'FreeBSD' {
       ensure_packages('cron')
@@ -102,7 +107,7 @@ class mysql::backup::mysqlbackup (
       'incremental_base'       => 'history:last_backup',
       'incremental_backup_dir' => $backupdir,
       'user'                   => $backupuser,
-      'password'               => $backuppassword,
+      'password'               => $backuppassword_unsensitive
     },
   }
   $options = mysql::normalise_and_deepmerge($default_options, $mysql::server::override_options)

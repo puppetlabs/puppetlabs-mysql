@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'mysql::backup::mysqldump' do
@@ -48,6 +50,25 @@ describe 'mysql::backup::mysqldump' do
             hour: 23,
             minute: 5,
           )
+        }
+      end
+
+      context 'with compression_command' do
+        let(:params) do
+          {
+            compression_command: 'TEST -TEST',
+            compression_extension: '.TEST'
+          }.merge(default_params)
+        end
+
+        it {
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
+            %r{(\| TEST -TEST)},
+          )
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
+            %r{(\.TEST)},
+          )
+          is_expected.not_to contain_package('bzip2')
         }
       end
     end

@@ -1,69 +1,47 @@
-name: "release"
+name: "Publish module"
 
-on: 
-  push:
-    branches:
-      - 'release'
-
+on:
+  workflow_dispatch:
+  
 jobs:
-  LitmusAcceptancePuppet5:
-    env:
-      HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
-      HONEYCOMB_DATASET: litmus tests
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        ruby_version: [2.5.x]
-        puppet_gem_version: [~> 6.0]
-        platform: [release_checks_5]
-        agent_family: ['puppet5']
-
+  create-github-release:
+    name: Deploy GitHub Release
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v1
-    - name: Litmus Parallel
-      uses: puppetlabs/action-litmus_parallel@master
-      with:
-        platform: ${{ matrix.platform }}
-        agent_family: ${{ matrix.agent_family }}
-  LitmusAcceptancePuppet6:
-    env:
-      HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
-      HONEYCOMB_DATASET: litmus tests
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        ruby_version: [2.5.x]
-        puppet_gem_version: [~> 6.0]
-        platform: [release_checks_6]
-        agent_family: ['puppet6']
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+          clean: true
+          fetch-depth: 0
+      - name: Get Version
+        id: gv
+        run: |
+          echo "::set-output name=ver::$(jq --raw-output .version metadata.json)"
+      - name: Create Release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "v${{ steps.gv.outputs.ver }}"
+          draft: false
+          prerelease: false
 
+  deploy-forge:
+    name: Deploy to Forge
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v1
-    - name: Litmus Parallel
-      uses: puppetlabs/action-litmus_parallel@master
-      with:
-        platform: ${{ matrix.platform }}
-        agent_family: ${{ matrix.agent_family }}
-
-  Spec:
-    runs-on: self-hosted
-
-    strategy:
-      matrix:
-        check: [parallel_spec, 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop']
-        ruby_version: [2.5.x]
-        puppet_gem_version: [~> 5.0, ~> 6.0]
-        exclude:
-        - puppet_gem_version: ~> 5.0
-          check: 'syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop'
-        - ruby_version: 2.5.x
-          puppet_gem_version: ~> 5.0
-
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: Spec Tests
-      uses: puppetlabs/action-litmus_spec@master
-      with:
-        puppet_gem_versionm: ${{ matrix.puppet_gem_version }}
-        check: ${{ matrix.check }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+          clean: true
+      - name: "PDK Build"
+        uses: docker://puppet/pdk:nightly
+        with:
+          args: 'build'
+      - name: "Push to Forge"
+        uses: docker://puppet/pdk:nightly
+        with:
+          args: 'release publish --forge-token ${{ secrets.FORGE_API_KEY }} --force'

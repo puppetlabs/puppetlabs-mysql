@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'mysql_grant' do
@@ -266,51 +268,13 @@ describe 'mysql_grant' do
     end
   end
 
-  # On Ubuntu 20.04 'ALL' now returns as the sum of it's constitute parts and so require a specific test
-  describe 'ALL privilege on newer MySQL versions', if: os[:family] == 'ubuntu' && os[:release] =~ %r{^20\.04} do
-    pp_one = <<-MANIFEST
-        mysql_user { 'all@localhost':
-          ensure => present,
-        }
-        mysql_grant { 'all@localhost/*.*':
-          user       => 'all@localhost',
-          privileges => ['ALL'],
-          table      => '*.*',
-          require    => Mysql_user['all@localhost'],
-        }
-    MANIFEST
-    it "create ['ALL'] privs" do
-      apply_manifest(pp_one, catch_failures: true)
-    end
-
-    pp_two = <<-MANIFEST
-        mysql_user { 'all@localhost':
-          ensure => present,
-        }
-        mysql_grant { 'all@localhost/*.*':
-          user       => 'all@localhost',
-          privileges => ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER', 'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES', 'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER', 'UPDATE'],
-          table      => '*.*',
-          require    => Mysql_user['all@localhost'],
-        }
-    MANIFEST
-    it "create ['ALL'] constitute parts privs" do
-      apply_manifest(pp_two, catch_changes: true)
-    end
-  end
-
   describe 'complex test' do
-    # On Ubuntu 20.04 'ALL' now returns as the sum of it's constitute parts and so is no longer idempotent when set
-    privileges = if os[:family] == 'ubuntu' && os[:release] =~ %r{^20\.04}
-                   "['SELECT', 'INSERT', 'UPDATE']"
-                 else
-                   "['ALL']"
-                 end
     pp = <<-MANIFEST
         $dbSubnet = '10.10.10.%'
 
         mysql_database { 'foo':
-          ensure => present,
+          ensure  => present,
+          charset => '#{fetch_charset}',
         }
 
         exec { 'mysql-create-table':
@@ -323,7 +287,7 @@ describe 'mysql_grant' do
         Mysql_grant {
           ensure     => present,
           options    => ['GRANT'],
-          privileges => #{privileges},
+          privileges => ['ALL'],
           table      => '*.*',
           require    => [ Mysql_database['foo'], Exec['mysql-create-table'] ],
         }
@@ -367,12 +331,12 @@ describe 'mysql_grant' do
           user       => "web@${dbSubnet}",
           require    => Mysql_user["web@${dbSubnet}"],
         }
-        mysql_user { "web@${fqdn}":
+        mysql_user { "web@${::networking['ip']}":
           ensure => present,
         }
-        mysql_grant { "web@${fqdn}/*.*":
-          user       => "web@${fqdn}",
-          require    => Mysql_user["web@${fqdn}"],
+        mysql_grant { "web@${::networking['ip']}/*.*":
+          user       => "web@${::networking['ip']}",
+          require    => Mysql_user["web@${::networking['ip']}"],
         }
         mysql_user { 'web@localhost':
           ensure => present,
@@ -481,8 +445,6 @@ describe 'mysql_grant' do
   end
 
   describe 'proxy privilieges' do
-    pre_run
-
     describe 'adding proxy privileges', if: Gem::Version.new(mysql_version) > Gem::Version.new('5.5.0') do
       pp = <<-MANIFEST
         mysql_user { 'proxy1@tester':
@@ -646,7 +608,6 @@ describe 'mysql_grant' do
     end
 
     it 'fails with fqdn' do
-      pre_run
       unless Gem::Version.new(mysql_version) > Gem::Version.new('5.7.0')
         result = run_shell('mysql -NBe "SHOW GRANTS FOR test@fqdn.com"', expect_failures: true)
         expect(result.stderr).to contain(%r{There is no such grant defined for user 'test' on host 'fqdn.com'})
@@ -725,6 +686,7 @@ describe 'mysql_grant' do
           user     => 'root1',
           password => 'password',
           sql      => '/tmp/grant_spec_table.sql',
+          charset  => #{fetch_charset},
         }
     MANIFEST
     it 'creates table' do

@@ -15,7 +15,7 @@
 ##### START CONFIG ###################################################
 
 USER=<%= @backupuser %>
-PASS='<%= @backuppassword %>'
+PASS='<%= @backuppassword_unsensitive %>'
 MAX_ALLOWED_PACKET=<%= @maxallowedpacket %>
 DIR=<%= @backupdir %>
 ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
@@ -93,18 +93,18 @@ mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read d
 do
   <%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
-    ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+    ${dbname} <% if @backupcompress %>| <%= @compression_command %> <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %><%= @compression_extension %><% end  %>
 done
 <% else -%>
 <%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
  ${ADDITIONAL_OPTIONS} \
- --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+ --all-databases <% if @backupcompress %>| <%= @compression_command %> <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %><%= @compression_extension %><% end  %>
 <% end -%>
 <% else -%>
 <% @backupdatabases.each do |db| -%>
 <%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \
- <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+ <%= db %><% if @backupcompress %>| <%= @compression_command %> <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %><%= @compression_extension %><% end  %>
 <% end -%>
 <% end -%>
 

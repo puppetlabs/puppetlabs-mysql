@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/type/mysql_plugin'
 describe Puppet::Type.type(:mysql_plugin) do

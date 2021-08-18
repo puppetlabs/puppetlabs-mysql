@@ -98,7 +98,7 @@ class mysql::server (
   $mysql_group             = $mysql::params::mysql_group,
   $mycnf_owner             = $mysql::params::mycnf_owner,
   $mycnf_group             = $mysql::params::mycnf_group,
-  $root_password           = $mysql::params::root_password,
+  Variant[String, Sensitive[String]] $root_password = $mysql::params::root_password,
   $service_enabled         = $mysql::params::server_service_enabled,
   $service_manage          = $mysql::params::server_service_manage,
   $service_name            = $mysql::params::server_service_name,
@@ -129,11 +129,11 @@ class mysql::server (
     $real_service_manage = $service_manage
   }
   if $old_root_password {
-    warning(translate('The `old_root_password` attribute is no longer used and will be removed in a future release.'))
+    warning('The `old_root_password` attribute is no longer used and will be removed in a future release.')
   }
 
   if ! empty($options) and ! empty($override_options) {
-    fail(translate('You can\'t specify $options and $override_options simultaneously, see the README section \'Customize server options\'!'))
+    fail('You can\'t specify $options and $override_options simultaneously, see the README section \'Customize server options\'!')
   }
 
   # If override_options are set, create a merged together set of options. Rightmost hashes win over left.

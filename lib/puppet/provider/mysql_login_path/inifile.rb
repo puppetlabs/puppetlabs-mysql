@@ -1,6 +1,7 @@
 # encoding: UTF-8
+# frozen_string_literal: true
 
-# See: https://github.com/puppetlabs/puppet/blob/master/lib/puppet/util/inifile.rb
+# See: https://github.com/puppetlabs/puppet/blob/main/lib/puppet/util/inifile.rb
 # This class represents the INI file and can be used to parse, modify,
 # and write INI files.
 class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
@@ -67,6 +68,8 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #   #=> an IniFile instance
   #
   def initialize(opts = {})
+    super
+
     @comment  = opts.fetch(:comment, ';#')
     @param    = opts.fetch(:parameter, '=')
     @encoding = opts.fetch(:encoding, nil)
@@ -439,7 +442,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
     # Returns `true` if the current value starts with a leading double quote.
     # Otherwise returns false.
     def leading_quote?
-      value && value.start_with?('"')
+      value&.start_with?('"')
     end
 
     # Given a string, attempt to parse out a value from that string. This
@@ -458,11 +461,11 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       if leading_quote?
         # check for a closing quote at the end of the string
         if string =~ @close_quote
-          value << Regexp.last_match(1)
+          self.value += Regexp.last_match(1)
 
           # otherwise just append the string to the value
         else
-          value << string
+          self.value += string
           continuation = true
         end
 
@@ -477,11 +480,19 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
           continuation = true
 
         when @trailing_slash
-          value ? value << Regexp.last_match(1) : self.value = Regexp.last_match(1)
+          if self.value
+            self.value += Regexp.last_match(1)
+          else
+            self.value = Regexp.last_match(1)
+          end
           continuation = true
 
         when @normal_value
-          value ? value << Regexp.last_match(1) : self.value = Regexp.last_match(1)
+          if self.value
+            self.value += Regexp.last_match(1)
+          else
+            self.value = Regexp.last_match(1)
+          end
 
         else
           error
@@ -489,7 +500,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       end
 
       if continuation
-        value << $INPUT_RECORD_SEPARATOR if leading_quote?
+        self.value += $INPUT_RECORD_SEPARATOR if leading_quote?
       else
         process_property
       end
@@ -599,8 +610,8 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
         begin
           begin
                     Integer(value)
-                  rescue
-                    Float(value)
+          rescue
+            Float(value)
                   end
         rescue
           unescape_value(value)

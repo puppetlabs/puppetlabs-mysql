@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'mysql_user' do
@@ -44,7 +46,7 @@ describe 'mysql_user' do
     end
 
     describe 'changing authentication plugin', if: (Gem::Version.new(mysql_version) > Gem::Version.new('5.5.0') && os[:release] !~ %r{^16\.04}) do
-      it 'works without errors' do
+      it 'works without errors', if: (os[:family] != 'sles' && os[:release].to_i == 15) do
         pp = <<-EOS
           mysql_user { 'ashp@localhost':
             plugin => 'auth_socket',
@@ -54,15 +56,14 @@ describe 'mysql_user' do
         idempotent_apply(pp)
       end
 
-      it 'has the correct plugin' do
+      it 'has the correct plugin', if: (os[:family] != 'sles' && os[:release].to_i == 15) do
         run_shell("mysql -NBe \"select plugin from mysql.user where CONCAT(user, '@', host) = 'ashp@localhost'\"") do |r|
           expect(r.stdout.rstrip).to eq('auth_socket')
           expect(r.stderr).to be_empty
         end
       end
 
-      it 'does not have a password' do
-        pre_run
+      it 'does not have a password', if: (os[:family] != 'sles' && os[:release].to_i == 15) do
         table = if Gem::Version.new(mysql_version) > Gem::Version.new('5.7.0')
                   'authentication_string'
                 else

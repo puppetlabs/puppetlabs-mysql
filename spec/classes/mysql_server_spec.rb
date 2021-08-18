@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'mysql::server' do
@@ -235,6 +237,29 @@ describe 'mysql::server' do
               max_connections_per_hour: nil, max_queries_per_hour: nil,
               max_updates_per_hour: nil, max_user_connections: nil,
               password_hash: nil
+            )
+          }
+        end
+
+        describe 'with users and Sensitive password_hash' do
+          let(:params) do
+            { users: {
+              'foo@localhost' => {
+                'max_connections_per_hour' => '1',
+                'max_queries_per_hour'     => '2',
+                'max_updates_per_hour'     => '3',
+                'max_user_connections'     => '4',
+                'password_hash'            => sensitive('*F3A2A51A9B0F2BE2468926B4132313728C250DBF'),
+              },
+              'foo2@localhost' => {},
+            } }
+          end
+
+          it {
+            is_expected.to contain_mysql_user('foo@localhost').with(
+              max_connections_per_hour: '1', max_queries_per_hour: '2',
+              max_updates_per_hour: '3', max_user_connections: '4',
+              password_hash: 'Sensitive [value redacted]'
             )
           }
         end

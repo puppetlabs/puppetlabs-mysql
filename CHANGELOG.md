@@ -2,9 +2,115 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v10.7.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.7.0) (2020-09-25)
+## [v12.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.0) (2021-07-26)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.7.0...v10.7.0)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.1.0...v12.0.0)
+
+### Changed
+
+- Deprecate mysql::server::mysqltuner and show it as an example [\#1409](https://github.com/puppetlabs/puppetlabs-mysql/pull/1409) ([ghoneycutt](https://github.com/ghoneycutt))
+- Deprecate mysql::server::monitor and show as an example [\#1408](https://github.com/puppetlabs/puppetlabs-mysql/pull/1408) ([ghoneycutt](https://github.com/ghoneycutt))
+- Remove EOL platforms Debian 8 and Ubuntu 14.04 [\#1406](https://github.com/puppetlabs/puppetlabs-mysql/pull/1406) ([ghoneycutt](https://github.com/ghoneycutt))
+
+## [v11.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.1.0) (2021-07-05)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.3...v11.1.0)
+
+### Added
+
+- \(MODULES-11115\) add Rocky Linux 8 compatibility [\#1405](https://github.com/puppetlabs/puppetlabs-mysql/pull/1405) ([vchepkov](https://github.com/vchepkov))
+- Use Puppet-Datatype Sensitive [\#1400](https://github.com/puppetlabs/puppetlabs-mysql/pull/1400) ([cocker-cc](https://github.com/cocker-cc))
+
+### Fixed
+
+- Fix mysql\_user parameters update on modern MySQL [\#1415](https://github.com/puppetlabs/puppetlabs-mysql/pull/1415) ([weastur](https://github.com/weastur))
+- \(IAC-1677\) Fix issue with deprecated rspec [\#1414](https://github.com/puppetlabs/puppetlabs-mysql/pull/1414) ([ghoneycutt](https://github.com/ghoneycutt))
+- Fix broken link and style in documentation [\#1403](https://github.com/puppetlabs/puppetlabs-mysql/pull/1403) ([ghoneycutt](https://github.com/ghoneycutt))
+
+## v11.0.3
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.2...v11.0.3)
+
+### Fixed
+
+- \(IAC-1430\) - Minor docs updating [\#1401](https://github.com/puppetlabs/puppetlabs-mysql/pull/1401) ([pmcmaw](https://github.com/pmcmaw))
+
+## [v11.0.2](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.2) (2021-06-07)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.1...v11.0.2)
+
+### Fixed
+
+- \(bugfix\) - Pull python3-mysqldb in Debian Bullseye [\#1396](https://github.com/puppetlabs/puppetlabs-mysql/pull/1396) ([thomasgoirand](https://github.com/thomasgoirand))
+- Update xtrabackup package name for Ubuntu 20.04 [\#1387](https://github.com/puppetlabs/puppetlabs-mysql/pull/1387) ([rsynnest](https://github.com/rsynnest))
+
+## [v11.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.1) (2021-04-19)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v11.0.0...v11.0.1)
+
+### Fixed
+
+- Fix: Puppet Unknown variable: 'mysql::params::exec\_path' [\#1378](https://github.com/puppetlabs/puppetlabs-mysql/pull/1378) ([JvGinkel](https://github.com/JvGinkel))
+- \(IAC-1497\) - Removal of unsupported `translate` dependency [\#1375](https://github.com/puppetlabs/puppetlabs-mysql/pull/1375) ([david22swan](https://github.com/david22swan))
+- \(MODULES-10926\) Fix Java binding package for Ubuntu 20.04 [\#1373](https://github.com/puppetlabs/puppetlabs-mysql/pull/1373) ([treydock](https://github.com/treydock))
+
+## [v11.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v11.0.0) (2021-03-01)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.10.0...v11.0.0)
+
+### Changed
+
+- pdksync - \(MAINT\) Remove SLES 11 support [\#1370](https://github.com/puppetlabs/puppetlabs-mysql/pull/1370) ([sanfrancrisko](https://github.com/sanfrancrisko))
+- pdksync - \(MAINT\) Remove RHEL 5 family support [\#1369](https://github.com/puppetlabs/puppetlabs-mysql/pull/1369) ([sanfrancrisko](https://github.com/sanfrancrisko))
+- pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [\#1366](https://github.com/puppetlabs/puppetlabs-mysql/pull/1366) ([carabasdaniel](https://github.com/carabasdaniel))
+
+### Added
+
+- Support compression command and extension [\#1363](https://github.com/puppetlabs/puppetlabs-mysql/pull/1363) ([dploeger](https://github.com/dploeger))
+
+## [v10.10.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.10.0) (2021-02-11)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.9.1...v10.10.0)
+
+### Added
+
+- Set default MySQL version for FreeBSD [\#1360](https://github.com/puppetlabs/puppetlabs-mysql/pull/1360) ([olevole](https://github.com/olevole))
+
+## [v10.9.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.9.1) (2021-01-06)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.9.0...v10.9.1)
+
+### Fixed
+
+- Repair check of logbindir [\#1348](https://github.com/puppetlabs/puppetlabs-mysql/pull/1348) ([qha](https://github.com/qha))
+
+## [v10.9.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.9.0) (2020-12-16)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.8.0...v10.9.0)
+
+### Added
+
+- \(FEAT\) Add support for Puppet 7 [\#1347](https://github.com/puppetlabs/puppetlabs-mysql/pull/1347) ([daianamezdrea](https://github.com/daianamezdrea))
+- \(IAC-996\) Removal of inappropriate terminology [\#1340](https://github.com/puppetlabs/puppetlabs-mysql/pull/1340) ([pmcmaw](https://github.com/pmcmaw))
+
+## [v10.8.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.8.0) (2020-11-03)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.7.1...v10.8.0)
+
+### Added
+
+- Add compatibility for Amazon Linux 2 [\#1328](https://github.com/puppetlabs/puppetlabs-mysql/pull/1328) ([greno2](https://github.com/greno2))
+
+### Fixed
+
+- \(IAC-1137\) Ensure curl package is installed for xtrabackup tests [\#1338](https://github.com/puppetlabs/puppetlabs-mysql/pull/1338) ([pmcmaw](https://github.com/pmcmaw))
+- \(MODULES-10788\) - fix for password prompt when creating mysql\_login\_path resource [\#1334](https://github.com/puppetlabs/puppetlabs-mysql/pull/1334) ([andeman](https://github.com/andeman))
+- \(MODULES-10790\) - Setting logbin results in error Unknown variable: 'managed\_dirs\_path' [\#1325](https://github.com/puppetlabs/puppetlabs-mysql/pull/1325) ([pmcmaw](https://github.com/pmcmaw))
+- Fix package for python bindings on Ubuntu 20.04 [\#1323](https://github.com/puppetlabs/puppetlabs-mysql/pull/1323) ([tobias-urdin](https://github.com/tobias-urdin))
+
+## [v10.7.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.7.1) (2020-09-25)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v10.7.0...v10.7.1)
 
 ### Fixed
 
@@ -51,7 +157,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
-- Remove legacy \(old API\) `mysql\_password` function [\#1299](https://github.com/puppetlabs/puppetlabs-mysql/pull/1299) ([alexjfisher](https://github.com/alexjfisher))
+- Remove legacy \(old API\) `mysql_password` function [\#1299](https://github.com/puppetlabs/puppetlabs-mysql/pull/1299) ([alexjfisher](https://github.com/alexjfisher))
 - Improve differences between generated mysql service id values [\#1293](https://github.com/puppetlabs/puppetlabs-mysql/pull/1293) ([ryaner](https://github.com/ryaner))
 - \(MODULES-10023\) Fix multiple xtrabackup regressions [\#1245](https://github.com/puppetlabs/puppetlabs-mysql/pull/1245) ([fraenki](https://github.com/fraenki))
 - Fix binarylog by allowing users to specify managed directories [\#1194](https://github.com/puppetlabs/puppetlabs-mysql/pull/1194) ([elfranne](https://github.com/elfranne))
@@ -79,10 +185,6 @@ All notable changes to this project will be documented in this file. The format 
 
 - Fix java and ruby binding packages for Debian 10 [\#1264](https://github.com/puppetlabs/puppetlabs-mysql/pull/1264) ([treydock](https://github.com/treydock))
 - \(MODULES-10114\) Confine fact for only when mysql is in PATH [\#1256](https://github.com/puppetlabs/puppetlabs-mysql/pull/1256) ([bFekete](https://github.com/bFekete))
-
-# Change log
-
-All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
 ## [v10.2.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v10.2.1) (2019-10-30)
 
@@ -1175,4 +1277,4 @@ configuration variables.
 \* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

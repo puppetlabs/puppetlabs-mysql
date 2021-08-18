@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/type/mysql_user'
 require 'spec_helper'
 describe Puppet::Type.type(:mysql_user) do
   context 'On MySQL 5.x' do
     before :each do
-      Facter.stubs(:value).with(:mysql_version).returns('5.6.24')
+      allow(Facter).to receive(:value).with(:mysql_version).and_return('5.6.24')
     end
 
     it 'fails with a long user name' do
@@ -18,7 +20,7 @@ describe Puppet::Type.type(:mysql_user) do
     let(:user) { Puppet::Type.type(:mysql_user).new(name: '12345678901234567@localhost', password_hash: 'pass') }
 
     before :each do
-      Facter.stubs(:value).with(:mysql_version).returns('10.0.19')
+      allow(Facter).to receive(:value).with(:mysql_version).and_return('10.0.19')
     end
 
     it 'succeeds with a long user name on MariaDB' do
@@ -92,7 +94,7 @@ describe Puppet::Type.type(:mysql_user) do
 
   context 'using a quoted username that is too long ' do
     before :each do
-      Facter.stubs(:value).with(:mysql_version).returns('5.6.24')
+      allow(Facter).to receive(:value).with(:mysql_version).and_return('5.6.24')
     end
 
     it 'fails with a size error' do

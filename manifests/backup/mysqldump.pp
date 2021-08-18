@@ -4,7 +4,7 @@
 #
 class mysql::backup::mysqldump (
   $backupuser               = '',
-  $backuppassword           = '',
+  Variant[String, Sensitive[String]] $backuppassword = '',
   $backupdir                = '',
   $maxallowedpacket         = '1M',
   $backupdirmode            = '0700',
@@ -30,9 +30,17 @@ class mysql::backup::mysqldump (
   $mysqlbackupdir_target    = undef,
   $incremental_backups      = false,
   $install_cron             = true,
+  $compression_command      = 'bzcat -zc',
+  $compression_extension    = '.bz2'
 ) inherits mysql::params {
+  $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
+    $backuppassword.unwrap
+  } else {
+    $backuppassword
+  }
+
   unless $::osfamily == 'FreeBSD' {
-    if $backupcompress {
+    if $backupcompress and $compression_command == 'bzcat -zc' {
       ensure_packages(['bzip2'])
       Package['bzip2'] -> File['mysqlbackup.sh']
     }
@@ -59,9 +67,7 @@ class mysql::backup::mysqldump (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-      ensure_packages('crontabs')
-    } elsif $::osfamily == 'RedHat' {
+    if $::osfamily == 'RedHat' {
       ensure_packages('cronie')
     } elsif $::osfamily != 'FreeBSD' {
       ensure_packages('cron')
@@ -80,6 +86,7 @@ class mysql::backup::mysqldump (
     require  => File['mysqlbackup.sh'],
   }
 
+  # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
   file { 'mysqlbackup.sh':
     ensure  => $ensure,
     path    => '/usr/local/sbin/mysqlbackup.sh',

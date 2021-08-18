@@ -9,6 +9,7 @@ require 'open3'
 require 'pty'
 require 'expect'
 require 'fileutils'
+require 'English'
 
 # Implementation for the mysql_login_path type using the Resource API.
 class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::SimpleProvider
@@ -46,7 +47,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
         "Execution of '%{str}' returned %{exit_status}: %{output}",
       ) % {
         str: command_str,
-        exit_status: $?.exitstatus,
+        exit_status: $CHILD_STATUS.exitstatus,
         output: e.message,
       }
     end
@@ -78,7 +79,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result = ''
     output = my_print_defaults_cmd(context, uid, '-s', name)
     output.split("\n").each do |line|
-      if line =~ %r{\-\-password}
+      if %r{\-\-password}.match?(line)
         result = line.sub(%r{\-\-password=}, '')
       end
     end

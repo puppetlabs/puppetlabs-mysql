@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'mysql::db define' do
@@ -12,6 +14,7 @@ describe 'mysql::db define' do
         mysql::db { 'spec1':
           user            => 'root1',
           password        => 'password',
+          charset         => #{fetch_charset},
         }
       MANIFEST
     end
@@ -40,6 +43,7 @@ describe 'mysql::db define' do
           user     => 'root1',
           password => 'password',
           sql      => '/tmp/spec.sql',
+          charset  => #{fetch_charset},
         }
       MANIFEST
     end
@@ -64,6 +68,7 @@ describe 'mysql::db define' do
           user     => 'root1',
           password => 'password',
           dbname   => 'realdb',
+          charset  => #{fetch_charset},
         }
       MANIFEST
     end

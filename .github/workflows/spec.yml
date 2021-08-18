@@ -1,0 +1,130 @@
+name: "Spec Tests"
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+  pull_request:
+
+env:
+  HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
+  HONEYCOMB_DATASET: litmus tests
+
+jobs:
+  setup_matrix:
+    name: "Setup Test Matrix"
+    runs-on: ubuntu-20.04
+    outputs:
+      spec_matrix: ${{ steps.get-matrix.outputs.spec_matrix }}
+
+    steps:
+      - name: "Honeycomb: Start recording"
+        uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
+        with:
+          apikey: ${{ env.HONEYCOMB_WRITEKEY }}
+          dataset: ${{ env.HONEYCOMB_DATASET }}
+          job-status: ${{ job.status }}
+
+      - name: "Honeycomb: Start first step"
+        run: |
+          echo STEP_ID=setup-environment >> $GITHUB_ENV
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
+      - name: Checkout Source
+        uses: actions/checkout@v2
+        if: ${{ github.repository_owner == 'puppetlabs' }}
+
+      - name: Activate Ruby 2.7
+        uses: ruby/setup-ruby@v1
+        if: ${{ github.repository_owner == 'puppetlabs' }}
+        with:
+          ruby-version: "2.7"
+          bundler-cache: true
+
+      - name: Print bundle environment
+        if: ${{ github.repository_owner == 'puppetlabs' }}
+        run: |
+          echo ::group::bundler environment
+          buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
+          echo ::endgroup::
+
+      - name: "Honeycomb: Record Setup Environment time"
+        if: ${{ github.repository_owner == 'puppetlabs' }}
+        run: |
+          buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
+          echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
+      - name: Run Static & Syntax Tests
+        if: ${{ github.repository_owner == 'puppetlabs' }}
+        run: |
+          buildevents cmd $TRACE_ID $STEP_ID 'static_syntax_checks' -- bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop
+
+      - name: Setup Spec Test Matrix
+        id: get-matrix
+        run: |
+          if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
+            buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2
+          else
+            echo  "::set-output name=spec_matrix::{}"
+          fi
+
+      - name: "Honeycomb: Record Setup Test Matrix time"
+        if: ${{ always() }}
+        run: |
+          buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
+
+  Spec:
+    name: "Spec Tests (Puppet: ${{matrix.puppet_version}}, Ruby Ver: ${{matrix.ruby_version}})"
+    needs:
+      - setup_matrix
+    if: ${{ needs.setup_matrix.outputs.spec_matrix != '{}' }}
+
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.setup_matrix.outputs.spec_matrix)}}
+
+    env:
+      BUILDEVENT_FILE: '../buildevents.txt'
+      PUPPET_GEM_VERSION: ${{ matrix.puppet_version }}
+      FACTER_GEM_VERSION: 'https://github.com/puppetlabs/facter#main'
+
+    steps:
+      - run: |
+          echo "SANITIZED_PUPPET_VERSION=$(echo '${{ matrix.puppet_version }}' | sed 's/~> //g')" >> $GITHUB_ENV
+
+      - run: |
+          echo 'puppet_version=${{ env.SANITIZED_PUPPET_VERSION }}' >> $BUILDEVENT_FILE
+
+      - name: "Honeycomb: Start first step"
+        run: |
+          echo "STEP_ID=${{ env.SANITIZED_PUPPET_VERSION }}-spec" >> $GITHUB_ENV
+          echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
+      - name: "Honeycomb: Start recording"
+        uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
+        with:
+          apikey: ${{ env.HONEYCOMB_WRITEKEY }}
+          dataset: ${{ env.HONEYCOMB_DATASET }}
+          job-status: ${{ job.status }}
+          matrix-key: ${{ env.SANITIZED_PUPPET_VERSION }}
+
+      - name: Checkout Source
+        uses: actions/checkout@v2
+
+      - name: "Activate Ruby ${{ matrix.ruby_version }}"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{matrix.ruby_version}}
+          bundler-cache: true
+
+      - name: Print bundle environment
+        run: |
+          echo ::group::bundler environment
+          buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
+          echo ::endgroup::
+
+      - name: Run parallel_spec tests
+        run: |
+          buildevents cmd $TRACE_ID $STEP_ID 'rake parallel_spec Puppet ${{ matrix.puppet_version }}, Ruby ${{ matrix.ruby_version }}' -- bundle exec rake parallel_spec

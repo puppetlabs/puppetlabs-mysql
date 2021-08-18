@@ -5,7 +5,7 @@
 class mysql::backup::xtrabackup (
   $xtrabackup_package_name  = $mysql::params::xtrabackup_package_name,
   $backupuser               = undef,
-  $backuppassword           = undef,
+  Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
   $backupdir                = '',
   $maxallowedpacket         = '1M',
   $backupmethod             = 'xtrabackup',
@@ -31,8 +31,16 @@ class mysql::backup::xtrabackup (
   $additional_cron_args     = '--backup',
   $incremental_backups      = true,
   $install_cron             = true,
+  $compression_command      = undef,
+  $compression_extension    = undef,
 ) inherits mysql::params {
   ensure_packages($xtrabackup_package_name)
+
+  $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
+    $backuppassword.unwrap
+  } else {
+    $backuppassword
+  }
 
   if $backupuser and $backuppassword {
     mysql_user { "${backupuser}@localhost":
@@ -51,9 +59,7 @@ class mysql::backup::xtrabackup (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-      ensure_packages('crontabs')
-    } elsif $::osfamily == 'RedHat' {
+    if $::osfamily == 'RedHat' {
       ensure_packages('cronie')
     } elsif $::osfamily != 'FreeBSD' {
       ensure_packages('cron')
@@ -64,7 +70,7 @@ class mysql::backup::xtrabackup (
     # Warn if old backups are removed too soon. Incremental backups will fail
     # if the full backup is no longer available.
     if ($backuprotate.convert_to(Integer) < 7) {
-      warning(translate('The value for `backuprotate` is too low, it must be set to at least 7 days when using incremental backups.'))
+      warning('The value for `backuprotate` is too low, it must be set to at least 7 days when using incremental backups.')
     }
 
     # The --target-dir uses a more predictable value for the full backup so
@@ -119,6 +125,7 @@ class mysql::backup::xtrabackup (
     group  => $backupdirgroup,
   }
 
+  # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
   file { 'xtrabackup.sh':
     ensure  => $ensure,
     path    => '/usr/local/sbin/xtrabackup.sh',
