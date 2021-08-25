@@ -142,11 +142,7 @@ describe 'mysql::server::backup class' do
           }
           case $facts['os']['family'] {
             /Debian/: {
-              if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
-                $source_url = "http://repo.percona.com/apt/percona-release_1.0-22.generic_all.deb"
-              } else {
-                $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
-              }
+              $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
 
               file { '/tmp/percona-release_latest.deb':
                 ensure => present,
@@ -267,7 +263,7 @@ describe 'mysql::server::backup class' do
           }
           case $facts['os']['family'] {
             /Debian/: {
-              $source_url = "http://repo.percona.com/apt/percona-release_1.0-22.generic_all.deb"
+              $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
 
               file { '/tmp/percona-release_latest.deb':
                 ensure => present,
