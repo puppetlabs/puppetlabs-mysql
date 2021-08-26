@@ -1556,7 +1556,7 @@ Hash a string as mysql's "PASSWORD()" function would do it
 
 #### `mysql::password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive)`
 
-The mysql::password function.
+Hash a string as mysql's "PASSWORD()" function would do it
 
 Returns: `Variant[String, Sensitive[String]]` hash
 The mysql password hash from the clear text password.
