@@ -9,6 +9,6 @@ class Puppet::Provider::MysqlLoginPath::Sensitive < Puppet::Pops::Types::PSensit
 
   def encode_with(coder)
     coder.tag = nil
-    coder.scalar = 'PPuppet::Provider::MysqlLoginPath::Sensitive <<encrypted>>'
+    coder.scalar = 'Puppet::Provider::MysqlLoginPath::Sensitive <<encrypted>>'
   end
 end
