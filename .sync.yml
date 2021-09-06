@@ -20,8 +20,14 @@ Rakefile:
 .gitpod.yml:
   unmanaged: false
 .github/workflows/nightly.yml:
+  exclude_platforms:
+    - OracleLinux-7
+    - SLES-12
   unmanaged: false
 .github/workflows/pr_test.yml:
+  exclude_platforms:
+    - OracleLinux-7
+    - SLES-12
   unmanaged: false
 .github/workflows/auto_release.yml:
   unmanaged: false
