@@ -13,6 +13,8 @@ spec/spec_helper.rb:
   - require 'spec_helper_local'
   coverage_report: true
 "  changelog_user": puppetlabs
+Rakefile:
+  changelog_max_issues: 500
 .gitpod.Dockerfile:
   unmanaged: false
 .gitpod.yml:
