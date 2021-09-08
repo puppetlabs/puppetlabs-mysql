@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+
+ensure_module_defined('Puppet::Provider::MysqlLoginPath')
 require 'puppet/provider/mysql_login_path/sensitive'
 require 'psych'
 
