@@ -4,7 +4,7 @@
 # @api private
 #
 class mysql::bindings::python {
-  package { 'python-mysqldb':
+  package { $mysql::bindings::python_package_name:
     ensure          => $mysql::bindings::python_package_ensure,
     install_options => $mysql::bindings::install_options,
     name            => $mysql::bindings::python_package_name,
