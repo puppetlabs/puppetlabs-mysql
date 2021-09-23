@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+
 env:
   HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
   HONEYCOMB_DATASET: litmus tests
@@ -16,6 +17,7 @@ jobs:
       matrix: ${{ steps.get-matrix.outputs.matrix }}
 
     steps:
+     
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
@@ -27,7 +29,6 @@ jobs:
       run: |
         echo STEP_ID=setup-environment >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Checkout Source
       uses: actions/checkout@v2
       if: ${{ github.repository_owner == 'puppetlabs' }}
@@ -45,29 +46,27 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
-
+   
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
         echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Setup Acceptance Test Matrix
       id: get-matrix
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2
+          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2 --exclude-platforms '["Debian-9", "Debian-10", "Debian-11"]'
         else
           echo  "::set-output name=matrix::{}"
         fi
-
+  
     - name: "Honeycomb: Record Setup Test Matrix time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
-
   Acceptance:
     name: "${{matrix.platforms.label}}, ${{matrix.collection}}"
     needs:
