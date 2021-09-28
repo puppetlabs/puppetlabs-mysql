@@ -12,6 +12,7 @@ describe 'mysql::server::backup class' do
         ]:
           user     => 'backup',
           password => 'secret',
+          charset  => #{fetch_charset},
         }
 
         class { 'mysql::server::backup':
@@ -72,6 +73,7 @@ describe 'mysql::server::backup class' do
           ]:
             user     => 'backup',
             password => 'secret',
+            charset  => #{fetch_charset},
           }
 
           class { 'mysql::server::backup':
@@ -136,6 +138,7 @@ describe 'mysql::server::backup class' do
           ]:
             user     => 'backup',
             password => 'secret',
+            charset  => #{fetch_charset},
           }
           case $facts['os']['family'] {
             /Debian/: {
@@ -260,6 +263,7 @@ describe 'mysql::server::backup class' do
           ]:
             user     => 'backup',
             password => 'secret',
+            charset  => #{fetch_charset},
           }
           case $facts['os']['family'] {
             /Debian/: {

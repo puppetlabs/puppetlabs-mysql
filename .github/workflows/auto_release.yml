@@ -46,8 +46,14 @@ jobs:
       run: |
         echo "::set-output name=ver::$(jq --raw-output .version metadata.json)"
 
-    - name: "Commit changes"
+    - name: "Check if a release is necessary"
       if: ${{ github.repository_owner == 'puppetlabs' }}
+      id: check
+      run: |
+        git diff --quiet CHANGELOG.md && echo "::set-output name=release::false" || echo "::set-output name=release::true"
+
+    - name: "Commit changes"
+      if: ${{ github.repository_owner == 'puppetlabs' && steps.check.outputs.release == 'true' }}
       run: |
         git config --local user.email "${{ github.repository_owner }}@users.noreply.github.com"
         git config --local user.name "GitHub Action"
@@ -57,7 +63,7 @@ jobs:
     - name: Create Pull Request
       id: cpr
       uses: puppetlabs/peter-evans-create-pull-request@v3
-      if: ${{ github.repository_owner == 'puppetlabs' }}
+      if: ${{ github.repository_owner == 'puppetlabs' && steps.check.outputs.release == 'true' }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "Release prep v${{ steps.gv.outputs.ver }}"
@@ -73,7 +79,7 @@ jobs:
         labels: "maintenance"
 
     - name: PR outputs
-      if: ${{ github.repository_owner == 'puppetlabs' }}
+      if: ${{ github.repository_owner == 'puppetlabs' && steps.check.outputs.release == 'true' }}
       run: |
         echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
         echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
