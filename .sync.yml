@@ -21,8 +21,16 @@ Rakefile:
   unmanaged: false
 .github/workflows/nightly.yml:
   unmanaged: false
+  exclude_platforms:
+    - Debian-9
+    - Debian-10
+    - Debian-11
 .github/workflows/pr_test.yml:
   unmanaged: false
+  exclude_platforms:
+    - Debian-9
+    - Debian-10
+    - Debian-11
 .github/workflows/auto_release.yml:
   unmanaged: false
 .github/workflows/spec.yml:
