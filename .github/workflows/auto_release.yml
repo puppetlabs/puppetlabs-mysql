@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+    
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
@@ -25,7 +26,6 @@ jobs:
       run: |
         echo STEP_ID="auto-release" >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: "Checkout Source"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       uses: actions/checkout@v2
@@ -83,7 +83,7 @@ jobs:
       run: |
         echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
         echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
-
+ 
     - name: "Honeycomb: Record finish step"
       if: ${{ always() }}
       run: |
