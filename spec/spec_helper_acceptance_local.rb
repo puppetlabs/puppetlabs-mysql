@@ -40,6 +40,10 @@ def fetch_charset
                end
 end
 
+def fetch_os_name
+  @facter_os_name ||= LitmusHelper.instance.run_shell('facter os.name').stdout.delete("\n").downcase
+end
+
 RSpec.configure do |c|
   c.before :suite do
     if os[:family] == 'debian' || os[:family] == 'ubuntu'
