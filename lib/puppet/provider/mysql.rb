@@ -48,6 +48,12 @@ class Puppet::Provider::Mysql < Puppet::Provider
     "--defaults-extra-file=#{Facter.value(:root_home)}/.my.cnf" if File.file?("#{Facter.value(:root_home)}/.my.cnf")
   end
 
+  # Optional puppet-defaults file
+  def self.puppet_defaults_file
+    "--defaults-file=#{Facter.value(:root_home)}/.my.puppet.cnf" if File.file?("#{Facter.value(:root_home)}/.my.puppet.cnf")
+  end
+
+
   def self.mysqld_type
     # find the mysql "dialect" like mariadb / mysql etc.
     mysqld_version_string.scan(%r{mariadb}i) { return 'mariadb' }
@@ -101,11 +107,17 @@ class Puppet::Provider::Mysql < Puppet::Provider
     self.class.defaults_file
   end
 
+  def puppet_defaults_file
+    self.class.puppet_defaults_file
+  end
+
   def self.mysql_caller(text_of_sql, type)
     if type.eql? 'system'
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
         ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
         mysql_raw([system_database, '-e', text_of_sql].flatten.compact).scrub
+      elsif File.file?("#{Facter.value(:root_home)}/.my.puppet.cnf")
+        mysql_raw([puppet_defaults_file, system_database, '-e', text_of_sql].flatten.compact).scrub
       else
         mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact).scrub
       end
@@ -113,6 +125,8 @@ class Puppet::Provider::Mysql < Puppet::Provider
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
         ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
         mysql_raw(['-NBe', text_of_sql].flatten.compact).scrub
+      elsif File.file?("#{Facter.value(:root_home)}/.my.puppet.cnf")
+        mysql_raw([puppet_defaults_file, '-NBe', text_of_sql].flatten.compact).scrub
       else
         mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact).scrub
       end
