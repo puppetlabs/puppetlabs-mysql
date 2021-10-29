@@ -228,7 +228,8 @@ describe 'mysql::backup::xtrabackup' do
 
       context 'with mariabackup' do
         let(:params) do
-          { backupmethod: 'mariabackup' }.merge(default_params)
+          { backupmethod: 'mariabackup',
+            backupmethod_package: 'mariadb-backup' }.merge(default_params)
         end
 
         it 'contain the mariabackup executor' do

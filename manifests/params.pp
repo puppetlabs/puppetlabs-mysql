@@ -37,7 +37,6 @@ class mysql::params {
   $client_dev_package_provider = undef
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
-  $xtrabackup_package_name_default = 'percona-xtrabackup'
 
   case $::osfamily {
     'RedHat': {
@@ -61,11 +60,11 @@ class mysql::params {
           if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
             $provider = 'mariadb'
             if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
-              $xtrabackup_package_name_override = 'percona-xtrabackup-24'
+              $xtrabackup_package_name = 'percona-xtrabackup-24'
             }
           } else {
             $provider = 'mysql'
-            $xtrabackup_package_name_override = 'percona-xtrabackup-20'
+            $xtrabackup_package_name = 'percona-xtrabackup-20'
           }
           if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
             $java_package_name   = 'mariadb-java-client'
@@ -154,7 +153,7 @@ class mysql::params {
       $mycnf_owner         = undef
       $mycnf_group         = undef
       $server_service_name = 'mysql'
-      $xtrabackup_package_name_override = 'xtrabackup'
+      $xtrabackup_package_name = 'xtrabackup'
 
       $ssl_ca              = '/etc/mysql/cacert.pem'
       $ssl_cert            = '/etc/mysql/server-cert.pem'
@@ -224,7 +223,7 @@ class mysql::params {
       if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') < 0) or
       ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
       ($::operatingsystem == 'Debian') {
-        $xtrabackup_package_name_override = 'percona-xtrabackup-24'
+        $xtrabackup_package_name = 'percona-xtrabackup-24'
       }
       if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
       ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '11') >= 0) {
@@ -511,10 +510,8 @@ class mysql::params {
     },
   }
 
-  if defined('$xtrabackup_package_name_override') {
-    $xtrabackup_package_name = pick($xtrabackup_package_name_override, $xtrabackup_package_name_default)
-  } else {
-    $xtrabackup_package_name = $xtrabackup_package_name_default
+  if !defined('$xtrabackup_package_name') {
+    $xtrabackup_package_name = 'percona-xtrabackup'
   }
 
   ## Additional graceful failures
