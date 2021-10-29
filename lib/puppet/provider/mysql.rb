@@ -53,7 +53,6 @@ class Puppet::Provider::Mysql < Puppet::Provider
     "--defaults-file=#{Facter.value(:root_home)}/.my.puppet.cnf" if File.file?("#{Facter.value(:root_home)}/.my.puppet.cnf")
   end
 
-
   def self.mysqld_type
     # find the mysql "dialect" like mariadb / mysql etc.
     mysqld_version_string.scan(%r{mariadb}i) { return 'mariadb' }
