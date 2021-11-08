@@ -2,7 +2,9 @@ name: "PR Testing"
 
 on: [pull_request]
 
+
 env:
+ 
   HONEYCOMB_WRITEKEY: 7f3c63a70eecc61d635917de46bea4e6
   HONEYCOMB_DATASET: litmus tests
 
@@ -14,6 +16,7 @@ jobs:
       matrix: ${{ steps.get-matrix.outputs.matrix }}
 
     steps:
+    
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
@@ -25,7 +28,6 @@ jobs:
       run: |
         echo STEP_ID=setup-environment >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Checkout Source
       uses: actions/checkout@v2
       if: ${{ github.repository_owner == 'puppetlabs' }}
@@ -43,14 +45,13 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
-
+  
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
         echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Run validation steps
       run: |
         bundle exec rake validate
@@ -60,16 +61,15 @@ jobs:
       id: get-matrix
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2
+          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2 --exclude-platforms '["Debian-9", "Debian-10", "Debian-11"]'
         else
           echo  "::set-output name=matrix::{}"
         fi
-
+ 
     - name: "Honeycomb: Record Setup Test Matrix time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
-
   Acceptance:
     name: "${{matrix.platforms.label}}, ${{matrix.collection}}"
     needs:
@@ -89,7 +89,7 @@ jobs:
         echo 'platform=${{ matrix.platforms.image }}' >> $BUILDEVENT_FILE
         echo 'collection=${{ matrix.collection }}' >> $BUILDEVENT_FILE
         echo 'label=${{ matrix.platforms.label }}' >> $BUILDEVENT_FILE
-
+ 
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
@@ -102,7 +102,6 @@ jobs:
       run: |
         echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-1 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Checkout Source
       uses: actions/checkout@v2
 
@@ -117,14 +116,13 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
-
+ 
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
         echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Provision test environment
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision ${{ matrix.platforms.image }}' -- bundle exec rake 'litmus:provision[${{matrix.platforms.provider}},${{ matrix.platforms.image }}]'
@@ -150,7 +148,7 @@ jobs:
     - name: Install module
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_module' -- bundle exec rake 'litmus:install_module'
-
+ 
     - name: "Honeycomb: Record deployment times"
       if: ${{ always() }}
       run: |
@@ -159,18 +157,16 @@ jobs:
         echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-3 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
         echo ::endgroup::
-
     - name: Run acceptance tests
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:acceptance:parallel' -- bundle exec rake 'litmus:acceptance:parallel'
-
+ 
     - name: "Honeycomb: Record acceptance testing times"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Run acceptance tests'
         echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-4 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
-
     - name: Remove test environment
       if: ${{ always() }}
       continue-on-error: true
@@ -182,7 +178,7 @@ jobs:
           echo
           echo ::endgroup::
         fi
-
+ 
     - name: "Honeycomb: Record removal times"
       if: ${{ always() }}
       run: |
