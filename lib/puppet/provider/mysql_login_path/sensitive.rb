@@ -6,4 +6,9 @@ class Puppet::Provider::MysqlLoginPath::Sensitive < Puppet::Pops::Types::PSensit
   def ==(other)
     return true if other.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive) && unwrap == other.unwrap
   end
+
+  def encode_with(coder)
+    coder.tag = nil
+    coder.scalar = 'Puppet::Provider::MysqlLoginPath::Sensitive <<encrypted>>'
+  end
 end

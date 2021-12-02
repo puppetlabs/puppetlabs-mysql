@@ -698,4 +698,21 @@ describe 'mysql_grant' do
       expect(result.exit_code).to be_zero
     end
   end
+
+  describe 'multiple lines privileges', if: Gem::Version.new(mysql_version) > Gem::Version.new('8.0.0') && Gem::Version.new(mysql_version) < Gem::Version.new('10.0.0') do
+    pp = <<-MANIFEST
+        mysql_user { 'multi@localhost':
+          ensure => present,
+        }
+        mysql_grant { 'multi@localhost/*.*':
+          user       => 'multi@localhost',
+          privileges => ['SELECT', 'INSERT', 'UPDATE', 'BACKUP_ADMIN', 'FLUSH_TABLES'],
+          table      => '*.*',
+          require    => Mysql_user['multi@localhost'],
+        }
+    MANIFEST
+    it 'check idempotency in MySQL 8' do
+      idempotent_apply(pp)
+    end
+  end
 end
