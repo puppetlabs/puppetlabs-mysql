@@ -18,9 +18,9 @@
 # @param dbname
 #   The name of the database to create.
 # @param charset
-#   The character set for the database.
+#   The character set for the database. Must be set with collate to avoid corrective changes.
 # @param collate
-#   The collation for the database.
+#   The collation for the database. Must be set with charset to avoid corrective changes.
 # @param host
 #   The host to use as part of user@host for grants.
 # @param grant

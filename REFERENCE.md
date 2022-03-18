@@ -1138,7 +1138,7 @@ Default value: `$name`
 
 Data type: `Any`
 
-The character set for the database.
+The character set for the database. Must be set with collate to avoid corrective changes.
 
 Default value: `'utf8'`
 
@@ -1146,7 +1146,7 @@ Default value: `'utf8'`
 
 Data type: `Any`
 
-The collation for the database.
+The collation for the database. Must be set with charset to avoid corrective changes.
 
 Default value: `'utf8_general_ci'`
 
@@ -1556,7 +1556,7 @@ Hash a string as mysql's "PASSWORD()" function would do it
 
 #### `mysql::password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive)`
 
-Hash a string as mysql's "PASSWORD()" function would do it
+The mysql::password function.
 
 Returns: `Variant[String, Sensitive[String]]` hash
 The mysql password hash from the clear text password.
