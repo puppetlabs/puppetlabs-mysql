@@ -1138,7 +1138,7 @@ Default value: `$name`
 
 Data type: `Any`
 
-The character set for the database. Must be set with collate to avoid corrective changes.
+The character set for the database. Must have the same value as collate to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 
 Default value: `'utf8'`
 
@@ -1146,7 +1146,7 @@ Default value: `'utf8'`
 
 Data type: `Any`
 
-The collation for the database. Must be set with charset to avoid corrective changes.
+The collation for the database.  Must have the same value as charset to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 
 Default value: `'utf8_general_ci'`
 
