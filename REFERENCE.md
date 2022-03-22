@@ -1146,7 +1146,7 @@ Default value: `'utf8'`
 
 Data type: `Any`
 
-The collation for the database.  Must have the same value as charset to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
+The collation for the database. Must have the same value as charset to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 
 Default value: `'utf8_general_ci'`
 
