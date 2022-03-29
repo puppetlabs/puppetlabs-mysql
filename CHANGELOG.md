@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v12.0.2](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.2) (2022-03-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.1...v12.0.2)
+
+### Fixed
+
+- add mysql_native_password plugin to authentication_string vs password [\#1441](https://github.com/puppetlabs/puppetlabs-mysql/pull/1441) ([Heidistein](https://github.com/Heidistein))
+- fix Error: Transaction store file transactionstore.yaml is corrupt [\#1429](https://github.com/puppetlabs/puppetlabs-mysql/pull/1429) ([andeman](https://github.com/andeman))
+- pdksync - \(MAINT\) Remove RHEL 5 family support [\#1369](https://github.com/puppetlabs/puppetlabs-mysql/pull/1369) ([sanfrancrisko](https://github.com/sanfrancrisko))
+- pdksync - \(MAINT\) Remove SLES 11 support [\#1370](https://github.com/puppetlabs/puppetlabs-mysql/pull/1370) ([sanfrancrisko](https://github.com/sanfrancrisko))
+- pdksync - (GH-iac-334) Remove Support for Ubuntu 16.04 [\#1457](https://github.com/puppetlabs/puppetlabs-mysql/pull/1457) ([david22swan](https://github.com/david22swan))
+
 ## [v12.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.1) (2021-08-26)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.0...v12.0.1)
