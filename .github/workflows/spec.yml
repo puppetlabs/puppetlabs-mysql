@@ -54,10 +54,10 @@ jobs:
           buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
           echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
           echo STEP_START=$(date +%s) >> $GITHUB_ENV
-      - name: Run Static & Syntax Tests
-        if: ${{ github.repository_owner == 'puppetlabs' }}
-        run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'static_syntax_checks' -- bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop
+#       - name: Run Static & Syntax Tests
+#         if: ${{ github.repository_owner == 'puppetlabs' }}
+#         run: |
+#           buildevents cmd $TRACE_ID $STEP_ID 'static_syntax_checks' -- bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop
 
       - name: Setup Spec Test Matrix
         id: get-matrix
