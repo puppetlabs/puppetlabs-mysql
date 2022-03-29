@@ -11,6 +11,7 @@ env:
 
 jobs:
   setup_matrix:
+    if: ${{ github.repository_owner == 'puppetlabs' }}
     name: "Setup Test Matrix"
     runs-on: ubuntu-20.04
     outputs:
@@ -186,7 +187,7 @@ jobs:
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Remove test environment'
 
   slack-workflow-status:
-    if: always()
+    if: ${{ github.repository_owner == 'puppetlabs' }}
     name: Post Workflow Status To Slack
     needs:
       - Acceptance
