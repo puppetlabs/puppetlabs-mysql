@@ -464,7 +464,7 @@ describe 'mysql_grant' do
 
       it 'finds the user #stdout' do
         run_shell('mysql -NBe "SHOW GRANTS FOR proxy1@tester"') do |r|
-          expect(r.stdout).to match(%r{GRANT PROXY ON 'proxy_user'@'proxy_host' TO ['|`]proxy1['|`]@['|`]tester['|`]})
+          expect(r.stdout).to match(%r{GRANT USAGE ON *.* TO ['|`]proxy1['|`]@['|`]tester['|`]\nGRANT PROXY ON ['|`]proxy_user['|`]@['|`]proxy_host['|`] TO ['|`]proxy1['|`]@['|`]tester['|`]\n})
           expect(r.stderr).to be_empty
         end
       end
