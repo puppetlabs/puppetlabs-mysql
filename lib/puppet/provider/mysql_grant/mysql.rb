@@ -69,8 +69,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           sorted_privileges = ['ALL']
 
         # Currently there is an issue with the behaviour of the module which was highlighted by the 'complex test' test case in 'mysql_grant_spec'. The module, upon retrieving all privileges from an
-        # user, does not take into account that the latest version of mysql does state dynamic privileges outside of 'ALL PRIVILEGES' (shortened to 'ALL'). This is a workaround to remove the
-        # unnecesary privileges from the sorted_privileges list which is used to check for idempotency in test cases.
+        # user, does not take into account that the latest version of mysql now includes dynamic privileges which are returned alongside the original static privileges and are set by 'ALL PRIVILEGES' 
+        # (shortened to 'ALL'). This is a workaround to remove the unnecesary privileges from the sorted_privileges list which is used to check for idempotency in test cases.
         elsif sorted_privileges == ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN',
                                     'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
                                     'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN',
