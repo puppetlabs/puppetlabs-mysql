@@ -68,8 +68,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
                                                                    'UPDATE']
           sorted_privileges = ['ALL']
 
-        # Currently there is an issue with the 'complex test' test case in 'mysql_grant_spec' where the methods will try to pass the array below causing an error where the system is trying to apply
-        # twice dynamic privileges to an user. This fixes the test case but it is only a workaround.
+        # Currently there is an issue with the behaviour of the module which was highlighted by the 'complex test' test case in 'mysql_grant_spec'. The module, upon being asked to grant all privileges to 
+        # users will try to pass the array below, causing an error where the system is trying to apply twice the dynamic privileges. This is only a workaround fix that blocks the duplicated privileges from being
+        # applied.
         elsif sorted_privileges == ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN',
                                     'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
                                     'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN',
