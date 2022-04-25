@@ -167,6 +167,14 @@ class mysql::server (
     ~> Class['mysql::server::service']
   }
 
+
+  if $_options['mysqld']['ssl-disable'] {
+    notify { 'ssl-disable':
+      message => 'Disabling SSL is evil! You should never ever do this except
+                if you are forced to use a mysql version compiled without SSL support',
+    }
+  }
+
   Anchor['mysql::server::start']
   -> Class['mysql::server::config']
   -> Class['mysql::server::install']
@@ -175,4 +183,5 @@ class mysql::server (
   -> Class['mysql::server::service']
   -> Class['mysql::server::root_password']
   -> Class['mysql::server::providers']
--> Anchor['mysql::server::end'] }
+  -> Anchor['mysql::server::end']
+}
