@@ -15,10 +15,8 @@ end
 
 Facter.add('mysql_server_id') do
   setcode do
-    begin
-      mysql_id_get
-    rescue
-      nil
-    end
+    mysql_id_get
+  rescue
+    nil
   end
 end
