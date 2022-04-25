@@ -107,7 +107,7 @@ class mysql::backup::mysqlbackup (
       'incremental_base'       => 'history:last_backup',
       'incremental_backup_dir' => $backupdir,
       'user'                   => $backupuser,
-      'password'               => $backuppassword_unsensitive
+      'password'               => $backuppassword_unsensitive,
     },
   }
   $options = mysql::normalise_and_deepmerge($default_options, $mysql::server::override_options)
