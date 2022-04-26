@@ -34,7 +34,7 @@ class mysql::server::config {
   }
 
   #Debian: Creating world readable directories before installing.
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       if $managed_dirs {
         $managed_dirs.each | $entry | {
