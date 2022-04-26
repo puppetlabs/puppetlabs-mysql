@@ -200,5 +200,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK }}
           # Optional Input
-          channel: '#team-ia-bots'
+          channel: '#team-cat-bots'
           name: 'GABot'
