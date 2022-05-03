@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper_acceptance'
-export_locales
+# export_locales
 
 describe 'mysql class' do
   describe 'advanced config' do
