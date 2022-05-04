@@ -15,6 +15,6 @@
     {'label':'Scientific-6','provider':'provision::docker','image':'litmusimage/scientificlinux:6'},
     {'label':'Scientific-7','provider':'provision::docker','image':'litmusimage/scientificlinux:7'},
     {'label':'Ubuntu-18.04','provider':'provision::docker','image':'litmusimage/ubuntu:18.04'},
-    {'label':'Ubuntu-20.04','provider':'provision::docker','image':'litmusimage/ubuntu:20.04'}
-    ],'collection':['puppet6-nightly','puppet7-nightly']}
+    {'label':'Ubuntu-20.04','provider':'provision::docker','image':'litmusimage/ubuntu:20.04'}],
+    'collection':['puppet6','puppet7']}
     

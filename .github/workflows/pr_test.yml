@@ -1,4 +1,4 @@
-name: 'PR Testing'
+name: "PR Testing"
 
 on: [pull_request]
 
@@ -10,21 +10,21 @@ env:
 
 jobs:
   setup_matrix:
-    name: 'Setup Test Matrix'
+    name: "Setup Test Matrix"
     runs-on: ubuntu-20.04
     outputs:
       matrix: ${{ steps.get-matrix.outputs.matrix }}
 
     steps:
     
-    - name: 'Honeycomb: Start recording'
+    - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
         apikey: ${{ env.HONEYCOMB_WRITEKEY }}
         dataset: ${{ env.HONEYCOMB_DATASET }}
         job-status: ${{ job.status }}
 
-    - name: 'Honeycomb: Start first step'
+    - name: "Honeycomb: Start first step"
       run: |
         echo STEP_ID=setup-environment >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
@@ -36,7 +36,7 @@ jobs:
       uses: ruby/setup-ruby@v1
       if: ${{ github.repository_owner == 'puppetlabs' }}
       with:
-        ruby-version: '2.7'
+        ruby-version: "2.7"
         bundler-cache: true
 
     - name: Print bundle environment
@@ -46,7 +46,7 @@ jobs:
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
   
-    - name: 'Honeycomb: Record Setup Environment time'
+    - name: "Honeycomb: Record Setup Environment time"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
@@ -61,17 +61,17 @@ jobs:
       id: get-matrix
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          echo  "::set-output name=matrix::{'platforms':[{'label':'AlmaLinux-8','provider':'provision::docker','image':'litmusimage/almalinux:8'},{'label':'CentOS-7','provider':'provision::docker','image':'litmusimage/centos:7'},{'label':'CentOS-8','provider':'provision::docker','image':'litmusimage/centos:stream8'},{'label':'Debian-10','provider':'provision::provision_service','image':'debian-10'},{'label':'Debian-11','provider':'provision::provision_service','image':'debian-11'},{'label':'Debian-9','provider':'provision::provision_service','image':'debian-9'},{'label':'OracleLinux-6','provider':'provision::docker','image':'litmusimage/oraclelinux:6'},{'label':'OracleLinux-7','provider':'provision::docker','image':'litmusimage/oraclelinux:7'},{'label':'RedHat-7','provider':'provision::provision_service','image':'rhel-7'},{'label':'RedHat-8','provider':'provision::provision_service','image':'rhel-8'},{'label':'Rocky-8','provider':'provision::docker','image':'litmusimage/rockylinux:8'},{'label':'SLES-12','provider':'provision::provision_service','image':'sles-12'},{'label':'SLES-15','provider':'provision::provision_service','image':'sles-15'},{'label':'Scientific-6','provider':'provision::docker','image':'litmusimage/scientificlinux:6'},{'label':'Scientific-7','provider':'provision::docker','image':'litmusimage/scientificlinux:7'},{'label':'Ubuntu-18.04','provider':'provision::docker','image':'litmusimage/ubuntu:18.04'},{'label':'Ubuntu-20.04','provider':'provision::docker','image':'litmusimage/ubuntu:20.04'}],'collection':['puppet6','puppet7']}"
+          echo  "::set-output name=matrix::$(cat local_matrix_builder)"
         else
           echo  "::set-output name=matrix::{}"
         fi
  
-    - name: 'Honeycomb: Record Setup Test Matrix time'
+    - name: "Honeycomb: Record Setup Test Matrix time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Test Matrix'
   Acceptance:
-    name: '${{matrix.platforms.label}}, ${{matrix.collection}}'
+    name: "${{matrix.platforms.label}}, ${{matrix.collection}}"
     needs:
       - setup_matrix
     if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
@@ -90,7 +90,7 @@ jobs:
         echo 'collection=${{ matrix.collection }}' >> $BUILDEVENT_FILE
         echo 'label=${{ matrix.platforms.label }}' >> $BUILDEVENT_FILE
  
-    - name: 'Honeycomb: Start recording'
+    - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
         apikey: ${{ env.HONEYCOMB_WRITEKEY }}
@@ -98,7 +98,7 @@ jobs:
         job-status: ${{ job.status }}
         matrix-key: ${{ matrix.platforms.label }}-${{ matrix.collection }}
 
-    - name: 'Honeycomb: start first step'
+    - name: "Honeycomb: start first step"
       run: |
         echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-1 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
@@ -108,7 +108,7 @@ jobs:
     - name: Activate Ruby 2.7
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.7'
+        ruby-version: "2.7"
         bundler-cache: true
 
     - name: Print bundle environment
@@ -117,7 +117,7 @@ jobs:
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
  
-    - name: 'Honeycomb: Record Setup Environment time'
+    - name: "Honeycomb: Record Setup Environment time"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
@@ -138,7 +138,7 @@ jobs:
         then
           FILE='inventory.yaml'
         fi
-        sed -e 's/password: .*/password: '[redacted]'/' < $FILE || true
+        sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
         echo ::endgroup::
 
     - name: Install agent
@@ -149,7 +149,7 @@ jobs:
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_module' -- bundle exec rake 'litmus:install_module'
  
-    - name: 'Honeycomb: Record deployment times'
+    - name: "Honeycomb: Record deployment times"
       if: ${{ always() }}
       run: |
         echo ::group::honeycomb step
@@ -161,7 +161,7 @@ jobs:
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:acceptance:parallel' -- bundle exec rake 'litmus:acceptance:parallel'
  
-    - name: 'Honeycomb: Record acceptance testing times'
+    - name: "Honeycomb: Record acceptance testing times"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Run acceptance tests'
@@ -179,7 +179,7 @@ jobs:
           echo ::endgroup::
         fi
  
-    - name: 'Honeycomb: Record removal times'
+    - name: "Honeycomb: Record removal times"
       if: ${{ always() }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Remove test environment'
