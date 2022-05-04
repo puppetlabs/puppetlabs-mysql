@@ -62,7 +62,6 @@ jobs:
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
           echo  "::set-output name=matrix::{'platforms':[{'label':'Debian-9','provider':'provision::provision_service','image':'debian-9'},{'label':'Debian-10','provider':'provision::provision_service','image':'debian-10'}],'collection':['puppet6','puppet7']}"
-          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2 --exclude-platforms '["Debian-9", "Debian-10", "Debian-11"]'
         else
           echo  "::set-output name=matrix::{}"
         fi
