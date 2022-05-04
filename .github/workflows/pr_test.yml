@@ -61,7 +61,7 @@ jobs:
       id: get-matrix
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          echo  "::set-output name=matrix::$(cat local_matrix_builder)"
+          echo  "::set-output name=matrix::{$(cat local_matrix_builder)}"
         else
           echo  "::set-output name=matrix::{}"
         fi
