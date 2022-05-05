@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'spec_helper_acceptance'
-export_locales
+if os[:family] != 'debian'
+  export_locales
+end
 
 describe 'mysql class' do
   describe 'advanced config' do
