@@ -3,9 +3,9 @@
 require 'spec_helper_acceptance'
 
 # The export_locales method conflicts with our testing when the target system uses MariaDB, therefore it is being disabled for those systems.
-if os[:family] != 'debian' && os[:family] != 'ubuntu'
-  export_locales
-end
+# if os[:family] != 'debian' && os[:family] != 'ubuntu'
+export_locales
+# end
 
 describe 'mysql class' do
   describe 'advanced config' do
