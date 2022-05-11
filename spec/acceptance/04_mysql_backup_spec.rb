@@ -250,7 +250,7 @@ describe 'mysql::server::backup class' do
   end
 
   context 'with xtrabackup enabled and incremental backups disabled' do
-    context 'should work with no errors', if: ((os[:family] == 'debian') || (os[:family] == 'ubuntu' && os[:release] =~ %r{^18\.04|^20\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 7)) do # rubocop:disable Layout/LineLength
+    context 'should work with no errors', if: ((os[:family] == 'debian') || (os[:family] == 'ubuntu' && os[:release] =~ %r{^18\.04|^20\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 7)) do
       pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
