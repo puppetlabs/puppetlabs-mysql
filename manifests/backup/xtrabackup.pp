@@ -57,7 +57,8 @@ class mysql::backup::xtrabackup (
         privileges => ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES'],
         require    => Mysql_user["${backupuser}@localhost"],
       }
-    }else {
+    }
+    else {
       mysql_grant { "${backupuser}@localhost/*.*":
         ensure     => $ensure,
         user       => "${backupuser}@localhost",
