@@ -105,7 +105,12 @@ describe 'mysql::backup::xtrabackup' do
               ensure: 'present',
               user: 'backupuser@localhost',
               table: '*.*',
-              privileges: ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
+              privileges:
+              if facts[:osfamily] == 'debian' && facts[:operatingsystemmajrelease == '11']
+                ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT']
+              else
+                ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES']
+              end,
             )
             .that_requires('Mysql_user[backupuser@localhost]')
         end
