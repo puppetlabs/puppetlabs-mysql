@@ -4,7 +4,7 @@ require 'spec_helper_acceptance'
 
 # The export_locales method conflicts with our testing when the target system uses MariaDB, therefore it is being disabled for those systems.
 # if os[:family] != 'debian' && os[:family] != 'ubuntu'
-# export_locales
+export_locales
 # end
 
 describe 'mysql class' do
@@ -60,9 +60,7 @@ describe 'mysql class' do
         class { '::mysql::server':
         override_options => {
                   'mysqld' => {
-                  'log-bin' => '/var/log/mariadb/mariadb-bin.log',},
-                  'LANG' => 'C',
-                  'LC_ALL' => 'C'
+                  'log-bin' => '/var/log/mariadb/mariadb-bin.log',}
            }
           }
           MANIFEST
