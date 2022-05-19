@@ -21,15 +21,16 @@ end
 
 def export_locales
   LitmusHelper.instance.run_shell('echo export PATH=/opt/puppetlabs/bin:$PATH > ~/.bashrc')
-  LitmusHelper.instance.run_shell('echo export LC_ALL=en_US.UTF-8 > /etc/profile.d/my-custom.lang.sh')
+  LitmusHelper.instance.run_shell('echo export LC_ALL=C > /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo "## US English ##" >> /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo export LANG=en_US.UTF-8 >> /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo export LANGUAGE=en_US.UTF-8 >> /etc/profile.d/my-custom.lang.sh')
-  LitmusHelper.instance.run_shell('echo export LC_COLLATE=en_US.UTF-8 >> /etc/profile.d/my-custom.lang.sh')
+  LitmusHelper.instance.run_shell('echo export LC_COLLATE=C >> /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo export LC_CTYPE=en_US.UTF-8 >> /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('. /etc/profile.d/my-custom.lang.sh')
-  LitmusHelper.instance.run_shell('echo export LC_ALL=en_US.UTF-8 >> ~/.bashrc')
+  LitmusHelper.instance.run_shell('echo export LC_ALL=C >> ~/.bashrc')
   LitmusHelper.instance.run_shell('. ~/.bashrc')
+  LitmusHelper.instance.run_shell('export LC_ALL=C')
 end
 
 def fetch_charset
