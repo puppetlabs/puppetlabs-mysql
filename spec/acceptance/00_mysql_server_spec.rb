@@ -60,7 +60,9 @@ describe 'mysql class' do
         class { '::mysql::server':
         override_options => {
                   'mysqld' => {
-                  'log-bin' => '/var/log/mariadb/mariadb-bin.log',}
+                  'log-bin' => '/var/log/mariadb/mariadb-bin.log',},
+                  'LANG' => 'C',
+                  'LC_ALL' => 'C'
            }
           }
           MANIFEST
