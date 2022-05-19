@@ -30,7 +30,6 @@ def export_locales
   LitmusHelper.instance.run_shell('. /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo export LC_ALL=C >> ~/.bashrc')
   LitmusHelper.instance.run_shell('. ~/.bashrc')
-  LitmusHelper.instance.run_shell('export LC_ALL=C')
 end
 
 def fetch_charset
