@@ -68,7 +68,7 @@ describe 'mysql class' do
 
       it 'can be set' do
         apply_manifest(pp, catch_failures: true) do |r|
-          if os[:family] == 'debian' && os[:release].to_i > 9 && Puppet::Util::Package.versioncmp(Puppet.version, '7.0.0') < 0
+          if (((os[:family] == 'debian') && (os[:release].to_i > 9)) && Puppet::Util::Package.versioncmp(Puppet.version, '7.0.0') < 0)
             expect(r.stderr).to match(%r{locale environment variables were bad; continuing with LANG=C LC_ALL=C})
           else
             expect(r.stderr).to be_empty
