@@ -167,7 +167,6 @@ class mysql::server (
     ~> Class['mysql::server::service']
   }
 
-
   if $_options['mysqld']['ssl-disable'] {
     notify { 'ssl-disable':
       message => 'Disabling SSL is evil! You should never ever do this except

@@ -49,12 +49,23 @@ class mysql::backup::xtrabackup (
       require       => Class['mysql::server::root_password'],
     }
 
-    mysql_grant { "${backupuser}@localhost/*.*":
-      ensure     => $ensure,
-      user       => "${backupuser}@localhost",
-      table      => '*.*',
-      privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
-      require    => Mysql_user["${backupuser}@localhost"],
+    if $::osfamily == 'debian' and $::operatingsystemmajrelease == '11' {
+      mysql_grant { "${backupuser}@localhost/*.*":
+        ensure     => $ensure,
+        user       => "${backupuser}@localhost",
+        table      => '*.*',
+        privileges => ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES'],
+        require    => Mysql_user["${backupuser}@localhost"],
+      }
+    }
+    else {
+      mysql_grant { "${backupuser}@localhost/*.*":
+        ensure     => $ensure,
+        user       => "${backupuser}@localhost",
+        table      => '*.*',
+        privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
+        require    => Mysql_user["${backupuser}@localhost"],
+      }
     }
   }
 
