@@ -236,6 +236,7 @@ class mysql::params {
       $ruby_package_name   =  $facts['os']['release']['major']  ? {
         '9'     => 'ruby-mysql2', # stretch
         '10'    => 'ruby-mysql2', # buster
+        '11'    => 'ruby-mysql2', # bullseye
         '16.04' => 'ruby-mysql', # xenial
         '18.04' => 'ruby-mysql2', # bionic
         '20.04' => 'ruby-mysql2', # focal

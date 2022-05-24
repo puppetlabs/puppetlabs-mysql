@@ -6,9 +6,9 @@ mysql_version = '5.6'
 support_bin_dir = '/root/mysql_login_path'
 if os[:family] == 'redhat' && os[:release].to_i == 8
   mysql_version = '8.0'
-elsif os[:family] == 'debian' && os[:release] =~ %r{9|10}
+elsif os[:family] == 'debian' && os[:release] =~ %r{9|10|11}
   mysql_version = '8.0'
-elsif os[:family] == 'ubuntu' && os[:release] =~ %r{16\.04|18\.04}
+elsif os[:family] == 'ubuntu' && os[:release] =~ %r{18\.04|20\.04}
   mysql_version = '5.7'
 end
 

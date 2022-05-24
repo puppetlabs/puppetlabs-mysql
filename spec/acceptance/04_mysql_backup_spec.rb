@@ -129,7 +129,7 @@ describe 'mysql::server::backup class' do
   end
 
   context 'with xtrabackup enabled' do
-    context 'should work with no errors', if: ((os[:family] == 'debian') || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 7)) do
+    context 'should work with no errors', if: ((os[:family] == 'debian') || (os[:family] == 'ubuntu' && os[:release] =~ %r{^18\.04|^20\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 7)) do
       pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
@@ -142,11 +142,7 @@ describe 'mysql::server::backup class' do
           }
           case $facts['os']['family'] {
             /Debian/: {
-              if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
-                $source_url = "http://repo.percona.com/apt/percona-release_1.0-22.generic_all.deb"
-              } else {
-                $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
-              }
+              $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
 
               file { '/tmp/percona-release_latest.deb':
                 ensure => present,
@@ -254,7 +250,7 @@ describe 'mysql::server::backup class' do
   end
 
   context 'with xtrabackup enabled and incremental backups disabled' do
-    context 'should work with no errors', if: ((os[:family] == 'debian' && os[:release].to_i >= 9) || (os[:family] == 'ubuntu' && os[:release] =~ %r{^16\.04|^18\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 7)) do # rubocop:disable Layout/LineLength
+    context 'should work with no errors', if: ((os[:family] == 'debian') || (os[:family] == 'ubuntu' && os[:release] =~ %r{^18\.04|^20\.04}) || (os[:family] == 'redhat' && os[:release].to_i > 7)) do
       pp = <<-MANIFEST
           class { 'mysql::server': root_password => 'password' }
           mysql::db { [
