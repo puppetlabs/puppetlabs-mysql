@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper_acceptance'
-require 'pry'
 
 # The export_locales method conflicts with our testing when the target system uses MariaDB, therefore it is being disabled for those systems.
 # if os[:family] != 'debian' && os[:family] != 'ubuntu'
@@ -70,7 +69,6 @@ describe 'mysql class' do
       it 'can be set' do
         apply_manifest(pp, catch_failures: true) do |r|
           if (os[:family] == 'debian' && os[:release].to_i > 9) && Gem::Version.new(run_shell('puppet --version').stdout) < Gem::Version.new('7.0.0')
-            binding.pry
             expect(r.stderr).to match(%r{locale environment variables were bad; continuing with LANG=C LC_ALL=C})
           else
             expect(r.stderr).to be_empty
