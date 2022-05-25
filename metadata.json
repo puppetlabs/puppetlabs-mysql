@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "12.0.1",
+  "version": "12.0.2",
   "author": "puppetlabs",
   "summary": "Installs, configures, and manages the MySQL service.",
   "license": "Apache-2.0",
@@ -61,7 +61,6 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "16.04",
         "18.04",
         "20.04"
       ]
@@ -87,6 +86,6 @@
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "heads/main-0-gbd3742c",
-  "pdk-version": "2.2.0"
+  "template-ref": "heads/main-0-g806810b",
+  "pdk-version": "2.4.0"
 }

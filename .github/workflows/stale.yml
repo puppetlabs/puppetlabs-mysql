@@ -1,0 +1,36 @@
+name: Audit aging issues/PRs
+
+on:
+  schedule:
+  - cron: "30 1 * * *"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/stale@v3
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        days-before-issue-stale: 90
+        days-before-pr-stale: 60
+        days-before-pr-close: 7
+        stale-issue-message: |
+          Hello! 👋
+
+          This issue has been open for a while and has had no recent activity. We've labelled it with `attention-needed` so that we can get a clear view of which issues need our attention.
+
+          If you are waiting on a response from us we will try and address your comments on a future Community Day.
+
+          Alternatively, if it is no longer relevant to you please close the issue with a comment.
+        stale-issue-label: 'attention-needed'
+        stale-pr-message: |
+          Hello! 👋
+
+          This pull request has been open for a while and has had no recent activity. We've labelled it with `attention-needed` so that we can get a clear view of which PRs need our attention.
+
+          If you are waiting on a response from us we will try and address your comments on a future Community Day.
+
+          Alternatively, if it is no longer relevant to you please close the PR with a comment. 
+          
+          Please note that if a pull request receives no update for 7 after it has been labelled, it will be closed. We are always happy to re-open pull request if they have been closed in error.
+        stale-pr-label: 'attention-needed'

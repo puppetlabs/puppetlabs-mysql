@@ -18,9 +18,9 @@
 # @param dbname
 #   The name of the database to create.
 # @param charset
-#   The character set for the database.
+#   The character set for the database. Must have the same value as collate to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 # @param collate
-#   The collation for the database.
+#   The collation for the database. Must have the same value as charset to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 # @param host
 #   The host to use as part of user@host for grants.
 # @param grant

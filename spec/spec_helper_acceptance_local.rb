@@ -27,9 +27,9 @@ def export_locales
   LitmusHelper.instance.run_shell('echo export LANGUAGE=en_US.UTF-8 >> /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo export LC_COLLATE=C >> /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo export LC_CTYPE=en_US.UTF-8 >> /etc/profile.d/my-custom.lang.sh')
-  LitmusHelper.instance.run_shell('source /etc/profile.d/my-custom.lang.sh')
+  LitmusHelper.instance.run_shell('. /etc/profile.d/my-custom.lang.sh')
   LitmusHelper.instance.run_shell('echo export LC_ALL="C" >> ~/.bashrc')
-  LitmusHelper.instance.run_shell('source ~/.bashrc')
+  LitmusHelper.instance.run_shell('. ~/.bashrc')
 end
 
 def fetch_charset

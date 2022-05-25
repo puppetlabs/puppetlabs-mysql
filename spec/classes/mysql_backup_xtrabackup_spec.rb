@@ -105,7 +105,12 @@ describe 'mysql::backup::xtrabackup' do
               ensure: 'present',
               user: 'backupuser@localhost',
               table: '*.*',
-              privileges: ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
+              privileges:
+              if facts[:osfamily] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') == 0
+                ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES']
+              else
+                ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT']
+              end,
             )
             .that_requires('Mysql_user[backupuser@localhost]')
         end

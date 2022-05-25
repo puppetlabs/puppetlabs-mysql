@@ -11,6 +11,7 @@ env:
 
 jobs:
   setup_matrix:
+    if: ${{ github.repository_owner == 'puppetlabs' }}
     name: "Setup Test Matrix"
     runs-on: ubuntu-20.04
     outputs:
@@ -58,7 +59,7 @@ jobs:
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         if [ '${{ github.repository_owner }}' == 'puppetlabs' ]; then
-          buildevents cmd $TRACE_ID $STEP_ID matrix_from_metadata -- bundle exec matrix_from_metadata_v2 --exclude-platforms '["Debian-9", "Debian-10", "Debian-11"]'
+          echo  "::set-output name=matrix::{'platforms':[{'label':'AlmaLinux-8','provider':'provision::docker','image':'litmusimage/almalinux:8'},{'label':'CentOS-7','provider':'provision::docker','image':'litmusimage/centos:7'},{'label':'CentOS-8','provider':'provision::docker','image':'litmusimage/centos:stream8'},{'label':'Debian-10','provider':'provision::provision_service','image':'debian-10'},{'label':'Debian-11','provider':'provision::provision_service','image':'debian-11'},{'label':'Debian-9','provider':'provision::provision_service','image':'debian-9'},{'label':'OracleLinux-6','provider':'provision::docker','image':'litmusimage/oraclelinux:6'},{'label':'OracleLinux-7','provider':'provision::docker','image':'litmusimage/oraclelinux:7'},{'label':'RedHat-7','provider':'provision::provision_service','image':'rhel-7'},{'label':'RedHat-8','provider':'provision::provision_service','image':'rhel-8'},{'label':'Rocky-8','provider':'provision::docker','image':'litmusimage/rockylinux:8'},{'label':'SLES-12','provider':'provision::provision_service','image':'sles-12'},{'label':'SLES-15','provider':'provision::provision_service','image':'sles-15'},{'label':'Scientific-6','provider':'provision::docker','image':'litmusimage/scientificlinux:6'},{'label':'Scientific-7','provider':'provision::docker','image':'litmusimage/scientificlinux:7'},{'label':'Ubuntu-18.04','provider':'provision::docker','image':'litmusimage/ubuntu:18.04'},{'label':'Ubuntu-20.04','provider':'provision::provision_service','image':'ubuntu-2004-lts'}],'collection':['puppet6-nightly','puppet7-nightly']}"
         else
           echo  "::set-output name=matrix::{}"
         fi
@@ -186,7 +187,7 @@ jobs:
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Remove test environment'
 
   slack-workflow-status:
-    if: always()
+    if: ${{ github.repository_owner == 'puppetlabs' }}
     name: Post Workflow Status To Slack
     needs:
       - Acceptance
@@ -199,5 +200,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK }}
           # Optional Input
-          channel: '#team-ia-bots'
+          channel: '#team-cat-bots'
           name: 'GABot'
