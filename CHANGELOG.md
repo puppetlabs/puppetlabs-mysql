@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v12.0.3](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.3) - 2022-05-25
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.2...v12.0.3)
+
+### Fixed
+
+- (IAC-1595) MySQL maintenance [#1472](https://github.com/puppetlabs/puppetlabs-mysql/pull/1472) ([LukasAud](https://github.com/LukasAud))
+
+- Solve issue with repeated restarts if ssl-disable is true [#1425](https://github.com/puppetlabs/puppetlabs-mysql/pull/1425) ([markasammut](https://github.com/markasammut))
+
 ## [v12.0.2](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.2) (2022-04-19)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.1...v12.0.2)
