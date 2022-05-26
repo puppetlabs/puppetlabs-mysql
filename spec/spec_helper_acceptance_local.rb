@@ -32,14 +32,6 @@ def export_locales
   LitmusHelper.instance.run_shell('. ~/.bashrc')
 end
 
-def fetch_charset
-  @charset ||= if os[:family] == 'ubuntu' && os[:release] =~ %r{^20\.04}
-                 'utf8mb3'
-               else
-                 'utf8'
-               end
-end
-
 RSpec.configure do |c|
   c.before :suite do
     if os[:family] == 'debian' || os[:family] == 'ubuntu'
