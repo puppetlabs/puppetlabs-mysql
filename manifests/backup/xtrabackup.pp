@@ -3,7 +3,6 @@
 # @api private
 #
 class mysql::backup::xtrabackup (
-  $xtrabackup_package_name  = $mysql::params::xtrabackup_package_name,
   $backupuser               = undef,
   Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
   $backupdir                = '',
@@ -33,8 +32,9 @@ class mysql::backup::xtrabackup (
   $install_cron             = true,
   $compression_command      = undef,
   $compression_extension    = undef,
+  $backupmethod_package     = $mysql::params::xtrabackup_package_name,
 ) inherits mysql::params {
-  ensure_packages($xtrabackup_package_name)
+  ensure_packages($backupmethod_package)
 
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
@@ -94,7 +94,7 @@ class mysql::backup::xtrabackup (
       hour    => $time[0],
       minute  => $time[1],
       weekday => '0',
-      require => Package[$xtrabackup_package_name],
+      require => Package[$backupmethod_package],
     }
   }
 
@@ -126,7 +126,7 @@ class mysql::backup::xtrabackup (
     hour    => $time[0],
     minute  => $time[1],
     weekday => $daily_cron_data['weekday'],
-    require => Package[$xtrabackup_package_name],
+    require => Package[$backupmethod_package],
   }
 
   file { $backupdir:

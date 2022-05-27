@@ -31,6 +31,7 @@ class mysql::backup::mysqlbackup (
   $install_cron             = true,
   $compression_command      = undef,
   $compression_extension    = undef,
+  $backupmethod_package     = undef,
 ) inherits mysql::params {
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
