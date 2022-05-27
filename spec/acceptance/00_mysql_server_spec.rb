@@ -38,8 +38,7 @@ describe 'mysql class' do
           },
           databases => {
             'somedb' => {
-              ensure  => 'present',
-              charset => #{fetch_charset},
+              ensure => 'present',
             },
           }
         }
