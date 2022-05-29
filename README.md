@@ -520,7 +520,7 @@ class { 'mysql::server::backup':
   backupuser              => 'mariabackup',
   backuppassword          => 'AVeryStrongPasswordUShouldEncrypt!',
   provider                => 'xtrabackup',
-  backupmethod            => 'mariabackup'
+  backupmethod            => 'mariabackup',
   backupmethod_package    => 'mariadb-backup',
   backupdir               => '/tmp/backups',
   backuprotate            => 15,
