@@ -49,24 +49,61 @@ class mysql::backup::xtrabackup (
       password_hash => mysql::password($backuppassword),
       require       => Class['mysql::server::root_password'],
     }
-
-    if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['major'], '11') >= 0) or
-    ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['major'], '22.04') >= 0) {
-      mysql_grant { "${backupuser}@localhost/*.*":
+    # Percona XtraBackup needs additional grants/privileges to work with MySQL 8
+    if versioncmp($facts['mysql_version'], '8') >= 0 and !(/(?i:mariadb)/ in $facts['mysqld_version']) {
+      if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['major'], '11') >= 0) or
+      ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['major'], '22.04') >= 0) {
+        mysql_grant { "${backupuser}@localhost/*.*":
+          ensure     => $ensure,
+          user       => "${backupuser}@localhost",
+          table      => '*.*',
+          privileges => ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES', 'BACKUP_ADMIN'],
+          require    => Mysql_user["${backupuser}@localhost"],
+        }
+      }
+      else {
+        mysql_grant { "${backupuser}@localhost/*.*":
+          ensure     => $ensure,
+          user       => "${backupuser}@localhost",
+          table      => '*.*',
+          privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT', 'BACKUP_ADMIN'],
+          require    => Mysql_user["${backupuser}@localhost"],
+        }
+      }
+      mysql_grant { "${backupuser}@localhost/performance_schema.keyring_component_status":
         ensure     => $ensure,
         user       => "${backupuser}@localhost",
-        table      => '*.*',
-        privileges => ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES'],
+        table      => 'performance_schema.keyring_component_status',
+        privileges => ['SELECT'],
+        require    => Mysql_user["${backupuser}@localhost"],
+      }
+      mysql_grant { "${backupuser}@localhost/performance_schema.log_status":
+        ensure     => $ensure,
+        user       => "${backupuser}@localhost",
+        table      => 'performance_schema.log_status',
+        privileges => ['SELECT'],
         require    => Mysql_user["${backupuser}@localhost"],
       }
     }
     else {
-      mysql_grant { "${backupuser}@localhost/*.*":
-        ensure     => $ensure,
-        user       => "${backupuser}@localhost",
-        table      => '*.*',
-        privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
-        require    => Mysql_user["${backupuser}@localhost"],
+      if $facts['os']['family'] == 'debian' and $facts['os']['release']['major'] == '11' or
+      ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['major'], '22.04') >= 0) {
+        mysql_grant { "${backupuser}@localhost/*.*":
+          ensure     => $ensure,
+          user       => "${backupuser}@localhost",
+          table      => '*.*',
+          privileges => ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES'],
+          require    => Mysql_user["${backupuser}@localhost"],
+        }
+      }
+      else {
+        mysql_grant { "${backupuser}@localhost/*.*":
+          ensure     => $ensure,
+          user       => "${backupuser}@localhost",
+          table      => '*.*',
+          privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
+          require    => Mysql_user["${backupuser}@localhost"],
+        }
       }
     }
   }
