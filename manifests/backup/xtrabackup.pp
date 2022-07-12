@@ -33,6 +33,7 @@ class mysql::backup::xtrabackup (
   $compression_command      = undef,
   $compression_extension    = undef,
   $backupmethod_package     = $mysql::params::xtrabackup_package_name,
+  Array[String] $excludedatabases = [],
 ) inherits mysql::params {
   ensure_packages($backupmethod_package)
 
