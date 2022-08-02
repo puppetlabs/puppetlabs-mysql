@@ -14,9 +14,12 @@ def mysql_id_get
 end
 
 Facter.add('mysql_server_id') do
+  confine kernel: :linux
   setcode do
-    mysql_id_get
-  rescue
-    nil
+    begin
+      mysql_id_get
+    rescue
+      nil
+    end
   end
 end
