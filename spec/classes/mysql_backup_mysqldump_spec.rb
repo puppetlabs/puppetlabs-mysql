@@ -71,6 +71,21 @@ describe 'mysql::backup::mysqldump' do
           is_expected.not_to contain_package('bzip2')
         }
       end
+
+      context 'with file_per_database and excludedatabases' do
+        let(:params) do
+          {
+            'file_per_database' => true,
+            'excludedatabases'  => [ 'information_schema' ],
+          }.merge(default_params)
+        end
+
+        it {
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
+            %r{information_schema},
+          )
+        }
+      end
     end
   end
   # rubocop:enable RSpec/NestedGroups

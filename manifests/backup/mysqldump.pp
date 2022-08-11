@@ -33,6 +33,7 @@ class mysql::backup::mysqldump (
   $compression_command      = 'bzcat -zc',
   $compression_extension    = '.bz2',
   $backupmethod_package     = undef,
+  Array[String] $excludedatabases = [],
 ) inherits mysql::params {
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
