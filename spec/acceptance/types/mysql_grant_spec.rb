@@ -273,7 +273,9 @@ describe 'mysql_grant' do
         $dbSubnet = '10.10.10.%'
 
         mysql_database { 'foo':
-          ensure => present,
+          ensure  => present,
+          charset => '#{fetch_charset}',
+          collate => '#{fetch_charset}_general_ci',
         }
 
         exec { 'mysql-create-table':
@@ -685,6 +687,7 @@ describe 'mysql_grant' do
           user     => 'root1',
           password => 'password',
           sql      => '/tmp/grant_spec_table.sql',
+          charset  => '#{fetch_charset}',
         }
     MANIFEST
     it 'creates table' do

@@ -12,6 +12,8 @@ describe 'mysql::server::backup class' do
         ]:
           user     => 'backup',
           password => 'secret',
+          charset  => '#{fetch_charset}',
+          collate  => '#{fetch_charset}_general_ci',
         }
 
         class { 'mysql::server::backup':
@@ -72,6 +74,8 @@ describe 'mysql::server::backup class' do
           ]:
             user     => 'backup',
             password => 'secret',
+            charset  => '#{fetch_charset}',
+            collate  => '#{fetch_charset}_general_ci',
           }
 
           class { 'mysql::server::backup':
@@ -136,14 +140,16 @@ describe 'mysql::server::backup class' do
           ]:
             user     => 'backup',
             password => 'secret',
+            charset  => '#{fetch_charset}',
+            collate  => '#{fetch_charset}_general_ci',
           }
           case $facts['os']['family'] {
             /Debian/: {
               $source_url = "http://repo.percona.com/apt/percona-release_latest.${facts['os']['distro']['codename']}_all.deb"
 
               file { '/tmp/percona-release_latest.deb':
-                ensure => present,
-                source => $source_url,
+                ensure  => present,
+                source  => $source_url,
               }
               ensure_packages('gnupg')
               ensure_packages('gnupg2')
@@ -256,6 +262,8 @@ describe 'mysql::server::backup class' do
           ]:
             user     => 'backup',
             password => 'secret',
+            charset  => '#{fetch_charset}',
+            collate  => '#{fetch_charset}_general_ci',
           }
           case $facts['os']['family'] {
             /Debian/: {
