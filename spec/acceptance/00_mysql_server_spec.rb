@@ -38,7 +38,9 @@ describe 'mysql class' do
           },
           databases => {
             'somedb' => {
-              ensure => 'present',
+              ensure  => 'present',
+              charset => '#{fetch_charset}',
+              collate => '#{fetch_charset}_general_ci',
             },
           }
         }
