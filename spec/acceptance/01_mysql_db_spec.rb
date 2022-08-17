@@ -43,9 +43,9 @@ describe 'mysql::db define' do
         mysql::db { 'spec2':
           user     => 'root1',
           password => 'password',
-          sql      => '/tmp/spec.sql',
           charset  => '#{fetch_charset}',
           collate  => '#{fetch_charset}_general_ci',
+          sql      => ['/tmp/spec.sql'],
         }
       MANIFEST
     end
