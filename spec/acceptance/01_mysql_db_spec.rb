@@ -37,7 +37,7 @@ describe 'mysql::db define' do
         class { 'mysql::server': override_options => { 'root_password' => 'password' } }
         file { '/tmp/spec.sql':
           ensure  => file,
-          content => 'CREATE TABLE table1 (id int);',
+          content => 'CREATE TABLE IF NOT EXISTS table1 (id int);',
           before  => Mysql::Db['spec2'],
         }
         mysql::db { 'spec2':
