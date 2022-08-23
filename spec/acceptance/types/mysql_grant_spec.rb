@@ -686,8 +686,8 @@ describe 'mysql_grant' do
         mysql::db { 'grant_spec_db':
           user     => 'root1',
           password => 'password',
-          sql      => '/tmp/grant_spec_table.sql',
           charset  => '#{fetch_charset}',
+          sql      => ['/tmp/grant_spec_table.sql'],
         }
     MANIFEST
     it 'creates table' do
