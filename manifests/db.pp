@@ -58,7 +58,7 @@ define mysql::db (
   $enforce_sql                                  = false,
   Enum['absent', 'present'] $ensure             = 'present',
   $import_timeout                               = 300,
-  Enum['cat', 'zcat'] $import_cat_cmd           = 'cat',
+  Enum['cat', 'zcat', 'bzcat'] $import_cat_cmd  = 'cat',
   $mysql_exec_path                              = undef,
 ) {
   include 'mysql::client'
