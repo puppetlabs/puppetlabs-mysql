@@ -32,12 +32,16 @@ def export_locales
   LitmusHelper.instance.run_shell('. ~/.bashrc')
 end
 
+def ubuntu_2204?
+  os[:family] == 'ubuntu' && os[:release].to_f == 22.04
+end
+
+def sles_15?
+  os[:family] == 'sles' && os[:release].to_i == 15
+end
+
 def fetch_charset
-  @charset ||= if os[:family] == 'ubuntu' && os[:release] =~ %r{^22\.04}
-                 'utf8mb3'
-               else
-                 'utf8'
-               end
+  @charset ||= ubuntu_2204? || sles_15? ? 'utf8mb3' : 'utf8'
 end
 
 RSpec.configure do |c|
