@@ -124,6 +124,13 @@ jobs:
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
         echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
+    - name: "Disable mysqld apparmor profile"
+      if: matrix.platforms.provider == 'provision::docker'
+      run: |
+        sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+        sudo apparmor_parser -R /etc/apparmor.d/disable/usr.sbin.mysqld
+
     - name: Provision test environment
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:provision ${{ matrix.platforms.image }}' -- bundle exec rake 'litmus:provision[${{matrix.platforms.provider}},${{ matrix.platforms.image }}]'
@@ -149,7 +156,7 @@ jobs:
     - name: Install module
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:install_module' -- bundle exec rake 'litmus:install_module'
- 
+
     - name: "Honeycomb: Record deployment times"
       if: ${{ always() }}
       run: |
