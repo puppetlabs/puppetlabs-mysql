@@ -32,6 +32,16 @@ def export_locales
   LitmusHelper.instance.run_shell('. ~/.bashrc')
 end
 
+def supports_xtrabackup?
+  (os[:family] == 'redhat' && os[:release].to_i > 7) ||
+    os[:family] == 'debian' ||
+    os[:family] == 'ubuntu'
+end
+
+def redhat_9?
+  os[:family] == 'redhat' && os[:release].to_i == 9
+end
+
 def ubuntu_2204?
   os[:family] == 'ubuntu' && os[:release].to_f == 22.04
 end
@@ -50,6 +60,12 @@ RSpec.configure do |c|
       # needed for the puppet fact
       LitmusHelper.instance.apply_manifest("package { 'lsb-release': ensure => installed, }", expect_failures: false)
       LitmusHelper.instance.apply_manifest("package { 'ap': ensure => installed, }", expect_failures: false)
+
+      # Disable the mysqld apparmor profile on Ubuntu and debian
+      # exec('mkdir', '/etc/apparmor.d/disable')
+      exec('ln', '-s', '/etc/apparmor.d/usr.sbin.mysqld', '/etc/apparmor.d/disable/')
+      exec('apparmor_parser', '-R', '/etc/apparmor.d/disable/usr.sbin.mysqld')
+
     end
     # needed for the grant tests, not installed on el7 docker images
     LitmusHelper.instance.apply_manifest("package { 'which': ensure => installed, }", expect_failures: false)
