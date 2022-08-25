@@ -464,7 +464,6 @@ The following parameters are available in the `mysql::server` class:
 * [`config_file_mode`](#config_file_mode)
 * [`includedir`](#includedir)
 * [`install_options`](#install_options)
-* [`install_secret_file`](#install_secret_file)
 * [`manage_config_file`](#manage_config_file)
 * [`options`](#options)
 * [`override_options`](#override_options)
@@ -528,14 +527,6 @@ Data type: `Any`
 Passes [install_options](https://docs.puppetlabs.com/references/latest/type.html#package-attribute-install_options) array to managed package resources. You must pass the appropriate options for the specified package manager
 
 Default value: ``undef``
-
-##### <a name="install_secret_file"></a>`install_secret_file`
-
-Data type: `Any`
-
-Path to secret file containing temporary root password.
-
-Default value: `$mysql::params::install_secret_file`
 
 ##### <a name="manage_config_file"></a>`manage_config_file`
 
@@ -795,17 +786,26 @@ Create and manage a MySQL backup.
 
 ```puppet
 class { 'mysql::server':
-  root_password => 'password'
+  root_password           => 'password'
 }
 class { 'mysql::server::backup':
-  backupuser     => 'myuser',
-  backuppassword => 'mypassword',
-  backupdir      => '/tmp/backups',
+  backupuser              => 'myuser',
+  backuppassword          => 'mypassword',
+  backupdir               => '/tmp/backups',
+}
+```
+
+##### Create a basic MySQL backup using mariabackup:
+
+```puppet
+class { 'mysql::server':
+  root_password           => 'password'
 }
 class { 'mysql::server::backup':
-  backupmethod => 'mariabackup',
-  provider     => 'xtrabackup',
-  backupdir    => '/tmp/backups',
+  backupmethod            => 'mariabackup',
+  backupmethod_package    => 'mariadb-backup'
+  provider                => 'xtrabackup',
+  backupdir               => '/tmp/backups',
 }
 ```
 
@@ -841,6 +841,8 @@ The following parameters are available in the `mysql::server::backup` class:
 * [`install_cron`](#install_cron)
 * [`compression_command`](#compression_command)
 * [`compression_extension`](#compression_extension)
+* [`backupmethod_package`](#backupmethod_package)
+* [`excludedatabases`](#excludedatabases)
 
 ##### <a name="backupuser"></a>`backupuser`
 
@@ -1022,7 +1024,7 @@ Default value: `'/usr/bin:/usr/sbin:/bin:/sbin'`
 
 Data type: `Any`
 
-Sets the server backup implementation. Valid values are:
+Sets the server backup implementation. Valid values are: xtrabackup, mysqldump, mysqlbackup
 
 Default value: `'mysqldump'`
 
@@ -1067,6 +1069,22 @@ Configure the file extension for the compressed backup (when using the mysqldump
 
 Default value: ``undef``
 
+##### <a name="backupmethod_package"></a>`backupmethod_package`
+
+Data type: `Any`
+
+The package which provides the binary specified by the backupmethod parameter.
+
+Default value: `$mysql::params::xtrabackup_package_name`
+
+##### <a name="excludedatabases"></a>`excludedatabases`
+
+Data type: `Array[String]`
+
+Give a list of excluded databases when using file_per_database, e.g.: [ 'information_schema', 'performance_schema' ]
+
+Default value: `[]`
+
 ## Defined types
 
 ### <a name="mysqldb"></a>`mysql::db`
@@ -1090,6 +1108,7 @@ mysql::db { 'mydb':
 
 The following parameters are available in the `mysql::db` defined type:
 
+* [`name`](#name)
 * [`user`](#user)
 * [`password`](#password)
 * [`tls_options`](#tls_options)
@@ -1105,6 +1124,14 @@ The following parameters are available in the `mysql::db` defined type:
 * [`import_timeout`](#import_timeout)
 * [`import_cat_cmd`](#import_cat_cmd)
 * [`mysql_exec_path`](#mysql_exec_path)
+
+##### <a name="name"></a>`name`
+
+The name of the database to create. Database names must:
+  * be longer than 64 characters.
+  * not contain / \ or . characters.
+  * not contain characters that are not permitted in file names.
+  * not end with space characters.
 
 ##### <a name="user"></a>`user`
 
@@ -1128,7 +1155,7 @@ Default value: ``undef``
 
 ##### <a name="dbname"></a>`dbname`
 
-Data type: `Any`
+Data type: `String`
 
 The name of the database to create.
 
@@ -1176,9 +1203,9 @@ Default value: ``undef``
 
 ##### <a name="sql"></a>`sql`
 
-Data type: `Optional[Variant[Array, Hash, String]]`
+Data type: `Optional[Array]`
 
-The path to the sqlfile you want to execute. This can be single file specified as string, or it can be an array of strings.
+The path to the sqlfile you want to execute. This can be an array containing one or more file paths.
 
 Default value: ``undef``
 
@@ -1208,7 +1235,7 @@ Default value: `300`
 
 ##### <a name="import_cat_cmd"></a>`import_cat_cmd`
 
-Data type: `Any`
+Data type: `Enum['cat', 'zcat', 'bzcat']`
 
 Command to read the sqlfile for importing the database. Useful for compressed sqlfiles. For example, you can use 'zcat' for .gz files.
 
@@ -1556,7 +1583,7 @@ Hash a string as mysql's "PASSWORD()" function would do it
 
 #### `mysql::password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive)`
 
-The mysql::password function.
+Hash a string as mysql's "PASSWORD()" function would do it
 
 Returns: `Variant[String, Sensitive[String]]` hash
 The mysql password hash from the clear text password.
