@@ -34,7 +34,7 @@
 # @param grant_options
 #   The grant_options for the grant for user@host on the database.
 # @param sql
-#   The path to the sqlfile you want to execute. This can be a an array containing one or more file paths.
+#   The path to the sqlfile you want to execute. This can be an array containing one or more file paths.
 # @param enforce_sql
 #   Specifies whether executing the sqlfiles should happen on every run. If set to false, sqlfiles only run once.
 # @param ensure
