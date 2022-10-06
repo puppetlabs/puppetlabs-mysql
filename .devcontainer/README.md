@@ -13,14 +13,18 @@ https://github.com/microsoft/vscode-dev-containers/tree/v0.140.1/containers/pupp
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash"
+		"terminal.integrated.profiles.linux": {
+			"bash": {
+				"path": "bash",
+			}
+		}
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"puppet.puppet-vscode",
 		"rebornix.Ruby"
-	]
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [],
