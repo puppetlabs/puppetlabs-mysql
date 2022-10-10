@@ -2,28 +2,55 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v12.0.3](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.3) - 2022-05-25
+## [v13.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v13.0.0) (2022-08-25)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.3...v13.0.0)
+
+### Changed
+
+- Harden db defined type [\#1484](https://github.com/puppetlabs/puppetlabs-mysql/pull/1484) ([chelnak](https://github.com/chelnak))
+
+### Added
+
+- pdksync - \(GH-cat-11\) Certify Support for Ubuntu 22.04 [\#1483](https://github.com/puppetlabs/puppetlabs-mysql/pull/1483) ([david22swan](https://github.com/david22swan))
+- \[Compatibility\] Add Raspbian OS to provider configuration [\#1481](https://github.com/puppetlabs/puppetlabs-mysql/pull/1481) ([jordi-upc](https://github.com/jordi-upc))
+- Allow excludedatabases when using file\_per\_database [\#1480](https://github.com/puppetlabs/puppetlabs-mysql/pull/1480) ([HT43-bqxFqB](https://github.com/HT43-bqxFqB))
+- pdksync - \(GH-cat-12\) Add Support for Redhat 9 [\#1477](https://github.com/puppetlabs/puppetlabs-mysql/pull/1477) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- Harden config class [\#1487](https://github.com/puppetlabs/puppetlabs-mysql/pull/1487) ([chelnak](https://github.com/chelnak))
+- Harden service class [\#1486](https://github.com/puppetlabs/puppetlabs-mysql/pull/1486) ([chelnak](https://github.com/chelnak))
+- Harden root password class [\#1485](https://github.com/puppetlabs/puppetlabs-mysql/pull/1485) ([chelnak](https://github.com/chelnak))
+- Use MariaDB for Ubuntu 20.04 [\#1449](https://github.com/puppetlabs/puppetlabs-mysql/pull/1449) ([treydock](https://github.com/treydock))
+- Add support for mariabackup  [\#1447](https://github.com/puppetlabs/puppetlabs-mysql/pull/1447) ([rsynnest](https://github.com/rsynnest))
+
+## [v12.0.3](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.3) (2022-05-25)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.2...v12.0.3)
 
 ### Fixed
 
-- (IAC-1595) MySQL maintenance [#1472](https://github.com/puppetlabs/puppetlabs-mysql/pull/1472) ([LukasAud](https://github.com/LukasAud))
-
-- Solve issue with repeated restarts if ssl-disable is true [#1425](https://github.com/puppetlabs/puppetlabs-mysql/pull/1425) ([markasammut](https://github.com/markasammut))
+- \(IAC-1595\) MySQL maintenance [\#1472](https://github.com/puppetlabs/puppetlabs-mysql/pull/1472) ([LukasAud](https://github.com/LukasAud))
+- Solve issue with repeated restarts if ssl-disable is true [\#1425](https://github.com/puppetlabs/puppetlabs-mysql/pull/1425) ([markasammut](https://github.com/markasammut))
 
 ## [v12.0.2](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.2) (2022-04-19)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.1...v12.0.2)
 
+### Added
+
+- pdksync - \(IAC-1753\) - Add Support for AlmaLinux 8 [\#1444](https://github.com/puppetlabs/puppetlabs-mysql/pull/1444) ([david22swan](https://github.com/david22swan))
+- pdksync - \(IAC-1751\) - Add Support for Rocky 8 [\#1442](https://github.com/puppetlabs/puppetlabs-mysql/pull/1442) ([david22swan](https://github.com/david22swan))
+
 ### Fixed
 
-- add mysql_native_password plugin to authentication_string vs password [\#1441](https://github.com/puppetlabs/puppetlabs-mysql/pull/1441) ([Heidistein](https://github.com/Heidistein))
-- fix Error: Transaction store file transactionstore.yaml is corrupt [\#1429](https://github.com/puppetlabs/puppetlabs-mysql/pull/1429) ([andeman](https://github.com/andeman))
-- pdksync - \(MAINT\) Remove RHEL 5 family support [\#1369](https://github.com/puppetlabs/puppetlabs-mysql/pull/1369) ([sanfrancrisko](https://github.com/sanfrancrisko))
-- pdksync - \(MAINT\) Remove SLES 11 support [\#1370](https://github.com/puppetlabs/puppetlabs-mysql/pull/1370) ([sanfrancrisko](https://github.com/sanfrancrisko))
-- pdksync - \(GH-iac-334\) Remove Support for Ubuntu 16.04 [\#1457](https://github.com/puppetlabs/puppetlabs-mysql/pull/1457) ([david22swan](https://github.com/david22swan))
 - \(Bugfix\) Grant privileges idempotency Fix [\#1466](https://github.com/puppetlabs/puppetlabs-mysql/pull/1466) ([LukasAud](https://github.com/LukasAud))
+- pdksync - \(GH-iac-334\) Remove Support for Ubuntu 16.04 [\#1457](https://github.com/puppetlabs/puppetlabs-mysql/pull/1457) ([david22swan](https://github.com/david22swan))
+- pdksync - \(IAC-1787\) Remove Support for CentOS 6 [\#1450](https://github.com/puppetlabs/puppetlabs-mysql/pull/1450) ([david22swan](https://github.com/david22swan))
+- add mysql\_native\_password plugin to authentication\_string vs password [\#1441](https://github.com/puppetlabs/puppetlabs-mysql/pull/1441) ([Heidistein](https://github.com/Heidistein))
+- fix Error: Transaction store file transactionstore.yaml is corrupt [\#1429](https://github.com/puppetlabs/puppetlabs-mysql/pull/1429) ([andeman](https://github.com/andeman))
+- Combine multiple grants into one while checking state [\#1428](https://github.com/puppetlabs/puppetlabs-mysql/pull/1428) ([fuyar](https://github.com/fuyar))
 
 ## [v12.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v12.0.1) (2021-08-26)
 

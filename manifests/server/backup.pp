@@ -80,6 +80,8 @@
 #   Configure the file extension for the compressed backup (when using the mysqldump provider)
 # @param backupmethod_package
 #   The package which provides the binary specified by the backupmethod parameter.
+# @param excludedatabases
+#   Give a list of excluded databases when using file_per_database, e.g.: [ 'information_schema', 'performance_schema' ]
 class mysql::server::backup (
   $backupuser               = undef,
   Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
@@ -110,6 +112,7 @@ class mysql::server::backup (
   $compression_command      = undef,
   $compression_extension    = undef,
   $backupmethod_package     = $mysql::params::xtrabackup_package_name,
+  Array[String] $excludedatabases = [],
 ) inherits mysql::params {
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
     warning("The 'prescript' option is not currently implemented for the ${provider} backup provider.")
@@ -145,6 +148,7 @@ class mysql::server::backup (
         'compression_command'      => $compression_command,
         'compression_extension'    => $compression_extension,
         'backupmethod_package'     => $backupmethod_package,
+        'excludedatabases'         => $excludedatabases,
       }
   })
 }

@@ -14,6 +14,8 @@ describe 'mysql::db define' do
         mysql::db { 'spec1':
           user            => 'root1',
           password        => 'password',
+          charset         => '#{fetch_charset}',
+          collate         => '#{fetch_charset}_general_ci',
         }
       MANIFEST
     end
@@ -35,13 +37,15 @@ describe 'mysql::db define' do
         class { 'mysql::server': override_options => { 'root_password' => 'password' } }
         file { '/tmp/spec.sql':
           ensure  => file,
-          content => 'CREATE TABLE table1 (id int);',
+          content => 'CREATE TABLE IF NOT EXISTS table1 (id int);',
           before  => Mysql::Db['spec2'],
         }
         mysql::db { 'spec2':
           user     => 'root1',
           password => 'password',
-          sql      => '/tmp/spec.sql',
+          charset  => '#{fetch_charset}',
+          collate  => '#{fetch_charset}_general_ci',
+          sql      => ['/tmp/spec.sql'],
         }
       MANIFEST
     end
@@ -66,6 +70,8 @@ describe 'mysql::db define' do
           user     => 'root1',
           password => 'password',
           dbname   => 'realdb',
+          charset  => '#{fetch_charset}',
+          collate  => '#{fetch_charset}_general_ci',
         }
       MANIFEST
     end

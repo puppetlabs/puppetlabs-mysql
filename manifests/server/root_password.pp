@@ -16,20 +16,15 @@ class mysql::server::root_password {
   }
 
   $options = $mysql::server::_options
-  $secret_file = $mysql::server::install_secret_file
   $login_file = $mysql::server::login_file
 
   # New installations of MySQL will configure a default random password for the root user
   # with an expiration. No actions can be performed until this password is changed. The
   # below exec will remove this default password. If the user has supplied a root
   # password it will be set further down with the mysql_user resource.
-  $rm_pass_cmd = join([
-      "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' ${secret_file}) password ''",
-      "rm -f ${secret_file}",
-  ], ' && ')
   exec { 'remove install pass':
-    command => $rm_pass_cmd,
-    onlyif  => "test -f ${secret_file}",
+    command => "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' /.mysql_secret) password && (rm -f  /.mysql_secret; exit 0) || (rm -f /.mysql_secret; exit 1)",
+    onlyif  => [['test', '-f' ,'/.mysql_secret']],
     path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
   }
 

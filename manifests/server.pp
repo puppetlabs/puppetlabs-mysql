@@ -17,8 +17,6 @@
 #   The location, as a path, of !includedir for custom configuration overrides.
 # @param install_options
 #   Passes [install_options](https://docs.puppetlabs.com/references/latest/type.html#package-attribute-install_options) array to managed package resources. You must pass the appropriate options for the specified package manager
-# @param install_secret_file
-#   Path to secret file containing temporary root password.
 # @param manage_config_file
 #   Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
 # @param options
@@ -81,7 +79,6 @@ class mysql::server (
   $config_file_mode        = $mysql::params::config_file_mode,
   $includedir              = $mysql::params::includedir,
   $install_options         = undef,
-  $install_secret_file     = $mysql::params::install_secret_file,
   $manage_config_file      = $mysql::params::manage_config_file,
   Mysql::Options  $options                 = {},
   $override_options        = {},
