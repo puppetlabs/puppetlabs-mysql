@@ -505,6 +505,30 @@ class { 'mysql::server::backup':
 }
 ```
 
+The next example shows how to use mariabackup (a fork of xtrabackup) as a backup provider.
+Note that on most Linux/BSD distributions, this will require setting `backupmethod_package => 'mariadb-backup'` in the `mysql::server::backup` declaration in order to override the default xtrabackup package (`percona-xtrabackup`).
+
+```puppet
+class { 'mysql::server':
+  package_name            => 'mariadb-server',
+  package_ensure          => '1:10.3.21+maria~xenial',
+  service_name            => 'mysqld',
+  root_password           => 'AVeryStrongPasswordUShouldEncrypt!',
+}
+
+class { 'mysql::server::backup':
+  backupuser              => 'mariabackup',
+  backuppassword          => 'AVeryStrongPasswordUShouldEncrypt!',
+  provider                => 'xtrabackup',
+  backupmethod            => 'mariabackup',
+  backupmethod_package    => 'mariadb-backup',
+  backupdir               => '/tmp/backups',
+  backuprotate            => 15,
+  execpath                => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
+  time                    => ['23', '15'],
+}
+```
+
 ## Reference
 
 ### Classes

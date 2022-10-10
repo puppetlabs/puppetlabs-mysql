@@ -81,7 +81,11 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
+<% if @excludedatabases.empty? -%>
 mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read dbname
+<% else -%>
+mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | grep -v '^\(<%= @excludedatabases.join('|') %>\)$' | while read dbname
+<% end -%>
 do
   <%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \

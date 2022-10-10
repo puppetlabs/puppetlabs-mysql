@@ -106,7 +106,8 @@ describe 'mysql::backup::xtrabackup' do
               user: 'backupuser@localhost',
               table: '*.*',
               privileges:
-              if facts[:osfamily] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') == 0
+              if (facts[:operatingsystem] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') >= 0) ||
+                (facts[:operatingsystem] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '22') >= 0)
                 ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES']
               else
                 ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT']
@@ -228,7 +229,8 @@ describe 'mysql::backup::xtrabackup' do
 
       context 'with mariabackup' do
         let(:params) do
-          { backupmethod: 'mariabackup' }.merge(default_params)
+          { backupmethod: 'mariabackup',
+            backupmethod_package: 'mariadb-backup' }.merge(default_params)
         end
 
         it 'contain the mariabackup executor' do

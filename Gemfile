@@ -13,23 +13,28 @@ def location_for(place_or_version, fake_version = nil)
   end
 end
 
-ruby_version_segments = Gem::Version.new(RUBY_VERSION.dup).segments
-minor_version = ruby_version_segments[0..1].join('.')
-
 group :development do
-  gem "json", '= 2.0.4',                                         require: false if Gem::Requirement.create('~> 2.4.2').satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
-  gem "json", '= 2.1.0',                                         require: false if Gem::Requirement.create(['>= 2.5.0', '< 2.7.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
-  gem "json", '= 2.3.0',                                         require: false if Gem::Requirement.create(['>= 2.7.0', '< 2.8.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
-  gem "puppet-module-posix-default-r#{minor_version}", '~> 1.0', require: false, platforms: [:ruby]
-  gem "puppet-module-posix-dev-r#{minor_version}", '~> 1.0',     require: false, platforms: [:ruby]
-  gem "puppet-module-win-default-r#{minor_version}", '~> 1.0',   require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "puppet-module-win-dev-r#{minor_version}", '~> 1.0',       require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "voxpupuli-puppet-lint-plugins", '>= 3.0',                 require: false, platforms: [:ruby]
-  gem "github_changelog_generator",                              require: false
+  gem "json", '~> 2.0',                                require: false
+  gem "voxpupuli-puppet-lint-plugins", '~> 3.0',       require: false
+  gem "facterdb", '~> 1.18',                           require: false
+  gem "metadata-json-lint", '>= 2.0.2', '< 4.0.0',     require: false
+  gem "puppetlabs_spec_helper", '>= 3.0.0', '< 5.0.0', require: false
+  gem "rspec-puppet-facts", '~> 2.0',                  require: false
+  gem "codecov", '~> 0.2',                             require: false
+  gem "dependency_checker", '~> 0.2',                  require: false
+  gem "parallel_tests", '~> 3.4',                      require: false
+  gem "pry", '~> 0.10',                                require: false
+  gem "simplecov-console", '~> 0.5',                   require: false
+  gem "puppet-debugger", '~> 1.0',                     require: false
+  gem "rubocop", '= 1.6.1',                            require: false
+  gem "rubocop-performance", '= 1.9.1',                require: false
+  gem "rubocop-rspec", '= 2.0.1',                      require: false
+  gem "rb-readline", '= 0.5.5',                        require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "github_changelog_generator",                    require: false
 end
 group :system_tests do
-  gem "puppet-module-posix-system-r#{minor_version}", '~> 1.0', require: false, platforms: [:ruby]
-  gem "puppet-module-win-system-r#{minor_version}", '~> 1.0',   require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet_litmus", '< 1.0.0', require: false, platforms: [:ruby]
+  gem "serverspec", '~> 2.41',    require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
