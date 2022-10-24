@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v13.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v13.0.1) (2022-10-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v13.0.0...v13.0.1)
+
+### Fixed
+
+- \(CONT-173\) - Updating deprecated facter instances [\#1501](https://github.com/puppetlabs/puppetlabs-mysql/pull/1501) ([jordanbreen28](https://github.com/jordanbreen28))
+- pdksync - \(CONT-189\) Remove support for RedHat6 / OracleLinux6 / Scientific6 [\#1498](https://github.com/puppetlabs/puppetlabs-mysql/pull/1498) ([david22swan](https://github.com/david22swan))
+- pdksync - \(CONT-130\) - Dropping Support for Debian 9 [\#1495](https://github.com/puppetlabs/puppetlabs-mysql/pull/1495) ([jordanbreen28](https://github.com/jordanbreen28))
+- MySQL 8.0: Grant required privileges to xtrabackup user [\#1478](https://github.com/puppetlabs/puppetlabs-mysql/pull/1478) ([jan-win1993](https://github.com/jan-win1993))
+
 ## [v13.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v13.0.0) (2022-08-25)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v12.0.3...v13.0.0)
