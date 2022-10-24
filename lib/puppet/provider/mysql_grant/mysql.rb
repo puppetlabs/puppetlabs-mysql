@@ -25,9 +25,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
       # initialize variables to be visible outside of the grants.each_line scope
       stripped_privileges = []
-      table = ""
+      table = ''
       options = []
-      host = ""
+      host = ''
 
       # we need to iterate over all grants rows, because on mysql 8+ there are static and dynamic privileges
       # each on separate row of show grants
@@ -57,10 +57,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         stripped_privileges.concat local_stripped_privileges
         # Same here, but to remove OPTION leaving just GRANT.
         local_options = if %r{WITH\sGRANT\sOPTION}.match?(rest)
-                    ['GRANT']
-                  else
-                    ['NONE']
-                  end
+                          ['GRANT']
+                        else
+                          ['NONE']
+                        end
         options.concat local_options
         # fix double backslash that MySQL prints, so resources match
         table.gsub!('\\\\', '\\')
@@ -73,23 +73,21 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         end
 
         sorted_privileges = stripped_privileges.uniq.sort
-        if newer_than('mysql' => '8.0.0') && (
-            sorted_privileges == ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER',
-                                  'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES',
-                                  'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER',
-                                  'UPDATE'] ||
-            sorted_privileges == ['ALTER', 'ALTER ROUTINE', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN',
-                                  'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN', 'CLONE_ADMIN', 'CONNECTION_ADMIN', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE',
-                                  'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER', 'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'ENCRYPTION_KEY_ADMIN',
-                                  'EVENT', 'EXECUTE', 'FILE', 'FIREWALL_EXEMPT', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
-                                  'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INDEX', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'INSERT',
-                                  'LOCK TABLES', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN', 'PROCESS', 'REFERENCES', 'RELOAD', 'REPLICATION CLIENT',
-                                  'REPLICATION SLAVE', 'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN', 'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN',
-                                  'SELECT', 'SENSITIVE_VARIABLES_OBSERVER', 'SERVICE_CONNECTION_ADMIN', 'SESSION_VARIABLES_ADMIN', 'SET_USER_ID', 'SHOW DATABASES',
-                                  'SHOW VIEW', 'SHOW_ROUTINE', 'SHUTDOWN', 'SUPER', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN', 'TRIGGER', 'UPDATE',
-                                  'XA_RECOVER_ADMIN'] ||
-            sorted_privileges == ['ALL', 'USAGE']
-          )
+        if newer_than('mysql' => '8.0.0') &&
+           [['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER',
+             'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES',
+             'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER',
+             'UPDATE'], ['ALTER', 'ALTER ROUTINE', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN',
+                         'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN', 'CLONE_ADMIN', 'CONNECTION_ADMIN', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE',
+                         'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER', 'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'ENCRYPTION_KEY_ADMIN',
+                         'EVENT', 'EXECUTE', 'FILE', 'FIREWALL_EXEMPT', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
+                         'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INDEX', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'INSERT',
+                         'LOCK TABLES', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN', 'PROCESS', 'REFERENCES', 'RELOAD', 'REPLICATION CLIENT',
+                         'REPLICATION SLAVE', 'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN', 'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN',
+                         'SELECT', 'SENSITIVE_VARIABLES_OBSERVER', 'SERVICE_CONNECTION_ADMIN', 'SESSION_VARIABLES_ADMIN', 'SET_USER_ID', 'SHOW DATABASES',
+                         'SHOW VIEW', 'SHOW_ROUTINE', 'SHUTDOWN', 'SUPER', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN', 'TRIGGER', 'UPDATE',
+                         'XA_RECOVER_ADMIN'], ['ALL', 'USAGE']].include?(sorted_privileges)
+
           sorted_privileges = ['ALL']
 
         # The following two elsif blocks of code are a workaround for issue #1474.
