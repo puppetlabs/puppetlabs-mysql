@@ -22,16 +22,15 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         next if %r{There is no such grant defined for user}.match?(e.inspect)
         raise Puppet::Error, _('#mysql had an error ->  %{inspect}') % { inspect: e.inspect }
       end
-      
+
       # initialize variables to be visible outside of the grants.each_line scope
       stripped_privileges = []
       table = ""
       options = []
       host = ""
-      
+
       # we need to iterate over all grants rows, because on mysql 8+ there are static and dynamic privileges
       # each on separate row of show grants
- 
       # Once we have the list of grants generate entries for each.
       grants.each_line do |grant|
         # Match the munges we do in the type.
