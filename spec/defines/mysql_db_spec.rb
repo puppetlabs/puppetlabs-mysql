@@ -94,7 +94,7 @@ describe 'mysql::db', type: :define do
       ].each do |path|
         it "fails when provided '#{path}' as a value to the 'sql' parameter" do
           params['sql'] = [path]
-          is_expected.to raise_error(Puppet::PreformattedError, %r{The file '#{Regexp.escape(path)}' is invalid. A a valid file path is expected.})
+          is_expected.to raise_error(Puppet::PreformattedError, %r{The file '#{Regexp.escape(path)}' is invalid. A valid file path is expected.})
         end
       end
 
@@ -103,6 +103,7 @@ describe 'mysql::db', type: :define do
         '/tmp/test.txt',
         '/tmp/.test',
         '/foo.test',
+        '/foo.test.txt',
       ].each do |path|
         it "succeeds when provided '#{path}' as a value to the 'sql' parameter" do
           params['sql'] = [path]
