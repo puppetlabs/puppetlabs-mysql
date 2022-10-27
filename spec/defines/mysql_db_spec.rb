@@ -104,6 +104,10 @@ describe 'mysql::db', type: :define do
         '/tmp/.test',
         '/foo.test',
         '/foo.test.txt',
+        '/foo/test/test-1.2.3/schema/test.sql',
+        '/foo/test/test-1.2.3/schema/foo.test.sql',
+        '/foo/foo.t1.t2.t3/foo.test-1.2.3/test.test.schema/test..app.sql',
+	      '/foo/foo.t1.t2...t3/foo.test-1.2.3/test.test.schema/test.app.sql',
       ].each do |path|
         it "succeeds when provided '#{path}' as a value to the 'sql' parameter" do
           params['sql'] = [path]
