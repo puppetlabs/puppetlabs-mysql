@@ -76,8 +76,8 @@ define mysql::db (
   # Ensure that the sql files passed are valid file paths.
   if $sql {
     $sql.each | $sqlfile | {
-      if $sqlfile !~ /^\/(?:[A-Za-z0-9_-]+\/?+)+(?:.[A-Za-z0-9]+)$/ {
-        $message = "The file '${sqlfile}' is invalid. A a valid file path is expected."
+      if $sqlfile !~ /^\/(?:.[.A-Za-z0-9_-]+\/?+)+(?:\.[.A-Za-z0-9]+)+$/ {
+        $message = "The file '${sqlfile}' is invalid. A valid file path is expected."
         fail($message)
       }
     }
