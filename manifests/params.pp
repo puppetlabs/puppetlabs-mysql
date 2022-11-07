@@ -239,6 +239,7 @@ class mysql::params {
         '16.04' => 'ruby-mysql', # xenial
         '18.04' => 'ruby-mysql2', # bionic
         '20.04' => 'ruby-mysql2', # focal
+        '22.04' => 'ruby-mysql2', # jammy
         default => 'libmysql-ruby',
       }
     }
