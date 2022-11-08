@@ -106,9 +106,9 @@ class mysql::params {
       $mycnf_owner             = undef
       $mycnf_group             = undef
       $socket                  = '/var/lib/mysql/mysql.sock'
-      $ssl_ca                  = '/etc/mysql/cacert.pem'
-      $ssl_cert                = '/etc/mysql/server-cert.pem'
-      $ssl_key                 = '/etc/mysql/server-key.pem'
+      $ssl_ca                  = undef
+      $ssl_cert                = undef
+      $ssl_key                 = undef
       $tmpdir                  = '/tmp'
       $managed_dirs            = undef
       # mysql::bindings
