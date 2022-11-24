@@ -200,9 +200,9 @@ class mysql::params {
       $mycnf_owner             = undef
       $mycnf_group             = undef
       $socket                  = '/var/run/mysqld/mysqld.sock'
-      $ssl_ca                  = '/etc/mysql/cacert.pem'
-      $ssl_cert                = '/etc/mysql/server-cert.pem'
-      $ssl_key                 = '/etc/mysql/server-key.pem'
+      $ssl_ca                  = undef
+      $ssl_cert                = undef
+      $ssl_key                 = undef
       $tmpdir                  = '/tmp'
       $managed_dirs            = ['tmpdir','basedir','datadir','innodb_data_home_dir','innodb_log_group_home_dir','innodb_undo_directory','innodb_tmpdir']
 
