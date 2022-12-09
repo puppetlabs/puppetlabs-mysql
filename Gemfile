@@ -14,24 +14,24 @@ def location_for(place_or_version, fake_version = nil)
 end
 
 group :development do
-  gem "json", '~> 2.0',                                require: false
-  gem "voxpupuli-puppet-lint-plugins", '~> 3.0',       require: false
-  gem "facterdb", '~> 1.18',                           require: false
-  gem "metadata-json-lint", '>= 2.0.2', '< 4.0.0',     require: false
-  gem "puppetlabs_spec_helper", '>= 3.0.0', '< 5.0.0', require: false
-  gem "rspec-puppet-facts", '~> 2.0',                  require: false
-  gem "codecov", '~> 0.2',                             require: false
-  gem "dependency_checker", '~> 0.2',                  require: false
-  gem "parallel_tests", '~> 3.4',                      require: false
-  gem "pry", '~> 0.10',                                require: false
-  gem "simplecov-console", '~> 0.5',                   require: false
-  gem "puppet-debugger", '~> 1.0',                     require: false
-  gem "rubocop", '= 1.6.1',                            require: false
-  gem "rubocop-performance", '= 1.9.1',                require: false
-  gem "rubocop-rspec", '= 2.0.1',                      require: false
-  gem "rb-readline", '= 0.5.5',                        require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "github_changelog_generator",                    require: false
-  gem "puppet-lint-check_unsafe_interpolations", '~> 0.0.2'
+  gem "json", '~> 2.0',                                     require: false
+  gem "voxpupuli-puppet-lint-plugins", '~> 3.0',            require: false
+  gem "facterdb", '~> 1.18',                                require: false
+  gem "metadata-json-lint", '>= 2.0.2', '< 4.0.0',          require: false
+  gem "puppetlabs_spec_helper", '>= 3.0.0', '< 5.0.0',      require: false
+  gem "rspec-puppet-facts", '~> 2.0',                       require: false
+  gem "codecov", '~> 0.2',                                  require: false
+  gem "dependency_checker", '~> 0.2',                       require: false
+  gem "parallel_tests", '~> 3.4',                           require: false
+  gem "pry", '~> 0.10',                                     require: false
+  gem "simplecov-console", '~> 0.5',                        require: false
+  gem "puppet-debugger", '~> 1.0',                          require: false
+  gem "rubocop", '= 1.6.1',                                 require: false
+  gem "rubocop-performance", '= 1.9.1',                     require: false
+  gem "rubocop-rspec", '= 2.0.1',                           require: false
+  gem "rb-readline", '= 0.5.5',                             require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "github_changelog_generator",                         require: false
+  gem 'puppet-lint-check_unsafe_interpolations', '~> 0.0.3' require: false
 end
 group :system_tests do
   gem "puppet_litmus", '< 1.0.0', require: false, platforms: [:ruby]
