@@ -47,11 +47,26 @@ describe 'mysql::server' do
         it { is_expected.to contain_file('mysql-config-file').with_content(%r{ssl = false}) }
       end
 
+      describe 'ssl set to false filters out ssl options' do
+        let(:params) { { override_options: { 'mysqld' => { 'ssl' => false, 'ssl-disable' => false, 'ssl-key' => '/etc/key.pem' } } } }
+
+        it { is_expected.to contain_file('mysql-config-file').with_content(%r{ssl = false}) }
+        it { is_expected.to contain_file('mysql-config-file').without_content(%r{ssl-key}) }
+      end
+
       # ssl-disable (and ssl) are special cased within mysql.
       describe 'possibility of disabling ssl completely' do
         let(:params) { { override_options: { 'mysqld' => { 'ssl' => true, 'ssl-disable' => true } } } }
 
         it { is_expected.to contain_file('mysql-config-file').without_content(%r{ssl = true}) }
+      end
+
+      describe 'ssl-disable filters other ssl options' do
+        let(:params) { { override_options: { 'mysqld' => { 'ssl' => true, 'ssl-disable' => true, 'ssl-key' => '/etc/key.pem' } } } }
+
+        it { is_expected.to contain_file('mysql-config-file').without_content(%r{ssl = true}) }
+        it { is_expected.to contain_file('mysql-config-file').without_content(%r{ssl-disable}) }
+        it { is_expected.to contain_file('mysql-config-file').without_content(%r{ssl-key}) }
       end
 
       describe 'a non ssl option set to true' do
