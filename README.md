@@ -143,7 +143,7 @@ mysql::db { 'mydb':
   password        => 'mypass',
   host            => 'localhost',
   grant           => ['SELECT', 'UPDATE'],
-  sql             => '/path/to/sqlfile.gz',
+  sql             => ['/path/to/sqlfile.gz'],
   import_cat_cmd  => 'zcat',
   import_timeout  => 900,
   mysql_exec_path => '/opt/rh/rh-myql57/root/bin',
