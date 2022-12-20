@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v13.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v13.1.0) (2022-12-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v13.0.1...v13.1.0)
+
+### Added
+
+- mysql::db sql parameter support filenames with multiple dots [\#1505](https://github.com/puppetlabs/puppetlabs-mysql/pull/1505) ([skn-bvdh](https://github.com/skn-bvdh))
+
+### Fixed
+
+- \(GH-1518\) Declare minimum Puppet version 6.24.0 [\#1519](https://github.com/puppetlabs/puppetlabs-mysql/pull/1519) ([pmcmaw](https://github.com/pmcmaw))
+- \(GH-1516\) Update sql example to use array [\#1517](https://github.com/puppetlabs/puppetlabs-mysql/pull/1517) ([pmcmaw](https://github.com/pmcmaw))
+- do not emit other ssl directives when ssl = false [\#1513](https://github.com/puppetlabs/puppetlabs-mysql/pull/1513) ([kjetilho](https://github.com/kjetilho))
+- \(GH-1491\) Fix for Ubuntu 22.04 [\#1508](https://github.com/puppetlabs/puppetlabs-mysql/pull/1508) ([david22swan](https://github.com/david22swan))
+
 ## [v13.0.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v13.0.1) (2022-10-24)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v13.0.0...v13.0.1)
