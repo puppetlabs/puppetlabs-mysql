@@ -106,9 +106,6 @@ class mysql::params {
       $mycnf_owner             = undef
       $mycnf_group             = undef
       $socket                  = '/var/lib/mysql/mysql.sock'
-      $ssl_ca                  = '/etc/mysql/cacert.pem'
-      $ssl_cert                = '/etc/mysql/server-cert.pem'
-      $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       $managed_dirs            = undef
       # mysql::bindings
@@ -154,9 +151,6 @@ class mysql::params {
       $server_service_name = 'mysql'
       $xtrabackup_package_name = 'xtrabackup'
 
-      $ssl_ca              = '/etc/mysql/cacert.pem'
-      $ssl_cert            = '/etc/mysql/server-cert.pem'
-      $ssl_key             = '/etc/mysql/server-key.pem'
       $tmpdir              = '/tmp'
       $managed_dirs        = undef
       # mysql::bindings
@@ -200,9 +194,6 @@ class mysql::params {
       $mycnf_owner             = undef
       $mycnf_group             = undef
       $socket                  = '/var/run/mysqld/mysqld.sock'
-      $ssl_ca                  = '/etc/mysql/cacert.pem'
-      $ssl_cert                = '/etc/mysql/server-cert.pem'
-      $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       $managed_dirs            = ['tmpdir','basedir','datadir','innodb_data_home_dir','innodb_log_group_home_dir','innodb_undo_directory','innodb_tmpdir']
 
@@ -261,9 +252,6 @@ class mysql::params {
       $mycnf_group             = undef
       $server_service_name     = 'mysqld'
       $socket                  = '/var/lib/mysql/mysql.sock'
-      $ssl_ca                  = '/etc/mysql/cacert.pem'
-      $ssl_cert                = '/etc/mysql/server-cert.pem'
-      $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       $managed_dirs            = undef
       # mysql::bindings
@@ -289,9 +277,6 @@ class mysql::params {
       $mycnf_group         = undef
       $server_service_name = 'mysql'
       $socket              = '/run/mysqld/mysqld.sock'
-      $ssl_ca              = '/etc/mysql/cacert.pem'
-      $ssl_cert            = '/etc/mysql/server-cert.pem'
-      $ssl_key             = '/etc/mysql/server-key.pem'
       $tmpdir              = '/tmp'
       $managed_dirs        = undef
       # mysql::bindings
@@ -317,9 +302,6 @@ class mysql::params {
       $mycnf_group         = undef
       $server_service_name = 'mysql-server'
       $socket              = '/var/db/mysql/mysql.sock'
-      $ssl_ca              = undef
-      $ssl_cert            = undef
-      $ssl_key             = undef
       $tmpdir              = '/tmp'
       $managed_dirs        = undef
       # mysql::bindings
@@ -348,9 +330,6 @@ class mysql::params {
       $mycnf_group         = undef
       $server_service_name = 'mysqld'
       $socket              = '/var/run/mysql/mysql.sock'
-      $ssl_ca              = undef
-      $ssl_cert            = undef
-      $ssl_key             = undef
       $tmpdir              = '/tmp'
       $managed_dirs        = undef
       # mysql::bindings
@@ -380,9 +359,6 @@ class mysql::params {
           $mycnf_group         = undef
           $server_service_name = 'mariadb'
           $socket              = '/run/mysqld/mysqld.sock'
-          $ssl_ca              = '/etc/mysql/cacert.pem'
-          $ssl_cert            = '/etc/mysql/server-cert.pem'
-          $ssl_key             = '/etc/mysql/server-key.pem'
           $tmpdir              = '/tmp'
           $managed_dirs        = undef
           $java_package_name   = undef
@@ -408,9 +384,6 @@ class mysql::params {
           $mycnf_group         = undef
           $server_service_name = 'mysqld'
           $socket              = '/var/lib/mysql/mysql.sock'
-          $ssl_ca              = '/etc/mysql/cacert.pem'
-          $ssl_cert            = '/etc/mysql/server-cert.pem'
-          $ssl_key             = '/etc/mysql/server-key.pem'
           $tmpdir              = '/tmp'
           $managed_dirs        = undef
           # mysql::bindings
@@ -492,9 +465,9 @@ class mysql::params {
       'skip-external-locking' => true,
       'socket'                => $mysql::params::socket,
       'ssl'                   => false,
-      'ssl-ca'                => $mysql::params::ssl_ca,
-      'ssl-cert'              => $mysql::params::ssl_cert,
-      'ssl-key'               => $mysql::params::ssl_key,
+      'ssl-ca'                => undef,
+      'ssl-cert'              => undef,
+      'ssl-key'               => undef,
       'ssl-disable'           => false,
       'thread_cache_size'     => '8',
       'thread_stack'          => '256K',
