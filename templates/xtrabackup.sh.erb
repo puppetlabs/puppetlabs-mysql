@@ -59,7 +59,9 @@ cleanup
 <% unless @delete_before_dump -%>
 if [ $? -eq 0 ] ; then
     cleanup
+    <% if @backup_success_file_path -%>
     touch <%= @backup_success_file_path %>
+    <% end -%>
 fi
 <% end -%>
 
