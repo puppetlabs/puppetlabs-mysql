@@ -24,7 +24,8 @@ describe 'mysql::backup::xtrabackup' do
         let(:params) do
           default_params
         end
-        it 'does not contain the touch /tmp/backup_success command' do
+
+        it 'does not contain the touch command' do
           is_expected.to contain_file('xtrabackup.sh').without_content(
             %r{(^\s+touch\s+$)},
           )
