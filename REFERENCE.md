@@ -1598,7 +1598,7 @@ Plain text password.
 
 Data type: `Optional[Boolean]`
 
-If the Postgresql-Passwordhash should be of Datatype Sensitive[String]
+If the mysql password hash should be of datatype Sensitive[String]
 
 ### <a name="mysql--strip_hash"></a>`mysql::strip_hash`
 
