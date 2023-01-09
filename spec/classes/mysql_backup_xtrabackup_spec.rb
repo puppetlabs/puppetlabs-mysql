@@ -25,6 +25,12 @@ describe 'mysql::backup::xtrabackup' do
           default_params
         end
 
+        it 'does not contain the touch command' do
+          is_expected.to contain_file('xtrabackup.sh').without_content(
+            %r{(^\s+touch\s+$)},
+          )
+        end
+
         it 'contains the wrapper script' do
           is_expected.to contain_file('xtrabackup.sh').with_content(
             %r{(\n*^xtrabackup\s+.*\$@)},
@@ -301,6 +307,18 @@ describe 'mysql::backup::xtrabackup' do
         it 'contain the mariabackup executor' do
           is_expected.to contain_file('xtrabackup.sh').with_content(
             %r{(\n*^mariabackup\s+.*\$@)},
+          )
+        end
+      end
+
+      context 'with backup_success_file_path' do
+        let(:params) do
+          { backup_success_file_path: '/tmp/backup_success' }.merge(default_params)
+        end
+
+        it 'contain the touch /tmp/backup_success command' do
+          is_expected.to contain_file('xtrabackup.sh').with_content(
+            %r{(^\s+touch /tmp/backup_success$)},
           )
         end
       end
