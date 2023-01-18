@@ -9,6 +9,12 @@
 #     grant    => ['SELECT', 'UPDATE'],
 #   }
 #
+# @param name
+#   The name of the database to create. Database names must:
+#     * be longer than 64 characters.
+#     * not contain / \ or . characters.
+#     * not contain characters that are not permitted in file names.
+#     * not end with space characters.
 # @param user
 #   The user for the database you're creating.
 # @param password
@@ -18,9 +24,9 @@
 # @param dbname
 #   The name of the database to create.
 # @param charset
-#   The character set for the database.
+#   The character set for the database. Must have the same value as collate to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 # @param collate
-#   The collation for the database.
+#   The collation for the database. Must have the same value as charset to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 # @param host
 #   The host to use as part of user@host for grants.
 # @param grant
@@ -28,7 +34,7 @@
 # @param grant_options
 #   The grant_options for the grant for user@host on the database.
 # @param sql
-#   The path to the sqlfile you want to execute. This can be single file specified as string, or it can be an array of strings.
+#   The path to the sqlfile you want to execute. This can be an array containing one or more file paths.
 # @param enforce_sql
 #   Specifies whether executing the sqlfiles should happen on every run. If set to false, sqlfiles only run once.
 # @param ensure
@@ -41,25 +47,41 @@
 define mysql::db (
   $user,
   Variant[String, Sensitive[String]] $password,
-  $tls_options                                = undef,
-  $dbname                                     = $name,
-  $charset                                    = 'utf8',
-  $collate                                    = 'utf8_general_ci',
-  $host                                       = 'localhost',
-  $grant                                      = 'ALL',
-  $grant_options                              = undef,
-  Optional[Variant[Array, Hash, String]] $sql = undef,
-  $enforce_sql                                = false,
-  Enum['absent', 'present'] $ensure           = 'present',
-  $import_timeout                             = 300,
-  $import_cat_cmd                             = 'cat',
-  $mysql_exec_path                            = undef,
+  $tls_options                                  = undef,
+  String $dbname                                = $name,
+  $charset                                      = 'utf8',
+  $collate                                      = 'utf8_general_ci',
+  $host                                         = 'localhost',
+  $grant                                        = 'ALL',
+  $grant_options                                = undef,
+  Optional[Array] $sql                          = undef,
+  $enforce_sql                                  = false,
+  Enum['absent', 'present'] $ensure             = 'present',
+  $import_timeout                               = 300,
+  Enum['cat', 'zcat', 'bzcat'] $import_cat_cmd  = 'cat',
+  $mysql_exec_path                              = undef,
 ) {
-  $table = "${dbname}.*"
-
-  $sql_inputs = join([$sql], ' ')
-
   include 'mysql::client'
+
+  # Ensure that the database name is valid.
+  if $dbname !~ /^[^\/?%*:|\""<>.\s;]{1,64}$/ {
+    $message = "The database name '${dbname}' is invalid. Values must:
+      * be longer than 64 characters.
+      * not contain // \\ or . characters.
+      * not contain characters that are not permitted in file names.
+      * not end with space characters."
+    fail($message)
+  }
+
+  # Ensure that the sql files passed are valid file paths.
+  if $sql {
+    $sql.each | $sqlfile | {
+      if $sqlfile !~ /^\/(?:.[.A-Za-z0-9_-]+\/?+)+(?:\.[.A-Za-z0-9]+)+$/ {
+        $message = "The file '${sqlfile}' is invalid. A valid file path is expected."
+        fail($message)
+      }
+    }
+  }
 
   if ($mysql_exec_path) {
     $_mysql_exec_path = $mysql_exec_path
@@ -84,6 +106,8 @@ define mysql::db (
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
 
   if $ensure == 'present' {
+    $table = "${dbname}.*"
+
     mysql_grant { "${user}@${host}/${table}":
       privileges => $grant,
       provider   => 'mysql',
@@ -96,14 +120,12 @@ define mysql::db (
       ],
     }
 
-    $refresh = ! $enforce_sql
-
     if $sql {
       exec { "${dbname}-import":
-        command     => "${import_cat_cmd} ${sql_inputs} | mysql ${dbname}",
+        command     => "${import_cat_cmd} ${shell_join($sql)} | mysql ${dbname}",
         logoutput   => true,
         environment => "HOME=${::root_home}",
-        refreshonly => $refresh,
+        refreshonly => ! $enforce_sql,
         path        => "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:${_mysql_exec_path}",
         require     => Mysql_grant["${user}@${host}/${table}"],
         subscribe   => Mysql_database[$dbname],

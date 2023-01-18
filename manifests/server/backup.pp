@@ -3,17 +3,23 @@
 #
 # @example Create a basic MySQL backup:
 #   class { 'mysql::server':
-#     root_password => 'password'
+#     root_password           => 'password'
 #   }
 #   class { 'mysql::server::backup':
-#     backupuser     => 'myuser',
-#     backuppassword => 'mypassword',
-#     backupdir      => '/tmp/backups',
+#     backupuser              => 'myuser',
+#     backuppassword          => 'mypassword',
+#     backupdir               => '/tmp/backups',
+#   }
+#
+# @example Create a basic MySQL backup using mariabackup:
+#   class { 'mysql::server':
+#     root_password           => 'password'
 #   }
 #   class { 'mysql::server::backup':
-#     backupmethod => 'mariabackup',
-#     provider     => 'xtrabackup',
-#     backupdir    => '/tmp/backups',
+#     backupmethod            => 'mariabackup',
+#     backupmethod_package    => 'mariadb-backup'
+#     provider                => 'xtrabackup',
+#     backupdir               => '/tmp/backups',
 #   }
 #
 # @param backupuser
@@ -62,7 +68,7 @@
 # @param execpath
 #   Allows you to set a custom PATH should your MySQL installation be non-standard places. Defaults to `/usr/bin:/usr/sbin:/bin:/sbin`.
 # @param provider
-#   Sets the server backup implementation. Valid values are:
+#   Sets the server backup implementation. Valid values are: xtrabackup, mysqldump, mysqlbackup
 # @param maxallowedpacket
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
@@ -74,6 +80,10 @@
 #   on the target system. Packages for it are NOT automatically installed.
 # @param compression_extension
 #   Configure the file extension for the compressed backup (when using the mysqldump provider)
+# @param backupmethod_package
+#   The package which provides the binary specified by the backupmethod parameter.
+# @param excludedatabases
+#   Give a list of excluded databases when using file_per_database, e.g.: [ 'information_schema', 'performance_schema' ]
 class mysql::server::backup (
   $backupuser               = undef,
   $backupcronuser           = $mysql::params::backupcronuser,
@@ -103,7 +113,9 @@ class mysql::server::backup (
   $incremental_backups      = true,
   $install_cron             = true,
   $compression_command      = undef,
-  $compression_extension    = undef
+  $compression_extension    = undef,
+  $backupmethod_package     = $mysql::params::xtrabackup_package_name,
+  Array[String] $excludedatabases = [],
 ) inherits mysql::params {
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
     warning("The 'prescript' option is not currently implemented for the ${provider} backup provider.")
@@ -139,6 +151,8 @@ class mysql::server::backup (
         'install_cron'             => $install_cron,
         'compression_command'      => $compression_command,
         'compression_extension'    => $compression_extension,
+        'backupmethod_package'     => $backupmethod_package,
+        'excludedatabases'         => $excludedatabases,
       }
   })
 }

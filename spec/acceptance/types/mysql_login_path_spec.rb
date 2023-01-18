@@ -6,13 +6,13 @@ mysql_version = '5.6'
 support_bin_dir = '/root/mysql_login_path'
 if os[:family] == 'redhat' && os[:release].to_i == 8
   mysql_version = '8.0'
-elsif os[:family] == 'debian' && os[:release] =~ %r{9|10}
+elsif os[:family] == 'debian' && os[:release] =~ %r{9|10|11}
   mysql_version = '8.0'
-elsif os[:family] == 'ubuntu' && os[:release] =~ %r{16\.04|18\.04}
+elsif os[:family] == 'ubuntu' && os[:release] =~ %r{18\.04|20\.04}
   mysql_version = '5.7'
 end
 
-describe 'mysql_login_path', unless: ("#{os[:family]}-#{os[:release].to_i}" =~ %r{redhat\-5|suse}) do
+describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".include?('suse') do
   before(:all) do
     run_shell("rm -rf #{support_bin_dir}")
     bolt_upload_file('spec/support/mysql_login_path', support_bin_dir)

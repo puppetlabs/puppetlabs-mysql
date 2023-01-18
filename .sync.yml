@@ -13,6 +13,8 @@ spec/spec_helper.rb:
   - require 'spec_helper_local'
   coverage_report: true
 "  changelog_user": puppetlabs
+Rakefile:
+  changelog_max_issues: 500
 .gitpod.Dockerfile:
   unmanaged: false
 .gitpod.yml:
@@ -30,3 +32,13 @@ spec/spec_helper.rb:
   unmanaged: false
 .travis.yml:
   delete: true
+changelog_since_tag: 'v11.0.3'
+Rakefile:
+  extra_disabled_lint_checks:
+    - parameter_types
+    - parameter_documentation
+    - legacy_facts
+    - top_scope_facts
+    - anchor_resource
+    - relative_classname_reference
+    - params_empty_string_assignment

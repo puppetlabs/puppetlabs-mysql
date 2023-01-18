@@ -17,8 +17,6 @@
 #   The location, as a path, of !includedir for custom configuration overrides.
 # @param install_options
 #   Passes [install_options](https://docs.puppetlabs.com/references/latest/type.html#package-attribute-install_options) array to managed package resources. You must pass the appropriate options for the specified package manager
-# @param install_secret_file
-#   Path to secret file containing temporary root password.
 # @param manage_config_file
 #   Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
 # @param options
@@ -81,7 +79,6 @@ class mysql::server (
   $config_file_mode        = $mysql::params::config_file_mode,
   $includedir              = $mysql::params::includedir,
   $install_options         = undef,
-  $install_secret_file     = $mysql::params::install_secret_file,
   $manage_config_file      = $mysql::params::manage_config_file,
   Mysql::Options  $options                 = {},
   $override_options        = {},
@@ -167,6 +164,13 @@ class mysql::server (
     ~> Class['mysql::server::service']
   }
 
+  if $_options['mysqld']['ssl-disable'] {
+    notify { 'ssl-disable':
+      message => 'Disabling SSL is evil! You should never ever do this except
+                if you are forced to use a mysql version compiled without SSL support',
+    }
+  }
+
   Anchor['mysql::server::start']
   -> Class['mysql::server::config']
   -> Class['mysql::server::install']
@@ -175,4 +179,5 @@ class mysql::server (
   -> Class['mysql::server::service']
   -> Class['mysql::server::root_password']
   -> Class['mysql::server::providers']
--> Anchor['mysql::server::end'] }
+  -> Anchor['mysql::server::end']
+}

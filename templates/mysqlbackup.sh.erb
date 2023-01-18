@@ -22,11 +22,7 @@ ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
 
 # Create temporary mysql cnf file.
 TMPFILE=`mktemp /tmp/backup.XXXXXX` || exit 1
-<%- if @kernel == 'SunOS' -%>
-echo "[client]\npassword=$PASS\nuser=$USER\nmax_allowed_packet=$MAX_ALLOWED_PACKET" > $TMPFILE
-<%- else -%>
 echo -e "[client]\npassword=$PASS\nuser=$USER\nmax_allowed_packet=$MAX_ALLOWED_PACKET" > $TMPFILE
-<%- end -%>
 
 <% if @prescript -%>
 <%- [@prescript].flatten.compact.each do |script|%>
@@ -76,11 +72,7 @@ set -o pipefail
 
 cleanup()
 {
-<%- if @kernel == 'SunOS' -%>
-	gfind "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | gxargs -0 -r rm -f
-<%- else -%>
 	find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
-<%- end -%>
 }
 
 <% if @delete_before_dump -%>
@@ -89,7 +81,11 @@ cleanup
 <% end -%>
 <% if @backupdatabases.empty? -%>
 <% if @file_per_database -%>
+<% if @excludedatabases.empty? -%>
 mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read dbname
+<% else -%>
+mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | grep -v '^\(<%= @excludedatabases.join('|') %>\)$' | while read dbname
+<% end -%>
 do
   <%= @backupmethod -%> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
     ${ADDITIONAL_OPTIONS} \

@@ -32,6 +32,7 @@ class mysql::backup::mysqlbackup (
   $install_cron             = true,
   $compression_command      = undef,
   $compression_extension    = undef,
+  $backupmethod_package     = undef,
 ) inherits mysql::params {
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
@@ -74,9 +75,7 @@ class mysql::backup::mysqlbackup (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-      ensure_packages('crontabs')
-    } elsif $::osfamily == 'RedHat' {
+    if $::osfamily == 'RedHat' {
       ensure_packages('cronie')
     } elsif $::osfamily != 'FreeBSD' {
       ensure_packages('cron')
@@ -110,7 +109,7 @@ class mysql::backup::mysqlbackup (
       'incremental_base'       => 'history:last_backup',
       'incremental_backup_dir' => $backupdir,
       'user'                   => $backupuser,
-      'password'               => $backuppassword_unsensitive
+      'password'               => $backuppassword_unsensitive,
     },
   }
   $options = mysql::normalise_and_deepmerge($default_options, $mysql::server::override_options)

@@ -38,7 +38,8 @@ describe 'mysql class' do
           databases => {
             'somedb' => {
               ensure  => 'present',
-              charset => 'utf8',
+              charset => '#{fetch_charset}',
+              collate => '#{fetch_charset}_general_ci',
             },
           }
         }
@@ -62,7 +63,6 @@ describe 'mysql class' do
       end
 
       it 'can be set' do
-        export_locales
         apply_manifest(pp, catch_failures: true) do |r|
           expect(r.stderr).to be_empty
         end

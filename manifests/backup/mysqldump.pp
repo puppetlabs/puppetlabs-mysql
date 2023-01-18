@@ -32,7 +32,9 @@ class mysql::backup::mysqldump (
   $incremental_backups      = false,
   $install_cron             = true,
   $compression_command      = 'bzcat -zc',
-  $compression_extension    = '.bz2'
+  $compression_extension    = '.bz2',
+  $backupmethod_package     = undef,
+  Array[String] $excludedatabases = [],
 ) inherits mysql::params {
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
@@ -68,9 +70,7 @@ class mysql::backup::mysqldump (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '5' {
-      ensure_packages('crontabs')
-    } elsif $::osfamily == 'RedHat' {
+    if $::osfamily == 'RedHat' {
       ensure_packages('cronie')
     } elsif $::osfamily != 'FreeBSD' {
       ensure_packages('cron')

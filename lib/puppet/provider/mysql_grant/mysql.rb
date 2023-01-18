@@ -7,7 +7,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
   commands mysql_raw: 'mysql'
 
   def self.instances
-    instances = []
+    instance_configs = {}
     users.map do |user|
       user_string = cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
@@ -54,15 +54,55 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         # fix double backslash that MySQL prints, so resources match
         table.gsub!('\\\\', '\\')
         # We need to return an array of instances so capture these
-        instances << new(
-          name: "#{user}@#{host}/#{table}",
-          ensure: :present,
-          privileges: stripped_privileges.sort,
+        name = "#{user}@#{host}/#{table}"
+        if instance_configs.key?(name)
+          instance_config = instance_configs[name]
+          stripped_privileges.concat instance_config[:privileges]
+          options.concat instance_config[:options]
+        end
+
+        sorted_privileges = stripped_privileges.uniq.sort
+        if newer_than('mysql' => '8.0.0') && sorted_privileges == ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER',
+                                                                   'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES',
+                                                                   'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER',
+                                                                   'UPDATE']
+          sorted_privileges = ['ALL']
+
+        # The following two elsif blocks of code are a workaround for issue #1474.
+        elsif sorted_privileges == ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN',
+                                    'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
+                                    'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN',
+                                    'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN', 'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN', 'SERVICE_CONNECTION_ADMIN',
+                                    'SESSION_VARIABLES_ADMIN', 'SET_USER_ID', 'SHOW_ROUTINE', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN', 'XA_RECOVER_ADMIN']
+          sorted_privileges = ['ALL']
+
+        elsif sorted_privileges == ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN',
+                                    'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
+                                    'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN',
+                                    'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN', 'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN', 'SENSITIVE_VARIABLES_OBSERVER',
+                                    'SERVICE_CONNECTION_ADMIN', 'SESSION_VARIABLES_ADMIN', 'SET_USER_ID', 'SHOW_ROUTINE', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN',
+                                    'XA_RECOVER_ADMIN']
+          sorted_privileges = ['ALL']
+        end
+
+        instance_configs[name] = {
+          privileges: sorted_privileges,
           table: table,
           user: "#{user}@#{host}",
-          options: options,
-        )
+          options: options.uniq,
+        }
       end
+    end
+    instances = []
+    instance_configs.map do |name, config|
+      instances << new(
+        name: name,
+        ensure: :present,
+        privileges: config[:privileges],
+        table: config[:table],
+        user: config[:user],
+        options: config[:options],
+      )
     end
     instances
   end
