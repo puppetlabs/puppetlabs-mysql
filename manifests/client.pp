@@ -28,7 +28,7 @@ class mysql::client (
   $package_provider = undef,
   $package_source   = undef,
 ) inherits mysql::params {
-  include 'mysql::client::install'
+  contain 'mysql::client::install'
 
   if $bindings_enable {
     class { 'mysql::bindings':
@@ -42,7 +42,6 @@ class mysql::client (
 
   # Anchor pattern workaround to avoid resources of mysql::client::install to
   # "float off" outside mysql::client
-  anchor { 'mysql::client::start': }
+  Class['mysql::client::install']
   -> Class['mysql::client::install']
-  -> anchor { 'mysql::client::end': }
 }

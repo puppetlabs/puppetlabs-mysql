@@ -4,7 +4,7 @@
 #
 class mysql::backup::mysqldump (
   $backupuser               = '',
-  Variant[String, Sensitive[String]] $backuppassword = '',
+  Variant[String, Sensitive[String]] $backuppassword = Undef,
   $backupdir                = '',
   $maxallowedpacket         = '1M',
   $backupdirmode            = '0700',

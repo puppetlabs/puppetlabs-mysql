@@ -142,22 +142,19 @@ class mysql::server (
 
   Class['mysql::server::root_password'] -> Mysql::Db <| |>
 
-  include 'mysql::server::config'
-  include 'mysql::server::install'
-  include 'mysql::server::managed_dirs'
-  include 'mysql::server::installdb'
-  include 'mysql::server::service'
-  include 'mysql::server::root_password'
-  include 'mysql::server::providers'
+  contain 'mysql::server::config'
+  contain 'mysql::server::install'
+  contain 'mysql::server::managed_dirs'
+  contain 'mysql::server::installdb'
+  contain 'mysql::server::service'
+  contain 'mysql::server::root_password'
+  contain 'mysql::server::providers'
 
   if $remove_default_accounts {
     class { 'mysql::server::account_security':
       require => Anchor['mysql::server::end'],
     }
   }
-
-  anchor { 'mysql::server::start': }
-  anchor { 'mysql::server::end': }
 
   if $restart {
     Class['mysql::server::config']
@@ -171,13 +168,11 @@ class mysql::server (
     }
   }
 
-  Anchor['mysql::server::start']
-  -> Class['mysql::server::config']
+  Class['mysql::server::config']
   -> Class['mysql::server::install']
   -> Class['mysql::server::managed_dirs']
   -> Class['mysql::server::installdb']
   -> Class['mysql::server::service']
   -> Class['mysql::server::root_password']
   -> Class['mysql::server::providers']
-  -> Anchor['mysql::server::end']
 }

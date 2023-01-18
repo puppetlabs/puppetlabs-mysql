@@ -39,6 +39,4 @@ Rakefile:
     - parameter_documentation
     - legacy_facts
     - top_scope_facts
-    - anchor_resource
     - relative_classname_reference
-    - params_empty_string_assignment
