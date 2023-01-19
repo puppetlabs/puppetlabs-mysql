@@ -45,13 +45,14 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
-  
+
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ github.repository_owner == 'puppetlabs' }}
       run: |
         buildevents step $TRACE_ID $STEP_ID $STEP_START 'Setup Environment'
         echo STEP_ID=Setup-Acceptance-Test-Matrix >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
+
     - name: Run validation steps
       run: |
         bundle exec rake validate
@@ -90,7 +91,7 @@ jobs:
         echo 'platform=${{ matrix.platforms.image }}' >> $BUILDEVENT_FILE
         echo 'collection=${{ matrix.collection }}' >> $BUILDEVENT_FILE
         echo 'label=${{ matrix.platforms.label }}' >> $BUILDEVENT_FILE
- 
+
     - name: "Honeycomb: Start recording"
       uses: puppetlabs/kvrhdn-gha-buildevents@pdk-templates-v1
       with:
@@ -117,7 +118,7 @@ jobs:
         echo ::group::bundler environment
         buildevents cmd $TRACE_ID $STEP_ID 'bundle env' -- bundle env
         echo ::endgroup::
- 
+
     - name: "Honeycomb: Record Setup Environment time"
       if: ${{ always() }}
       run: |
@@ -125,10 +126,10 @@ jobs:
         echo STEP_ID=${{ matrix.platforms.image }}-${{ matrix.collection }}-2 >> $GITHUB_ENV
         echo STEP_START=$(date +%s) >> $GITHUB_ENV
 
-    - name: "Disable mysqld apparmor profile"
-      if: matrix.platforms.provider == 'provision::docker'
-      run: |
-        sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+    - name: "Disable mysqld apparmor profile"	
+      if: matrix.platforms.provider == 'provision::docker'	
+      run: |	
+        sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/	
         sudo apparmor_parser -R /etc/apparmor.d/disable/usr.sbin.mysqld
 
     - name: Provision test environment
@@ -168,7 +169,7 @@ jobs:
     - name: Run acceptance tests
       run: |
         buildevents cmd $TRACE_ID $STEP_ID 'rake litmus:acceptance:parallel' -- bundle exec rake 'litmus:acceptance:parallel'
- 
+
     - name: "Honeycomb: Record acceptance testing times"
       if: ${{ always() }}
       run: |
@@ -186,7 +187,7 @@ jobs:
           echo
           echo ::endgroup::
         fi
- 
+
     - name: "Honeycomb: Record removal times"
       if: ${{ always() }}
       run: |
