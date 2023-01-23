@@ -24,6 +24,8 @@
 #
 # @param backupuser
 #   MySQL user to create with backup administrator privileges.
+# @param backupcronuser
+#   User to use for backup cron jobs. Defaults to root.
 # @param backuppassword
 #   Password to create for `backupuser`.
 # @param backupdir
@@ -84,6 +86,7 @@
 #   Give a list of excluded databases when using file_per_database, e.g.: [ 'information_schema', 'performance_schema' ]
 class mysql::server::backup (
   $backupuser               = undef,
+  $backupcronuser           = $mysql::params::backupcronuser,
   Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
   $backupdir                = undef,
   $backupdirmode            = '0700',
@@ -121,10 +124,11 @@ class mysql::server::backup (
   create_resources('class', {
       "mysql::backup::${provider}" => {
         'backupuser'               => $backupuser,
+        'backupcronuser'           => $backupcronuser,
         'backuppassword'           => $backuppassword,
         'backupdir'                => $backupdir,
         'backupdirmode'            => $backupdirmode,
-        'backupdirowner'           => $backupdirowner,
+        'backupdirowner'           => $backupcronuser,
         'backupdirgroup'           => $backupdirgroup,
         'backupcompress'           => $backupcompress,
         'backuprotate'             => $backuprotate,
