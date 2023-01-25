@@ -44,7 +44,6 @@ end
 PuppetLint.configuration.send('disable_relative')
 PuppetLint.configuration.send('disable_parameter_types')
 PuppetLint.configuration.send('disable_parameter_documentation')
-PuppetLint.configuration.send('disable_legacy_facts')
 PuppetLint.configuration.send('disable_top_scope_facts')
 PuppetLint.configuration.send('disable_anchor_resource')
 PuppetLint.configuration.send('disable_relative_classname_reference')

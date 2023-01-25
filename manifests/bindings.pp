@@ -100,7 +100,7 @@ class mysql::bindings (
   $daemon_dev_package_name     = $mysql::params::daemon_dev_package_name,
   $daemon_dev_package_provider = $mysql::params::daemon_dev_package_provider
 ) inherits mysql::params {
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Archlinux': {
       if $java_enable { fail("::mysql::bindings::java cannot be managed by puppet on ${::facts['os']['family']} as it is not in official repositories. Please disable java mysql binding.") }
       if $perl_enable { include 'mysql::bindings::perl' }

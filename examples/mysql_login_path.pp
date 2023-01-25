@@ -2,7 +2,7 @@
 include apt
 apt::source { 'repo.mysql.com':
   location => 'http://repo.mysql.com/apt/debian',
-  release  => $::lsbdistcodename,
+  release  => $facts['os']['distro']['codename'],
   repos    => 'mysql-8.0',
   key      => {
     id     => 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
