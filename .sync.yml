@@ -36,9 +36,6 @@ Rakefile:
 changelog_since_tag: 'v11.0.3'
 Rakefile:
   extra_disabled_lint_checks:
-    - parameter_types
-    - parameter_documentation
     - top_scope_facts
     - anchor_resource
-    - relative_classname_reference
     - params_empty_string_assignment

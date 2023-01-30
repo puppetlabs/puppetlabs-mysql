@@ -6,8 +6,8 @@ describe 'mysql::server' do
   context 'on an unsupported OS' do
     let(:facts) do
       {
-        osfamily: 'UNSUPPORTED',
-        operatingsystem: 'UNSUPPORTED',
+        os: { family: 'UNSUPPORTED',
+              name: 'UNSUPPORTED' },
       }
     end
 

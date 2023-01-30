@@ -18,15 +18,19 @@
 #   Whether to manage the MySQL client package. Defaults to `true`.
 # @param package_name
 #   The name of the MySQL client package to install.
+# @param package_provider
+#   Specify the provider of the package. Optional. Valid value is a String.
+# @param package_source
+#   Specify the path to the package source. Optional. Valid value is a String
 #
 class mysql::client (
-  $bindings_enable  = $mysql::params::bindings_enable,
-  $install_options  = undef,
-  $package_ensure   = $mysql::params::client_package_ensure,
-  $package_manage   = $mysql::params::client_package_manage,
-  $package_name     = $mysql::params::client_package_name,
-  $package_provider = undef,
-  $package_source   = undef,
+  Boolean                                                               $bindings_enable  = $mysql::params::bindings_enable,
+  Optional[Array[String[1]]]                                            $install_options  = undef,
+  Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]] $package_ensure   = $mysql::params::client_package_ensure,
+  Boolean                                                               $package_manage   = $mysql::params::client_package_manage,
+  String[1]                                                             $package_name     = $mysql::params::client_package_name,
+  Optional[String[1]]                                                   $package_provider = undef,
+  Optional[String[1]]                                                   $package_source   = undef,
 ) inherits mysql::params {
   include 'mysql::client::install'
 

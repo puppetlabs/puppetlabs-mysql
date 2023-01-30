@@ -41,6 +41,8 @@
 #   Whether the service should be restarted when things change. Valid values are `true`, `false`. Defaults to `false`.
 # @param root_group
 #   The name of the group used for root. Can be a group name or a group ID. See more about the [group](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
+# @param managed_dirs
+#   An array containing all directories to be managed.
 # @param mysql_group
 #   The name of the group of the MySQL daemon user. Can be a group name or a group ID. See more about the [group](https://docs.puppetlabs.com/references/latest/type.html#file-attribute-group).
 # @param mycnf_owner
@@ -61,6 +63,10 @@
 #   Whether root user should be created. Valid values are `true`, `false`. Defaults to `true`. This is useful for a cluster setup with Galera. The root user has to be created only once. You can set this parameter true on one node and set it to false on the remaining nodes.
 # @param create_root_my_cnf
 #   Whether to create `/root/.my.cnf`. Valid values are `true`, `false`. Defaults to `true`. `create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. You can use this for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
+# @param create_root_login_file
+#   Whether to create a login file for root. Valid values are 'true', 'false'.
+# @param login_file
+#   Specify the login file.
 # @param users
 #   Optional hash of users to create, which are passed to [mysql_user](#mysql_user).
 # @param grants
@@ -75,42 +81,42 @@
 #   This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter above for details on changing the root password.
 #
 class mysql::server (
-  $config_file             = $mysql::params::config_file,
-  $config_file_mode        = $mysql::params::config_file_mode,
-  $includedir              = $mysql::params::includedir,
-  $install_options         = undef,
-  $manage_config_file      = $mysql::params::manage_config_file,
-  Mysql::Options  $options                 = {},
-  $override_options        = {},
-  $package_ensure          = $mysql::params::server_package_ensure,
-  $package_manage          = $mysql::params::server_package_manage,
-  $package_name            = $mysql::params::server_package_name,
-  $package_provider        = undef,
-  $package_source          = undef,
-  $purge_conf_dir          = $mysql::params::purge_conf_dir,
-  $remove_default_accounts = false,
-  $restart                 = $mysql::params::restart,
-  $root_group              = $mysql::params::root_group,
-  $managed_dirs            = $mysql::params::managed_dirs,
-  $mysql_group             = $mysql::params::mysql_group,
-  $mycnf_owner             = $mysql::params::mycnf_owner,
-  $mycnf_group             = $mysql::params::mycnf_group,
-  Variant[String, Sensitive[String]] $root_password = $mysql::params::root_password,
-  $service_enabled         = $mysql::params::server_service_enabled,
-  $service_manage          = $mysql::params::server_service_manage,
-  $service_name            = $mysql::params::server_service_name,
-  $service_provider        = $mysql::params::server_service_provider,
-  $create_root_user        = $mysql::params::create_root_user,
-  $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
-  $create_root_login_file  = $mysql::params::create_root_login_file,
-  $login_file              = $mysql::params::login_file,
-  $users                   = {},
-  $grants                  = {},
-  $databases               = {},
+  String[1]                                                             $config_file             = $mysql::params::config_file,
+  String[1]                                                             $config_file_mode        = $mysql::params::config_file_mode,
+  Optional[String]                                                      $includedir              = $mysql::params::includedir,
+  Optional[Array[String[1]]]                                            $install_options         = undef,
+  Variant[Boolean, String[1]]                                           $manage_config_file      = $mysql::params::manage_config_file,
+  Mysql::Options                                                        $options                 = {},
+  Hash                                                                  $override_options        = {},
+  Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]] $package_ensure          = $mysql::params::server_package_ensure,
+  Boolean                                                               $package_manage          = $mysql::params::server_package_manage,
+  String[1]                                                             $package_name            = $mysql::params::server_package_name,
+  Optional[String[1]]                                                   $package_provider        = undef,
+  Optional[String[1]]                                                   $package_source          = undef,
+  Variant[Boolean, String[1]]                                           $purge_conf_dir          = $mysql::params::purge_conf_dir,
+  Variant[Boolean, String[1]]                                           $remove_default_accounts = false,
+  Variant[Boolean, String[1]]                                           $restart                 = $mysql::params::restart,
+  String[1]                                                             $root_group              = $mysql::params::root_group,
+  Optional[Array[String[1]]]                                            $managed_dirs            = $mysql::params::managed_dirs,
+  String[1]                                                             $mysql_group             = $mysql::params::mysql_group,
+  Optional[String[1]]                                                   $mycnf_owner             = $mysql::params::mycnf_owner,
+  Optional[String[1]]                                                   $mycnf_group             = $mysql::params::mycnf_group,
+  Variant[String, Sensitive[String]]                                    $root_password           = $mysql::params::root_password,
+  Variant[Boolean, String[1]]                                           $service_enabled         = $mysql::params::server_service_enabled,
+  Variant[Boolean, String[1]]                                           $service_manage          = $mysql::params::server_service_manage,
+  String[1]                                                             $service_name            = $mysql::params::server_service_name,
+  Optional[String[1]]                                                   $service_provider        = $mysql::params::server_service_provider,
+  Boolean                                                               $create_root_user        = $mysql::params::create_root_user,
+  Boolean                                                               $create_root_my_cnf      = $mysql::params::create_root_my_cnf,
+  Boolean                                                               $create_root_login_file  = $mysql::params::create_root_login_file,
+  Optional[String[1]]                                                   $login_file              = $mysql::params::login_file,
+  Hash                                                                  $users                   = {},
+  Hash                                                                  $grants                  = {},
+  Hash                                                                  $databases               = {},
   # Deprecated parameters
-  $enabled                 = undef,
-  $manage_service          = undef,
-  $old_root_password       = undef
+  Optional[Variant[String[1], Boolean]]        $enabled                 = undef,
+  Optional[Variant[String[1], Boolean]]        $manage_service          = undef,
+  Optional[Variant[String, Sensitive[String]]] $old_root_password       = undef
 ) inherits mysql::params {
   # Deprecated parameters.
   if $enabled {
