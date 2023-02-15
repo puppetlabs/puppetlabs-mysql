@@ -109,9 +109,9 @@ class mysql::backup::xtrabackup (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' {
+    if $facts['os']['family'] == 'RedHat' {
       ensure_packages('cronie')
-    } elsif $::osfamily != 'FreeBSD' {
+    } elsif $facts['os']['family'] != 'FreeBSD' {
       ensure_packages('cron')
     }
   }
@@ -138,7 +138,7 @@ class mysql::backup::xtrabackup (
   }
 
   # Wether to use GNU or BSD date format.
-  case $::osfamily {
+  case $facts['os']['family'] {
     'FreeBSD','OpenBSD': {
       $dateformat = '$(date -v-sun +\\%F)_full'
     }

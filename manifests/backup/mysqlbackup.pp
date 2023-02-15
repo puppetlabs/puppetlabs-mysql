@@ -74,9 +74,9 @@ class mysql::backup::mysqlbackup (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' {
+    if $facts['os']['family'] == 'RedHat' {
       ensure_packages('cronie')
-    } elsif $::osfamily != 'FreeBSD' {
+    } elsif $facts['os']['family'] != 'FreeBSD' {
       ensure_packages('cron')
     }
   }

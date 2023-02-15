@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe 'mysql::bindings' do
   on_supported_os.each do |os, facts|
-    next if facts[:osfamily] == 'Archlinux'
+    next if facts[:os]['family'] == 'Archlinux'
     context "on #{os}" do
       let(:facts) do
         facts.merge(root_home: '/root')

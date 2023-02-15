@@ -37,7 +37,7 @@ describe 'mysql::backup::xtrabackup' do
           )
         end
 
-        package = if facts[:osfamily] == 'RedHat'
+        package = if facts[:os]['family'] == 'RedHat'
                     if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '8') >= 0
                       'percona-xtrabackup-24'
                     elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
@@ -55,7 +55,7 @@ describe 'mysql::backup::xtrabackup' do
                     else
                       'percona-xtrabackup-24'
                     end
-                  elsif facts[:osfamily] == 'Suse'
+                  elsif facts[:os]['family'] == 'Suse'
                     'xtrabackup'
                   else
                     'percona-xtrabackup'
@@ -75,7 +75,7 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contains the daily cronjob for weekdays 1-6' do
-          dateformat = case facts[:osfamily]
+          dateformat = case facts[:os]['family']
                        when 'FreeBSD', 'OpenBSD'
                          '$(date -v-sun +\%F)_full'
                        else
@@ -193,7 +193,7 @@ describe 'mysql::backup::xtrabackup' do
           { additional_cron_args: '--backup --skip-ssl' }.merge(default_params)
         end
 
-        package = if facts[:osfamily] == 'RedHat'
+        package = if facts[:os]['family'] == 'RedHat'
                     if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '8') >= 0
                       'percona-xtrabackup-24'
                     elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
@@ -211,13 +211,13 @@ describe 'mysql::backup::xtrabackup' do
                     else
                       'percona-xtrabackup-24'
                     end
-                  elsif facts[:osfamily] == 'Suse'
+                  elsif facts[:os]['family'] == 'Suse'
                     'xtrabackup'
                   else
                     'percona-xtrabackup'
                   end
 
-        dateformat = case facts[:osfamily]
+        dateformat = case facts[:os]['family']
                      when 'FreeBSD', 'OpenBSD'
                        '$(date -v-sun +\%F)_full'
                      else

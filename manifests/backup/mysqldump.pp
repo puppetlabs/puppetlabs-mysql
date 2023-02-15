@@ -41,7 +41,7 @@ class mysql::backup::mysqldump (
     $backuppassword
   }
 
-  unless $::osfamily == 'FreeBSD' {
+  unless $facts['os']['family'] == 'FreeBSD' {
     if $backupcompress and $compression_command == 'bzcat -zc' {
       ensure_packages(['bzip2'])
       Package['bzip2'] -> File['mysqlbackup.sh']
@@ -69,9 +69,9 @@ class mysql::backup::mysqldump (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' {
+    if $facts['os']['family'] == 'RedHat' {
       ensure_packages('cronie')
-    } elsif $::osfamily != 'FreeBSD' {
+    } elsif $facts['os']['family'] != 'FreeBSD' {
       ensure_packages('cron')
     }
   }

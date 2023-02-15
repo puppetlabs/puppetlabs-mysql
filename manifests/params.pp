@@ -37,7 +37,7 @@ class mysql::params {
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
@@ -425,7 +425,7 @@ class mysql::params {
         }
 
         default: {
-          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::osfamily} or ${::operatingsystem}.")
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${facts['os']['family']} or ${::operatingsystem}.")
         }
       }
     }
@@ -516,7 +516,7 @@ class mysql::params {
   }
 
   ## Additional graceful failures
-  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
+  if $facts['os']['family'] == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
     fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 6.0 and beyond.")
   }
 }
