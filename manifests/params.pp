@@ -41,7 +41,7 @@ class mysql::params {
     'RedHat': {
       case $facts['os']['name'] {
         'Fedora': {
-          if versioncmp($::operatingsystemrelease, '19') >= 0 or $::operatingsystemrelease == 'Rawhide' {
+          if versioncmp($facts['os']['release']['full'], '19') >= 0 or $facts['os']['release']['full'] == 'Rawhide' {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
@@ -49,7 +49,7 @@ class mysql::params {
           $python_package_name = 'MySQL-python'
         }
         'Amazon': {
-          if versioncmp($::operatingsystemrelease, '2') >= 0 {
+          if versioncmp($facts['os']['release']['full'], '2') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
@@ -207,26 +207,26 @@ class mysql::params {
       $managed_dirs            = ['tmpdir','basedir','datadir','innodb_data_home_dir','innodb_log_group_home_dir','innodb_undo_directory','innodb_tmpdir']
 
       # mysql::bindings
-      if ($facts['os']['name'] == 'Debian' and versioncmp($::operatingsystemrelease, '10') >= 0) or
-      ($facts['os']['name'] == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) {
+      if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['full'], '10') >= 0) or
+      ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '20.04') >= 0) {
         $java_package_name   = 'libmariadb-java'
       } else {
         $java_package_name   = 'libmysql-java'
       }
       $perl_package_name   = 'libdbd-mysql-perl'
-      if  ($facts['os']['name'] == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') >= 0) or
+      if  ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '16.04') >= 0) or
       ($facts['os']['name'] == 'Debian') {
         $php_package_name = 'php-mysql'
       } else {
         $php_package_name = 'php5-mysql'
       }
-      if  ($facts['os']['name'] == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') < 0) or
-      ($facts['os']['name'] == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
+      if  ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '16.04') < 0) or
+      ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '20.04') >= 0) or
       ($facts['os']['name'] == 'Debian') {
         $xtrabackup_package_name = 'percona-xtrabackup-24'
       }
-      if ($facts['os']['name'] == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
-      ($facts['os']['name'] == 'Debian' and versioncmp($::operatingsystemrelease, '11') >= 0) {
+      if ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '20.04') >= 0) or
+      ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['full'], '11') >= 0) {
         $python_package_name = 'python3-mysqldb'
       } else {
         $python_package_name = 'python-mysqldb'
