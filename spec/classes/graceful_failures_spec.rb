@@ -8,8 +8,8 @@ describe 'mysql::server' do
       {
         os: {
           family: 'UNSUPPORTED',
+          name: 'UNSUPPORTED',
         },
-        operatingsystem: 'UNSUPPORTED',
       }
     end
 

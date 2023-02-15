@@ -45,9 +45,9 @@ describe 'mysql::backup::xtrabackup' do
                     else
                       'percona-xtrabackup-20'
                     end
-                  elsif facts[:operatingsystem] == 'Debian'
+                  elsif facts[:os]['name'] == 'Debian'
                     'percona-xtrabackup-24'
-                  elsif facts[:operatingsystem] == 'Ubuntu'
+                  elsif facts[:os]['name'] == 'Ubuntu'
                     if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '20') >= 0
                       'percona-xtrabackup-24'
                     elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
@@ -114,8 +114,8 @@ describe 'mysql::backup::xtrabackup' do
               user: 'backupuser@localhost',
               table: '*.*',
               privileges:
-              if (facts[:operatingsystem] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') >= 0) ||
-                (facts[:operatingsystem] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '22') >= 0)
+              if (facts[:os]['name'] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') >= 0) ||
+                (facts[:os]['name'] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '22') >= 0)
                 ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES']
               else
                 ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT']
@@ -157,8 +157,8 @@ describe 'mysql::backup::xtrabackup' do
                 user: 'backupuser@localhost',
                 table: '*.*',
                 privileges:
-                if (facts[:operatingsystem] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') >= 0) ||
-                  (facts[:operatingsystem] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '22') >= 0)
+                if (facts[:os]['name'] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') >= 0) ||
+                  (facts[:os]['name'] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '22') >= 0)
                   ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES', 'BACKUP_ADMIN']
                 else
                   ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT', 'BACKUP_ADMIN']
@@ -201,9 +201,9 @@ describe 'mysql::backup::xtrabackup' do
                     else
                       'percona-xtrabackup-20'
                     end
-                  elsif facts[:operatingsystem] == 'Debian'
+                  elsif facts[:os]['name'] == 'Debian'
                     'percona-xtrabackup-24'
-                  elsif facts[:operatingsystem] == 'Ubuntu'
+                  elsif facts[:os]['name'] == 'Ubuntu'
                     if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '20') >= 0
                       'percona-xtrabackup-24'
                     elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
