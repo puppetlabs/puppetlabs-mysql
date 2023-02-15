@@ -28,9 +28,9 @@ class mysql::server::account_security {
         require => Anchor['mysql::server::end'],
     }
   }
-  if ($::fqdn != $::hostname) {
-    if ($::hostname != 'localhost') {
-      mysql_user { ["root@${::hostname}", "@${::hostname}"]:
+  if ($::fqdn != $facts['networking']['hostname']) {
+    if ($facts['networking']['hostname'] != 'localhost') {
+      mysql_user { ["root@${facts['networking']['hostname']}", "@${facts['networking']['hostname']}"]:
         ensure  => 'absent',
         require => Anchor['mysql::server::end'],
       }

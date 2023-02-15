@@ -15,7 +15,9 @@ describe 'mysql::server::account_security' do
         let(:facts) do
           facts.merge(root_home: '/root',
                       fqdn: 'myhost.mydomain',
-                      hostname: 'myhost')
+                      networking: {
+                        hostname: 'myhost'
+                      })
         end
 
         ['root@myhost.mydomain',
@@ -47,7 +49,9 @@ describe 'mysql::server::account_security' do
         let(:facts) do
           facts.merge(root_home: '/root',
                       fqdn: 'localhost',
-                      hostname: 'localhost')
+                      networking: {
+                        hostname: 'localhost'
+                      })
         end
 
         ['root@127.0.0.1',
@@ -66,7 +70,9 @@ describe 'mysql::server::account_security' do
         let(:facts) do
           facts.merge(root_home: '/root',
                       fqdn: 'localhost.localdomain',
-                      hostname: 'localhost')
+                      networking: {
+                        hostname: 'localhost'
+                      })
         end
 
         ['root@127.0.0.1',

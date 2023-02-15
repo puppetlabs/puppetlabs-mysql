@@ -340,7 +340,7 @@ class mysql::params {
       $config_file         = '/etc/my.cnf'
       $includedir          = undef
       $datadir             = '/var/mysql'
-      $log_error           = "/var/mysql/${::hostname}.err"
+      $log_error           = "/var/mysql/${facts['networking']['hostname']}.err"
       $pidfile             = '/var/mysql/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = '_mysql'
