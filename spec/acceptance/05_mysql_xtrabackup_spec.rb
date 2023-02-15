@@ -40,7 +40,7 @@ describe 'mysql::server::backup class with xtrabackup', if: Gem::Version.new(mys
           /RedHat/: {
             # RHEL/CentOS 5 is no longer supported by Percona, but older versions
             # of the repository are still available.
-            if versioncmp($::operatingsystemmajrelease, '6') >= 0 {
+            if versioncmp($facts['os']['release']['major'], '6') >= 0 {
               $percona_url = 'http://repo.percona.com/yum/percona-release-latest.noarch.rpm'
               $epel_url = "https://download.fedoraproject.org/pub/epel/epel-release-latest-${facts['os']['release']['major']}.noarch.rpm"
             } else {

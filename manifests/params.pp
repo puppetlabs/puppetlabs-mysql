@@ -56,16 +56,16 @@ class mysql::params {
           }
         }
         /^(RedHat|Rocky|CentOS|Scientific|OracleLinux|AlmaLinux)$/: {
-          if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
+          if versioncmp($facts['os']['release']['major'], '7') >= 0 {
             $provider = 'mariadb'
-            if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+            if versioncmp($facts['os']['release']['major'], '8') >= 0 {
               $xtrabackup_package_name = 'percona-xtrabackup-24'
             }
           } else {
             $provider = 'mysql'
             $xtrabackup_package_name = 'percona-xtrabackup-20'
           }
-          if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+          if versioncmp($facts['os']['release']['major'], '8') >= 0 {
             $java_package_name   = 'mariadb-java-client'
             $python_package_name = 'python3-PyMySQL'
           } else {
@@ -516,7 +516,7 @@ class mysql::params {
   }
 
   ## Additional graceful failures
-  if $facts['os']['family'] == 'RedHat' and $::operatingsystemmajrelease == '4' and $facts['os']['name'] != 'Amazon' {
+  if $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] == '4' and $facts['os']['name'] != 'Amazon' {
     fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 6.0 and beyond.")
   }
 }
