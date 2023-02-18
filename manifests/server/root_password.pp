@@ -35,6 +35,16 @@ class mysql::server::root_password {
       password_hash => Deferred('mysql::password', [$mysql::server::root_password]),
       require       => Exec['remove install pass'],
     }
+    mysql_user { 'root@127.0.0.1':
+      ensure        => present,
+      password_hash => mysql::password($mysql::server::root_password),
+      require       => Exec['remove install pass'],
+    }
+    mysql_user { 'root@::1':
+      ensure        => present,
+      password_hash => mysql::password($mysql::server::root_password),
+      require       => Exec['remove install pass'],
+    }
   }
 
   if $mysql::server::create_root_my_cnf and $root_password_set {
