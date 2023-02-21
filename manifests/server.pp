@@ -20,7 +20,8 @@
 # @param manage_config_file
 #   Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
 # @param options
-#   A hash of options structured like the override_options, but not merged with the default options. Use this if you don't want your options merged with the default options.
+#   A hash of options structured like the override_options, but not merged with the default options. 
+#   Use this if you don't want your options merged with the default options.
 # @param override_options
 #   Specifies override options to pass into MySQL. Structured like a hash in the my.cnf file:  See  above for usage details.
 # @param package_ensure
@@ -50,7 +51,11 @@
 # @param mycnf_group
 #   Name or group-id which owns the mysql-config-file.
 # @param root_password
-#   The MySQL root password. Puppet attempts to set the root password and update `/root/.my.cnf` with it. This is required if `create_root_user` or `create_root_my_cnf` are true. If `root_password` is 'UNSET', then `create_root_user` and `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created. Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password.
+#   The MySQL root password. Puppet attempts to set the root password and update `/root/.my.cnf` with it. This is required 
+#   if `create_root_user` or `create_root_my_cnf` are true. If `root_password` is 'UNSET', then `create_root_user` and 
+#   `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created. 
+#   Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old 
+#   password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password.
 # @param service_enabled
 #   Specifies whether the service should be enabled. Valid values are `true`, `false`. Defaults to `true`.
 # @param service_manage
@@ -60,9 +65,13 @@
 # @param service_provider
 #   The provider to use to manage the service. For Ubuntu, defaults to 'upstart'; otherwise, default is undefined.
 # @param create_root_user
-#   Whether root user should be created. Valid values are `true`, `false`. Defaults to `true`. This is useful for a cluster setup with Galera. The root user has to be created only once. You can set this parameter true on one node and set it to false on the remaining nodes.
+#   Whether root user should be created. Valid values are `true`, `false`. Defaults to `true`. 
+#   This is useful for a cluster setup with Galera. The root user has to be created only once. 
+#   You can set this parameter true on one node and set it to false on the remaining nodes.
 # @param create_root_my_cnf
-#   Whether to create `/root/.my.cnf`. Valid values are `true`, `false`. Defaults to `true`. `create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. You can use this for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
+#   Whether to create `/root/.my.cnf`. Valid values are `true`, `false`. Defaults to `true`. 
+#   `create_root_my_cnf` allows creation of `/root/.my.cnf` independently of `create_root_user`. 
+#   You can use this for a cluster setup with Galera where you want `/root/.my.cnf` to exist on all nodes.
 # @param create_root_login_file
 #   Whether to create a login file for root. Valid values are 'true', 'false'.
 # @param login_file
@@ -78,7 +87,8 @@
 # @param manage_service
 #   _Deprecated_
 # @param old_root_password
-#   This parameter no longer does anything. It exists only for backwards compatibility. See the `root_password` parameter above for details on changing the root password.
+#   This parameter no longer does anything. It exists only for backwards compatibility. 
+#   See the `root_password` parameter above for details on changing the root password.
 #
 class mysql::server (
   String[1]                                                             $config_file             = $mysql::params::config_file,

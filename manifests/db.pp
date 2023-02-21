@@ -126,7 +126,7 @@ define mysql::db (
       exec { "${dbname}-import":
         command     => "${import_cat_cmd} ${shell_join($sql)} | mysql ${dbname}",
         logoutput   => true,
-        environment => "HOME=${::root_home}",
+        environment => "HOME=${facts['root_home']}",
         refreshonly => ! $enforce_sql,
         path        => "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:${_mysql_exec_path}",
         require     => Mysql_grant["${user}@${host}/${table}"],

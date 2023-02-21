@@ -45,7 +45,8 @@
 # @param ignore_events
 #   Ignore the mysql.event table.
 # @param delete_before_dump
-#   Whether to delete old .sql files before backing up. Setting to true deletes old files before backing up, while setting to false deletes them after backup.
+#   Whether to delete old .sql files before backing up. 
+#   Setting to true deletes old files before backing up, while setting to false deletes them after backup.
 # @param backupdatabases
 #   Databases to backup (required if using xtrabackup provider). By default `[]` will back up all databases.
 # @param file_per_database
@@ -62,7 +63,9 @@
 # @param prescript
 #   A script that is executed before the backup begins.
 # @param postscript
-#   A script that is executed when the backup is finished. This could be used to sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
+#   A script that is executed when the backup is finished. This could be used to sync the backup to a central store. 
+#   This script can be either a single line that is directly executed or a number of lines supplied as an array. 
+#   It could also be one or more externally managed (executable) files.
 # @param execpath
 #   Allows you to set a custom PATH should your MySQL installation be non-standard places. Defaults to `/usr/bin:/usr/sbin:/bin:/sbin`.
 # @param provider
@@ -70,7 +73,8 @@
 # @param maxallowedpacket
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
-#   Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
+#   Specifies an array of optional arguments which should be passed through to the backup tool. 
+#   (Supported by the xtrabackup and mysqldump providers.)
 # @param install_cron
 #   Manage installation of cron package
 # @param compression_command

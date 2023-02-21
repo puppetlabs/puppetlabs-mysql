@@ -25,43 +25,50 @@
 # @param daemon_dev
 #   Specifies whether `::mysql::bindings::daemon_dev` should be included. Valid values are `true`, `false`.
 # @param java_package_ensure
-#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `java_enable => true`.
+#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. 
+#   Only applies if `java_enable => true`.
 # @param java_package_name
 #   The name of the Java package to install. Only applies if `java_enable => true`.
 # @param java_package_provider
 #   The provider to use to install the Java package. Only applies if `java_enable => true`.
 # @param perl_package_ensure
-#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `perl_enable => true`.
+#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. 
+#   Only applies if `perl_enable => true`.
 # @param perl_package_name
 #   The name of the Perl package to install. Only applies if `perl_enable => true`.
 # @param perl_package_provider
 #   The provider to use to install the Perl package. Only applies if `perl_enable => true`.
 # @param php_package_ensure
-#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `php_enable => true`.
+#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. 
+#   Only applies if `php_enable => true`.
 # @param php_package_name
 #   The name of the PHP package to install. Only applies if `php_enable => true`.
 # @param php_package_provider
 #   The provider to use to install the PHP package. Only applies if `php_enable => true`.
 # @param python_package_ensure
-#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `python_enable => true`.
+#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. 
+#   Only applies if `python_enable => true`.
 # @param python_package_name
 #   The name of the Python package to install. Only applies if `python_enable => true`.
 # @param python_package_provider
 #   The provider to use to install the Python package. Only applies if `python_enable => true`.
 # @param ruby_package_ensure
-#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `ruby_enable => true`.
+#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. 
+#   Only applies if `ruby_enable => true`.
 # @param ruby_package_name
 #   The name of the Ruby package to install. Only applies if `ruby_enable => true`.
 # @param ruby_package_provider
 #   What provider should be used to install the package.
 # @param client_dev_package_ensure
-#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `client_dev => true`.
+#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. 
+#   Only applies if `client_dev => true`.
 # @param client_dev_package_name
 #   The name of the client_dev package to install. Only applies if `client_dev => true`.
 # @param client_dev_package_provider
 #   The provider to use to install the client_dev package. Only applies if `client_dev => true`.
 # @param daemon_dev_package_ensure
-#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Only applies if `daemon_dev => true`.
+#   Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'. 
+#   Only applies if `daemon_dev => true`.
 # @param daemon_dev_package_name
 #   The name of the daemon_dev package to install. Only applies if `daemon_dev => true`.
 # @param daemon_dev_package_provider
@@ -102,11 +109,11 @@ class mysql::bindings (
 ) inherits mysql::params {
   case $facts['os']['family'] {
     'Archlinux': {
-      if $java_enable { fail("::mysql::bindings::java cannot be managed by puppet on ${::facts['os']['family']} as it is not in official repositories. Please disable java mysql binding.") }
+      if $java_enable { fail("::mysql::bindings::java cannot be managed by puppet on ${facts['os']['family']} as it is not in official repositories. Please disable java mysql binding.") }
       if $perl_enable { include 'mysql::bindings::perl' }
-      if $php_enable { warning("::mysql::bindings::php does not need to be managed by puppet on ${::facts['os']['family']} as it is included in mysql package by default.") }
+      if $php_enable { warning("::mysql::bindings::php does not need to be managed by puppet on ${facts['os']['family']} as it is included in mysql package by default.") }
       if $python_enable { include 'mysql::bindings::python' }
-      if $ruby_enable { fail("::mysql::bindings::ruby cannot be managed by puppet on ${::facts['os']['family']} as it is not in official repositories. Please disable ruby mysql binding.") }
+      if $ruby_enable { fail("::mysql::bindings::ruby cannot be managed by puppet on ${facts['os']['family']} as it is not in official repositories. Please disable ruby mysql binding.") }
     }
 
     default: {

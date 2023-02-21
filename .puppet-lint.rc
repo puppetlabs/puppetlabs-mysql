@@ -1,4 +1,3 @@
 --relative
---no-top_scope_facts-check
 --no-anchor_resource-check
 --no-params_empty_string_assignment-check

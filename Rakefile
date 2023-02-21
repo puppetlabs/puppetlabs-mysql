@@ -42,7 +42,6 @@ def changelog_future_release
 end
 
 PuppetLint.configuration.send('disable_relative')
-PuppetLint.configuration.send('disable_top_scope_facts')
 PuppetLint.configuration.send('disable_anchor_resource')
 PuppetLint.configuration.send('disable_params_empty_string_assignment')
 
