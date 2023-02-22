@@ -44,6 +44,7 @@
 
 #### Public Resource types
 
+* [`mysql_database`](#mysql_database): Manage a MySQL database.
 * [`mysql_grant`](#mysql_grant): Manage a MySQL user's rights.
 * [`mysql_login_path`](#mysql_login_path): Manage a MySQL login path.
 * [`mysql_plugin`](#mysql_plugin): Manage MySQL plugins.
@@ -51,7 +52,6 @@
 
 #### Private Resource types
 
-* `mysql_database`: Manage a MySQL database.
 * `mysql_datadir`: Manage MySQL datadirs with mysql_install_db OR mysqld (5.7.6 and above).
 
 ### Functions
@@ -1280,6 +1280,56 @@ Specify the path in which mysql has been installed if done in the non-standard b
 Default value: `undef`
 
 ## Resource types
+
+### <a name="mysql_database"></a>`mysql_database`
+
+Manage a MySQL database.
+
+#### Properties
+
+The following properties are available in the `mysql_database` type.
+
+##### `charset`
+
+Valid values: `%r{^\S+$}`
+
+The CHARACTER SET setting for the database
+
+Default value: `utf8`
+
+##### `collate`
+
+Valid values: `%r{^\S+$}`
+
+The COLLATE setting for the database
+
+Default value: `utf8_general_ci`
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
+
+#### Parameters
+
+The following parameters are available in the `mysql_database` type.
+
+* [`name`](#-mysql_database--name)
+* [`provider`](#-mysql_database--provider)
+
+##### <a name="-mysql_database--name"></a>`name`
+
+namevar
+
+The name of the MySQL database to manage.
+
+##### <a name="-mysql_database--provider"></a>`provider`
+
+The specific backend to use for this `mysql_database` resource. You will seldom need to specify this --- Puppet will
+usually discover the appropriate provider for your platform.
 
 ### <a name="mysql_grant"></a>`mysql_grant`
 
