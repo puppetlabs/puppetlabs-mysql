@@ -1159,7 +1159,7 @@ The following parameters are available in the `mysql::db` defined type:
 
 The name of the database to create. Database names must:
   * not be longer than 64 characters.
-  * not contain / \ or . characters.
+  * not contain '/' '\' or '.' characters.
   * not contain characters that are not permitted in file names.
   * not end with space characters.
 

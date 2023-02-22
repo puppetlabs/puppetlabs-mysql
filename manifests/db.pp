@@ -12,7 +12,7 @@
 # @param name
 #   The name of the database to create. Database names must:
 #     * not be longer than 64 characters.
-#     * not contain / \ or . characters.
+#     * not contain '/' '\' or '.' characters.
 #     * not contain characters that are not permitted in file names.
 #     * not end with space characters.
 # @param user
@@ -69,7 +69,7 @@ define mysql::db (
   if $dbname !~ /^[^\/?%*:|\""<>.\s;]{1,64}$/ {
     $message = "The database name '${dbname}' is invalid. Values must:
       * not be longer than 64 characters.
-      * not contain // \\ or . characters.
+      * not contain '/' '\\' or '.' characters.
       * not contain characters that are not permitted in file names.
       * not end with space characters."
     fail($message)
