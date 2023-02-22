@@ -44,10 +44,10 @@
 
 #### Public Resource types
 
-* [`mysql_grant`](#mysql_grant): @summary Manage a MySQL user's rights.
+* [`mysql_grant`](#mysql_grant): Manage a MySQL user's rights.
 * [`mysql_login_path`](#mysql_login_path): Manage a MySQL login path.
 * [`mysql_plugin`](#mysql_plugin): Manage MySQL plugins.
-* [`mysql_user`](#mysql_user): @summary Manage a MySQL user. This includes management of users password as well as privileges.
+* [`mysql_user`](#mysql_user): Manage a MySQL user. This includes management of users password as well as privileges.
 
 #### Private Resource types
 
@@ -1283,7 +1283,6 @@ Default value: `undef`
 
 ### <a name="mysql_grant"></a>`mysql_grant`
 
-@summary
 Manage a MySQL user's rights.
 
 #### Properties
@@ -1483,7 +1482,6 @@ usually discover the appropriate provider for your platform.
 
 ### <a name="mysql_user"></a>`mysql_user`
 
-@summary
 Manage a MySQL user. This includes management of users password as well as privileges.
 
 #### Properties

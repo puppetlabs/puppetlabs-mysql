@@ -2,8 +2,7 @@
 
 Puppet::Type.newtype(:mysql_datadir) do
   @doc = <<-PUPPET
-    @summary
-      Manage MySQL datadirs with mysql_install_db OR mysqld (5.7.6 and above).
+    @summary Manage MySQL datadirs with mysql_install_db OR mysqld (5.7.6 and above).
 
     @api private
   PUPPET

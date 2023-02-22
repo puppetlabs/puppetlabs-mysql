@@ -2,8 +2,7 @@
 
 Puppet::Type.newtype(:mysql_grant) do
   @doc = <<-PUPPET
-    @summary
-      Manage a MySQL user's rights.
+    @summary Manage a MySQL user's rights.
   PUPPET
   ensurable
 
