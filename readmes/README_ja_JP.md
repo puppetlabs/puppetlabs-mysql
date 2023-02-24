@@ -107,11 +107,11 @@ mysql::db { 'mydb':
 エクスポートされたリソースを含む別のリソース名を使用するには、次のようにします。
 
 ```puppet
- @@mysql::db { "mydb_${fqdn}":
+ @@mysql::db { "mydb_${facts['networking']['fqdn']}":
   user     => 'myuser',
   password => 'mypass',
   dbname   => 'mydb',
-  host     => ${fqdn},
+  host     => ${facts['networking']['fqdn']},
   grant    => ['SELECT', 'UPDATE'],
   tag      => $domain,
 }

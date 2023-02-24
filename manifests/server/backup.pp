@@ -45,7 +45,8 @@
 # @param ignore_events
 #   Ignore the mysql.event table.
 # @param delete_before_dump
-#   Whether to delete old .sql files before backing up. Setting to true deletes old files before backing up, while setting to false deletes them after backup.
+#   Whether to delete old .sql files before backing up. 
+#   Setting to true deletes old files before backing up, while setting to false deletes them after backup.
 # @param backupdatabases
 #   Databases to backup (required if using xtrabackup provider). By default `[]` will back up all databases.
 # @param file_per_database
@@ -62,7 +63,9 @@
 # @param prescript
 #   A script that is executed before the backup begins.
 # @param postscript
-#   A script that is executed when the backup is finished. This could be used to sync the backup to a central store. This script can be either a single line that is directly executed or a number of lines supplied as an array. It could also be one or more externally managed (executable) files.
+#   A script that is executed when the backup is finished. This could be used to sync the backup to a central store. 
+#   This script can be either a single line that is directly executed or a number of lines supplied as an array. 
+#   It could also be one or more externally managed (executable) files.
 # @param execpath
 #   Allows you to set a custom PATH should your MySQL installation be non-standard places. Defaults to `/usr/bin:/usr/sbin:/bin:/sbin`.
 # @param provider
@@ -70,7 +73,8 @@
 # @param maxallowedpacket
 #   Defines the maximum SQL statement size for the backup dump script. The default value is 1MB, as this is the default MySQL Server value.
 # @param optional_args
-#   Specifies an array of optional arguments which should be passed through to the backup tool. (Supported by the xtrabackup and mysqldump providers.)
+#   Specifies an array of optional arguments which should be passed through to the backup tool. 
+#   (Supported by the xtrabackup and mysqldump providers.)
 # @param install_cron
 #   Manage installation of cron package
 # @param compression_command
@@ -83,36 +87,36 @@
 # @param excludedatabases
 #   Give a list of excluded databases when using file_per_database, e.g.: [ 'information_schema', 'performance_schema' ]
 class mysql::server::backup (
-  $backupuser               = undef,
-  Optional[Variant[String, Sensitive[String]]] $backuppassword = undef,
-  $backupdir                = undef,
-  $backupdirmode            = '0700',
-  $backupdirowner           = 'root',
-  $backupdirgroup           = $mysql::params::root_group,
-  $backupcompress           = true,
-  $backuprotate             = 30,
-  $backupmethod             = undef,
-  $backup_success_file_path = '/tmp/mysqlbackup_success',
-  $ignore_events            = true,
-  $delete_before_dump       = false,
-  $backupdatabases          = [],
-  $file_per_database        = false,
-  $include_routines         = false,
-  $include_triggers         = false,
-  $ensure                   = 'present',
-  $time                     = ['23', '5'],
-  $prescript                = false,
-  $postscript               = false,
-  $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $provider                 = 'mysqldump',
-  $maxallowedpacket         = '1M',
-  $optional_args            = [],
-  $incremental_backups      = true,
-  $install_cron             = true,
-  $compression_command      = undef,
-  $compression_extension    = undef,
-  $backupmethod_package     = $mysql::params::xtrabackup_package_name,
-  Array[String] $excludedatabases = [],
+  Optional[String[1]]                                                   $backupuser               = undef,
+  Optional[Variant[String, Sensitive[String]]]                          $backuppassword           = undef,
+  Optional[String[1]]                                                   $backupdir                = undef,
+  String[1]                                                             $backupdirmode            = '0700',
+  String[1]                                                             $backupdirowner           = 'root',
+  String[1]                                                             $backupdirgroup           = $mysql::params::root_group,
+  Boolean                                                               $backupcompress           = true,
+  Variant[String[1], Integer]                                           $backuprotate             = 30,
+  Optional[String[1]]                                                   $backupmethod             = undef,
+  String[1]                                                             $backup_success_file_path = '/tmp/mysqlbackup_success',
+  Boolean                                                               $ignore_events            = true,
+  Boolean                                                               $delete_before_dump       = false,
+  Array[String[1]]                                                      $backupdatabases          = [],
+  Boolean                                                               $file_per_database        = false,
+  Boolean                                                               $include_routines         = false,
+  Boolean                                                               $include_triggers         = false,
+  Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]] $ensure                   = 'present',
+  Variant[Array[String[1]], Array[Integer]]                             $time                     = ['23', '5'],
+  Variant[Boolean, String[1], Array[String[1]]]                         $prescript                = false,
+  Variant[Boolean, String[1], Array[String[1]]]                         $postscript               = false,
+  String[1]                                                             $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
+  Enum['xtrabackup', 'mysqldump', 'mysqlbackup']                        $provider                 = 'mysqldump',
+  String[1]                                                             $maxallowedpacket         = '1M',
+  Array[String[1]]                                                      $optional_args            = [],
+  Boolean                                                               $incremental_backups      = true,
+  Boolean                                                               $install_cron             = true,
+  Optional[String[1]]                                                   $compression_command      = undef,
+  Optional[String[1]]                                                   $compression_extension    = undef,
+  String[1]                                                             $backupmethod_package     = $mysql::params::xtrabackup_package_name,
+  Array[String]                                                         $excludedatabases         = [],
 ) inherits mysql::params {
   if $prescript and $provider =~ /(mysqldump|mysqlbackup)/ {
     warning("The 'prescript' option is not currently implemented for the ${provider} backup provider.")

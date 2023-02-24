@@ -2,7 +2,7 @@
 include apt
 apt::source { 'repo.mysql.com':
   location => 'http://repo.mysql.com/apt/debian',
-  release  => $::lsbdistcodename,
+  release  => $facts['os']['distro']['codename'],
   repos    => 'mysql-8.0',
   key      => {
     id     => 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
@@ -35,7 +35,7 @@ class { 'mysql::server':
 class { 'mysql::client':
   package_manage => false,
   package_name   => 'mysql-community-client',
-  require        => Class['::mysql::server'],
+  require        => Class['mysql::server'],
 }
 
 mysql_login_path { 'client':
@@ -54,7 +54,7 @@ mysql_login_path { 'local_dan':
   password => Sensitive('blah'),
   port     => 3306,
   owner    => root,
-  require  => Class['::mysql::server'],
+  require  => Class['mysql::server'],
 }
 
 mysql_user { 'dan@localhost':

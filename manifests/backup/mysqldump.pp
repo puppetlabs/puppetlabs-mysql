@@ -3,37 +3,37 @@
 # @api private
 #
 class mysql::backup::mysqldump (
-  $backupuser               = '',
-  Variant[String, Sensitive[String]] $backuppassword = '',
-  $backupdir                = '',
-  $maxallowedpacket         = '1M',
-  $backupdirmode            = '0700',
-  $backupdirowner           = 'root',
-  $backupdirgroup           = $mysql::params::root_group,
-  $backupcompress           = true,
-  $backuprotate             = 30,
-  $backupmethod             = 'mysqldump',
-  $backup_success_file_path = undef,
-  $ignore_events            = true,
-  $delete_before_dump       = false,
-  $backupdatabases          = [],
-  $file_per_database        = false,
-  $include_triggers         = false,
-  $include_routines         = false,
-  $ensure                   = 'present',
-  $time                     = ['23', '5'],
-  $prescript                = false,
-  $postscript               = false,
-  $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $optional_args            = [],
-  $mysqlbackupdir_ensure    = 'directory',
-  $mysqlbackupdir_target    = undef,
-  $incremental_backups      = false,
-  $install_cron             = true,
-  $compression_command      = 'bzcat -zc',
-  $compression_extension    = '.bz2',
-  $backupmethod_package     = undef,
-  Array[String] $excludedatabases = [],
+  String                                        $backupuser               = '',
+  Variant[String, Sensitive[String]]            $backuppassword           = '',
+  String                                        $backupdir                = '',
+  String[1]                                     $maxallowedpacket         = '1M',
+  String[1]                                     $backupdirmode            = '0700',
+  String[1]                                     $backupdirowner           = 'root',
+  String[1]                                     $backupdirgroup           = $mysql::params::root_group,
+  Boolean                                       $backupcompress           = true,
+  Variant[Integer, String[1]]                   $backuprotate             = 30,
+  String[1]                                     $backupmethod             = 'mysqldump',
+  Optional[String[1]]                           $backup_success_file_path = undef,
+  Boolean                                       $ignore_events            = true,
+  Boolean                                       $delete_before_dump       = false,
+  Array[String[1]]                              $backupdatabases          = [],
+  Boolean                                       $file_per_database        = false,
+  Boolean                                       $include_triggers         = false,
+  Boolean                                       $include_routines         = false,
+  Enum['present', 'absent']                     $ensure                   = 'present',
+  Variant[Array[String[1]], Array[Integer]]     $time                     = ['23', '5'],
+  Variant[Boolean, String[1], Array[String[1]]] $prescript                = false,
+  Variant[Boolean, String[1], Array[String[1]]] $postscript               = false,
+  String[1]                                     $execpath                 = '/usr/bin:/usr/sbin:/bin:/sbin',
+  Array[String[1]]                              $optional_args            = [],
+  String[1]                                     $mysqlbackupdir_ensure    = 'directory',
+  Optional[String[1]]                           $mysqlbackupdir_target    = undef,
+  Boolean                                       $incremental_backups      = false,
+  Boolean                                       $install_cron             = true,
+  String[1]                                     $compression_command      = 'bzcat -zc',
+  String[1]                                     $compression_extension    = '.bz2',
+  Optional[String[1]]                           $backupmethod_package     = undef,
+  Array[String]                                 $excludedatabases         = [],
 ) inherits mysql::params {
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
@@ -41,7 +41,7 @@ class mysql::backup::mysqldump (
     $backuppassword
   }
 
-  unless $::osfamily == 'FreeBSD' {
+  unless $facts['os']['family'] == 'FreeBSD' {
     if $backupcompress and $compression_command == 'bzcat -zc' {
       ensure_packages(['bzip2'])
       Package['bzip2'] -> File['mysqlbackup.sh']
@@ -69,9 +69,9 @@ class mysql::backup::mysqldump (
   }
 
   if $install_cron {
-    if $::osfamily == 'RedHat' {
+    if $facts['os']['family'] == 'RedHat' {
       ensure_packages('cronie')
-    } elsif $::osfamily != 'FreeBSD' {
+    } elsif $facts['os']['family'] != 'FreeBSD' {
       ensure_packages('cron')
     }
   }

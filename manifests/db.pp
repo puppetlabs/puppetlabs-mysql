@@ -43,23 +43,25 @@
 #   Timeout, in seconds, for loading the sqlfiles. Defaults to 300.
 # @param import_cat_cmd
 #   Command to read the sqlfile for importing the database. Useful for compressed sqlfiles. For example, you can use 'zcat' for .gz files.
+# @param mysql_exec_path
+#   Specify the path in which mysql has been installed if done in the non-standard bin/sbin path.   
 #
 define mysql::db (
-  $user,
-  Variant[String, Sensitive[String]] $password,
-  $tls_options                                  = undef,
-  String $dbname                                = $name,
-  $charset                                      = 'utf8',
-  $collate                                      = 'utf8_general_ci',
-  $host                                         = 'localhost',
-  $grant                                        = 'ALL',
-  $grant_options                                = undef,
-  Optional[Array] $sql                          = undef,
-  $enforce_sql                                  = false,
-  Enum['absent', 'present'] $ensure             = 'present',
-  $import_timeout                               = 300,
-  Enum['cat', 'zcat', 'bzcat'] $import_cat_cmd  = 'cat',
-  $mysql_exec_path                              = undef,
+  String[1]                                      $user,
+  Variant[String, Sensitive[String]]             $password,
+  Optional[Array[String[1]]]                     $tls_options     = undef,
+  String                                         $dbname          = $name,
+  String[1]                                      $charset         = 'utf8',
+  String[1]                                      $collate         = 'utf8_general_ci',
+  String[1]                                      $host            = 'localhost',
+  Variant[String[1], Array[String[1]]]           $grant           = 'ALL',
+  Optional[Variant[String[1], Array[String[1]]]] $grant_options   = undef,
+  Optional[Array]                                $sql             = undef,
+  Boolean                                        $enforce_sql     = false,
+  Enum['absent', 'present']                      $ensure          = 'present',
+  Integer                                        $import_timeout  = 300,
+  Enum['cat', 'zcat', 'bzcat']                   $import_cat_cmd  = 'cat',
+  Optional[String]                               $mysql_exec_path = undef,
 ) {
   include 'mysql::client'
 
@@ -124,7 +126,7 @@ define mysql::db (
       exec { "${dbname}-import":
         command     => "${import_cat_cmd} ${shell_join($sql)} | mysql ${dbname}",
         logoutput   => true,
-        environment => "HOME=${::root_home}",
+        environment => "HOME=${facts['root_home']}",
         refreshonly => ! $enforce_sql,
         path        => "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:${_mysql_exec_path}",
         require     => Mysql_grant["${user}@${host}/${table}"],

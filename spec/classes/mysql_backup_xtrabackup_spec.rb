@@ -37,25 +37,25 @@ describe 'mysql::backup::xtrabackup' do
           )
         end
 
-        package = if facts[:osfamily] == 'RedHat'
-                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '8') >= 0
+        package = if facts[:os]['family'] == 'RedHat'
+                    if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '8') >= 0
                       'percona-xtrabackup-24'
-                    elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
+                    elsif Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '7') >= 0
                       'percona-xtrabackup'
                     else
                       'percona-xtrabackup-20'
                     end
-                  elsif facts[:operatingsystem] == 'Debian'
+                  elsif facts[:os]['name'] == 'Debian'
                     'percona-xtrabackup-24'
-                  elsif facts[:operatingsystem] == 'Ubuntu'
-                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '20') >= 0
+                  elsif facts[:os]['name'] == 'Ubuntu'
+                    if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '20') >= 0
                       'percona-xtrabackup-24'
-                    elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
+                    elsif Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '16') >= 0
                       'percona-xtrabackup'
                     else
                       'percona-xtrabackup-24'
                     end
-                  elsif facts[:osfamily] == 'Suse'
+                  elsif facts[:os]['family'] == 'Suse'
                     'xtrabackup'
                   else
                     'percona-xtrabackup'
@@ -75,7 +75,7 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contains the daily cronjob for weekdays 1-6' do
-          dateformat = case facts[:osfamily]
+          dateformat = case facts[:os]['name']
                        when 'FreeBSD', 'OpenBSD'
                          '$(date -v-sun +\%F)_full'
                        else
@@ -114,8 +114,8 @@ describe 'mysql::backup::xtrabackup' do
               user: 'backupuser@localhost',
               table: '*.*',
               privileges:
-              if (facts[:operatingsystem] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') >= 0) ||
-                (facts[:operatingsystem] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '22') >= 0)
+              if (facts[:os]['name'] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '11') >= 0) ||
+                (facts[:os]['name'] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '22') >= 0)
                 ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES']
               else
                 ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT']
@@ -157,8 +157,8 @@ describe 'mysql::backup::xtrabackup' do
                 user: 'backupuser@localhost',
                 table: '*.*',
                 privileges:
-                if (facts[:operatingsystem] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '11') >= 0) ||
-                  (facts[:operatingsystem] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '22') >= 0)
+                if (facts[:os]['name'] == 'Debian' && Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '11') >= 0) ||
+                  (facts[:os]['name'] == 'Ubuntu' && Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '22') >= 0)
                   ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES', 'BACKUP_ADMIN']
                 else
                   ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT', 'BACKUP_ADMIN']
@@ -193,31 +193,31 @@ describe 'mysql::backup::xtrabackup' do
           { additional_cron_args: '--backup --skip-ssl' }.merge(default_params)
         end
 
-        package = if facts[:osfamily] == 'RedHat'
-                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '8') >= 0
+        package = if facts[:os]['family'] == 'RedHat'
+                    if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '8') >= 0
                       'percona-xtrabackup-24'
-                    elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '7') >= 0
+                    elsif Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '7') >= 0
                       'percona-xtrabackup'
                     else
                       'percona-xtrabackup-20'
                     end
-                  elsif facts[:operatingsystem] == 'Debian'
+                  elsif facts[:os]['name'] == 'Debian'
                     'percona-xtrabackup-24'
-                  elsif facts[:operatingsystem] == 'Ubuntu'
-                    if Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '20') >= 0
+                  elsif facts[:os]['name'] == 'Ubuntu'
+                    if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '20') >= 0
                       'percona-xtrabackup-24'
-                    elsif Puppet::Util::Package.versioncmp(facts[:operatingsystemmajrelease], '16') >= 0
+                    elsif Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '16') >= 0
                       'percona-xtrabackup'
                     else
                       'percona-xtrabackup-24'
                     end
-                  elsif facts[:osfamily] == 'Suse'
+                  elsif facts[:os]['family'] == 'Suse'
                     'xtrabackup'
                   else
                     'percona-xtrabackup'
                   end
 
-        dateformat = case facts[:osfamily]
+        dateformat = case facts[:os]['family']
                      when 'FreeBSD', 'OpenBSD'
                        '$(date -v-sun +\%F)_full'
                      else

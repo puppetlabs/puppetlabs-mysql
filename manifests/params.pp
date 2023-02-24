@@ -37,11 +37,11 @@ class mysql::params {
   $daemon_dev_package_ensure   = 'present'
   $daemon_dev_package_provider = undef
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'RedHat': {
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'Fedora': {
-          if versioncmp($::operatingsystemrelease, '19') >= 0 or $::operatingsystemrelease == 'Rawhide' {
+          if versioncmp($facts['os']['release']['full'], '19') >= 0 or $facts['os']['release']['full'] == 'Rawhide' {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
@@ -49,23 +49,23 @@ class mysql::params {
           $python_package_name = 'MySQL-python'
         }
         'Amazon': {
-          if versioncmp($::operatingsystemrelease, '2') >= 0 {
+          if versioncmp($facts['os']['release']['full'], '2') >= 0 {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
           }
         }
         /^(RedHat|Rocky|CentOS|Scientific|OracleLinux|AlmaLinux)$/: {
-          if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
+          if versioncmp($facts['os']['release']['major'], '7') >= 0 {
             $provider = 'mariadb'
-            if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+            if versioncmp($facts['os']['release']['major'], '8') >= 0 {
               $xtrabackup_package_name = 'percona-xtrabackup-24'
             }
           } else {
             $provider = 'mysql'
             $xtrabackup_package_name = 'percona-xtrabackup-20'
           }
-          if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+          if versioncmp($facts['os']['release']['major'], '8') >= 0 {
             $java_package_name   = 'mariadb-java-client'
             $python_package_name = 'python3-PyMySQL'
           } else {
@@ -119,7 +119,7 @@ class mysql::params {
     }
 
     'Suse': {
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'OpenSuSE': {
           $socket = '/var/run/mysql/mysql.sock'
           $log_error = '/var/log/mysql/mysqld.log'
@@ -141,7 +141,7 @@ class mysql::params {
           $basedir             = undef
         }
         default: {
-          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::operatingsystem}.")
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${facts['os']['name']}.")
         }
       }
       $config_file         = '/etc/my.cnf'
@@ -207,26 +207,26 @@ class mysql::params {
       $managed_dirs            = ['tmpdir','basedir','datadir','innodb_data_home_dir','innodb_log_group_home_dir','innodb_undo_directory','innodb_tmpdir']
 
       # mysql::bindings
-      if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '10') >= 0) or
-      ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) {
+      if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['full'], '10') >= 0) or
+      ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '20.04') >= 0) {
         $java_package_name   = 'libmariadb-java'
       } else {
         $java_package_name   = 'libmysql-java'
       }
       $perl_package_name   = 'libdbd-mysql-perl'
-      if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') >= 0) or
-      ($::operatingsystem == 'Debian') {
+      if  ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '16.04') >= 0) or
+      ($facts['os']['name'] == 'Debian') {
         $php_package_name = 'php-mysql'
       } else {
         $php_package_name = 'php5-mysql'
       }
-      if  ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '16.04') < 0) or
-      ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
-      ($::operatingsystem == 'Debian') {
+      if  ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '16.04') < 0) or
+      ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '20.04') >= 0) or
+      ($facts['os']['name'] == 'Debian') {
         $xtrabackup_package_name = 'percona-xtrabackup-24'
       }
-      if ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '20.04') >= 0) or
-      ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '11') >= 0) {
+      if ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '20.04') >= 0) or
+      ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['full'], '11') >= 0) {
         $python_package_name = 'python3-mysqldb'
       } else {
         $python_package_name = 'python-mysqldb'
@@ -340,7 +340,7 @@ class mysql::params {
       $config_file         = '/etc/my.cnf'
       $includedir          = undef
       $datadir             = '/var/mysql'
-      $log_error           = "/var/mysql/${::hostname}.err"
+      $log_error           = "/var/mysql/${facts['networking']['hostname']}.err"
       $pidfile             = '/var/mysql/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = '_mysql'
@@ -365,7 +365,7 @@ class mysql::params {
     }
 
     default: {
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'Alpine': {
           $client_package_name = 'mariadb-client'
           $server_package_name = 'mariadb'
@@ -425,13 +425,13 @@ class mysql::params {
         }
 
         default: {
-          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${::osfamily} or ${::operatingsystem}.")
+          fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${facts['os']['family']} or ${facts['os']['name']}.")
         }
       }
     }
   }
 
-  case $::operatingsystem {
+  case $facts['os']['name'] {
     'Ubuntu': {
       $server_service_provider = 'systemd'
     }
@@ -516,7 +516,7 @@ class mysql::params {
   }
 
   ## Additional graceful failures
-  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '4' and $::operatingsystem != 'Amazon' {
+  if $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] == '4' and $facts['os']['name'] != 'Amazon' {
     fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 6.0 and beyond.")
   }
 }

@@ -12,7 +12,7 @@ class mysql::server::account_security {
       ensure  => 'absent',
       require => Anchor['mysql::server::end'],
   }
-  if ($::fqdn != 'localhost.localdomain') {
+  if ($facts['networking']['fqdn'] != 'localhost.localdomain') {
     mysql_user {
       ['root@localhost.localdomain',
       '@localhost.localdomain']:
@@ -20,17 +20,17 @@ class mysql::server::account_security {
         require => Anchor['mysql::server::end'],
     }
   }
-  if ($::fqdn and $::fqdn != 'localhost') {
+  if ($facts['networking']['fqdn'] and $facts['networking']['fqdn'] != 'localhost') {
     mysql_user {
-      ["root@${::fqdn}",
-      "@${::fqdn}"]:
+      ["root@${facts['networking']['fqdn']}",
+      "@${facts['networking']['fqdn']}"]:
         ensure  => 'absent',
         require => Anchor['mysql::server::end'],
     }
   }
-  if ($::fqdn != $::hostname) {
-    if ($::hostname != 'localhost') {
-      mysql_user { ["root@${::hostname}", "@${::hostname}"]:
+  if ($facts['networking']['fqdn'] != $facts['networking']['hostname']) {
+    if ($facts['networking']['hostname'] != 'localhost') {
+      mysql_user { ["root@${facts['networking']['hostname']}", "@${facts['networking']['hostname']}"]:
         ensure  => 'absent',
         require => Anchor['mysql::server::end'],
       }

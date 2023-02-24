@@ -3,7 +3,7 @@
 
 $mysql_monitor_password = 'password'
 $mysql_monitor_username = 'monitoring'
-$mysql_monitor_hostname = $::facts['networking']['hostname']
+$mysql_monitor_hostname = $facts['networking']['hostname']
 
 mysql_user { "${mysql_monitor_username}@${mysql_monitor_hostname}":
   ensure        => present,
