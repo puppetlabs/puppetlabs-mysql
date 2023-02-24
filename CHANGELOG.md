@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+
+## [v13.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v13.2.0) - 2023-02-24
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v13.1.0...v13.2.0)
+
+### Added
+
+- (CONT-359) Syntax update [#1532](https://github.com/puppetlabs/puppetlabs-mysql/pull/1532) ([LukasAud](https://github.com/LukasAud))
+
+### Fixed
+
+- xtrabackup.sh only touch when backup_success_file_path is set [#1522](https://github.com/puppetlabs/puppetlabs-mysql/pull/1522) ([JvGinkel](https://github.com/JvGinkel))
+
 ## [v13.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v13.1.0) (2022-12-20)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v13.0.1...v13.1.0)
