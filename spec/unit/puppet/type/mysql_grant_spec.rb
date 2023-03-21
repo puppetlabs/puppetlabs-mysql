@@ -78,6 +78,12 @@ describe Puppet::Type.type(:mysql_grant) do
 
   it 'requires the name to match the user and table with tag #general' do
     expect {
+      Puppet::Type.type(:mysql_grant).new(name: 'foo@localhost/*.*', privileges: ['ALL'], table: ['*.*'], user: 'foo@localhost', tag: 'bar')
+    }.not_to raise_error
+  end
+
+  it 'requires the name to match the user and table with tag, also in name #general' do
+    expect {
       Puppet::Type.type(:mysql_grant).new(name: 'bar:foo@localhost/*.*', privileges: ['ALL'], table: ['*.*'], user: 'foo@localhost', tag: 'bar')
     }.not_to raise_error
   end

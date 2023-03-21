@@ -43,7 +43,7 @@ Puppet::Type.newtype(:mysql_grant) do
       raise(_('mysql_grant: `name` `parameter` must match user@host/table format.')) if self[:name] != "#{self[:user]}/#{self[:table]}"
     end
     if self[:user] && self[:table] && self[:tag]
-      raise(_('mysql_grant: `name` `parameter` must match tag:user@host/table format.')) if self[:name] != "#{self[:tag][0]}:#{self[:user]}/#{self[:table]}"
+      raise(_('mysql_grant: `name` `parameter` must match tag:user@host/table format.')) if self[:name] != "#{self[:user]}/#{self[:table]}" && self[:name] != "#{self[:tag][0]}:#{self[:user]}/#{self[:table]}"
     end
   end
 
