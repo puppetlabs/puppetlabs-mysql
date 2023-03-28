@@ -15,6 +15,7 @@ describe 'mysql::server' do
         it { is_expected.to contain_class('mysql::server::service') }
         it { is_expected.to contain_class('mysql::server::root_password') }
         it { is_expected.to contain_class('mysql::server::providers') }
+        it { is_expected.to contain_class('mysql::server::service') }
       end
 
       context 'with remove_default_accounts set' do
