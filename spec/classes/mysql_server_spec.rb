@@ -15,6 +15,8 @@ describe 'mysql::server' do
         it { is_expected.to contain_class('mysql::server::service') }
         it { is_expected.to contain_class('mysql::server::root_password') }
         it { is_expected.to contain_class('mysql::server::providers') }
+        it { is_expected.to contain_file('mysql-config-file').that_comes_before('Service[mysqld]') }
+        it { is_expected.not_to contain_file('mysql-config-file').that_notifies('Service[mysqld]') }
       end
 
       context 'with remove_default_accounts set' do
@@ -151,6 +153,11 @@ describe 'mysql::server' do
           let(:params) { { override_options: { 'mysqld' => { 'bind-address' => :undef } } } }
 
           it { is_expected.to contain_file('mysql-config-file').without_content(%r{^bind-address}) }
+        end
+        context 'with reload_on_config_change' do
+          let(:params) { { 'reload_on_config_change' => true } }
+
+          it { is_expected.to contain_file('mysql-config-file').that_notifies('Service[mysqld]') }
         end
       end
 

@@ -99,6 +99,10 @@ To implement version specific parameters, specify the version, such as [mysqld-5
 If you don’t want to use the default configuration, you can also supply your options to the `$options` parameter instead of `$override_options`.
 Please note that `$options` and `$override_options` are mutually exclusive, you can only use one of them.
 
+By default, the puppet won't reload/restart mysqld when you change an existing
+configuration. If you want to do that, you can set
+`mysql::server::reload_on_config_change` to true.
+
 ### Create a database
 
 To create a database with a user and some assigned privileges:
