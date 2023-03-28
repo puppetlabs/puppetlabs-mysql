@@ -37,8 +37,8 @@ group :development do
   gem "github_changelog_generator", '= 1.15.2',        require: false
 end
 group :system_tests do
-  gem "puppet_litmus", '< 1.0.0', require: false, platforms: [:ruby]
-  gem "serverspec", '~> 2.41',    require: false
+  gem "puppet_litmus", '<= 0.34.6', require: false, platforms: [:ruby]
+  gem "serverspec", '~> 2.41',      require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
