@@ -1,10 +1,11 @@
-name: "nightly"
+name: "ci"
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  pull_request:
+    branches:
+      - "main"
   workflow_dispatch:
-
+    
 jobs:
   Spec:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
@@ -18,4 +19,3 @@ jobs:
     with:
       runs_on: "ubuntu-20.04"
     secrets: "inherit"
-
