@@ -7,5 +7,3 @@ fixtures:
     puppet_agent:
       repo: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
       ref: v4.12.1
-  symlinks:
-    "mysql": "#{source_dir}"
