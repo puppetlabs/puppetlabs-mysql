@@ -4,21 +4,8 @@
 # @api private
 #
 class mysql::params {
-  $manage_config_file     = true
-  $config_file_mode       = '0644'
-  $purge_conf_dir         = false
-  $restart                = false
-  $root_password          = 'UNSET'
-  $server_package_ensure  = 'present'
-  $server_package_manage  = true
-  $server_service_manage  = true
-  $server_service_enabled = true
   $client_package_ensure  = 'present'
   $client_package_manage  = true
-  $create_root_user       = true
-  $create_root_my_cnf     = true
-  $create_root_login_file = false
-  $login_file             = undef
   $exec_path              = ''
   # mysql::bindings
   $bindings_enable             = false
@@ -103,8 +90,6 @@ class mysql::params {
       $datadir                 = '/var/lib/mysql'
       $root_group              = 'root'
       $mysql_group             = 'mysql'
-      $mycnf_owner             = undef
-      $mycnf_group             = undef
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
@@ -149,8 +134,6 @@ class mysql::params {
       $datadir             = '/var/lib/mysql'
       $root_group          = 'root'
       $mysql_group         = 'mysql'
-      $mycnf_owner         = undef
-      $mycnf_group         = undef
       $server_service_name = 'mysql'
       $xtrabackup_package_name = 'xtrabackup'
 
@@ -197,8 +180,6 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'adm'
-      $mycnf_owner             = undef
-      $mycnf_group             = undef
       $socket                  = '/var/run/mysqld/mysqld.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
       $ssl_cert                = '/etc/mysql/server-cert.pem'
@@ -257,8 +238,6 @@ class mysql::params {
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'mysql'
-      $mycnf_owner             = undef
-      $mycnf_group             = undef
       $server_service_name     = 'mysqld'
       $socket                  = '/var/lib/mysql/mysql.sock'
       $ssl_ca                  = '/etc/mysql/cacert.pem'
@@ -285,8 +264,6 @@ class mysql::params {
       $pidfile             = '/run/mysqld/mysqld.pid'
       $root_group          = 'root'
       $mysql_group         = 'mysql'
-      $mycnf_owner         = undef
-      $mycnf_group         = undef
       $server_service_name = 'mysql'
       $socket              = '/run/mysqld/mysqld.sock'
       $ssl_ca              = '/etc/mysql/cacert.pem'
@@ -313,8 +290,6 @@ class mysql::params {
       $pidfile             = '/var/run/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = 'mysql'
-      $mycnf_owner         = undef
-      $mycnf_group         = undef
       $server_service_name = 'mysql-server'
       $socket              = '/var/db/mysql/mysql.sock'
       $ssl_ca              = undef
@@ -344,8 +319,6 @@ class mysql::params {
       $pidfile             = '/var/mysql/mysql.pid'
       $root_group          = 'wheel'
       $mysql_group         = '_mysql'
-      $mycnf_owner         = undef
-      $mycnf_group         = undef
       $server_service_name = 'mysqld'
       $socket              = '/var/run/mysql/mysql.sock'
       $ssl_ca              = undef
@@ -376,8 +349,6 @@ class mysql::params {
           $pidfile             = '/run/mysqld/mysqld.pid'
           $root_group          = 'root'
           $mysql_group         = 'mysql'
-          $mycnf_owner         = undef
-          $mycnf_group         = undef
           $server_service_name = 'mariadb'
           $socket              = '/run/mysqld/mysqld.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'
@@ -404,8 +375,6 @@ class mysql::params {
           $pidfile             = '/var/run/mysqld/mysqld.pid'
           $root_group          = 'root'
           $mysql_group         = 'mysql'
-          $mycnf_owner         = undef
-          $mycnf_group         = undef
           $server_service_name = 'mysqld'
           $socket              = '/var/lib/mysql/mysql.sock'
           $ssl_ca              = '/etc/mysql/cacert.pem'
