@@ -4,6 +4,8 @@
 Puppet::Functions.create_function(:mysql_password) do
   # @param password
   #   Plain text password.
+  # @param sensitive
+  #   If the mysql password hash should be of datatype Sensitive[String]
   #
   # @return
   #   The mysql password hash from the 4.x function mysql::password.
