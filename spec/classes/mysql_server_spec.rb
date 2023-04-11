@@ -67,6 +67,7 @@ describe 'mysql::server' do
         it 'contains the package by default' do
           is_expected.to contain_package('mysql-server').with(ensure: :present)
         end
+
         context 'with package_manage set to true' do
           let(:params) { { package_manage: true } }
 
@@ -120,6 +121,7 @@ describe 'mysql::server' do
           it do
             is_expected.to contain_service('mysqld').with(ensure: :stopped)
           end
+
           context 'with package_manage set to true' do
             let(:params) { { package_manage: true } }
 
@@ -170,6 +172,7 @@ describe 'mysql::server' do
               path: '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
             )
           }
+
           it { is_expected.not_to contain_mysql_user('root@localhost') }
           it { is_expected.not_to contain_file('/root/.my.cnf') }
         end
@@ -177,6 +180,7 @@ describe 'mysql::server' do
           let(:params) { { root_password: 'SET' } }
 
           it { is_expected.to contain_mysql_user('root@localhost') }
+
           if Puppet.version.to_f >= 3.0
             it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false).that_requires('Mysql_user[root@localhost]') }
           else
@@ -187,6 +191,7 @@ describe 'mysql::server' do
           let(:params) { { root_password: 'SET', create_root_user: false } }
 
           it { is_expected.not_to contain_mysql_user('root@localhost') }
+
           if Puppet.version.to_f >= 3.0
             it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false) }
           else
@@ -229,6 +234,7 @@ describe 'mysql::server' do
               password_hash: '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
             )
           }
+
           it {
             is_expected.to contain_mysql_user('foo2@localhost').with(
               max_connections_per_hour: nil, max_queries_per_hour: nil,
@@ -284,6 +290,7 @@ describe 'mysql::server' do
               privileges: ['SELECT', 'UPDATE'], options: ['GRANT']
             )
           }
+
           it {
             is_expected.to contain_mysql_grant('foo2@localhost/*.*').with(
               user: 'foo2@localhost', table: '*.*',
@@ -309,10 +316,10 @@ describe 'mysql::server' do
               collate: 'latin1',
             )
           }
+
           it { is_expected.to contain_mysql_database('somedb2') }
         end
       end
     end
   end
-  # rubocop:enable RSpec/NestedGroups
 end

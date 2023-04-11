@@ -17,7 +17,7 @@ describe 'mysql::db', type: :define do
           'mysql_exec_path' => '' }
       end
 
-      let(:sql) { [ '/tmp/test.sql' ] }
+      let(:sql) { ['/tmp/test.sql'] }
 
       it 'does not notify the import sql exec if no sql script was provided' do
         is_expected.to contain_mysql_database('test_db').without_notify

@@ -95,7 +95,6 @@ describe 'mysql_user' do
         end
       end
     end
-    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
   end
 
   context 'using ashp-dash@localhost' do

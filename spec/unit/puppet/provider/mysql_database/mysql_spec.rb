@@ -15,14 +15,13 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
     )
   end
   let(:raw_databases) do
-    <<-SQL_OUTPUT
-information_schema
-mydb
-mysql
-performance_schema
-test
+    <<~SQL_OUTPUT
+      information_schema
+      mydb
+      mysql
+      performance_schema
+      test
     SQL_OUTPUT
-    # rubocop:enable Layout/IndentHeredoc
   end
 
   before :each do
@@ -81,6 +80,7 @@ test
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
       expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'
     end
+
     it 'fails if file missing' do
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(false)
       expect(provider.defaults_file).to be_nil

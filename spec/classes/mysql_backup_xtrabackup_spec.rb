@@ -324,5 +324,4 @@ describe 'mysql::backup::xtrabackup' do
       end
     end
   end
-  # rubocop:enable RSpec/NestedGroups
 end

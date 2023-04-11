@@ -436,13 +436,12 @@ describe 'mysql_grant' do
 
       apply_manifest(pp, catch_failures: true)
     end
-    # rubocop:enable RSpec/ExampleLength
+
     it 'finds the user' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
       expect(result.stdout).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO ['|`]test3['|`]@['|`]tester['|`]})
       expect(result.stderr).to be_empty
     end
-    # rubocop:enable RSpec/MultipleExpectations
   end
 
   describe 'proxy privilieges' do

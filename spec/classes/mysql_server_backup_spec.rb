@@ -288,6 +288,7 @@ describe 'mysql::server::backup' do
           it 'loops through backup all databases without compression #show databases' do
             is_expected.to contain_file('mysqlbackup.sh').with_content(%r{.*SHOW DATABASES.*})
           end
+
           it 'loops through backup all databases without compression #bzcat' do
             is_expected.to contain_file('mysqlbackup.sh').without_content(%r{.*bzcat -zc.*})
           end
@@ -386,5 +387,4 @@ describe 'mysql::server::backup' do
       end
     end
   end
-  # rubocop:enable RSpec/NestedGroups
 end

@@ -29,7 +29,7 @@ RSpec.describe Puppet::Provider::MysqlLoginPath::MysqlLoginPath do
     allow(PTY).to receive(:spawn)
       .with({ 'HOME' => '/root' },
             '/usr/bin/mysql_config_editor set --skip-warn -G local_socket -h localhost -u root ' \
-              '-S /var/run/mysql/mysql.sock -p')
+            '-S /var/run/mysql/mysql.sock -p')
       .and_return(`(exit 0)`)
 
     allow(PTY).to receive(:spawn)

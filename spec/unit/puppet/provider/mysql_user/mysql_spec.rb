@@ -66,16 +66,15 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
   let(:newhash) { '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5' }
 
   let(:raw_users) do
-    <<-SQL_OUTPUT
-root@127.0.0.1
-root@::1
-@localhost
-debian-sys-maint@localhost
-root@localhost
-usvn_user@localhost
-@vagrant-ubuntu-raring-64
+    <<~SQL_OUTPUT
+      root@127.0.0.1
+      root@::1
+      @localhost
+      debian-sys-maint@localhost
+      root@localhost
+      usvn_user@localhost
+      @vagrant-ubuntu-raring-64
     SQL_OUTPUT
-    # rubocop:enable Layout/IndentHeredoc
   end
 
   let(:parsed_users) { ['root@127.0.0.1', 'root@::1', '@localhost', 'debian-sys-maint@localhost', 'root@localhost', 'usvn_user@localhost', '@vagrant-ubuntu-raring-64'] }
@@ -115,6 +114,7 @@ usvn_user@localhost
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
+
     it 'returns an array of users MySQL 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
@@ -123,6 +123,7 @@ usvn_user@localhost
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
+
     it 'returns an array of users MySQL >= 5.7.0 < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
@@ -131,6 +132,7 @@ usvn_user@localhost
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
+
     it 'returns an array of users MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
@@ -139,6 +141,7 @@ usvn_user@localhost
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
+
     it 'returns an array of users mariadb 10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
@@ -147,6 +150,7 @@ usvn_user@localhost
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
+
     it 'returns an array of users mariadb >= 10.1.21' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
@@ -155,6 +159,7 @@ usvn_user@localhost
       usernames = provider.class.instances.map { |x| x.name }
       expect(parsed_users).to match_array(usernames)
     end
+
     it 'returns an array of users percona 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
@@ -174,6 +179,7 @@ usvn_user@localhost
         provider.class.instance_variable_set(:@mysqld_version_string, string)
         expect(provider.mysqld_version).to eq(version)
       end
+
       it "detects type '#{mysql_type}'" do
         provider.class.instance_variable_set(:@mysqld_version_string, string)
         expect(provider.mysqld_type).to eq(mysql_type)
@@ -199,6 +205,7 @@ usvn_user@localhost
       expect(provider).to receive(:exists?).and_return(true)
       expect(provider.create).to be_truthy
     end
+
     it 'creates a user using IF NOT EXISTS' do
       provider.class.instance_variable_set(:@mysqld_version_string, '5.7.6')
 
@@ -219,6 +226,7 @@ usvn_user@localhost
       expect(provider).to receive(:exists?).and_return(false)
       expect(provider.destroy).to be_truthy
     end
+
     it 'removes a user using IF EXISTS' do
       provider.class.instance_variable_set(:@mysqld_version_string, '5.7.1')
 
@@ -239,18 +247,22 @@ usvn_user@localhost
       allow(Facter).to receive(:value).with(:mysqld_version).and_return('5.6.24')
       expect(provider.mysqld_version).to eq '5.6.24'
     end
+
     it 'returns 5.7.6 for "mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))"' do
       provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))')
       expect(provider.mysqld_version).to eq '5.7.6'
     end
+
     it 'returns 5.7.6 for "mysqld  Ver 5.7.6-rc for Linux on x86_64 (MySQL Community Server (GPL))"' do
       provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.6-rc for Linux on x86_64 (MySQL Community Server (GPL))')
       expect(provider.mysqld_version).to eq '5.7.6'
     end
+
     it 'detects >= 5.7.6 for 5.7.7-log' do
       provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.7-log for Linux on x86_64 (MySQL Community Server (GPL))')
       expect(Puppet::Util::Package.versioncmp(provider.mysqld_version, '5.7.6')).to be >= 0
     end
+
     it 'detects < 5.7.6 for 5.7.5-log' do
       provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.5-log for Linux on x86_64 (MySQL Community Server (GPL))')
       expect(Puppet::Util::Package.versioncmp(provider.mysqld_version, '5.7.6')).to be < 0
@@ -262,6 +274,7 @@ usvn_user@localhost
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
       expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'
     end
+
     it 'fails if file missing' do
       expect(File).to receive(:file?).with('/root/.my.cnf').and_return(false)
       expect(provider.defaults_file).to be_nil
@@ -282,6 +295,7 @@ usvn_user@localhost
       expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
+
     it 'changes the hash mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
@@ -289,6 +303,7 @@ usvn_user@localhost
       expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
+
     it 'changes the hash mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
       expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
@@ -296,6 +311,7 @@ usvn_user@localhost
       expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
+
     it 'changes the hash MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'",
@@ -304,6 +320,7 @@ usvn_user@localhost
       expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
+
     it 'changes the hash mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
@@ -311,6 +328,7 @@ usvn_user@localhost
       expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
     end
+
     it 'changes the hash to an ed25519 hash mariadb >= 10.1.21 and < 10.2.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
       allow(resource).to receive(:value).with(:plugin).and_return('ed25519')
@@ -318,6 +336,7 @@ usvn_user@localhost
       expect(provider).to receive(:password_hash).and_return('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
       provider.password_hash = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'
     end
+
     it 'changes the hash to an ed25519 hash mariadb >= 10.2.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.3.22'][:string])
       allow(resource).to receive(:value).with(:plugin).and_return('ed25519')
@@ -325,11 +344,13 @@ usvn_user@localhost
       expect(provider).to receive(:password_hash).and_return('z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU')
       provider.password_hash = 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU'
     end
+
     it 'changes the hash to an invalid ed25519 hash mariadb >= 10.1.21' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
       allow(resource).to receive(:value).with(:plugin).and_return('ed25519')
       expect { provider.password_hash = 'invalid' }.to raise_error(ArgumentError, 'ed25519 hash should be 43 bytes long.')
     end
+
     it 'changes the hash percona-5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
       expect(provider.class).to receive(:mysql_caller).with("SET PASSWORD FOR 'joe'@'localhost' = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'", 'system').and_return('0')
@@ -344,7 +365,8 @@ usvn_user@localhost
       context 'MySQL < 5.7.6' do
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-          expect(provider.class).to receive(:mysql_caller).with("UPDATE mysql.user SET plugin = 'auth_socket', password = '' WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'system').and_return('0')
+          expect(provider.class).to receive(:mysql_caller).with("UPDATE mysql.user SET plugin = 'auth_socket', password = '' WHERE CONCAT(user, '@', host) = 'joe@localhost'",
+                                                                'system').and_return('0')
 
           expect(provider).to receive(:plugin).and_return('auth_socket')
           provider.plugin = 'auth_socket'
@@ -408,7 +430,6 @@ usvn_user@localhost
         end
       end
     end
-    # rubocop:enable RSpec/NestedGroups
   end
 
   describe 'tls_options=' do
@@ -419,6 +440,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
+
     it 'adds SSL option grant in mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
@@ -426,6 +448,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
+
     it 'adds SSL option grant in mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
@@ -433,6 +456,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
+
     it 'adds SSL option grant in mysql >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
@@ -440,6 +464,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['NONE'])
       provider.tls_options = ['NONE']
     end
+
     it 'adds SSL option grant in mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system').and_return('0')
@@ -458,6 +483,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
+
     it 'adds mTLS option grant in mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
@@ -466,6 +492,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
+
     it 'adds mTLS option grant in mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
@@ -474,6 +501,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
+
     it 'adds mTLS option grant in mysql >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
@@ -482,6 +510,7 @@ usvn_user@localhost
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
     end
+
     it 'adds mTLS option grant in mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
