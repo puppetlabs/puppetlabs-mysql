@@ -39,8 +39,11 @@ Puppet::Type.newtype(:mysql_grant) do
     raise(_('mysql_grant: `privileges` `parameter`: PROXY can only be specified by itself.')) if Array(self[:privileges]).size > 1 && Array(self[:privileges]).include?('PROXY')
     raise(_('mysql_grant: `table` `parameter` is required.')) if self[:ensure] == :present && self[:table].nil?
     raise(_('mysql_grant: `user` `parameter` is required.')) if self[:ensure] == :present && self[:user].nil?
-    if self[:user] && self[:table]
+    if self[:user] && self[:table] && self[:tag].nil?
       raise(_('mysql_grant: `name` `parameter` must match user@host/table format.')) if self[:name] != "#{self[:user]}/#{self[:table]}"
+    end
+    if self[:user] && self[:table] && self[:tag]
+      raise(_('mysql_grant: `name` `parameter` must match tag:user@host/table format.')) if self[:name] != "#{self[:user]}/#{self[:table]}" && self[:name] != "#{self[:tag][0]}:#{self[:user]}/#{self[:table]}"
     end
   end
 
