@@ -30,6 +30,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns an IniFile instance or nil if the file could not be opened.
   def self.load(filename, opts = {})
     return unless File.file? filename
+
     new(opts.merge(filename: filename))
   end
 
@@ -220,6 +221,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def each
     return unless block_given?
+
     @ini.each do |section, hash|
       hash.each do |param, val|
         yield section, param, val
@@ -242,6 +244,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def each_section
     return unless block_given?
+
     @ini.each_key { |section| yield section }
     self
   end
@@ -268,6 +271,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns the Hash of parameter/value pairs for this section.
   def [](section)
     return nil if section.nil?
+
     @ini[section.to_s]
   end
 
@@ -373,6 +377,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   def eql?(other)
     return true if equal? other
     return false unless other.instance_of? self.class
+
     @ini == other.instance_variable_get(:@ini)
   end
   alias == eql?
@@ -609,10 +614,10 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       else
         begin
           begin
-                    Integer(value)
+            Integer(value)
           rescue
             Float(value)
-                  end
+          end
         rescue
           unescape_value(value)
         end

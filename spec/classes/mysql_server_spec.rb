@@ -213,10 +213,10 @@ describe 'mysql::server' do
             { users: {
               'foo@localhost' => {
                 'max_connections_per_hour' => '1',
-                'max_queries_per_hour'     => '2',
-                'max_updates_per_hour'     => '3',
-                'max_user_connections'     => '4',
-                'password_hash'            => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
+                'max_queries_per_hour' => '2',
+                'max_updates_per_hour' => '3',
+                'max_user_connections' => '4',
+                'password_hash' => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
               },
               'foo2@localhost' => {},
             } }
@@ -243,10 +243,10 @@ describe 'mysql::server' do
             { users: {
               'foo@localhost' => {
                 'max_connections_per_hour' => '1',
-                'max_queries_per_hour'     => '2',
-                'max_updates_per_hour'     => '3',
-                'max_user_connections'     => '4',
-                'password_hash'            => sensitive('*F3A2A51A9B0F2BE2468926B4132313728C250DBF'),
+                'max_queries_per_hour' => '2',
+                'max_updates_per_hour' => '3',
+                'max_user_connections' => '4',
+                'password_hash' => sensitive('*F3A2A51A9B0F2BE2468926B4132313728C250DBF'),
               },
               'foo2@localhost' => {},
             } }
@@ -265,14 +265,14 @@ describe 'mysql::server' do
           let(:params) do
             { grants: {
               'foo@localhost/somedb.*' => {
-                'user'       => 'foo@localhost',
-                'table'      => 'somedb.*',
+                'user' => 'foo@localhost',
+                'table' => 'somedb.*',
                 'privileges' => ['SELECT', 'UPDATE'],
-                'options'    => ['GRANT'],
+                'options' => ['GRANT'],
               },
               'foo2@localhost/*.*' => {
-                'user'       => 'foo2@localhost',
-                'table'      => '*.*',
+                'user' => 'foo2@localhost',
+                'table' => '*.*',
                 'privileges' => ['SELECT'],
               },
             } }

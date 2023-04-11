@@ -15,13 +15,13 @@ describe 'mysql::server::backup' do
       end
 
       let(:default_params) do
-        { 'backupuser'         => 'testuser',
-          'backuppassword'     => 'testpass',
-          'backupdir'          => '/tmp/mysql-backup',
-          'backuprotate'       => '25',
+        { 'backupuser' => 'testuser',
+          'backuppassword' => 'testpass',
+          'backupdir' => '/tmp/mysql-backup',
+          'backuprotate' => '25',
           'delete_before_dump' => true,
-          'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
-          'maxallowedpacket'   => '1M' }
+          'execpath' => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          'maxallowedpacket' => '1M' }
       end
 
       context 'standard conditions' do
@@ -122,7 +122,7 @@ describe 'mysql::server::backup' do
       context 'with delete after dump and custom success file path' do
         let(:custom_params) do
           {
-            'delete_before_dump'       => false,
+            'delete_before_dump' => false,
             'backup_success_file_path' => '/opt/mysqlbackup_success',
           }
         end

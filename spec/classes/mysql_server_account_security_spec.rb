@@ -8,7 +8,7 @@ describe 'mysql::server::account_security' do
       let(:pre_condition) do
         <<-EOF
         anchor {'mysql::server::end': }
-      EOF
+        EOF
       end
 
       context 'with fqdn==myhost.mydomain' do

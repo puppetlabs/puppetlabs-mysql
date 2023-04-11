@@ -59,7 +59,7 @@ describe 'mysql class' do
                   'log-bin' => '/var/log/mariadb/mariadb-bin.log',}
            }
           }
-          MANIFEST
+        MANIFEST
       end
 
       it 'can be set' do

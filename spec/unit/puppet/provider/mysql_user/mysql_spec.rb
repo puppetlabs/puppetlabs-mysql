@@ -299,7 +299,7 @@ usvn_user@localhost
     it 'changes the hash MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH mysql_native_password AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'",
-'system').and_return('0')
+                                                            'system').and_return('0')
 
       expect(provider).to receive(:password_hash).and_return('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5')
       provider.password_hash = '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF5'
@@ -377,7 +377,7 @@ usvn_user@localhost
         it 'changes the authentication plugin' do
           provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
           expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'",
-'system').and_return('0')
+                                                                'system').and_return('0')
 
           expect(provider).to receive(:plugin).and_return('mysql_native_password')
           provider.plugin = 'mysql_native_password'
@@ -453,7 +453,7 @@ usvn_user@localhost
     it 'adds mTLS option grant in mysql 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
-'system').and_return('0')
+                                                            'system').and_return('0')
 
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
@@ -461,7 +461,7 @@ usvn_user@localhost
     it 'adds mTLS option grant in mysql 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
-'system').and_return('0')
+                                                            'system').and_return('0')
 
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
@@ -469,7 +469,7 @@ usvn_user@localhost
     it 'adds mTLS option grant in mysql < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
-'system').and_return('0')
+                                                            'system').and_return('0')
 
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
@@ -477,7 +477,7 @@ usvn_user@localhost
     it 'adds mTLS option grant in mysql >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
-'system').and_return('0')
+                                                            'system').and_return('0')
 
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']
@@ -485,7 +485,7 @@ usvn_user@localhost
     it 'adds mTLS option grant in mariadb-10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
       expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE ISSUER '/CN=Certificate Authority' AND SUBJECT '/OU=MySQL Users/CN=Username'",
-'system').and_return('0')
+                                                            'system').and_return('0')
 
       expect(provider).to receive(:tls_options).and_return(['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\''])
       provider.tls_options = ['ISSUER \'/CN=Certificate Authority\'', 'SUBJECT \'/OU=MySQL Users/CN=Username\'']

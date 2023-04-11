@@ -6,65 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 10
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: with_first_argument, with_fixed_indentation
-Layout/ArgumentAlignment:
-  Exclude:
-    - 'spec/unit/puppet/provider/mysql_login_path/mysql_login_path_spec.rb'
-    - 'spec/unit/puppet/provider/mysql_user/mysql_spec.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyleAlignWith, Severity.
-# SupportedStylesAlignWith: start_of_line, begin
-Layout/BeginEndAlignment:
-  Exclude:
-    - 'lib/puppet/provider/mysql_login_path/inifile.rb'
-
-# Offense count: 6
-# This cop supports safe autocorrection (--autocorrect).
-Layout/ClosingHeredocIndentation:
-  Exclude:
-    - 'lib/puppet/type/mysql_datadir.rb'
-    - 'lib/puppet/type/mysql_grant.rb'
-    - 'lib/puppet/type/mysql_login_path.rb'
-    - 'lib/puppet/type/mysql_user.rb'
-    - 'spec/acceptance/00_mysql_server_spec.rb'
-    - 'spec/classes/mysql_server_account_security_spec.rb'
-
-# Offense count: 18
-# This cop supports safe autocorrection (--autocorrect).
-Layout/EmptyLineAfterGuardClause:
-  Exclude:
-    - 'lib/puppet/functions/mysql/normalise_and_deepmerge.rb'
-    - 'lib/puppet/provider/mysql.rb'
-    - 'lib/puppet/provider/mysql_datadir/mysql.rb'
-    - 'lib/puppet/provider/mysql_grant/mysql.rb'
-    - 'lib/puppet/provider/mysql_login_path/inifile.rb'
-    - 'lib/puppet/provider/mysql_user/mysql.rb'
-    - 'lib/puppet/type/mysql_grant.rb'
-    - 'spec/classes/mysql_bindings_spec.rb'
-    - 'tasks/export.rb'
-    - 'tasks/sql.rb'
-
-# Offense count: 54
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowMultipleStyles, EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle.
-# SupportedHashRocketStyles: key, separator, table
-# SupportedColonStyles: key, separator, table
-# SupportedLastArgumentHashStyles: always_inspect, always_ignore, ignore_implicit, ignore_explicit
-Layout/HashAlignment:
-  Exclude:
-    - 'lib/puppet/type/mysql_login_path.rb'
-    - 'spec/classes/mysql_backup_mysqldump_spec.rb'
-    - 'spec/classes/mysql_bindings_spec.rb'
-    - 'spec/classes/mysql_server_backup_spec.rb'
-    - 'spec/classes/mysql_server_spec.rb'
-    - 'spec/defines/mysql_db_spec.rb'
-    - 'spec/unit/puppet/provider/mysql_login_path/mysql_login_path_spec.rb'
-
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 Layout/HeredocIndentation:

@@ -158,6 +158,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
 
   def self.cmd_privs(privileges)
     return 'ALL PRIVILEGES' if privileges.include?('ALL')
+
     priv_string = ''
     privileges.each do |priv|
       priv_string += "#{priv}, "

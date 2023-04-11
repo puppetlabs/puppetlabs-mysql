@@ -12,8 +12,8 @@ describe 'mysql::db', type: :define do
       let(:title) { 'test_db' }
 
       let(:params) do
-        { 'user'            => 'testuser',
-          'password'        => 'testpass',
+        { 'user' => 'testuser',
+          'password' => 'testpass',
           'mysql_exec_path' => '' }
       end
 

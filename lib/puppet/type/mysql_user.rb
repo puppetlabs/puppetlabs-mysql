@@ -5,7 +5,7 @@ Puppet::Type.newtype(:mysql_user) do
   @doc = <<-PUPPET
     @summary
       Manage a MySQL user. This includes management of users password as well as privileges.
-    PUPPET
+  PUPPET
 
   ensurable
 

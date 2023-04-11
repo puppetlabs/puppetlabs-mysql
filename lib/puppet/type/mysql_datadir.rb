@@ -6,7 +6,7 @@ Puppet::Type.newtype(:mysql_datadir) do
       Manage MySQL datadirs with mysql_install_db OR mysqld (5.7.6 and above).
 
     @api private
-    PUPPET
+  PUPPET
 
   ensurable
 

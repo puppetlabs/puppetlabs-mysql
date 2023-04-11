@@ -15,13 +15,13 @@ describe 'mysql::backup::mysqldump' do
       end
 
       let(:default_params) do
-        { 'backupuser'         => 'testuser',
-          'backuppassword'     => 'testpass',
-          'backupdir'          => '/tmp/mysql-backup',
-          'backuprotate'       => '25',
+        { 'backupuser' => 'testuser',
+          'backuppassword' => 'testpass',
+          'backupdir' => '/tmp/mysql-backup',
+          'backuprotate' => '25',
           'delete_before_dump' => true,
-          'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
-          'maxallowedpacket'   => '1M' }
+          'execpath' => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          'maxallowedpacket' => '1M' }
       end
 
       context 'with time included' do
@@ -76,7 +76,7 @@ describe 'mysql::backup::mysqldump' do
         let(:params) do
           {
             'file_per_database' => true,
-            'excludedatabases'  => [ 'information_schema' ],
+            'excludedatabases' => [ 'information_schema' ],
           }.merge(default_params)
         end
 
