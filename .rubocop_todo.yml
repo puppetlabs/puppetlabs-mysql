@@ -292,10 +292,6 @@ RSpec/ImplicitSubject:
     - 'spec/functions/mysql_password_spec.rb'
     - 'spec/functions/mysql_strip_hash_spec.rb'
 
-# Offense count: 7
-RSpec/MultipleExpectations:
-  Max: 9
-
 # Offense count: 36
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:

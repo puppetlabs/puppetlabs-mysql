@@ -190,19 +190,24 @@ usvn_user@localhost
 
   describe 'create' do
     it 'makes a user' do
-      expect(provider.class).to receive(:mysql_caller).with("CREATE USER 'joe'@'localhost' IDENTIFIED BY PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'", 'system')
-      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
-      expect(provider.class).to receive(:mysql_caller).with("GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE", 'system')
+      output = ["CREATE USER 'joe'@'localhost' IDENTIFIED BY PASSWORD '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'",
+                "GRANT USAGE ON *.* TO 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10",
+                "GRANT USAGE ON *.* TO 'joe'@'localhost' REQUIRE NONE"]
+      output.each do |out|
+        expect(provider.class).to receive(:mysql_caller).with(out, 'system')
+      end
       expect(provider).to receive(:exists?).and_return(true)
       expect(provider.create).to be_truthy
     end
     it 'creates a user using IF NOT EXISTS' do
       provider.class.instance_variable_set(:@mysqld_version_string, '5.7.6')
 
-      expect(provider.class).to receive(:mysql_caller).with("CREATE USER IF NOT EXISTS 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'",
-'system')
-      expect(provider.class).to receive(:mysql_caller).with("ALTER USER IF EXISTS 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10", 'system') # rubocop:disable Layout/LineLength
-      expect(provider.class).to receive(:mysql_caller).with("ALTER USER 'joe'@'localhost' REQUIRE NONE", 'system')
+      output = ["CREATE USER IF NOT EXISTS 'joe'@'localhost' IDENTIFIED WITH 'mysql_native_password' AS '*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4'",
+                "ALTER USER IF EXISTS 'joe'@'localhost' WITH MAX_USER_CONNECTIONS 10 MAX_CONNECTIONS_PER_HOUR 10 MAX_QUERIES_PER_HOUR 10 MAX_UPDATES_PER_HOUR 10",
+                "ALTER USER 'joe'@'localhost' REQUIRE NONE"]
+      output.each do |out|
+        expect(provider.class).to receive(:mysql_caller).with(out, 'system')
+      end
       expect(provider).to receive(:exists?).and_return(true)
       expect(provider.create).to be_truthy
     end
