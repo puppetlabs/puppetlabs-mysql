@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # frozen_string_literal: true
 
 # See: https://github.com/puppetlabs/puppet/blob/main/lib/puppet/util/inifile.rb
@@ -242,10 +241,10 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #   end
   #
   # Returns this IniFile.
-  def each_section
-    return unless block_given?
+  def each_section(&block)
+    return unless block
 
-    @ini.each_key { |section| yield section }
+    @ini.each_key(&block)
     self
   end
 

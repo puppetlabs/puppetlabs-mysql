@@ -197,26 +197,6 @@ Style/CommentedKeyword:
   Exclude:
     - 'lib/puppet/provider/mysql_login_path/inifile.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/Encoding:
-  Exclude:
-    - 'lib/puppet/provider/mysql_login_path/inifile.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/ExplicitBlockArgument:
-  Exclude:
-    - 'lib/puppet/provider/mysql_login_path/inifile.rb'
-
-# Offense count: 3
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowedVars.
-Style/FetchEnvVar:
-  Exclude:
-    - 'lib/puppet/provider/mysql.rb'
-    - 'lib/puppet/provider/mysql_datadir/mysql.rb'
-
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/GlobalStdStream:
@@ -225,30 +205,10 @@ Style/GlobalStdStream:
     - 'tasks/sql.rb'
 
 # Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: braces, no_braces
-Style/HashAsLastArrayItem:
-  Exclude:
-    - 'spec/functions/mysql_normalise_and_deepmerge_spec.rb'
-
-# Offense count: 1
 # Configuration parameters: MinBranchesCount.
 Style/HashLikeCase:
   Exclude:
     - 'lib/puppet/provider/mysql_login_path/inifile.rb'
-
-# Offense count: 10
-# This cop supports safe autocorrection (--autocorrect).
-Style/IfUnlessModifier:
-  Exclude:
-    - 'lib/puppet/functions/mysql/normalise_and_deepmerge.rb'
-    - 'lib/puppet/functions/mysql/password.rb'
-    - 'lib/puppet/provider/mysql_datadir/mysql.rb'
-    - 'lib/puppet/provider/mysql_grant/mysql.rb'
-    - 'lib/puppet/provider/mysql_login_path/mysql_login_path.rb'
-    - 'lib/puppet/type/mysql_grant.rb'
-    - 'lib/puppet/type/mysql_user.rb'
 
 # Offense count: 2
 Style/MixinUsage:

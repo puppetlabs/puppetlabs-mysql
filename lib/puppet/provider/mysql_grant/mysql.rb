@@ -200,12 +200,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
   def privileges=(privileges)
     diff = diff_privileges(@property_hash[:privileges], privileges)
-    unless diff[:revoke].empty?
-      revoke(@property_hash[:user], @property_hash[:table], diff[:revoke])
-    end
-    unless diff[:grant].empty?
-      grant(@property_hash[:user], @property_hash[:table], diff[:grant], @property_hash[:options])
-    end
+    revoke(@property_hash[:user], @property_hash[:table], diff[:revoke]) unless diff[:revoke].empty?
+    grant(@property_hash[:user], @property_hash[:table], diff[:grant], @property_hash[:options]) unless diff[:grant].empty?
     @property_hash[:privileges] = privileges
     self.privileges
   end

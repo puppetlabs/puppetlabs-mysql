@@ -37,7 +37,7 @@ describe 'mysql::normalise_and_deepmerge' do
     expect(subject).to run.with_params({}, {}, {}).and_return({})
   end
 
-  expected_values_two = [1, 2, 'four' => 4]
+  expected_values_two = [1, 2, { 'four' => 4 }]
   it 'merges subhashes' do
     hash = subject.execute({ 'one' => 1 }, 'two' => 2, 'three' => { 'four' => 4 })
     index_values.each_with_index do |index, expected|

@@ -97,9 +97,7 @@ Puppet::Type.newtype(:mysql_user) do
     validate do |value|
       value = [value] unless value.is_a?(Array)
       if value.include?('NONE') || value.include?('SSL') || value.include?('X509')
-        if value.length > 1
-          raise(ArgumentError, _('`tls_options` `property`: The values NONE, SSL and X509 cannot be used with other options, you may only pick one of them.'))
-        end
+        raise(ArgumentError, _('`tls_options` `property`: The values NONE, SSL and X509 cannot be used with other options, you may only pick one of them.')) if value.length > 1
       else
         value.each do |opt|
           o = opt.match(%r{^(CIPHER|ISSUER|SUBJECT)}i)

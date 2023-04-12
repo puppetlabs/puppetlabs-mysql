@@ -79,9 +79,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result = ''
     output = my_print_defaults_cmd(context, uid, '-s', name)
     output.split("\n").each do |line|
-      if %r{\-\-password}.match?(line)
-        result = line.sub(%r{\-\-password=}, '')
-      end
+      result = line.sub(%r{\-\-password=}, '') if %r{\-\-password}.match?(line)
     end
     result
   end
@@ -158,9 +156,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
 
   def canonicalize(_context, resources)
     resources.each do |r|
-      if r.key?(:password) && r[:password].is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
-        r[:password] = gen_pw(extract_pw(r[:password]))
-      end
+      r[:password] = gen_pw(extract_pw(r[:password])) if r.key?(:password) && r[:password].is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
     end
   end
 end

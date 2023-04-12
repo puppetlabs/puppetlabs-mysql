@@ -20,9 +20,7 @@ Puppet::Functions.create_function(:'mysql::password') do
   end
 
   def password(password, sensitive = false)
-    if password.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
-      password = password.unwrap
-    end
+    password = password.unwrap if password.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
 
     result_string = if %r{\*[A-F0-9]{40}$}.match?(password)
                       password

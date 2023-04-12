@@ -21,17 +21,13 @@ Puppet::Functions.create_function(:'mysql::normalise_and_deepmerge') do
   #   The given hash normalised
   #
   def normalise_and_deepmerge(*args)
-    if args.length < 2
-      raise Puppet::ParseError, _('mysql::normalise_and_deepmerge(): wrong number of arguments (%{args_length}; must be at least 2)') % { args_length: args.length }
-    end
+    raise Puppet::ParseError, _('mysql::normalise_and_deepmerge(): wrong number of arguments (%{args_length}; must be at least 2)') % { args_length: args.length } if args.length < 2
 
     result = {}
     args.each do |arg|
       next if arg.is_a?(String) && arg.empty? # empty string is synonym for puppet's undef
       # If the argument was not a hash, skip it.
-      unless arg.is_a?(Hash)
-        raise Puppet::ParseError, _('mysql::normalise_and_deepmerge: unexpected argument type %{arg_class}, only expects hash arguments.') % { args_class: args.class }
-      end
+      raise Puppet::ParseError, _('mysql::normalise_and_deepmerge: unexpected argument type %{arg_class}, only expects hash arguments.') % { args_class: args.class } unless arg.is_a?(Hash)
 
       # We need to make a copy of the hash since it is frozen by puppet
       current = deep_copy(arg)

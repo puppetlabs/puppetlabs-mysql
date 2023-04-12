@@ -16,9 +16,7 @@ Puppet::Type.newtype(:mysql_grant) do
     # 'ALL'.  This can't be done in the munge in the property as that iterates
     # over the array and there's no way to replace the entire array before it's
     # returned to the provider.
-    if self[:ensure] == :present && Array(self[:privileges]).size > 1 && self[:privileges].to_s.include?('ALL')
-      self[:privileges] = 'ALL'
-    end
+    self[:privileges] = 'ALL' if self[:ensure] == :present && Array(self[:privileges]).size > 1 && self[:privileges].to_s.include?('ALL')
     # Sort the privileges array in order to ensure the comparision in the provider
     # self.instances method match.  Otherwise this causes it to keep resetting the
     # privileges.

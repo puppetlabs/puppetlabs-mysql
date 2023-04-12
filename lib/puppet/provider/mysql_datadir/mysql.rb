@@ -8,7 +8,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
 
   # Make sure we find mysqld on CentOS and mysql_install_db on Gentoo and Solaris 11
   ENV['PATH'] = [
-    ENV['PATH'],
+    ENV.fetch('PATH', nil),
     '/usr/libexec',
     '/usr/share/mysql/scripts',
     '/opt/rh/rh-mysql80/root/usr/bin',
@@ -47,9 +47,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     log_error                = @resource.value(:log_error) || '/var/tmp/mysqld_initialize.log'
     # rubocop:enable Lint/UselessAssignment
     unless defaults_extra_file.nil?
-      unless File.exist?(defaults_extra_file)
-        raise ArgumentError, _('Defaults-extra-file %{file} is missing.') % { file: defaults_extra_file }
-      end
+      raise ArgumentError, _('Defaults-extra-file %{file} is missing.') % { file: defaults_extra_file } unless File.exist?(defaults_extra_file)
 
       defaults_extra_file = "--defaults-extra-file=#{defaults_extra_file}"
     end
