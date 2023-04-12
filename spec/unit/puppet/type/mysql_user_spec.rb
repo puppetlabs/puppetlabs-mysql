@@ -92,7 +92,7 @@ describe Puppet::Type.type(:mysql_user) do
     end
   end
 
-  context 'using a quoted username that is too long ' do
+  context 'using a quoted username that is too long' do
     before :each do
       allow(Facter).to receive(:value).with(:mysql_version).and_return('5.6.24')
     end

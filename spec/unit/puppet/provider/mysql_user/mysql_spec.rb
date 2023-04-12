@@ -248,12 +248,12 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       expect(provider.mysqld_version).to eq '5.6.24'
     end
 
-    it 'returns 5.7.6 for "mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))"' do
+    it 'returns 5.7.6 for "mysqld Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))"' do
       provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.6 for Linux on x86_64 (MySQL Community Server (GPL))')
       expect(provider.mysqld_version).to eq '5.7.6'
     end
 
-    it 'returns 5.7.6 for "mysqld  Ver 5.7.6-rc for Linux on x86_64 (MySQL Community Server (GPL))"' do
+    it 'returns 5.7.6 for "mysqld Ver 5.7.6-rc for Linux on x86_64 (MySQL Community Server (GPL))"' do
       provider.class.instance_variable_set(:@mysqld_version_string, 'mysqld  Ver 5.7.6-rc for Linux on x86_64 (MySQL Community Server (GPL))')
       expect(provider.mysqld_version).to eq '5.7.6'
     end

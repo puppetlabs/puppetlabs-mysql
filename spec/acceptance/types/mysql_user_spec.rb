@@ -136,6 +136,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using resource should throw no errors' do
     describe 'find users' do
       it do
@@ -145,6 +146,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using user-w-ssl@localhost with SSL' do
     describe 'adding user' do
       pp_five = <<-MANIFEST
@@ -172,6 +174,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using user-w-x509@localhost with X509' do
     describe 'adding user' do
       pp_six = <<-MANIFEST
@@ -199,6 +202,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using user-w-subject@localhost with ISSUER and SUBJECT' do
     describe 'adding user' do
       it 'works without errors' do

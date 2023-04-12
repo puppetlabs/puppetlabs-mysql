@@ -27,7 +27,7 @@ describe 'mysql::server::account_security' do
          '@localhost',
          '@%'].each do |user|
           it "removes Mysql_User[#{user}]" do # rubocop:disable RSpec/RepeatedExample,RSpec/RepeatedDescription
-            is_expected.to contain_mysql_user(user).with_ensure('absent')
+            expect(subject).to contain_mysql_user(user).with_ensure('absent')
           end
         end
 
@@ -36,12 +36,12 @@ describe 'mysql::server::account_security' do
         # covered by the above list.
         ['root@myhost', '@myhost'].each do |user|
           it "removes Mysql_User[#{user}]" do # rubocop:disable RSpec/RepeatedExample,RSpec/RepeatedDescription
-            is_expected.to contain_mysql_user(user).with_ensure('absent')
+            expect(subject).to contain_mysql_user(user).with_ensure('absent')
           end
         end
 
         it 'removes Mysql_database[test]' do
-          is_expected.to contain_mysql_database('test').with_ensure('absent')
+          expect(subject).to contain_mysql_database('test').with_ensure('absent')
         end
       end
 
@@ -61,7 +61,7 @@ describe 'mysql::server::account_security' do
          '@localhost.localdomain',
          '@%'].each do |user|
           it "removes Mysql_User[#{user}] for fqdn==localhost" do
-            is_expected.to contain_mysql_user(user).with_ensure('absent')
+            expect(subject).to contain_mysql_user(user).with_ensure('absent')
           end
         end
       end
@@ -82,7 +82,7 @@ describe 'mysql::server::account_security' do
          '@localhost.localdomain',
          '@%'].each do |user|
           it "removes Mysql_User[#{user}] for fqdn==localhost.localdomain" do
-            is_expected.to contain_mysql_user(user).with_ensure('absent')
+            expect(subject).to contain_mysql_user(user).with_ensure('absent')
           end
         end
       end

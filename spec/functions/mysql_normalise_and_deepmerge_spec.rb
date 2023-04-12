@@ -4,19 +4,19 @@ require 'spec_helper'
 
 describe 'mysql::normalise_and_deepmerge' do
   it 'exists' do
-    is_expected.not_to eq(nil)
+    expect(subject).not_to eq(nil)
   end
 
   it 'throws error with no arguments' do
-    is_expected.to run.with_params.and_raise_error(Puppet::ParseError)
+    expect(subject).to run.with_params.and_raise_error(Puppet::ParseError)
   end
 
   it 'throws error with only one argument' do
-    is_expected.to run.with_params('one' => 1).and_raise_error(Puppet::ParseError)
+    expect(subject).to run.with_params('one' => 1).and_raise_error(Puppet::ParseError)
   end
 
   it 'accepts empty strings as puppet undef' do
-    is_expected.to run.with_params({}, '')
+    expect(subject).to run.with_params({}, '')
   end
 
   # rubocop:disable RSpec/NamedSubject
@@ -35,7 +35,7 @@ describe 'mysql::normalise_and_deepmerge' do
   end
 
   it 'accepts empty hashes' do
-    is_expected.to run.with_params({}, {}, {}).and_return({})
+    expect(subject).to run.with_params({}, {}, {}).and_return({})
   end
 
   expected_values_two = [1, 2, 'four' => 4]

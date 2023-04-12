@@ -416,8 +416,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # object.
   class Parser
     attr_writer :section
-    attr_accessor :property
-    attr_accessor :value
+    attr_accessor :property, :value
 
     # Create a new IniFile::Parser that can be used to parse the contents of
     # an .ini file.

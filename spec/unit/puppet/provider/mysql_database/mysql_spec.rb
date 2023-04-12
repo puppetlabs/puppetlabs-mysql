@@ -76,6 +76,7 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
     before :each do
       allow(Facter).to receive(:value).with(:root_home).and_return('/root')
     end
+
     it 'sets --defaults-extra-file' do
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
       expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'

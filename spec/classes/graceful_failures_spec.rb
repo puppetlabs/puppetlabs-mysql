@@ -12,7 +12,7 @@ describe 'mysql::server' do
     end
 
     it 'gracefully fails' do
-      is_expected.to compile.and_raise_error(%r{Unsupported platform:})
+      expect(subject).to compile.and_raise_error(%r{Unsupported platform:})
     end
   end
 end
