@@ -5,6 +5,7 @@
 class mysql::backup::mysqldump (
   $backupuser               = '',
   Variant[String, Sensitive[String]] $backuppassword = '',
+  $backupcronuser           = $mysql::params::backupcronuser,
   $backupdir                = '',
   $maxallowedpacket         = '1M',
   $backupdirmode            = '0700',
@@ -79,7 +80,7 @@ class mysql::backup::mysqldump (
   cron { 'mysql-backup':
     ensure   => $ensure,
     command  => '/usr/local/sbin/mysqlbackup.sh',
-    user     => 'root',
+    user     => $backupcronuser,
     hour     => $time[0],
     minute   => $time[1],
     monthday => $time[2],
@@ -93,7 +94,7 @@ class mysql::backup::mysqldump (
     ensure  => $ensure,
     path    => '/usr/local/sbin/mysqlbackup.sh',
     mode    => '0700',
-    owner   => 'root',
+    owner   => $backupcronuser,
     group   => $mysql::params::root_group,
     content => template('mysql/mysqlbackup.sh.erb'),
   }
