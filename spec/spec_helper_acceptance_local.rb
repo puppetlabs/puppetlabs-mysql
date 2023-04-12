@@ -37,7 +37,7 @@ def sles_15?
 end
 
 def fetch_charset
-  @charset ||= ubuntu_2204? || sles_15? ? 'utf8mb3' : 'utf8'
+  @charset ||= (ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
 end
 
 RSpec.configure do |c|

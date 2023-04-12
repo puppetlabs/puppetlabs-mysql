@@ -109,7 +109,7 @@ describe 'mysql::server::backup' do
       context 'with delete after dump' do
         let(:custom_params) do
           {
-            'delete_before_dump' => false,
+            'delete_before_dump' => false
           }
         end
         let(:params) do
@@ -123,7 +123,7 @@ describe 'mysql::server::backup' do
         let(:custom_params) do
           {
             'delete_before_dump' => false,
-            'backup_success_file_path' => '/opt/mysqlbackup_success',
+            'backup_success_file_path' => '/opt/mysqlbackup_success'
           }
         end
         let(:params) do

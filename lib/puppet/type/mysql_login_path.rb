@@ -36,48 +36,48 @@ Puppet::ResourceApi.register_type(
   title_patterns: [
     {
       pattern: %r{^(?<name>.*[^-])-(?<owner>.*)$},
-      desc: 'Where the name of the and the owner are provided with a hyphen seperator',
+      desc: 'Where the name of the and the owner are provided with a hyphen seperator'
     },
     {
       pattern: %r{^(?<name>.*)$},
-      desc: 'Where only the name is provided',
+      desc: 'Where only the name is provided'
     },
   ],
   attributes: {
     ensure: {
       type: 'Enum[present, absent]',
-      desc: 'Whether this resource should be present or absent on the target system.',
+      desc: 'Whether this resource should be present or absent on the target system.'
     },
     name: {
       type: 'String',
       desc: 'Name of the login path you want to manage.',
-      behaviour: :namevar,
+      behaviour: :namevar
     },
     owner: {
       type: 'String',
       desc: 'The user to whom the logon path should belong.',
       behaviour: :namevar,
-      default: 'root',
+      default: 'root'
     },
     host: {
       type: 'Optional[String]',
-      desc: 'Host name to be entered into the login path.',
+      desc: 'Host name to be entered into the login path.'
     },
     user: {
       type: 'Optional[String]',
-      desc: 'Username to be entered into the login path.',
+      desc: 'Username to be entered into the login path.'
     },
     password: {
       type: 'Optional[Sensitive[String[1]]]',
-      desc: 'Password to be entered into login path',
+      desc: 'Password to be entered into login path'
     },
     socket: {
       type: 'Optional[String]',
-      desc: 'Socket path to be entered into login path',
+      desc: 'Socket path to be entered into login path'
     },
     port: {
       type: 'Optional[Integer[0,65535]]',
-      desc: 'Port number to be entered into login path.',
-    },
+      desc: 'Port number to be entered into login path.'
+    }
   },
 )

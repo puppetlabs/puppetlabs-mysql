@@ -48,7 +48,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
       ) % {
         str: command_str,
         exit_status: $CHILD_STATUS.exitstatus,
-        output: e.message,
+        output: e.message
       }
     end
   end

@@ -50,7 +50,7 @@ RSpec.describe Puppet::Provider::MysqlLoginPath::MysqlLoginPath do
           port: 3306,
           socket: nil,
           title: 'local_tcp-root',
-          user: 'root',
+          user: 'root'
         },
       ]
     end

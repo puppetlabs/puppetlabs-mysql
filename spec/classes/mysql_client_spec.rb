@@ -37,7 +37,7 @@ describe 'mysql::client' do
         let(:params) do
           {
             package_provider: 'dpkg',
-            package_source: '/somewhere',
+            package_source: '/somewhere'
           }
         end
 

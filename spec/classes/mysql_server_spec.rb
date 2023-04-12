@@ -43,7 +43,7 @@ describe 'mysql::server' do
           let(:params) do
             {
               override_options: { 'mysqld' => { 'datadir' => '/tmp' } },
-              options: { 'mysqld' => { 'max_allowed_packet' => '12M' } },
+              options: { 'mysqld' => { 'max_allowed_packet' => '12M' } }
             }
           end
 
@@ -53,7 +53,7 @@ describe 'mysql::server' do
         context 'when specifying $options' do
           let(:params) do
             {
-              options: { 'mysqld' => { 'datadir' => '/tmp' } },
+              options: { 'mysqld' => { 'datadir' => '/tmp' } }
             }
           end
 
@@ -90,7 +90,7 @@ describe 'mysql::server' do
           let(:params) do
             {
               package_provider: 'dpkg',
-              package_source: '/somewhere',
+              package_source: '/somewhere'
             }
           end
 
@@ -238,9 +238,9 @@ describe 'mysql::server' do
                 'max_queries_per_hour' => '2',
                 'max_updates_per_hour' => '3',
                 'max_user_connections' => '4',
-                'password_hash' => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF',
+                'password_hash' => '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
               },
-              'foo2@localhost' => {},
+              'foo2@localhost' => {}
             } }
           end
 
@@ -269,9 +269,9 @@ describe 'mysql::server' do
                 'max_queries_per_hour' => '2',
                 'max_updates_per_hour' => '3',
                 'max_user_connections' => '4',
-                'password_hash' => sensitive('*F3A2A51A9B0F2BE2468926B4132313728C250DBF'),
+                'password_hash' => sensitive('*F3A2A51A9B0F2BE2468926B4132313728C250DBF')
               },
-              'foo2@localhost' => {},
+              'foo2@localhost' => {}
             } }
           end
 
@@ -291,13 +291,13 @@ describe 'mysql::server' do
                 'user' => 'foo@localhost',
                 'table' => 'somedb.*',
                 'privileges' => ['SELECT', 'UPDATE'],
-                'options' => ['GRANT'],
+                'options' => ['GRANT']
               },
               'foo2@localhost/*.*' => {
                 'user' => 'foo2@localhost',
                 'table' => '*.*',
-                'privileges' => ['SELECT'],
-              },
+                'privileges' => ['SELECT']
+              }
             } }
           end
 
@@ -321,9 +321,9 @@ describe 'mysql::server' do
             { databases: {
               'somedb' => {
                 'charset' => 'latin1',
-                'collate' => 'latin1',
+                'collate' => 'latin1'
               },
-              'somedb2' => {},
+              'somedb2' => {}
             } }
           end
 

@@ -21,7 +21,7 @@ describe 'mysql::bindings' do
           'client_dev' => true,
           'daemon_dev' => true,
           'client_dev_package_name' => 'libmysqlclient-devel',
-          'daemon_dev_package_name' => 'mysql-devel',
+          'daemon_dev_package_name' => 'mysql-devel'
         }
       end
 

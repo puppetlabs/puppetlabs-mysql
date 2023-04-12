@@ -76,7 +76,7 @@ describe 'mysql::backup::mysqldump' do
         let(:params) do
           {
             'file_per_database' => true,
-            'excludedatabases' => ['information_schema'],
+            'excludedatabases' => ['information_schema']
           }.merge(default_params)
         end
 

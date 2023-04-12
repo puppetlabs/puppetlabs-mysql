@@ -235,13 +235,6 @@ Style/OptionalBooleanParameter:
     - 'lib/puppet/functions/mysql/password.rb'
     - 'lib/puppet/functions/mysql_password.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowModifier.
-Style/SoleNestedConditional:
-  Exclude:
-    - 'lib/puppet/type/mysql_grant.rb'
-
 # Offense count: 6
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Mode.
@@ -262,31 +255,4 @@ Style/SymbolProc:
   Exclude:
     - 'lib/puppet/provider/mysql_login_path/inifile.rb'
     - 'spec/unit/puppet/provider/mysql_database/mysql_spec.rb'
-    - 'spec/unit/puppet/provider/mysql_user/mysql_spec.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, AllowSafeAssignment.
-# SupportedStyles: require_parentheses, require_no_parentheses, require_parentheses_when_complex
-Style/TernaryParentheses:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 43
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyleForMultiline.
-# SupportedStylesForMultiline: comma, consistent_comma, no_comma
-Style/TrailingCommaInHashLiteral:
-  Exclude:
-    - 'lib/puppet/provider/mysql_grant/mysql.rb'
-    - 'lib/puppet/provider/mysql_login_path/mysql_login_path.rb'
-    - 'lib/puppet/type/mysql_login_path.rb'
-    - 'spec/classes/graceful_failures_spec.rb'
-    - 'spec/classes/mysql_backup_mysqldump_spec.rb'
-    - 'spec/classes/mysql_bindings_spec.rb'
-    - 'spec/classes/mysql_client_spec.rb'
-    - 'spec/classes/mysql_server_backup_spec.rb'
-    - 'spec/classes/mysql_server_spec.rb'
-    - 'spec/spec_helper.rb'
-    - 'spec/unit/puppet/provider/mysql_login_path/mysql_login_path_spec.rb'
     - 'spec/unit/puppet/provider/mysql_user/mysql_spec.rb'

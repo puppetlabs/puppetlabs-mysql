@@ -9,56 +9,56 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     {
       version: '5.5.46',
       string: '/usr/sbin/mysqld  Ver 5.5.46-log for Linux on x86_64 (MySQL Community Server (GPL))',
-      mysql_type: 'mysql',
+      mysql_type: 'mysql'
     },
     'mysql-5.6' =>
       {
         version: '5.6.27',
         string: '/usr/sbin/mysqld  Ver 5.6.27 for Linux on x86_64 (MySQL Community Server (GPL))',
-        mysql_type: 'mysql',
+        mysql_type: 'mysql'
       },
     'mysql-5.7.1' =>
       {
         version: '5.7.1',
         string: '/usr/sbin/mysqld  Ver 5.7.1 for Linux on x86_64 (MySQL Community Server (GPL))',
-        mysql_type: 'mysql',
+        mysql_type: 'mysql'
       },
     'mysql-5.7.6' =>
       {
         version: '5.7.8',
         string: '/usr/sbin/mysqld  Ver 5.7.8-rc for Linux on x86_64 (MySQL Community Server (GPL))',
-        mysql_type: 'mysql',
+        mysql_type: 'mysql'
       },
     'mariadb-10.0' =>
       {
         version: '10.0.21',
         string: '/usr/sbin/mysqld  Ver 10.0.21-MariaDB for Linux on x86_64 (MariaDB Server)',
-        mysql_type: 'mariadb',
+        mysql_type: 'mariadb'
       },
     'mariadb-10.0-deb8' =>
       {
         version: '10.0.23',
         string: '/usr/sbin/mysqld (mysqld 10.0.23-MariaDB-0+deb8u1)',
-        mysql_type: 'mariadb',
+        mysql_type: 'mariadb'
       },
     'mariadb-10.1.44' =>
       {
         version: '10.1.44',
         string: '/usr/sbin/mysqld (mysqld 10.1.44-MariaDB-1~bionic)',
-        mysql_type: 'mariadb',
+        mysql_type: 'mariadb'
       },
     'mariadb-10.3.22' =>
       {
         version: '10.3.22',
         string: '/usr/sbin/mysqld (mysqld 10.3.22-MariaDB-0+deb10u1)',
-        mysql_type: 'mariadb',
+        mysql_type: 'mariadb'
       },
     'percona-5.5' =>
       {
         version: '5.5.39',
         string: 'mysqld  Ver 5.5.39-36.0-55 for Linux on x86_64 (Percona XtraDB Cluster (GPL), Release rel36.0, Revision 824, WSREP version 25.11, wsrep_25.11.r4023)',
-        mysql_type: 'percona',
-      },
+        mysql_type: 'percona'
+      }
   }
 
   let(:defaults_file) { '--defaults-extra-file=/root/.my.cnf' }

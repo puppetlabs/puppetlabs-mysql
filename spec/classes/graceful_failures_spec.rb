@@ -7,7 +7,7 @@ describe 'mysql::server' do
     let(:facts) do
       {
         os: { family: 'UNSUPPORTED',
-              name: 'UNSUPPORTED' },
+              name: 'UNSUPPORTED' }
       }
     end
 
