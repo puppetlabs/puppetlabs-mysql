@@ -19,7 +19,6 @@ describe 'mysql::normalise_and_deepmerge' do
     expect(subject).to run.with_params({}, '')
   end
 
-  # rubocop:disable RSpec/NamedSubject
   index_values = ['one', 'two', 'three']
   expected_values_one = ['1', '2', '2']
   it 'merge two hashes' do
@@ -92,5 +91,4 @@ describe 'mysql::normalise_and_deepmerge' do
       expect(hash).not_to have_key(index_values_error[expected])
     end
   end
-  # rubocop:enable RSpec/NamedSubject
 end
