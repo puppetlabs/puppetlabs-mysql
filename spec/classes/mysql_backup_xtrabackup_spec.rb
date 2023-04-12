@@ -84,7 +84,7 @@ describe 'mysql::backup::xtrabackup' do
           expect(subject).to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
-              command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\\%F_\\\%H-\\\%M-\\\%S) --backup",
+              command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\%F_\\%H-\\%M-\\%S) --backup",
               user: 'root',
               hour: '23',
               minute: '5',
@@ -241,7 +241,7 @@ describe 'mysql::backup::xtrabackup' do
           expect(subject).to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
-              command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\\%F_\\\%H-\\\%M-\\\%S) --backup --skip-ssl",
+              command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\%F_\\%H-\\%M-\\%S) --backup --skip-ssl",
               user: 'root',
               hour: '23',
               minute: '5',
@@ -280,7 +280,7 @@ describe 'mysql::backup::xtrabackup' do
 
         it 'contains the prescript' do
           expect(subject).to contain_file('xtrabackup.sh').with_content(
-            %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
+            %r{.*rsync -a /tmp backup01.local-lan:\n\nrsync -a /tmp backup02.local-lan:.*},
           )
         end
       end
@@ -293,7 +293,7 @@ describe 'mysql::backup::xtrabackup' do
 
         it 'contains the prostscript' do
           expect(subject).to contain_file('xtrabackup.sh').with_content(
-            %r{.*rsync -a \/tmp backup01.local-lan:\n\nrsync -a \/tmp backup02.local-lan:.*},
+            %r{.*rsync -a /tmp backup01.local-lan:\n\nrsync -a /tmp backup02.local-lan:.*},
           )
         end
       end

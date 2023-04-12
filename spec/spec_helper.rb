@@ -26,7 +26,7 @@ default_fact_files.each do |f|
 
   begin
     default_facts.merge!(YAML.safe_load(File.read(f), [], [], true))
-  rescue => e
+  rescue StandardError => e
     RSpec.configuration.reporter.message "WARNING: Unable to load #{f}: #{e}"
   end
 end

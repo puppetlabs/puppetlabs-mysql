@@ -216,12 +216,6 @@ Style/MixinUsage:
     - 'spec/spec_helper.rb'
     - 'spec/spec_helper_local.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/NegatedIfElseCondition:
-  Exclude:
-    - 'lib/puppet/provider/mysql_user/mysql.rb'
-
 # Offense count: 8
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyle, AllowedMethods, AllowedPatterns.
@@ -240,43 +234,6 @@ Style/OptionalBooleanParameter:
   Exclude:
     - 'lib/puppet/functions/mysql/password.rb'
     - 'lib/puppet/functions/mysql_password.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantAssignment:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-
-# Offense count: 24
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantRegexpEscape:
-  Exclude:
-    - 'lib/puppet/provider/mysql_login_path/mysql_login_path.rb'
-    - 'lib/puppet/type/mysql_grant.rb'
-    - 'lib/puppet/type/mysql_user.rb'
-    - 'spec/acceptance/types/mysql_grant_spec.rb'
-    - 'spec/classes/mycnf_template_spec.rb'
-    - 'spec/classes/mysql_backup_xtrabackup_spec.rb'
-    - 'spec/classes/mysql_server_backup_spec.rb'
-    - 'spec/unit/puppet/type/mysql_grant_spec.rb'
-
-# Offense count: 10
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantStringEscape:
-  Exclude:
-    - 'spec/classes/mysql_backup_xtrabackup_spec.rb'
-    - 'spec/classes/mysql_server_spec.rb'
-
-# Offense count: 5
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: implicit, explicit
-Style/RescueStandardError:
-  Exclude:
-    - 'lib/facter/mysql_server_id.rb'
-    - 'lib/puppet/provider/mysql_login_path/inifile.rb'
-    - 'lib/puppet/provider/mysql_login_path/mysql_login_path.rb'
-    - 'spec/spec_helper.rb'
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).

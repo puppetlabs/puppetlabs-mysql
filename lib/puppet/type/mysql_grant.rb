@@ -66,7 +66,7 @@ Puppet::Type.newtype(:mysql_grant) do
     desc 'Table to apply privileges to.'
 
     validate do |value|
-      if Array(@resource[:privileges]).include?('PROXY') && !%r{^[0-9a-zA-Z$_]*@[\w%\.:\-\/]*$}.match(value)
+      if Array(@resource[:privileges]).include?('PROXY') && !%r{^[0-9a-zA-Z$_]*@[\w%.:\-/]*$}.match(value)
         raise(ArgumentError, _('mysql_grant: `table` `property` for PROXY should be specified as proxy_user@proxy_host.'))
       end
     end
@@ -75,7 +75,7 @@ Puppet::Type.newtype(:mysql_grant) do
       value.delete('`')
     end
 
-    newvalues(%r{.*\..*}, %r{^[0-9a-zA-Z$_]*@[\w%\.:\-/]*$})
+    newvalues(%r{.*\..*}, %r{^[0-9a-zA-Z$_]*@[\w%.:\-/]*$})
   end
 
   newproperty(:user) do
@@ -86,10 +86,10 @@ Puppet::Type.newtype(:mysql_grant) do
       # http://stackoverflow.com/questions/8055727/negating-a-backreference-in-regular-expressions/8057827#8057827
       # rubocop:disable Lint/AssignmentInCondition
       # rubocop:disable Lint/UselessAssignment
-      if matches = %r{^(['`"])((?!\1).)*\1@([\w%\.:\-/]+)$}.match(value)
+      if matches = %r{^(['`"])((?!\1).)*\1@([\w%.:\-/]+)$}.match(value)
         user_part = matches[2]
         host_part = matches[3]
-      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%\.:\-/]+)$}.match(value)
+      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%.:\-/]+)$}.match(value)
         user_part = matches[1]
         host_part = matches[2]
       elsif matches = %r{^((?!['`"]).*[^0-9a-zA-Z$_].*)@(.+)$}.match(value)

@@ -180,7 +180,7 @@ describe 'mysql::server' do
         describe 'when defaults' do
           it {
             expect(subject).to contain_exec('remove install pass').with(
-              command: "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' /.mysql_secret) password && (rm -f  /.mysql_secret; exit 0) || (rm -f /.mysql_secret; exit 1)",
+              command: "mysqladmin -u root --password=$(grep -o '[^ ]\\+$' /.mysql_secret) password && (rm -f  /.mysql_secret; exit 0) || (rm -f /.mysql_secret; exit 1)",
               onlyif: [['test', '-f', '/.mysql_secret']],
               path: '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
             )

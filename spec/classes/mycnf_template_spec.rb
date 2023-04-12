@@ -14,7 +14,7 @@ describe 'mysql::server' do
 
         it do
           expect(subject).to contain_file('mysql-config-file').with(mode: '0644',
-                                                                    selinux_ignore_defaults: true).with_content(%r{socket = \/var\/lib\/mysql\/mysql.sock})
+                                                                    selinux_ignore_defaults: true).with_content(%r{socket = /var/lib/mysql/mysql.sock})
         end
       end
 

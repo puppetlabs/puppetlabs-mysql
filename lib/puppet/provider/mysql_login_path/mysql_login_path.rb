@@ -42,7 +42,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
           output.puts password
         end
       end
-    rescue => e
+    rescue StandardError => e
       raise Puppet::ExecutionFailure, _(
         "Execution of '%{str}' returned %{exit_status}: %{output}",
       ) % {
@@ -79,7 +79,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result = ''
     output = my_print_defaults_cmd(context, uid, '-s', name)
     output.split("\n").each do |line|
-      result = line.sub(%r{\-\-password=}, '') if %r{\-\-password}.match?(line)
+      result = line.sub(%r{--password=}, '') if %r{--password}.match?(line)
     end
     result
   end

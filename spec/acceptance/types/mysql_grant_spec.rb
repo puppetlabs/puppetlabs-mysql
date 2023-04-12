@@ -262,7 +262,7 @@ describe 'mysql_grant' do
 
     it 'finds short ipv6 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
-        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]::1\/128['|`]})
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]::1/128['|`]})
         expect(r.stderr).to be_empty
       end
     end

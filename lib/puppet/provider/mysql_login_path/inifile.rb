@@ -613,10 +613,10 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
         begin
           begin
             Integer(value)
-          rescue
+          rescue StandardError
             Float(value)
           end
-        rescue
+        rescue StandardError
           unescape_value(value)
         end
       end
