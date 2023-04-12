@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe 'mysql::normalise_and_deepmerge' do
   it 'exists' do
-    expect(subject).not_to eq(nil)
+    expect(subject).not_to be_nil
   end
 
   it 'throws error with no arguments' do

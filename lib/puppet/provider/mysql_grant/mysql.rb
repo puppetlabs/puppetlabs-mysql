@@ -19,7 +19,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         # Default root user created by mysql_install_db on a host with fqdn
         # of myhost.mydomain.my: root@myhost.mydomain.my, when MySQL is started
         # with --skip-name-resolve.
-        next if %r{There is no such grant defined for user}.match?(e.inspect)
+        next if e.inspect.include?('There is no such grant defined for user')
 
         raise Puppet::Error, _('#mysql had an error ->  %{inspect}') % { inspect: e.inspect }
       end

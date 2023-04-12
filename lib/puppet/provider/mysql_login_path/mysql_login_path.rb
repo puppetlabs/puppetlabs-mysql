@@ -79,7 +79,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result = ''
     output = my_print_defaults_cmd(context, uid, '-s', name)
     output.split("\n").each do |line|
-      result = line.sub(%r{--password=}, '') if %r{--password}.match?(line)
+      result = line.sub(%r{--password=}, '') if line.include?('--password')
     end
     result
   end
@@ -133,7 +133,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
 
   def get(context, name)
     result = []
-    owner = name.empty? ? ['root'] : name.map { |item| item[:owner] }.compact.uniq
+    owner = name.empty? ? ['root'] : name.filter_map { |item| item[:owner] }.uniq
     owner.each do |uid|
       login_paths = list_login_paths(context, uid)
       result += login_paths

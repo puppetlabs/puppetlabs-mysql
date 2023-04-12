@@ -4,7 +4,7 @@ require 'spec_helper'
 
 shared_examples 'mysql::password function' do
   it 'exists' do
-    expect(subject).not_to eq(nil)
+    expect(subject).not_to be_nil
   end
 
   it 'raises a ArgumentError if there is less than 1 arguments' do

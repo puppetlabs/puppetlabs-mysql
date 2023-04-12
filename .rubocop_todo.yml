@@ -99,27 +99,6 @@ Performance/CollectionLiteralInLoop:
     - 'spec/classes/mysql_server_backup_spec.rb'
     - 'spec/defines/mysql_db_spec.rb'
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/MapCompact:
-  Exclude:
-    - 'lib/puppet/provider/mysql_login_path/mysql_login_path.rb'
-
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/StringInclude:
-  Exclude:
-    - 'lib/puppet/provider/mysql_grant/mysql.rb'
-    - 'lib/puppet/provider/mysql_login_path/mysql_login_path.rb'
-
-# Offense count: 3
-# This cop supports unsafe autocorrection (--autocorrect-all).
-RSpec/BeEq:
-  Exclude:
-    - 'spec/functions/mysql_normalise_and_deepmerge_spec.rb'
-    - 'spec/functions/mysql_password_spec.rb'
-    - 'spec/functions/mysql_strip_hash_spec.rb'
-
 # Offense count: 64
 # Configuration parameters: Prefixes, AllowedPatterns.
 # Prefixes: when, with, without
