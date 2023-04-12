@@ -1308,7 +1308,7 @@ Privileges for user
 
 ##### `table`
 
-Valid values: `%r{.*\..*}`, `%r{^[0-9a-zA-Z$_]*@[\w%\.:\-/]*$}`
+Valid values: `%r{.*\..*}`, `%r{^[0-9a-zA-Z$_]*@[\w%.:\-/]*$}`
 
 Table to apply privileges to.
 
