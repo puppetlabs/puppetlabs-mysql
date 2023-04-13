@@ -23,9 +23,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       else
         query = "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{name}'"
       end
-      @max_user_connections, @max_connections_per_hour, @max_queries_per_hour,
-      @max_updates_per_hour, ssl_type, ssl_cipher, x509_issuer, x509_subject,
-      @password, @plugin, @authentication_string = mysql_caller(query, 'regular').chomp.split(%r{\t})
+      @max_user_connections, @max_connections_per_hour, @max_queries_per_hour, @max_updates_per_hour, ssl_type, ssl_cipher,
+      x509_issuer, x509_subject, @password, @plugin, @authentication_string = mysql_caller(query, 'regular').chomp.split(%r{\t})
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
       if newer_than('mariadb' => '10.1.21') && (@plugin == 'ed25519' || @plugin == 'mysql_native_password')
         # Some auth plugins (e.g. ed25519) use authentication_string
@@ -256,11 +255,12 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
   end
 
   def self.parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
-    if ssl_type == 'ANY'
+    case ssl_type
+    when 'ANY'
       ['SSL']
-    elsif ssl_type == 'X509'
+    when 'X509'
       ['X509']
-    elsif ssl_type == 'SPECIFIED'
+    when 'SPECIFIED'
       options = []
       options << "CIPHER '#{ssl_cipher}'" if !ssl_cipher.nil? && !ssl_cipher.empty?
       options << "ISSUER '#{x509_issuer}'" if !x509_issuer.nil? && !x509_issuer.empty?

@@ -643,4 +643,4 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       value
     end
   end
-end # IniFile
+end

@@ -8,9 +8,9 @@ require 'puppet/provider/mysql_login_path/mysql_login_path'
 RSpec.describe Puppet::Provider::MysqlLoginPath::MysqlLoginPath do
   subject(:provider) { described_class.new }
 
-  let(:context) { instance_double('Puppet::ResourceApi::BaseContext') }
-  let(:wait_thr) { instance_double('wait_thr') }
-  let(:wait_thr_value) { instance_double('wait_thr_value') }
+  let(:context) { instance_double(Puppet::ResourceApi::BaseContext) }
+  let(:wait_thr) { instance_double(wait_thr) }
+  let(:wait_thr_value) { instance_double(wait_thr_value) }
   let(:sensitive_secure) { Puppet::Provider::MysqlLoginPath::Sensitive.new('secure') }
   let(:sensitive_more_secure) { Puppet::Provider::MysqlLoginPath::Sensitive.new('more_secure') }
 
