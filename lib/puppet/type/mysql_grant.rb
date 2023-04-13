@@ -87,10 +87,7 @@ Puppet::Type.newtype(:mysql_grant) do
       if matches = %r{^(['`"])((?!\1).)*\1@([\w%.:\-/]+)$}.match(value)
         user_part = matches[2]
         host_part = matches[3]
-      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%.:\-/]+)$}.match(value)
-        user_part = matches[1]
-        host_part = matches[2]
-      elsif matches = %r{^((?!['`"]).*[^0-9a-zA-Z$_].*)@(.+)$}.match(value)
+      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%.:\-/]+)$}.match(value) || matches = %r{^((?!['`"]).*[^0-9a-zA-Z$_].*)@(.+)$}.match(value)
         user_part = matches[1]
         host_part = matches[2]
       else

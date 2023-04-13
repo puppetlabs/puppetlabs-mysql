@@ -2,15 +2,14 @@
 
 require 'spec_helper_acceptance'
 
-mysql_version = '5.6'
 support_bin_dir = '/root/mysql_login_path'
-if os[:family] == 'redhat' && os[:release].to_i == 8
-  mysql_version = '8.0'
-elsif os[:family] == 'debian' && os[:release] =~ %r{9|10|11}
-  mysql_version = '8.0'
-elsif os[:family] == 'ubuntu' && os[:release] =~ %r{18\.04|20\.04}
-  mysql_version = '5.7'
-end
+mysql_version = if (os[:family] == 'redhat' && os[:release].to_i == 8) || (os[:family] == 'debian' && os[:release] =~ %r{9|10|11})
+                  '8.0'
+                elsif os[:family] == 'ubuntu' && os[:release] =~ %r{18\.04|20\.04}
+                  '5.7'
+                else
+                  '5.6'
+                end
 
 describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".include?('suse') do
   before(:all) do

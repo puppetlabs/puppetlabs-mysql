@@ -6,18 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 11
-# Configuration parameters: IgnoreLiteralBranches, IgnoreConstantBranches.
-Lint/DuplicateBranch:
-  Exclude:
-    - 'lib/puppet/provider/mysql_datadir/mysql.rb'
-    - 'lib/puppet/provider/mysql_grant/mysql.rb'
-    - 'lib/puppet/provider/mysql_user/mysql.rb'
-    - 'lib/puppet/type/mysql_grant.rb'
-    - 'lib/puppet/type/mysql_user.rb'
-    - 'spec/acceptance/types/mysql_login_path_spec.rb'
-    - 'spec/classes/mysql_backup_xtrabackup_spec.rb'
-
 # Offense count: 1
 Lint/FloatComparison:
   Exclude:
