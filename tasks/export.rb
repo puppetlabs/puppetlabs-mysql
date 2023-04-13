@@ -17,7 +17,7 @@ def get(file, database, user, password)
   { status: stdout.strip }
 end
 
-params = JSON.parse(STDIN.read)
+params = JSON.parse($stdin.read)
 database = params['database']
 user = params['user']
 password = params['password']

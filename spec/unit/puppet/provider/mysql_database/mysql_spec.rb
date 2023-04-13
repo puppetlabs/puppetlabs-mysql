@@ -38,7 +38,7 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
       raw_databases.each_line do |db|
         allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", db.chomp], 'regular').and_return("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Layout/LineLength
       end
-      databases = provider.class.instances.map { |x| x.name }
+      databases = provider.class.instances.map(&:name)
       expect(parsed_databases).to match_array(databases)
     end
   end

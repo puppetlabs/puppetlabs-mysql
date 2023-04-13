@@ -155,13 +155,6 @@ RSpec/StubbedMock:
     - 'spec/unit/puppet/provider/mysql_plugin/mysql_spec.rb'
     - 'spec/unit/puppet/provider/mysql_user/mysql_spec.rb'
 
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/GlobalStdStream:
-  Exclude:
-    - 'tasks/export.rb'
-    - 'tasks/sql.rb'
-
 # Offense count: 1
 # Configuration parameters: MinBranchesCount.
 Style/HashLikeCase:
@@ -174,17 +167,6 @@ Style/MixinUsage:
     - 'spec/spec_helper.rb'
     - 'spec/spec_helper_local.rb'
 
-# Offense count: 8
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle, AllowedMethods, AllowedPatterns.
-# SupportedStyles: predicate, comparison
-Style/NumericPredicate:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/puppet/provider/mysql.rb'
-    - 'lib/puppet/type/mysql_grant.rb'
-    - 'lib/puppet/type/mysql_user.rb'
-
 # Offense count: 2
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: respond_to_missing?
@@ -192,25 +174,3 @@ Style/OptionalBooleanParameter:
   Exclude:
     - 'lib/puppet/functions/mysql/password.rb'
     - 'lib/puppet/functions/mysql_password.rb'
-
-# Offense count: 6
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Mode.
-Style/StringConcatenation:
-  Exclude:
-    - 'lib/puppet/functions/mysql/password.rb'
-    - 'lib/puppet/provider/mysql.rb'
-    - 'lib/puppet/provider/mysql_grant/mysql.rb'
-    - 'lib/puppet/provider/mysql_login_path/mysql_login_path.rb'
-    - 'lib/puppet/provider/mysql_plugin/mysql.rb'
-    - 'lib/puppet/type/mysql_grant.rb'
-
-# Offense count: 10
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AllowMethodsWithArguments, AllowedMethods, AllowedPatterns, AllowComments.
-# AllowedMethods: define_method
-Style/SymbolProc:
-  Exclude:
-    - 'lib/puppet/provider/mysql_login_path/inifile.rb'
-    - 'spec/unit/puppet/provider/mysql_database/mysql_spec.rb'
-    - 'spec/unit/puppet/provider/mysql_user/mysql_spec.rb'

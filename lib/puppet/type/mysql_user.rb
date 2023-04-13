@@ -36,9 +36,9 @@ Puppet::Type.newtype(:mysql_user) do
       # rubocop:enable Lint/AssignmentInCondition
       # rubocop:enable Lint/UselessAssignment
       unless mysql_version.nil?
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8').negative? && user_part.size > 16
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0').negative? && user_part.size > 32
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0').positive? && user_part.size > 80
       end
     end
 

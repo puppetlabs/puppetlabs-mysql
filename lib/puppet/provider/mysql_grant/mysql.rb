@@ -40,7 +40,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           # split and sort the column_privileges in the parentheses and rejoin
           if priv.include?('(')
             type, col = priv.strip.split(%r{\s+|\b}, 2)
-            type.upcase + ' (' + col.slice(1...-1).strip.split(%r{\s*,\s*}).sort.join(', ') + ')'
+            "#{type.upcase} (#{col.slice(1...-1).strip.split(%r{\s*,\s*}).sort.join(', ')})"
           else
             # Once we split privileges up on the , we need to make sure we
             # shortern ALL PRIVILEGES to just all.

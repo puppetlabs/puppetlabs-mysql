@@ -29,7 +29,7 @@ Puppet::Type.type(:mysql_plugin).provide(:mysql, parent: Puppet::Provider::Mysql
   def create
     # Use plugin_name.so as soname if it's not specified. This won't work on windows as
     # there it should be plugin_name.dll
-    @resource[:soname].nil? ? (soname = @resource[:name] + '.so') : (soname = @resource[:soname])
+    @resource[:soname].nil? ? (soname = "#{@resource[:name]}.so") : (soname = @resource[:soname])
     self.class.mysql_caller("install plugin #{@resource[:name]} soname '#{soname}'", 'regular')
 
     @property_hash[:ensure] = :present

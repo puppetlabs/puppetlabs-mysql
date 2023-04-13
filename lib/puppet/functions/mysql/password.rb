@@ -27,7 +27,7 @@ Puppet::Functions.create_function(:'mysql::password') do
                     elsif password.empty?
                       ''
                     else
-                      '*' + Digest::SHA1.hexdigest(Digest::SHA1.digest(password)).upcase
+                      "*#{Digest::SHA1.hexdigest(Digest::SHA1.digest(password)).upcase}"
                     end
 
     if sensitive

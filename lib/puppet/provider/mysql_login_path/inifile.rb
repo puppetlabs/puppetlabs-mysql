@@ -325,7 +325,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def freeze
     super
-    @ini.each_value { |h| h.freeze }
+    @ini.each_value(&:freeze)
     @ini.freeze
     self
   end
@@ -336,7 +336,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def taint
     super
-    @ini.each_value { |h| h.taint }
+    @ini.each_value(&:taint)
     @ini.taint
     self
   end

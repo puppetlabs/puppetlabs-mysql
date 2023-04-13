@@ -111,7 +111,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
-      usernames = provider.class.instances.map { |x| x.name }
+      usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
 
@@ -120,7 +120,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
-      usernames = provider.class.instances.map { |x| x.name }
+      usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
 
@@ -129,7 +129,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
-      usernames = provider.class.instances.map { |x| x.name }
+      usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
 
@@ -138,7 +138,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
-      usernames = provider.class.instances.map { |x| x.name }
+      usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
 
@@ -147,7 +147,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
-      usernames = provider.class.instances.map { |x| x.name }
+      usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
 
@@ -156,7 +156,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD, PLUGIN, AUTHENTICATION_STRING FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
-      usernames = provider.class.instances.map { |x| x.name }
+      usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
 
@@ -165,7 +165,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
-      usernames = provider.class.instances.map { |x| x.name }
+      usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
   end

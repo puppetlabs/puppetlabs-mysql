@@ -6,7 +6,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   initvars
 
   # Make sure we find mysql commands on CentOS and FreeBSD
-  ENV['PATH'] = ENV.fetch('PATH', nil) + ':/usr/libexec:/usr/local/libexec:/usr/local/bin'
+  ENV['PATH'] = "#{ENV.fetch('PATH', nil)}:/usr/libexec:/usr/local/libexec:/usr/local/bin"
   ENV['LD_LIBRARY_PATH'] = [
     ENV.fetch('LD_LIBRARY_PATH', nil),
     '/usr/lib',
@@ -90,7 +90,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   end
 
   def self.older_than(forks_versions)
-    forks_versions.key?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]) < 0
+    forks_versions.key?(mysqld_type) && Puppet::Util::Package.versioncmp(mysqld_version, forks_versions[mysqld_type]).negative?
   end
 
   def older_than(forks_versions)

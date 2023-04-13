@@ -25,7 +25,7 @@ Puppet::Type.newtype(:mysql_grant) do
                           # split and sort the column_privileges in the parentheses and rejoin
                           if priv.include?('(')
                             type, col = priv.strip.split(%r{\s+|\b}, 2)
-                            type.upcase + ' (' + col.slice(1...-1).strip.split(%r{\s*,\s*}).sort.join(', ') + ')'
+                            "#{type.upcase} (#{col.slice(1...-1).strip.split(%r{\s*,\s*}).sort.join(', ')})"
                           else
                             priv.strip.upcase
                           end
@@ -54,7 +54,7 @@ Puppet::Type.newtype(:mysql_grant) do
 
     validate do |value|
       mysql_version = Facter.value(:mysql_version)
-      if value =~ %r{proxy}i && Puppet::Util::Package.versioncmp(mysql_version, '5.5.0') < 0
+      if value =~ %r{proxy}i && Puppet::Util::Package.versioncmp(mysql_version, '5.5.0').negative?
         raise(ArgumentError, _('mysql_grant: PROXY user not supported on mysql versions < 5.5.0. Current version %{version}.') % { version: mysql_version })
       end
     end
@@ -100,9 +100,9 @@ Puppet::Type.newtype(:mysql_grant) do
       # rubocop:enable Lint/UselessAssignment
       mysql_version = Facter.value(:mysql_version)
       unless mysql_version.nil?
-        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
-        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
-        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
+        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8').negative? && user_part.size > 16
+        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0').negative? && user_part.size > 32
+        raise(ArgumentError, _('mysql_grant: MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0').positive? && user_part.size > 80
       end
     end
 

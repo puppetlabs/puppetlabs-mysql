@@ -121,7 +121,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
       result.push(ensure: 'present',
                   name: section,
                   owner: uid.to_s,
-                  title: section + '-' + uid.to_s,
+                  title: "#{section}-#{uid}",
                   host: ini[section]['host'].nil? ? nil : ini[section]['host'],
                   user: ini[section]['user'].nil? ? nil : ini[section]['user'],
                   password: ini[section]['password'].nil? ? nil : gen_pw(get_password(context, uid, section)),
