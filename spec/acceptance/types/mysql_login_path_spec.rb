@@ -2,15 +2,14 @@
 
 require 'spec_helper_acceptance'
 
-mysql_version = '5.6'
 support_bin_dir = '/root/mysql_login_path'
-if os[:family] == 'redhat' && os[:release].to_i == 8
-  mysql_version = '8.0'
-elsif os[:family] == 'debian' && os[:release] =~ %r{9|10|11}
-  mysql_version = '8.0'
-elsif os[:family] == 'ubuntu' && os[:release] =~ %r{18\.04|20\.04}
-  mysql_version = '5.7'
-end
+mysql_version = if (os[:family] == 'redhat' && os[:release].to_i == 8) || (os[:family] == 'debian' && os[:release] =~ %r{9|10|11})
+                  '8.0'
+                elsif os[:family] == 'ubuntu' && os[:release] =~ %r{18\.04|20\.04}
+                  '5.7'
+                else
+                  '5.6'
+                end
 
 describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".include?('suse') do
   before(:all) do
@@ -43,11 +42,13 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
     it 'works with no errors' do
       apply_manifest(pp, catch_failures: true)
     end
+
     it 'finds mysql_config_editor binary for the provider' do
       run_shell('mysql_config_editor -V') do |r|
         expect(r.stdout).to match(%r{Ver.*#{mysql_version}.*x86_64})
       end
     end
+
     it 'finds my_print_defaults binary for the provider' do
       run_shell('my_print_defaults -V') do |r|
         expect(r.exit_status).to eq(0)
@@ -78,20 +79,18 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
+
       it 'finds the login path #stdout' do
         run_shell('mysql_config_editor print --all') do |r|
-          expect(r.stdout).to match(%r{^\[local_socket\]\n})
-          expect(r.stdout).to match(%r{host = localhost\n})
-          expect(r.stdout).to match(%r{user = root\n})
-          expect(r.stdout).to match(%r{socket = /var/run/mysql/mysql.sock\n})
-
-          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
-          expect(r.stdout).to match(%r{host = 127.0.0.1\n})
-          expect(r.stdout).to match(%r{user = network\n})
-          expect(r.stdout).to match(%r{port = 3306\n})
+          regex_match = [%r{^\[local_socket\]\n}, %r{host = localhost\n}, %r{user = root\n}, %r{socket = /var/run/mysql/mysql.sock\n},
+                         %r{^\[local_tcp\]\n}, %r{host = 127.0.0.1\n}, %r{user = network\n}, %r{port = 3306\n}]
+          regex_match.each do |reg|
+            expect(r.stdout).to match(reg)
+          end
           expect(r.stderr).to be_empty
         end
       end
+
       it 'finds the login path password #stdout' do
         run_shell('my_print_defaults -s local_socket') do |r|
           expect(r.stdout).to match(%r{--password=secure\n})
@@ -122,15 +121,17 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
+
       it 'finds the login path #stdout' do
         run_shell('mysql_config_editor print -G local_tcp') do |r|
-          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
-          expect(r.stdout).to match(%r{host = 10.0.0.1\n})
-          expect(r.stdout).to match(%r{user = network2\n})
-          expect(r.stdout).to match(%r{port = 3307\n})
+          regex_match = [%r{^\[local_tcp\]\n}, %r{host = 10.0.0.1\n}, %r{user = network2\n}, %r{port = 3307\n}]
+          regex_match.each do |reg|
+            expect(r.stdout).to match(reg)
+          end
           expect(r.stderr).to be_empty
         end
       end
+
       it 'finds the login path password #stdout' do
         run_shell('my_print_defaults -s local_tcp') do |r|
           expect(r.stdout).to match(%r{--password=Fort_kn0X\n})
@@ -144,16 +145,21 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       it 'removes values' do
         apply_manifest(pp2, catch_failures: true)
       end
+
       it 'ensure values are removed #stdout' do
         run_shell('mysql_config_editor print -G local_tcp') do |r|
-          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
-          expect(r.stdout).to match(%r{host = 192.168.0.1\n})
-          expect(r.stdout).not_to match(%r{host = 10.0.0.1\n})
-          expect(r.stdout).not_to match(%r{user = network2\n})
-          expect(r.stdout).not_to match(%r{port = 3307\n})
+          regex_match = [%r{^\[local_tcp\]\n}, %r{host = 192.168.0.1\n}]
+          regex_match.each do |reg|
+            expect(r.stdout).to match(reg)
+          end
+          regex_no_match = [%r{host = 10.0.0.1\n}, %r{user = network2\n}, %r{port = 3307\n}]
+          regex_no_match.each do |reg|
+            expect(r.stdout).not_to match(reg)
+          end
           expect(r.stderr).to be_empty
         end
       end
+
       it 'ensure password removed from the login path #stdout' do
         run_shell('my_print_defaults -s local_tcp') do |r|
           expect(r.stdout).not_to match(%r{--password=Fort_kn0X\n})
@@ -174,6 +180,7 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
+
       it 'finds the login path #stdout' do
         run_shell('mysql_config_editor print --all') do |r|
           expect(r.stdout).not_to match(%r{^\[local_socket\]\n})
@@ -199,15 +206,17 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
+
       it 'finds the login path #stdout' do
         run_shell('MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf mysql_config_editor print -G local_tcp') do |r|
-          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
-          expect(r.stdout).to match(%r{host = 10.0.0.2\n})
-          expect(r.stdout).to match(%r{user = other\n})
-          expect(r.stdout).to match(%r{port = 3306\n})
+          regex_match = [%r{^\[local_tcp\]\n}, %r{host = 10.0.0.2\n}, %r{user = other\n}, %r{port = 3306\n}]
+          regex_match.each do |reg|
+            expect(r.stdout).to match(reg)
+          end
           expect(r.stderr).to be_empty
         end
       end
+
       it 'finds the login path password #stdout' do
         run_shell('MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf my_print_defaults print -s local_tcp') do |r|
           expect(r.stdout).to match(%r{--password=sensitive\n})
@@ -228,15 +237,17 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
+
       it 'finds the login path #stdout' do
         run_shell('MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf mysql_config_editor print -G local_tcp') do |r|
-          expect(r.stdout).to match(%r{^\[local_tcp\]\n})
-          expect(r.stdout).to match(%r{host = 10.0.0.3\n})
-          expect(r.stdout).to match(%r{user = other2\n})
-          expect(r.stdout).to match(%r{port = 3307\n})
+          regex_match = [%r{^\[local_tcp\]\n}, %r{host = 10.0.0.3\n}, %r{user = other2\n}, %r{port = 3307\n}]
+          regex_match.each do |reg|
+            expect(r.stdout).to match(reg)
+          end
           expect(r.stderr).to be_empty
         end
       end
+
       it 'finds the login path password #stdout' do
         run_shell('MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf my_print_defaults -s local_tcp') do |r|
           expect(r.stdout).to match(%r{--password=password\n})
@@ -254,6 +265,7 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
+
       it 'finds the login path #stdout' do
         run_shell('MYSQL_TEST_LOGIN_FILE=/home/loginpath_test/.mylogin.cnf mysql_config_editor print --all') do |r|
           expect(r.stdout).not_to match(%r{^\[local_tcp\]\n})

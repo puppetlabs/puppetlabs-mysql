@@ -37,12 +37,12 @@ describe 'mysql::client' do
         let(:params) do
           {
             package_provider: 'dpkg',
-            package_source: '/somewhere',
+            package_source: '/somewhere'
           }
         end
 
         it do
-          is_expected.to contain_package('mysql_client').with(
+          expect(subject).to contain_package('mysql_client').with(
             provider: 'dpkg',
             source: '/somewhere',
           )

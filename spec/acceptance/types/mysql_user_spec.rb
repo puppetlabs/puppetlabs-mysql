@@ -47,11 +47,11 @@ describe 'mysql_user' do
 
     describe 'changing authentication plugin', if: (Gem::Version.new(mysql_version) > Gem::Version.new('5.5.0') && os[:release] !~ %r{^16\.04}) do
       it 'works without errors', if: (os[:family] != 'sles' && os[:release].to_i == 15) do
-        pp = <<-EOS
+        pp = <<-MANIFEST
           mysql_user { 'ashp@localhost':
             plugin => 'auth_socket',
           }
-        EOS
+        MANIFEST
 
         idempotent_apply(pp)
       end
@@ -78,12 +78,12 @@ describe 'mysql_user' do
 
     describe 'using ed25519 authentication plugin', if: Gem::Version.new(mysql_version) > Gem::Version.new('10.1.21') do
       it 'works without errors' do
-        pp = <<-EOS
+        pp = <<-MANIFEST
           mysql_user { 'ashp@localhost':
             plugin        => 'ed25519',
             password_hash => 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU',
           }
-        EOS
+        MANIFEST
 
         idempotent_apply(pp)
       end
@@ -95,7 +95,6 @@ describe 'mysql_user' do
         end
       end
     end
-    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
   end
 
   context 'using ashp-dash@localhost' do
@@ -137,6 +136,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using resource should throw no errors' do
     describe 'find users' do
       it do
@@ -146,6 +146,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using user-w-ssl@localhost with SSL' do
     describe 'adding user' do
       pp_five = <<-MANIFEST
@@ -173,6 +174,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using user-w-x509@localhost with X509' do
     describe 'adding user' do
       pp_six = <<-MANIFEST
@@ -200,6 +202,7 @@ describe 'mysql_user' do
       end
     end
   end
+
   context 'using user-w-subject@localhost with ISSUER and SUBJECT' do
     describe 'adding user' do
       it 'works without errors' do

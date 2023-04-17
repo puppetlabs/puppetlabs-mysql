@@ -6,17 +6,19 @@ require 'spec_helper_acceptance'
 # of mysql) have varying levels of support for plugins and have
 # different plugins available. Choose a plugin that works or don't try
 # to test plugins if not available.
-if os[:family] == 'redhat'
-  if os[:release].to_i == 5
+case os[:family]
+when 'redhat'
+  case os[:release].to_i
+  when 5
     plugin = nil # Plugins not supported on mysql on RHEL 5
-  elsif os[:release].to_i == 6
+  when 6
     plugin     = 'example'
     plugin_lib = 'ha_example.so'
-  elsif os[:release].to_i == 7
+  when 7
     plugin     = 'pam'
     plugin_lib = 'auth_pam.so'
   end
-elsif os[:family] == 'debian'
+when 'debian'
   if os[:family] == 'ubuntu'
     if %r{^16\.04|^18\.04}.match?(os[:release])
       # On Xenial running 5.7.12, the example plugin does not appear to be available.
@@ -27,7 +29,7 @@ elsif os[:family] == 'debian'
       plugin_lib = 'ha_example.so'
     end
   end
-elsif os[:family] == 'suse'
+when 'suse'
   plugin = nil # Plugin library path is broken on Suse http://lists.opensuse.org/opensuse-bugs/2013-08/msg01123.html
 end
 

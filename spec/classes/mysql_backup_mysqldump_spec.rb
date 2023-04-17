@@ -6,22 +6,22 @@ describe 'mysql::backup::mysqldump' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:pre_condition) do
-        <<-EOF
+        <<-MANIFEST
           class { 'mysql::server': }
-        EOF
+        MANIFEST
       end
       let(:facts) do
         facts.merge(root_home: '/root')
       end
 
       let(:default_params) do
-        { 'backupuser'         => 'testuser',
-          'backuppassword'     => 'testpass',
-          'backupdir'          => '/tmp/mysql-backup',
-          'backuprotate'       => '25',
+        { 'backupuser' => 'testuser',
+          'backuppassword' => 'testpass',
+          'backupdir' => '/tmp/mysql-backup',
+          'backuprotate' => '25',
           'delete_before_dump' => true,
-          'execpath'           => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
-          'maxallowedpacket'   => '1M' }
+          'execpath' => '/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin',
+          'maxallowedpacket' => '1M' }
       end
 
       context 'with time included' do
@@ -30,7 +30,7 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          is_expected.to contain_cron('mysql-backup').with(
+          expect(subject).to contain_cron('mysql-backup').with(
             hour: 23,
             minute: 59,
             monthday: 30,
@@ -44,7 +44,7 @@ describe 'mysql::backup::mysqldump' do
         let(:params) { default_params }
 
         it {
-          is_expected.to contain_cron('mysql-backup').with(
+          expect(subject).to contain_cron('mysql-backup').with(
             command: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
             hour: 23,
@@ -62,13 +62,13 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          is_expected.to contain_file('mysqlbackup.sh').with_content(
+          expect(subject).to contain_file('mysqlbackup.sh').with_content(
             %r{(\| TEST -TEST)},
           )
-          is_expected.to contain_file('mysqlbackup.sh').with_content(
+          expect(subject).to contain_file('mysqlbackup.sh').with_content(
             %r{(\.TEST)},
           )
-          is_expected.not_to contain_package('bzip2')
+          expect(subject).not_to contain_package('bzip2')
         }
       end
 
@@ -76,17 +76,16 @@ describe 'mysql::backup::mysqldump' do
         let(:params) do
           {
             'file_per_database' => true,
-            'excludedatabases'  => [ 'information_schema' ],
+            'excludedatabases' => ['information_schema']
           }.merge(default_params)
         end
 
         it {
-          is_expected.to contain_file('mysqlbackup.sh').with_content(
+          expect(subject).to contain_file('mysqlbackup.sh').with_content(
             %r{information_schema},
           )
         }
       end
     end
   end
-  # rubocop:enable RSpec/NestedGroups
 end

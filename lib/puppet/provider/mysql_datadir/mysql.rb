@@ -8,7 +8,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
 
   # Make sure we find mysqld on CentOS and mysql_install_db on Gentoo and Solaris 11
   ENV['PATH'] = [
-    ENV['PATH'],
+    ENV.fetch('PATH', nil),
     '/usr/libexec',
     '/usr/share/mysql/scripts',
     '/opt/rh/rh-mysql80/root/usr/bin',
@@ -47,9 +47,8 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     log_error                = @resource.value(:log_error) || '/var/tmp/mysqld_initialize.log'
     # rubocop:enable Lint/UselessAssignment
     unless defaults_extra_file.nil?
-      unless File.exist?(defaults_extra_file)
-        raise ArgumentError, _('Defaults-extra-file %{file} is missing.') % { file: defaults_extra_file }
-      end
+      raise ArgumentError, _('Defaults-extra-file %{file} is missing.') % { file: defaults_extra_file } unless File.exist?(defaults_extra_file)
+
       defaults_extra_file = "--defaults-extra-file=#{defaults_extra_file}"
     end
 
@@ -65,10 +64,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
       opts << "--#{opt}=#{val}" unless val.nil?
     end
 
-    if mysqld_version.nil?
-      debug("Installing MySQL data directory with mysql_install_db #{opts.compact.join(' ')}")
-      mysql_install_db(opts.compact)
-    elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
+    if !mysqld_version.nil? && newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       opts << "--log-error=#{log_error}"
       opts << initialize.to_s
       debug("Initializing MySQL data directory >= 5.7.6 with mysqld: #{opts.compact.join(' ')}")

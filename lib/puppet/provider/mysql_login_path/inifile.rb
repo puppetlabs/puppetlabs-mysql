@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # frozen_string_literal: true
 
 # See: https://github.com/puppetlabs/puppet/blob/main/lib/puppet/util/inifile.rb
@@ -30,6 +29,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns an IniFile instance or nil if the file could not be opened.
   def self.load(filename, opts = {})
     return unless File.file? filename
+
     new(opts.merge(filename: filename))
   end
 
@@ -220,6 +220,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def each
     return unless block_given?
+
     @ini.each do |section, hash|
       hash.each do |param, val|
         yield section, param, val
@@ -240,9 +241,10 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   #   end
   #
   # Returns this IniFile.
-  def each_section
-    return unless block_given?
-    @ini.each_key { |section| yield section }
+  def each_section(&block)
+    return unless block
+
+    @ini.each_key(&block)
     self
   end
 
@@ -268,6 +270,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns the Hash of parameter/value pairs for this section.
   def [](section)
     return nil if section.nil?
+
     @ini[section.to_s]
   end
 
@@ -322,7 +325,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def freeze
     super
-    @ini.each_value { |h| h.freeze }
+    @ini.each_value(&:freeze)
     @ini.freeze
     self
   end
@@ -333,7 +336,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # Returns this IniFile.
   def taint
     super
-    @ini.each_value { |h| h.taint }
+    @ini.each_value(&:taint)
     @ini.taint
     self
   end
@@ -373,6 +376,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   def eql?(other)
     return true if equal? other
     return false unless other.instance_of? self.class
+
     @ini == other.instance_variable_get(:@ini)
   end
   alias == eql?
@@ -411,8 +415,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   # object.
   class Parser
     attr_writer :section
-    attr_accessor :property
-    attr_accessor :value
+    attr_accessor :property, :value
 
     # Create a new IniFile::Parser that can be used to parse the contents of
     # an .ini file.
@@ -609,11 +612,11 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       else
         begin
           begin
-                    Integer(value)
-          rescue
+            Integer(value)
+          rescue StandardError
             Float(value)
-                  end
-        rescue
+          end
+        rescue StandardError
           unescape_value(value)
         end
       end
@@ -640,4 +643,4 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
       value
     end
   end
-end # IniFile
+end

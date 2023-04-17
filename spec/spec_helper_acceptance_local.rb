@@ -15,8 +15,7 @@ def mysql_version
     shell_output = LitmusHelper.instance.run_shell('mysql --version')
     raise _('unable to get mysql version') if shell_output.stdout.match(%r{\d+\.\d+\.\d+}).nil?
   end
-  mysql_version = shell_output.stdout.match(%r{\d+\.\d+\.\d+})[0]
-  mysql_version
+  shell_output.stdout.match(%r{\d+\.\d+\.\d+})[0]
 end
 
 def supports_xtrabackup?
@@ -37,8 +36,8 @@ def sles_15?
   os[:family] == 'sles' && os[:release].to_i == 15
 end
 
-def fetch_charset
-  @charset ||= ubuntu_2204? || sles_15? ? 'utf8mb3' : 'utf8'
+def charset
+  @charset ||= (ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
 end
 
 RSpec.configure do |c|

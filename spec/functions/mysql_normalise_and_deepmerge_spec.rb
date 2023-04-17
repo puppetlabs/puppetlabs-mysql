@@ -4,22 +4,21 @@ require 'spec_helper'
 
 describe 'mysql::normalise_and_deepmerge' do
   it 'exists' do
-    is_expected.not_to eq(nil)
+    expect(subject).not_to be_nil
   end
 
   it 'throws error with no arguments' do
-    is_expected.to run.with_params.and_raise_error(Puppet::ParseError)
+    expect(subject).to run.with_params.and_raise_error(Puppet::ParseError)
   end
 
   it 'throws error with only one argument' do
-    is_expected.to run.with_params('one' => 1).and_raise_error(Puppet::ParseError)
+    expect(subject).to run.with_params('one' => 1).and_raise_error(Puppet::ParseError)
   end
 
   it 'accepts empty strings as puppet undef' do
-    is_expected.to run.with_params({}, '')
+    expect(subject).to run.with_params({}, '')
   end
 
-  # rubocop:disable RSpec/NamedSubject
   index_values = ['one', 'two', 'three']
   expected_values_one = ['1', '2', '2']
   it 'merge two hashes' do
@@ -35,10 +34,10 @@ describe 'mysql::normalise_and_deepmerge' do
   end
 
   it 'accepts empty hashes' do
-    is_expected.to run.with_params({}, {}, {}).and_return({})
+    expect(subject).to run.with_params({}, {}, {}).and_return({})
   end
 
-  expected_values_two = [1, 2, 'four' => 4]
+  expected_values_two = [1, 2, { 'four' => 4 }]
   it 'merges subhashes' do
     hash = subject.execute({ 'one' => 1 }, 'two' => 2, 'three' => { 'four' => 4 })
     index_values.each_with_index do |index, expected|
@@ -72,6 +71,7 @@ describe 'mysql::normalise_and_deepmerge' do
     hash = subject.execute({ 'a-b-c' => 1 }, 'a_b_c' => 10)
     expect(hash['a_b_c']).to eq(10)
   end
+
   it 'equates keys mod dash and underscore #not' do
     hash = subject.execute({ 'a-b-c' => 1 }, 'a_b_c' => 10)
     expect(hash).not_to have_key('a-b-c')
@@ -85,10 +85,10 @@ describe 'mysql::normalise_and_deepmerge' do
       hash = subject.execute({ 'a-b-c' => 1, 'b_c_d' => { 'c-d-e' => 2, 'e-f-g' => 3 } }, 'a_b_c' => 10, 'b-c-d' => { 'c_d_e' => 12 })
       expect(hash[index]).to eq(expected_values_five[expected])
     end
+
     it 'keeps style of the last when keys are equal mod dash and underscore #not' do
       hash = subject.execute({ 'a-b-c' => 1, 'b_c_d' => { 'c-d-e' => 2, 'e-f-g' => 3 } }, 'a_b_c' => 10, 'b-c-d' => { 'c_d_e' => 12 })
       expect(hash).not_to have_key(index_values_error[expected])
     end
   end
-  # rubocop:enable RSpec/NamedSubject
 end

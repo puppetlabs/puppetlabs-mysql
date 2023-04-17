@@ -16,7 +16,7 @@ end
 Facter.add('mysql_server_id') do
   setcode do
     mysql_id_get
-  rescue
+  rescue StandardError
     nil
   end
 end

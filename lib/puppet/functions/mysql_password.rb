@@ -4,6 +4,8 @@
 Puppet::Functions.create_function(:mysql_password) do
   # @param password
   #   Plain text password.
+  # @param sensitive
+  #   If the mysql password hash should be of datatype Sensitive[String]
   #
   # @return
   #   The mysql password hash from the 4.x function mysql::password.
@@ -13,7 +15,7 @@ Puppet::Functions.create_function(:mysql_password) do
     return_type 'Variant[String, Sensitive[String]]'
   end
 
-  def mysql_password(password, sensitive = false)
+  def mysql_password(password, sensitive: false)
     call_function('deprecation', 'mysql_password', "This method has been deprecated, please use the namespaced version 'mysql::password' instead.")
     call_function('mysql::password', password, sensitive)
   end

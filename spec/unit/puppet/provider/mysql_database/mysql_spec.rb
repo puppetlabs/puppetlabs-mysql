@@ -15,14 +15,13 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
     )
   end
   let(:raw_databases) do
-    <<-SQL_OUTPUT
-information_schema
-mydb
-mysql
-performance_schema
-test
+    <<~SQL_OUTPUT
+      information_schema
+      mydb
+      mysql
+      performance_schema
+      test
     SQL_OUTPUT
-    # rubocop:enable Layout/IndentHeredoc
   end
 
   before :each do
@@ -39,7 +38,7 @@ test
       raw_databases.each_line do |db|
         allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", db.chomp], 'regular').and_return("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Layout/LineLength
       end
-      databases = provider.class.instances.map { |x| x.name }
+      databases = provider.class.instances.map(&:name)
       expect(parsed_databases).to match_array(databases)
     end
   end
@@ -77,10 +76,12 @@ test
     before :each do
       allow(Facter).to receive(:value).with(:root_home).and_return('/root')
     end
+
     it 'sets --defaults-extra-file' do
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
       expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'
     end
+
     it 'fails if file missing' do
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(false)
       expect(provider.defaults_file).to be_nil

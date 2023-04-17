@@ -79,11 +79,11 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 6.24.0 < 8.0.0"
+      "version_requirement": ">= 7.0.0 < 9.0.0"
     }
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "2.7.1-0-g9a16c87",
-  "pdk-version": "2.5.0"
+  "template-ref": "heads/main-0-ge5b0114",
+  "pdk-version": "2.7.1"
 }

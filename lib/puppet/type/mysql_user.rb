@@ -5,7 +5,7 @@ Puppet::Type.newtype(:mysql_user) do
   @doc = <<-PUPPET
     @summary
       Manage a MySQL user. This includes management of users password as well as privileges.
-    PUPPET
+  PUPPET
 
   ensurable
 
@@ -21,13 +21,10 @@ Puppet::Type.newtype(:mysql_user) do
       mysql_version = Facter.value(:mysql_version)
       # rubocop:disable Lint/AssignmentInCondition
       # rubocop:disable Lint/UselessAssignment
-      if matches = %r{^(['`"])((?:(?!\1).)*)\1@([\w%\.:\-/]+)$}.match(value)
+      if matches = %r{^(['`"])((?:(?!\1).)*)\1@([\w%.:\-/]+)$}.match(value)
         user_part = matches[2]
         host_part = matches[3]
-      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%\.:\-/]+)$}.match(value)
-        user_part = matches[1]
-        host_part = matches[2]
-      elsif matches = %r{^((?!['`"]).*[^0-9a-zA-Z$_].*)@(.+)$}.match(value)
+      elsif matches = %r{^([0-9a-zA-Z$_]*)@([\w%.:\-/]+)$}.match(value) || matches = %r{^((?!['`"]).*[^0-9a-zA-Z$_].*)@(.+)$}.match(value)
         user_part = matches[1]
         host_part = matches[2]
       else
@@ -36,9 +33,9 @@ Puppet::Type.newtype(:mysql_user) do
       # rubocop:enable Lint/AssignmentInCondition
       # rubocop:enable Lint/UselessAssignment
       unless mysql_version.nil?
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8') < 0 && user_part.size > 16
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') < 0 && user_part.size > 32
-        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0') > 0 && user_part.size > 80
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 16 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '5.7.8').negative? && user_part.size > 16
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 32 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0').negative? && user_part.size > 32
+        raise(ArgumentError, _('MySQL usernames are limited to a maximum of 80 characters.')) if Puppet::Util::Package.versioncmp(mysql_version, '10.0.0').positive? && user_part.size > 80
       end
     end
 
@@ -97,9 +94,7 @@ Puppet::Type.newtype(:mysql_user) do
     validate do |value|
       value = [value] unless value.is_a?(Array)
       if value.include?('NONE') || value.include?('SSL') || value.include?('X509')
-        if value.length > 1
-          raise(ArgumentError, _('`tls_options` `property`: The values NONE, SSL and X509 cannot be used with other options, you may only pick one of them.'))
-        end
+        raise(ArgumentError, _('`tls_options` `property`: The values NONE, SSL and X509 cannot be used with other options, you may only pick one of them.')) if value.length > 1
       else
         value.each do |opt|
           o = opt.match(%r{^(CIPHER|ISSUER|SUBJECT)}i)
@@ -107,13 +102,13 @@ Puppet::Type.newtype(:mysql_user) do
         end
       end
     end
-    def insync?(is)
+    def insync?(insync)
       # The current value may be nil and we don't
       # want to call sort on it so make sure we have arrays
-      if is.is_a?(Array) && @should.is_a?(Array)
-        is.sort == @should.sort
+      if insync.is_a?(Array) && @should.is_a?(Array)
+        insync.sort == @should.sort
       else
-        is == @should
+        insync == @should
       end
     end
   end

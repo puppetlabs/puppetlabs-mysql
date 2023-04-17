@@ -262,7 +262,7 @@ describe 'mysql_grant' do
 
     it 'finds short ipv6 #stdout' do
       run_shell("mysql -NBe \"SHOW GRANTS FOR 'test'@'::1/128'\"") do |r|
-        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]::1\/128['|`]})
+        expect(r.stdout).to match(%r{GRANT ALL PRIVILEGES ON ['|`]test['|`].* TO ['|`]test['|`]@['|`]::1/128['|`]})
         expect(r.stderr).to be_empty
       end
     end
@@ -274,8 +274,8 @@ describe 'mysql_grant' do
 
         mysql_database { 'foo':
           ensure  => present,
-          charset => '#{fetch_charset}',
-          collate => '#{fetch_charset}_general_ci',
+          charset => '#{charset}',
+          collate => '#{charset}_general_ci',
         }
 
         exec { 'mysql-create-table':
@@ -415,7 +415,7 @@ describe 'mysql_grant' do
 
   describe 'adding function privileges' do
     it 'works without errors' do
-      pp = <<-EOS
+      pp = <<-MANIFEST
         exec { 'simplefunc-create':
           command => '/usr/bin/mysql --user="root" --password="password" --database=mysql -NBe "CREATE FUNCTION simplefunc (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT(\\'Hello, \\', s, \\'!\\')"',
           before  => Mysql_user['test3@tester'],
@@ -432,17 +432,16 @@ describe 'mysql_grant' do
           privileges => ['EXECUTE'],
           require    => Mysql_user['test3@tester'],
         }
-      EOS
+      MANIFEST
 
       apply_manifest(pp, catch_failures: true)
     end
-    # rubocop:enable RSpec/ExampleLength
+
     it 'finds the user' do
       result = run_shell('mysql -NBe "SHOW GRANTS FOR test3@tester"')
       expect(result.stdout).to match(%r{GRANT EXECUTE ON FUNCTION `mysql`.`simplefunc` TO ['|`]test3['|`]@['|`]tester['|`]})
       expect(result.stderr).to be_empty
     end
-    # rubocop:enable RSpec/MultipleExpectations
   end
 
   describe 'proxy privilieges' do
@@ -686,7 +685,7 @@ describe 'mysql_grant' do
         mysql::db { 'grant_spec_db':
           user     => 'root1',
           password => 'password',
-          charset  => '#{fetch_charset}',
+          charset  => '#{charset}',
           sql      => ['/tmp/grant_spec_table.sql'],
         }
     MANIFEST

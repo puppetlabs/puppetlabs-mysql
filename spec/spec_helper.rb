@@ -13,7 +13,7 @@ include RspecPuppetFacts
 
 default_facts = {
   puppetversion: Puppet.version,
-  facterversion: Facter.version,
+  facterversion: Facter.version
 }
 
 default_fact_files = [
@@ -26,7 +26,7 @@ default_fact_files.each do |f|
 
   begin
     default_facts.merge!(YAML.safe_load(File.read(f), [], [], true))
-  rescue => e
+  rescue StandardError => e
     RSpec.configuration.reporter.message "WARNING: Unable to load #{f}: #{e}"
   end
 end

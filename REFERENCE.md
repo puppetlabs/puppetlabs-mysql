@@ -499,6 +499,7 @@ The following parameters are available in the `mysql::server` class:
 * [`users`](#-mysql--server--users)
 * [`grants`](#-mysql--server--grants)
 * [`databases`](#-mysql--server--databases)
+* [`reload_on_config_change`](#-mysql--server--reload_on_config_change)
 * [`enabled`](#-mysql--server--enabled)
 * [`manage_service`](#-mysql--server--manage_service)
 * [`old_root_password`](#-mysql--server--old_root_password)
@@ -767,6 +768,14 @@ Data type: `Hash`
 Optional hash of databases to create, which are passed to [mysql_database](#mysql_database).
 
 Default value: `{}`
+
+##### <a name="-mysql--server--reload_on_config_change"></a>`reload_on_config_change`
+
+Data type: `Boolean`
+
+By default, a my.cnf change won't reload/restart the database. Turn this flag to true to enable it
+
+Default value: `false`
 
 ##### <a name="-mysql--server--enabled"></a>`enabled`
 
@@ -1299,7 +1308,7 @@ Privileges for user
 
 ##### `table`
 
-Valid values: `%r{.*\..*}`, `%r{^[0-9a-zA-Z$_]*@[\w%\.:\-/]*$}`
+Valid values: `%r{.*\..*}`, `%r{^[0-9a-zA-Z$_]*@[\w%.:\-/]*$}`
 
 Table to apply privileges to.
 
@@ -1662,7 +1671,7 @@ Plain text password.
 
 Data type: `Optional[Boolean]`
 
-
+If the mysql password hash should be of datatype Sensitive[String]
 
 ## Data types
 

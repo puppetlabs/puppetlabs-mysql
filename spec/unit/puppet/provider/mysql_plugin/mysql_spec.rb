@@ -56,6 +56,7 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
       expect(provider.defaults_file).to eq '--defaults-extra-file=/root/.my.cnf'
     end
+
     it 'fails if file missing' do
       allow(File).to receive(:file?).with('/root/.my.cnf').and_return(false)
       expect(provider.defaults_file).to be_nil

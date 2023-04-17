@@ -19,7 +19,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         # Default root user created by mysql_install_db on a host with fqdn
         # of myhost.mydomain.my: root@myhost.mydomain.my, when MySQL is started
         # with --skip-name-resolve.
-        next if %r{There is no such grant defined for user}.match?(e.inspect)
+        next if e.inspect.include?('There is no such grant defined for user')
+
         raise Puppet::Error, _('#mysql had an error ->  %{inspect}') % { inspect: e.inspect }
       end
       # Once we have the list of grants generate entries for each.
@@ -28,6 +29,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         munged_grant = grant.delete("'").delete('`').delete('"')
         # Matching: GRANT (SELECT, UPDATE) PRIVILEGES ON (*.*) TO ('root')@('127.0.0.1') (WITH GRANT OPTION)
         next unless match = munged_grant.match(%r{^GRANT\s(.+)\sON\s(.+)\sTO\s(.*)@(.*?)(\s.*)?$}) # rubocop:disable Lint/AssignmentInCondition
+
         privileges, table, user, host, rest = match.captures
         table.gsub!('\\\\', '\\')
 
@@ -38,7 +40,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           # split and sort the column_privileges in the parentheses and rejoin
           if priv.include?('(')
             type, col = priv.strip.split(%r{\s+|\b}, 2)
-            type.upcase + ' (' + col.slice(1...-1).strip.split(%r{\s*,\s*}).sort.join(', ') + ')'
+            "#{type.upcase} (#{col.slice(1...-1).strip.split(%r{\s*,\s*}).sort.join(', ')})"
           else
             # Once we split privileges up on the , we need to make sure we
             # shortern ALL PRIVILEGES to just all.
@@ -62,26 +64,24 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
         end
 
         sorted_privileges = stripped_privileges.uniq.sort
-        if newer_than('mysql' => '8.0.0') && sorted_privileges == ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER',
-                                                                   'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES',
-                                                                   'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER',
-                                                                   'UPDATE']
-          sorted_privileges = ['ALL']
-
-        # The following two elsif blocks of code are a workaround for issue #1474.
-        elsif sorted_privileges == ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN',
-                                    'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
-                                    'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN',
-                                    'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN', 'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN', 'SERVICE_CONNECTION_ADMIN',
-                                    'SESSION_VARIABLES_ADMIN', 'SET_USER_ID', 'SHOW_ROUTINE', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN', 'XA_RECOVER_ADMIN']
-          sorted_privileges = ['ALL']
-
-        elsif sorted_privileges == ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN', 'BINLOG_ENCRYPTION_ADMIN',
-                                    'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS', 'FLUSH_TABLES', 'FLUSH_USER_RESOURCES',
-                                    'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE', 'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN',
-                                    'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN', 'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN', 'SENSITIVE_VARIABLES_OBSERVER',
-                                    'SERVICE_CONNECTION_ADMIN', 'SESSION_VARIABLES_ADMIN', 'SET_USER_ID', 'SHOW_ROUTINE', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN',
-                                    'XA_RECOVER_ADMIN']
+        mysql_v8_privileges = ['ALTER', 'ALTER ROUTINE', 'CREATE', 'CREATE ROLE', 'CREATE ROUTINE', 'CREATE TABLESPACE', 'CREATE TEMPORARY TABLES', 'CREATE USER',
+                               'CREATE VIEW', 'DELETE', 'DROP', 'DROP ROLE', 'EVENT', 'EXECUTE', 'FILE', 'INDEX', 'INSERT', 'LOCK TABLES', 'PROCESS', 'REFERENCES',
+                               'RELOAD', 'REPLICATION CLIENT', 'REPLICATION SLAVE', 'SELECT', 'SHOW DATABASES', 'SHOW VIEW', 'SHUTDOWN', 'SUPER', 'TRIGGER',
+                               'UPDATE']
+        # The following two compare blocks are a workaround for issue #1474.
+        mysql_pre_v8_privileges_one = ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN',
+                                       'BINLOG_ENCRYPTION_ADMIN', 'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS',
+                                       'FLUSH_TABLES', 'FLUSH_USER_RESOURCES', 'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE',
+                                       'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN', 'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN',
+                                       'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN', 'SERVICE_CONNECTION_ADMIN', 'SESSION_VARIABLES_ADMIN', 'SET_USER_ID',
+                                       'SHOW_ROUTINE', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN', 'XA_RECOVER_ADMIN']
+        mysql_pre_v8_privileges_two = ['ALL', 'APPLICATION_PASSWORD_ADMIN', 'AUDIT_ABORT_EXEMPT', 'AUDIT_ADMIN', 'AUTHENTICATION_POLICY_ADMIN', 'BACKUP_ADMIN', 'BINLOG_ADMIN',
+                                       'BINLOG_ENCRYPTION_ADMIN', 'CLONE_ADMIN', 'CONNECTION_ADMIN', 'ENCRYPTION_KEY_ADMIN', 'FLUSH_OPTIMIZER_COSTS', 'FLUSH_STATUS',
+                                       'FLUSH_TABLES', 'FLUSH_USER_RESOURCES', 'GROUP_REPLICATION_ADMIN', 'GROUP_REPLICATION_STREAM', 'INNODB_REDO_LOG_ARCHIVE',
+                                       'INNODB_REDO_LOG_ENABLE', 'PASSWORDLESS_USER_ADMIN', 'PERSIST_RO_VARIABLES_ADMIN', 'REPLICATION_APPLIER', 'REPLICATION_SLAVE_ADMIN',
+                                       'RESOURCE_GROUP_ADMIN', 'RESOURCE_GROUP_USER', 'ROLE_ADMIN', 'SENSITIVE_VARIABLES_OBSERVER', 'SERVICE_CONNECTION_ADMIN',
+                                       'SESSION_VARIABLES_ADMIN', 'SET_USER_ID', 'SHOW_ROUTINE', 'SYSTEM_USER', 'SYSTEM_VARIABLES_ADMIN', 'TABLE_ENCRYPTION_ADMIN', 'XA_RECOVER_ADMIN']
+        if (newer_than('mysql' => '8.0.0') && sorted_privileges == mysql_v8_privileges) || sorted_privileges == mysql_pre_v8_privileges_one || sorted_privileges == mysql_pre_v8_privileges_two
           sorted_privileges = ['ALL']
         end
 
@@ -89,7 +89,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           privileges: sorted_privileges,
           table: table,
           user: "#{user}@#{host}",
-          options: options.uniq,
+          options: options.uniq
         }
       end
     end
@@ -198,12 +198,8 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
   def privileges=(privileges)
     diff = diff_privileges(@property_hash[:privileges], privileges)
-    unless diff[:revoke].empty?
-      revoke(@property_hash[:user], @property_hash[:table], diff[:revoke])
-    end
-    unless diff[:grant].empty?
-      grant(@property_hash[:user], @property_hash[:table], diff[:grant], @property_hash[:options])
-    end
+    revoke(@property_hash[:user], @property_hash[:table], diff[:revoke]) unless diff[:revoke].empty?
+    grant(@property_hash[:user], @property_hash[:table], diff[:grant], @property_hash[:options]) unless diff[:grant].empty?
     @property_hash[:privileges] = privileges
     self.privileges
   end

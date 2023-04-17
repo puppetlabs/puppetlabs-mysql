@@ -7,12 +7,12 @@ describe 'mysql::server' do
     let(:facts) do
       {
         os: { family: 'UNSUPPORTED',
-              name: 'UNSUPPORTED' },
+              name: 'UNSUPPORTED' }
       }
     end
 
     it 'gracefully fails' do
-      is_expected.to compile.and_raise_error(%r{Unsupported platform:})
+      expect(subject).to compile.and_raise_error(%r{Unsupported platform:})
     end
   end
 end

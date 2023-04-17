@@ -42,13 +42,13 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
           output.puts password
         end
       end
-    rescue => e
+    rescue StandardError => e
       raise Puppet::ExecutionFailure, _(
         "Execution of '%{str}' returned %{exit_status}: %{output}",
       ) % {
         str: command_str,
         exit_status: $CHILD_STATUS.exitstatus,
-        output: e.message,
+        output: e.message
       }
     end
   end
@@ -79,9 +79,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     result = ''
     output = my_print_defaults_cmd(context, uid, '-s', name)
     output.split("\n").each do |line|
-      if %r{\-\-password}.match?(line)
-        result = line.sub(%r{\-\-password=}, '')
-      end
+      result = line.sub(%r{--password=}, '') if line.include?('--password')
     end
     result
   end
@@ -107,8 +105,8 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     mysql_config_editor_cmd(context, uid, 'remove', '-G', login_path)
   end
 
-  def gen_pw(pw)
-    Puppet::Provider::MysqlLoginPath::Sensitive.new(pw)
+  def gen_pw(password)
+    Puppet::Provider::MysqlLoginPath::Sensitive.new(password)
   end
 
   def extract_pw(sensitive)
@@ -123,7 +121,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
       result.push(ensure: 'present',
                   name: section,
                   owner: uid.to_s,
-                  title: section + '-' + uid.to_s,
+                  title: "#{section}-#{uid}",
                   host: ini[section]['host'].nil? ? nil : ini[section]['host'],
                   user: ini[section]['user'].nil? ? nil : ini[section]['user'],
                   password: ini[section]['password'].nil? ? nil : gen_pw(get_password(context, uid, section)),
@@ -135,7 +133,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
 
   def get(context, name)
     result = []
-    owner = name.empty? ? ['root'] : name.map { |item| item[:owner] }.compact.uniq
+    owner = name.empty? ? ['root'] : name.filter_map { |item| item[:owner] }.uniq
     owner.each do |uid|
       login_paths = list_login_paths(context, uid)
       result += login_paths
@@ -158,9 +156,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
 
   def canonicalize(_context, resources)
     resources.each do |r|
-      if r.key?(:password) && r[:password].is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
-        r[:password] = gen_pw(extract_pw(r[:password]))
-      end
+      r[:password] = gen_pw(extract_pw(r[:password])) if r.key?(:password) && r[:password].is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
     end
   end
 end

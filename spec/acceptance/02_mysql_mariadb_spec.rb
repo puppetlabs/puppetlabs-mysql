@@ -37,6 +37,7 @@ describe 'mysql server class', if: ((os[:family] == 'debian') || (os[:family] ==
     it 'apply manifest' do
       apply_manifest(pp)
     end
+
     it 'mariadb connection' do
       result = run_shell('mysql --user="root" --password="strongpassword" -e "status"')
       expect(result.stdout).to match(%r{MariaDB})

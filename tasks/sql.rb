@@ -12,10 +12,11 @@ def get(sql, database, user, password)
   cmd << "--password=#{password}" unless password.nil?
   stdout, stderr, status = Open3.capture3(*cmd)
   raise Puppet::Error, _("stderr: '%{stderr}'" % { stderr: stderr }) if status != 0
+
   { status: stdout.strip }
 end
 
-params = JSON.parse(STDIN.read)
+params = JSON.parse($stdin.read)
 database = params['database']
 user = params['user']
 password = params['password']
