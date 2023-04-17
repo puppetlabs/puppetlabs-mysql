@@ -5,7 +5,7 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'mysql_login_path',
 
-  docs: <<-EOS,
+  docs: <<-DESCRIPTION,
   @summary
     Manage a MySQL login path.
   @see
@@ -31,7 +31,7 @@ Puppet::ResourceApi.register_type(
 
   This type provides Puppet with the capabilities to store authentication credentials in an obfuscated login path file
   named .mylogin.cnf created with the mysql_config_editor utility. Supports only MySQL Community Edition > v5.6.6.
-  EOS
+  DESCRIPTION
   features: ['simple_get_filter', 'canonicalize'],
   title_patterns: [
     {

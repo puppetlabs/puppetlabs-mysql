@@ -415,7 +415,7 @@ describe 'mysql_grant' do
 
   describe 'adding function privileges' do
     it 'works without errors' do
-      pp = <<-EOS
+      pp = <<-MANIFEST
         exec { 'simplefunc-create':
           command => '/usr/bin/mysql --user="root" --password="password" --database=mysql -NBe "CREATE FUNCTION simplefunc (s CHAR(20)) RETURNS CHAR(50) DETERMINISTIC RETURN CONCAT(\\'Hello, \\', s, \\'!\\')"',
           before  => Mysql_user['test3@tester'],
@@ -432,7 +432,7 @@ describe 'mysql_grant' do
           privileges => ['EXECUTE'],
           require    => Mysql_user['test3@tester'],
         }
-      EOS
+      MANIFEST
 
       apply_manifest(pp, catch_failures: true)
     end

@@ -6,9 +6,9 @@ describe 'mysql::server::account_security' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:pre_condition) do
-        <<-EOF
+        <<-MANIFEST
         anchor {'mysql::server::end': }
-        EOF
+        MANIFEST
       end
 
       context 'with fqdn==myhost.mydomain' do

@@ -48,19 +48,6 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 18
 
-# Offense count: 8
-# Configuration parameters: ForbiddenDelimiters.
-# ForbiddenDelimiters: (?i-mx:(^|\s)(EO[A-Z]{1}|END)(\s|$))
-Naming/HeredocDelimiterNaming:
-  Exclude:
-    - 'lib/puppet/type/mysql_login_path.rb'
-    - 'spec/acceptance/types/mysql_grant_spec.rb'
-    - 'spec/acceptance/types/mysql_user_spec.rb'
-    - 'spec/classes/mysql_backup_mysqldump_spec.rb'
-    - 'spec/classes/mysql_backup_xtrabackup_spec.rb'
-    - 'spec/classes/mysql_server_account_security_spec.rb'
-    - 'spec/classes/mysql_server_backup_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: EnforcedStyleForLeadingUnderscores.
 # SupportedStylesForLeadingUnderscores: disallowed, required, optional
