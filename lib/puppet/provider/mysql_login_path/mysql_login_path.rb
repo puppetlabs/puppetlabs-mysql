@@ -105,8 +105,8 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     mysql_config_editor_cmd(context, uid, 'remove', '-G', login_path)
   end
 
-  def gen_pw(pw)
-    Puppet::Provider::MysqlLoginPath::Sensitive.new(pw)
+  def gen_pw(password)
+    Puppet::Provider::MysqlLoginPath::Sensitive.new(password)
   end
 
   def extract_pw(sensitive)

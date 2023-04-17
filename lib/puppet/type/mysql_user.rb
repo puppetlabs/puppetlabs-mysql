@@ -102,13 +102,13 @@ Puppet::Type.newtype(:mysql_user) do
         end
       end
     end
-    def insync?(is)
+    def insync?(insync)
       # The current value may be nil and we don't
       # want to call sort on it so make sure we have arrays
-      if is.is_a?(Array) && @should.is_a?(Array)
-        is.sort == @should.sort
+      if insync.is_a?(Array) && @should.is_a?(Array)
+        insync.sort == @should.sort
       else
-        is == @should
+        insync == @should
       end
     end
   end
