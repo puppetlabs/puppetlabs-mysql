@@ -48,13 +48,6 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 18
 
-# Offense count: 1
-# Configuration parameters: EnforcedStyleForLeadingUnderscores.
-# SupportedStylesForLeadingUnderscores: disallowed, required, optional
-Naming/MemoizedInstanceVariableName:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-
 # Offense count: 24
 # Configuration parameters: MinSize.
 Performance/CollectionLiteralInLoop:

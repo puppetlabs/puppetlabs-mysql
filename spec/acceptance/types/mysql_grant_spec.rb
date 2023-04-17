@@ -274,8 +274,8 @@ describe 'mysql_grant' do
 
         mysql_database { 'foo':
           ensure  => present,
-          charset => '#{fetch_charset}',
-          collate => '#{fetch_charset}_general_ci',
+          charset => '#{charset}',
+          collate => '#{charset}_general_ci',
         }
 
         exec { 'mysql-create-table':
@@ -685,7 +685,7 @@ describe 'mysql_grant' do
         mysql::db { 'grant_spec_db':
           user     => 'root1',
           password => 'password',
-          charset  => '#{fetch_charset}',
+          charset  => '#{charset}',
           sql      => ['/tmp/grant_spec_table.sql'],
         }
     MANIFEST

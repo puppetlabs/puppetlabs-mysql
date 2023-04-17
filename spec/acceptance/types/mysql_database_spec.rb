@@ -16,8 +16,8 @@ describe 'mysql_database' do
     pp = <<-MANIFEST
         mysql_database { 'spec_db':
           ensure  => present,
-          charset => '#{fetch_charset}',
-          collate => '#{fetch_charset}_general_ci',
+          charset => '#{charset}',
+          collate => '#{charset}_general_ci',
         }
     MANIFEST
     it 'works without errors' do
@@ -39,8 +39,8 @@ describe 'mysql_database' do
           collate => 'latin1_swedish_ci',
         }
         mysql_database { 'spec_utf8':
-          charset => '#{fetch_charset}',
-          collate => '#{fetch_charset}_general_ci',
+          charset => '#{charset}',
+          collate => '#{charset}_general_ci',
         }
     MANIFEST
     it 'creates two db of different types idempotently' do

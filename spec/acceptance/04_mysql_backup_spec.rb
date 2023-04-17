@@ -12,8 +12,8 @@ describe 'mysql::server::backup class' do
         ]:
           user     => 'backup',
           password => 'secret',
-          charset  => '#{fetch_charset}',
-          collate  => '#{fetch_charset}_general_ci',
+          charset  => '#{charset}',
+          collate  => '#{charset}_general_ci',
         }
 
         class { 'mysql::server::backup':
@@ -74,8 +74,8 @@ describe 'mysql::server::backup class' do
           ]:
             user     => 'backup',
             password => 'secret',
-            charset  => '#{fetch_charset}',
-            collate  => '#{fetch_charset}_general_ci',
+            charset  => '#{charset}',
+            collate  => '#{charset}_general_ci',
           }
 
           class { 'mysql::server::backup':

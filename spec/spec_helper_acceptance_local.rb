@@ -36,7 +36,7 @@ def sles_15?
   os[:family] == 'sles' && os[:release].to_i == 15
 end
 
-def fetch_charset
+def charset
   @charset ||= (ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
 end
 

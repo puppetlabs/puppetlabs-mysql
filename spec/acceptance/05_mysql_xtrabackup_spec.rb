@@ -12,8 +12,8 @@ describe 'mysql::server::backup class with xtrabackup', if: Gem::Version.new(mys
         ]:
           user     => 'backup',
           password => 'secret',
-          charset  => '#{fetch_charset}',
-          collate  => '#{fetch_charset}_general_ci',
+          charset  => '#{charset}',
+          collate  => '#{charset}_general_ci',
         }
         case $facts['os']['family'] {
           /Debian/: {
@@ -130,8 +130,8 @@ describe 'mysql::server::backup class with xtrabackup', if: Gem::Version.new(mys
         ]:
           user     => 'backup',
           password => 'secret',
-          charset  => '#{fetch_charset}',
-          collate  => '#{fetch_charset}_general_ci',
+          charset  => '#{charset}',
+          collate  => '#{charset}_general_ci',
         }
         case $facts['os']['family'] {
           /Debian/: {
