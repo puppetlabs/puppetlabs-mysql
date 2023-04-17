@@ -141,11 +141,3 @@ Style/MixinUsage:
   Exclude:
     - 'spec/spec_helper.rb'
     - 'spec/spec_helper_local.rb'
-
-# Offense count: 2
-# Configuration parameters: AllowedMethods.
-# AllowedMethods: respond_to_missing?
-Style/OptionalBooleanParameter:
-  Exclude:
-    - 'lib/puppet/functions/mysql/password.rb'
-    - 'lib/puppet/functions/mysql_password.rb'
