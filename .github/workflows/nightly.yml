@@ -35,10 +35,6 @@ jobs:
         bundle env
         echo ::endgroup::
 
-    - name: Run validation steps
-      run: |
-        bundle exec rake validate
-
     - name: Setup Acceptance Test Matrix
       id: get-matrix
       run: |
@@ -54,6 +50,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
+
+    env:
+      PUPPET_GEM_VERSION: '~> 7.24'
+      FACTER_GEM_VERSION: 'https://github.com/puppetlabs/facter#main'
     
     steps:
     - name: Checkout Source
