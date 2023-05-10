@@ -15,7 +15,7 @@ Puppet::Functions.create_function(:mysql_password) do
     return_type 'Variant[String, Sensitive[String]]'
   end
 
-  def mysql_password(password, sensitive: false)
+  def mysql_password(password, sensitive = false) # rubocop:disable Style/OptionalBooleanParameter
     call_function('deprecation', 'mysql_password', "This method has been deprecated, please use the namespaced version 'mysql::password' instead.")
     call_function('mysql::password', password, sensitive)
   end
