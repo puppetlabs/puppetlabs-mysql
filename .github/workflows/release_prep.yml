@@ -1,0 +1,15 @@
+name: "Release Prep"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Module version to be released. Must be a valid semver string. (1.2.3)"
+        required: true
+
+jobs:
+  release_prep:
+    uses: "puppetlabs/cat-github-actions/.github/workflows/module_release_prep.yml@main"
+    with:
+      version: "${{ github.event.inputs.version }}"
+    secrets: "inherit"
