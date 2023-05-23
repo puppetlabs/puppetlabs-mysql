@@ -50,7 +50,7 @@ class mysql::backup::mysqldump (
 
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
-    password_hash => mysql::password($backuppassword),
+    password_hash => Deferred('mysql::password', [$backuppassword]),
     require       => Class['mysql::server::root_password'],
   }
 

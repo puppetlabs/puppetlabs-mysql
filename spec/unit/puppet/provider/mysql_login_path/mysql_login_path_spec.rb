@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'puppet/resource_api/base_context'
 
 ensure_module_defined('Puppet::Provider::MysqlLoginPath')
 require 'puppet/provider/mysql_login_path/mysql_login_path'

@@ -46,7 +46,7 @@ class mysql::backup::xtrabackup (
   if $backupuser and $backuppassword {
     mysql_user { "${backupuser}@localhost":
       ensure        => $ensure,
-      password_hash => mysql::password($backuppassword),
+      password_hash => Deferred('mysql::password', [$backuppassword]),
       require       => Class['mysql::server::root_password'],
     }
     # Percona XtraBackup needs additional grants/privileges to work with MySQL 8

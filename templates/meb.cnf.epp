@@ -1,0 +1,18 @@
+### MANAGED BY PUPPET ###
+
+<% $options.map |Any $k, Any $v| { -%>
+<%   if $v.is_a(Hash) { -%>
+[<%=   $k %>]
+<%     $v.map |Any $ki, Any $vi| { -%>
+<%       if $vi == true or $v == '' {-%>
+<%=        $ki %>
+<%      } elsif $vi.is_a(Hash) { -%>
+<%         $vi.each |$vii| { -%>
+<%=          $ki %> = <%= $vii %>
+<%         } -%>
+<%       } elsif !($vi == '' or $vi == undef ) { -%>
+<%=        $ki %> = <%= $vi %>
+<%       } -%>
+<%     } -%>
+<%   } %>
+<% } -%>

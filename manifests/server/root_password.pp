@@ -32,7 +32,7 @@ class mysql::server::root_password {
   if $mysql::server::create_root_user and $root_password_set {
     mysql_user { 'root@localhost':
       ensure        => present,
-      password_hash => mysql::password($mysql::server::root_password),
+      password_hash => Deferred('mysql::password', [$mysql::server::root_password]),
       require       => Exec['remove install pass'],
     }
   }
