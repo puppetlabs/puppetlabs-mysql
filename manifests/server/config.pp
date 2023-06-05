@@ -41,8 +41,8 @@ class mysql::server::config {
           $dir = $options['mysqld']["${entry}"]
 
           if ( $dir and $dir != '/usr' and $dir != '/tmp' ) {
-            $clean_dir = shell_escape($dir)
-            $clean_package_name = shell_escape($mysql::server::package_name)
+            $clean_dir = stdlib::shell_escape($dir)
+            $clean_package_name = stdlib::shell_escape($mysql::server::package_name)
 
             exec { "${entry}-managed_dir-mkdir":
               command => ['/bin/mkdir', '-p', $clean_dir],
