@@ -56,7 +56,7 @@ class mysql::server::service {
       $mysqlsocket = $options['mysqld']['socket']
     }
 
-    $test_command = ['test', '-S', shell_escape($mysqlsocket)]
+    $test_command = ['test', '-S', stdlib::shell_escape($mysqlsocket)]
     if $service_ensure != 'stopped' {
       exec { 'wait_for_mysql_socket_to_open':
         command   => $test_command,
