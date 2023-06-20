@@ -44,14 +44,14 @@
 
 #### Public Resource types
 
-* [`mysql_grant`](#mysql_grant): @summary Manage a MySQL user's rights.
+* [`mysql_database`](#mysql_database): Manage a MySQL database.
+* [`mysql_grant`](#mysql_grant): Manage a MySQL user's rights.
 * [`mysql_login_path`](#mysql_login_path): Manage a MySQL login path.
 * [`mysql_plugin`](#mysql_plugin): Manage MySQL plugins.
-* [`mysql_user`](#mysql_user): @summary Manage a MySQL user. This includes management of users password as well as privileges.
+* [`mysql_user`](#mysql_user): Manage a MySQL user. This includes management of users password as well as privileges.
 
 #### Private Resource types
 
-* `mysql_database`: Manage a MySQL database.
 * `mysql_datadir`: Manage MySQL datadirs with mysql_install_db OR mysqld (5.7.6 and above).
 
 ### Functions
@@ -1158,8 +1158,8 @@ The following parameters are available in the `mysql::db` defined type:
 ##### <a name="-mysql--db--name"></a>`name`
 
 The name of the database to create. Database names must:
-  * be longer than 64 characters.
-  * not contain / \ or . characters.
+  * not be longer than 64 characters.
+  * not contain '/' '\' or '.' characters.
   * not contain characters that are not permitted in file names.
   * not end with space characters.
 
@@ -1281,9 +1281,58 @@ Default value: `undef`
 
 ## Resource types
 
+### <a name="mysql_database"></a>`mysql_database`
+
+Manage a MySQL database.
+
+#### Properties
+
+The following properties are available in the `mysql_database` type.
+
+##### `charset`
+
+Valid values: `%r{^\S+$}`
+
+The CHARACTER SET setting for the database
+
+Default value: `utf8`
+
+##### `collate`
+
+Valid values: `%r{^\S+$}`
+
+The COLLATE setting for the database
+
+Default value: `utf8_general_ci`
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
+
+#### Parameters
+
+The following parameters are available in the `mysql_database` type.
+
+* [`name`](#-mysql_database--name)
+* [`provider`](#-mysql_database--provider)
+
+##### <a name="-mysql_database--name"></a>`name`
+
+namevar
+
+The name of the MySQL database to manage.
+
+##### <a name="-mysql_database--provider"></a>`provider`
+
+The specific backend to use for this `mysql_database` resource. You will seldom need to specify this --- Puppet will
+usually discover the appropriate provider for your platform.
+
 ### <a name="mysql_grant"></a>`mysql_grant`
 
-@summary
 Manage a MySQL user's rights.
 
 #### Properties
@@ -1483,7 +1532,6 @@ usually discover the appropriate provider for your platform.
 
 ### <a name="mysql_user"></a>`mysql_user`
 
-@summary
 Manage a MySQL user. This includes management of users password as well as privileges.
 
 #### Properties

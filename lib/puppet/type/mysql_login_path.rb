@@ -6,8 +6,7 @@ Puppet::ResourceApi.register_type(
   name: 'mysql_login_path',
 
   docs: <<-DESCRIPTION,
-  @summary
-    Manage a MySQL login path.
+  @summary Manage a MySQL login path.
   @see
     https://dev.mysql.com/doc/refman/8.0/en/mysql-config-editor.html
   @example

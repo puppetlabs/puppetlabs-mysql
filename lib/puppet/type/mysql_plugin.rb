@@ -2,8 +2,7 @@
 
 Puppet::Type.newtype(:mysql_plugin) do
   @doc = <<-PUPPET
-    @summary
-      Manage MySQL plugins.
+    @summary Manage MySQL plugins.
 
     @example
       mysql_plugin { 'some_plugin':
