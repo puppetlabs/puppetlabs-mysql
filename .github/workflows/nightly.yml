@@ -70,10 +70,12 @@ jobs:
         bundle env
 
     - name: "Disable mysqld apparmor profile"	
-      if: matrix.platforms.provider == 'provision::docker'	
+      if: ${{matrix.platforms.provider == 'docker'}}
       run: |	
         sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/	
         sudo apparmor_parser -R /etc/apparmor.d/disable/usr.sbin.mysqld
+        sudo systemctl disable apparmor
+        sudo systemctl stop apparmor
 
     - name: Provision test environment
       run: |
@@ -98,4 +100,3 @@ jobs:
       continue-on-error: true
       run: |
         bundle exec rake 'litmus:tear_down'
-

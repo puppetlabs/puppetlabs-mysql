@@ -11,7 +11,7 @@ def mysql_version
   shell_output = LitmusHelper.instance.run_shell('mysql --version', expect_failures: true)
   if shell_output.stdout.match(%r{\d+\.\d+\.\d+}).nil?
     # mysql is not yet installed, so we apply this class to install it
-    LitmusHelper.instance.apply_manifest('include mysql::server', debug: true, catch_failures: true)
+    LitmusHelper.instance.apply_manifest('include mysql::server', catch_failures: true)
     shell_output = LitmusHelper.instance.run_shell('mysql --version')
     raise _('unable to get mysql version') if shell_output.stdout.match(%r{\d+\.\d+\.\d+}).nil?
   end
