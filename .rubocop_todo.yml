@@ -95,6 +95,7 @@ RSpec/NamedSubject:
     - 'spec/classes/mysql_server_spec.rb'
     - 'spec/defines/mysql_db_spec.rb'
     - 'spec/functions/mysql_normalise_and_deepmerge_spec.rb'
+    - 'spec/functions/mysql_innobackupex_args_spec.rb'
     - 'spec/functions/mysql_strip_hash_spec.rb'
 
 # Offense count: 45

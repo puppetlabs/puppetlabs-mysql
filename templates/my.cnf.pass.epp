@@ -1,0 +1,9 @@
+<%['mysql', 'client', 'mysqldump', 'mysqladmin', 'mysqlcheck'].each |$section| { %>
+[<%= $section -%>]
+user=root
+host=localhost
+<% if $root_password_set { -%>
+password='<%= $root_password %>'
+<% } -%>
+socket=<%= $options['client']['socket'] %>
+<% } %>

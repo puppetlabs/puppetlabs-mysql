@@ -61,10 +61,15 @@ class mysql::server::config {
     default: {}
   }
 
+  $parameters= {
+    'options' => $options,
+    'includedir' => $includedir,
+  }
+
   if $mysql::server::manage_config_file {
     file { 'mysql-config-file':
       path                    => $mysql::server::config_file,
-      content                 => template('mysql/my.cnf.erb'),
+      content                 => epp('mysql/my.cnf.epp', $parameters),
       mode                    => $mysql::server::config_file_mode,
       owner                   => $mysql::server::mycnf_owner,
       group                   => $mysql::server::mycnf_group,
