@@ -13,7 +13,7 @@ class mysql::backup::xtrabackup (
   String[1]                                     $backupdirgroup           = $mysql::params::root_group,
   Boolean                                       $backupcompress           = true,
   Variant[Integer, String[1]]                   $backuprotate             = 30,
-  String[1]                                     $backupscript_template    = 'mysql/xtrabackup.sh.erb',
+  String[1]                                     $backupscript_template    = 'mysql/xtrabackup.sh.epp',
   Optional[String[1]]                           $backup_success_file_path = undef,
   Boolean                                       $ignore_events            = true,
   Boolean                                       $delete_before_dump       = false,
@@ -176,12 +176,23 @@ class mysql::backup::xtrabackup (
   }
 
   # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
+  $parameters = {
+    'innobackupex_args' => mysql::innobackupex_args($backupuser, $backupcompress, $backuppassword_unsensitive, $backupdatabases, $optional_args),
+    'backuprotate' => $backuprotate,
+    'backupdir' => $backupdir,
+    'backupmethod' => $backupmethod,
+    'delete_before_dump' => $delete_before_dump,
+    'prescript' => $prescript,
+    'backup_success_file_path'=> $backup_success_file_path,
+    'postscript'=> $postscript,
+  }
+
   file { 'xtrabackup.sh':
     ensure  => $ensure,
     path    => '/usr/local/sbin/xtrabackup.sh',
     mode    => '0700',
     owner   => 'root',
     group   => $mysql::params::root_group,
-    content => template($backupscript_template),
+    content => epp($backupscript_template,$parameters),
   }
 }

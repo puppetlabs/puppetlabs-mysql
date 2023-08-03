@@ -88,6 +88,30 @@ class mysql::backup::mysqldump (
     require  => File['mysqlbackup.sh'],
   }
 
+  $parameters = {
+    'backupuser'=> $backupuser,
+    'backuppassword_unsensitive'=> $backuppassword_unsensitive,
+    'maxallowedpacket'=> $maxallowedpacket,
+    'backupdir'=> $backupdir,
+    'backuprotate'=> $backuprotate,
+    'prescript'=> $prescript,
+    'ignore_events'=> $ignore_events,
+    'backupdatabases'=> $backupdatabases,
+    'include_triggers'=> $include_triggers,
+    'optional_args'=> $optional_args,
+    'execpath'=> $execpath,
+    'delete_before_dump'=> $delete_before_dump,
+    'excludedatabases'=> $excludedatabases,
+    'backupmethod'=> $backupmethod,
+    'backupcompress'=> $backupcompress,
+    'compression_command'=> $compression_command,
+    'compression_extension'=> $compression_extension,
+    'backup_success_file_path'=> $backup_success_file_path,
+    'postscript'=> $postscript,
+    'file_per_database'=> $file_per_database,
+    'include_routines' => $include_routines,
+  }
+
   # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
   file { 'mysqlbackup.sh':
     ensure  => $ensure,
@@ -95,7 +119,7 @@ class mysql::backup::mysqldump (
     mode    => '0700',
     owner   => 'root',
     group   => $mysql::params::root_group,
-    content => template('mysql/mysqlbackup.sh.erb'),
+    content => epp('mysql/mysqlbackup.sh.epp',$parameters),
   }
 
   if $mysqlbackupdir_target {

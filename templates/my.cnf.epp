@@ -1,0 +1,25 @@
+### MANAGED BY PUPPET ###
+
+<% sort($options.map |$key, $value| { [$key, $value] }).map |$v| { -%>
+<% if type($v[1]) =~ Type[Hash] { -%>
+[<%= $v[0] %>]
+<%sort($v[1].map |$key, $value| { [$key, $value] }).map |$vi| { -%>
+<%- if ($vi[0] == 'ssl-disable') or ($vi[0] =~ /^ssl/ and $v[1]['ssl-disable'] == true) or ($vi[0] =~ /^ssl-/ and $v[1]['ssl'] == false) { -%>
+<%- next -%>
+<%- } elsif $vi[1] == true or $vi[1] == '' { -%>
+<%= $vi[0] -%>
+<%- } elsif type($vi[1]) =~ Type[Array] { -%>
+<%- $vi[1].each |$vii| { -%>
+<%-$base = $vi[0]-%>
+<%= $base %> = <%= $vii %>
+<%- } -%>
+<%- } elsif !($vi[1] ==nil or $vi[1]=='' or $vi[1]==undef) { -%>
+<%-$base = $vi[0]-%>
+<%= $base %> = <%= $vi[1] -%>
+<% } %>
+<% } %>
+<% } %>
+<% } %>
+<% if $includedir and $includedir != '' { -%>
+!includedir <%= $includedir %>
+<% } -%>
