@@ -8,29 +8,29 @@ vagrant:
   images:
   - centos/7
   - generic/ubuntu1804
-travis_deb:
+docker_deb:
   provisioner: docker
   images:
   - litmusimage/debian:9
   - litmusimage/debian:10
-travis_ub_5:
+docker_ub_5:
   provisioner: docker
   images:
   - litmusimage/ubuntu:16.04
   - litmusimage/ubuntu:18.04
-travis_ub_6:
+docker_ub_6:
   provisioner: docker
   images:
   - litmusimage/ubuntu:16.04
   - litmusimage/ubuntu:18.04
   - litmusimage/ubuntu:20.04
-travis_el7:
+docker_el7:
   provisioner: docker_exp
   images:
   - litmusimage/centos:7
   - litmusimage/oraclelinux:7
   - litmusimage/scientificlinux:7
-travis_el8:
+docker_el8:
   provisioner: docker
   images:
   - litmusimage/centos:8
