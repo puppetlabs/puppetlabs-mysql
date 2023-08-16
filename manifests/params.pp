@@ -400,21 +400,6 @@ class mysql::params {
     }
   }
 
-  case $facts['os']['name'] {
-    'Ubuntu': {
-      $server_service_provider = 'systemd'
-    }
-    'Alpine': {
-      $server_service_provider = 'rc-service'
-    }
-    'FreeBSD': {
-      $server_service_provider = 'freebsd'
-    }
-    default: {
-      $server_service_provider = undef
-    }
-  }
-
   $default_options = {
     'client'          => {
       'port'          => '3306',
