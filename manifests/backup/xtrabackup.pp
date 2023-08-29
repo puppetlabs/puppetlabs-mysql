@@ -43,14 +43,14 @@ class mysql::backup::xtrabackup (
     $backuppassword
   }
 
-  if $backupuser and $backuppassword {
+  if (defined('$facts["mysql_version"]')) and $backupuser and $backuppassword {
     mysql_user { "${backupuser}@localhost":
       ensure        => $ensure,
       password_hash => Deferred('mysql::password', [$backuppassword]),
       require       => Class['mysql::server::root_password'],
     }
     # Percona XtraBackup needs additional grants/privileges to work with MySQL 8
-    if (defined('$facts["mysql_version"]')) and versioncmp($facts['mysql_version'], '8') >= 0 and !(/(?i:mariadb)/ in $facts['mysqld_version']) {
+    if versioncmp($facts['mysql_version'], '8') >= 0 and !(/(?i:mariadb)/ in $facts['mysqld_version']) {
       if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['major'], '11') >= 0) or
       ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['major'], '22.04') >= 0) {
         mysql_grant { "${backupuser}@localhost/*.*":
