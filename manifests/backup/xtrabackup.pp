@@ -33,7 +33,8 @@ class mysql::backup::xtrabackup (
   Optional[String[1]]                           $compression_command      = undef,
   Optional[String[1]]                           $compression_extension    = undef,
   String[1]                                     $backupmethod_package     = $mysql::params::xtrabackup_package_name,
-  Array[String]                                 $excludedatabases = [],
+  Array[String]                                 $excludedatabases         = [],
+  Boolean                                       $is_mysql_v8              = false,
 ) inherits mysql::params {
   stdlib::ensure_packages($backupmethod_package)
 
@@ -43,14 +44,14 @@ class mysql::backup::xtrabackup (
     $backuppassword
   }
 
-  if (defined('$facts["mysql_version"]')) and $backupuser and $backuppassword {
+  if $backupuser and $backuppassword {
     mysql_user { "${backupuser}@localhost":
       ensure        => $ensure,
       password_hash => Deferred('mysql::password', [$backuppassword]),
       require       => Class['mysql::server::root_password'],
     }
     # Percona XtraBackup needs additional grants/privileges to work with MySQL 8
-    if versioncmp($facts['mysql_version'], '8') >= 0 and !(/(?i:mariadb)/ in $facts['mysqld_version']) {
+    if ($is_mysql_v8 or versioncmp($facts['mysql_version'], '8') >= 0) and !(/(?i:mariadb)/ in $facts['mysqld_version']) {
       if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['major'], '11') >= 0) or
       ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['major'], '22.04') >= 0) {
         mysql_grant { "${backupuser}@localhost/*.*":
