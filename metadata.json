@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "source": "git://github.com/puppetlabs/puppetlabs-mysql",
   "project_page": "http://github.com/puppetlabs/puppetlabs-mysql",
-  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
+  "issues_url": "https://github.com/puppetlabs/puppetlabs-mysql/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
