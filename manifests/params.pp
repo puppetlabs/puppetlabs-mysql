@@ -485,7 +485,7 @@ class mysql::params {
   }
 
   ## Additional graceful failures
-  if $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] == '4' and $facts['os']['name'] != 'Amazon' {
-    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 6.0 and beyond.")
+  if $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] < '7' and $facts['os']['name'] != 'Amazon' {
+    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 7.0 and beyond.")
   }
 }
