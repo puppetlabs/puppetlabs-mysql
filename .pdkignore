@@ -31,6 +31,7 @@
 /.fixtures.yml
 /Gemfile
 /.gitattributes
+/.github/
 /.gitignore
 /.gitlab-ci.yml
 /.pdkignore
