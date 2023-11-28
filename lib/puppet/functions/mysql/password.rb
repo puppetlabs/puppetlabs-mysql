@@ -19,7 +19,7 @@ Puppet::Functions.create_function(:'mysql::password') do
     return_type 'Variant[String, Sensitive[String]]'
   end
 
-  def password(password, sensitive = false) # rubocop:disable Style/OptionalBooleanParameter
+  def password(password, sensitive = false)
     password = password.unwrap if password.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
 
     result_string = if %r{\*[A-F0-9]{40}$}.match?(password)
