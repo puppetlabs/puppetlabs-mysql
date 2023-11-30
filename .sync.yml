@@ -3,6 +3,8 @@
   delete: true
 appveyor.yml:
   delete: true
+rubocop.yml:
+  include_todos: true
 
 Gemfile:
   optional:
@@ -14,8 +16,6 @@ spec/spec_helper.rb:
   - require 'spec_helper_local'
   coverage_report: true
 "  changelog_user": puppetlabs
-Rakefile:
-  changelog_max_issues: 500
 .gitpod.Dockerfile:
   unmanaged: false
 .gitpod.yml:
@@ -32,6 +32,7 @@ Rakefile:
   delete: true
 changelog_since_tag: 'v11.0.3'
 Rakefile:
+  changelog_max_issues: 500
   extra_disabled_lint_checks:
     - anchor_resource
     - params_empty_string_assignment
