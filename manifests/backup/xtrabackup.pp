@@ -97,11 +97,17 @@ class mysql::backup::xtrabackup (
         }
       }
       else {
+        # RENAME CLIENT Renamed to BINLOG MONITOR in MariaDB 10.5.2 
+        if versioncmp($facts['mysql_version'], '10.5.2') >= 0 and (/(?i:mariadb)/ in $facts['mysqld_version']) {
+          $privs = ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES']
+        } else {
+          $privs = ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT']
+        }
         mysql_grant { "${backupuser}@localhost/*.*":
           ensure     => $ensure,
           user       => "${backupuser}@localhost",
           table      => '*.*',
-          privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
+          privileges => $privs,
           require    => Mysql_user["${backupuser}@localhost"],
         }
       }
