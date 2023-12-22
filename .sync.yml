@@ -6,11 +6,7 @@ appveyor.yml:
 rubocop.yml:
   include_todos: true
 
-Gemfile:
-  optional:
-    ":development":
-    - gem: github_changelog_generator
-      version: '= 1.15.2'
+
 spec/spec_helper.rb:
   spec_overrides:
   - require 'spec_helper_local'
