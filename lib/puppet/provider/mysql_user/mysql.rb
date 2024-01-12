@@ -25,6 +25,8 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       x509_issuer, x509_subject, @password, @plugin, @authentication_string = mysql_caller(query, 'regular').chomp.split(%r{\t})
       
       if @plugin == 'caching_sha2_password'
+        # Escaping all single quotes to prevent errors when password generated it
+        @password = @password.gsub("'"){"\\'"}
         @password = mysql_caller("SELECT CONCAT('0x',HEX('#{@password}'))", 'regular').chomp
       end
 
