@@ -235,7 +235,11 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
     elsif newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
       sql = "ALTER USER #{merged_name} IDENTIFIED WITH '#{string}'"
-      sql += " AS '#{@resource[:password_hash]}'" if string == 'mysql_native_password'
+      if string == 'mysql_native_password'
+        sql += " AS '#{@resource[:password_hash]}'"
+      elsif string == 'caching_sha2_password'
+        sql += " AS X'#{password_hash[2..-1]}'"
+      end
     else
       # See https://bugs.mysql.com/bug.php?id=67449
       sql = "UPDATE mysql.user SET plugin = '#{string}'"
