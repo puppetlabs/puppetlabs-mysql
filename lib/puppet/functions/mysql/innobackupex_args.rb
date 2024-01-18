@@ -4,12 +4,11 @@
 # arguments that return string holds is conditional and decided by the the input given to function.
 
 Puppet::Functions.create_function(:'mysql::innobackupex_args') do
-  # @param args
-  #   String backupuser
-  #   Boolean backupcompress
-  #   String backuppassword_unsensitive
-  #   Array backupdatabases
-  #   Array optional_args
+  # @param backupuser
+  # @param backupcompress
+  # @param backuppassword_unsensitive
+  # @param backupdatabases
+  # @param optional_args
   #
   # @return String
   #   Generated on the basis of provided values.
