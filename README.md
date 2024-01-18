@@ -659,7 +659,7 @@ The MySQL module has an example task that allows a user to execute arbitary SQL 
 
 ## Limitations
 
-For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-mysql/blob/main/metadata.json)
+This module lacks compatibility with the ARM architecture, for an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-mysql/blob/main/metadata.json)
 
 **Note:** The mysqlbackup.sh does not work and is not supported on MySQL 5.7 and greater.
 
