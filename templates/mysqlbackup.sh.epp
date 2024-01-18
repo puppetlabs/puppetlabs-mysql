@@ -84,7 +84,7 @@ cleanup
 <% if $excludedatabases.empty { -%>
 mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | while read dbname
 <%} else {-%>
-mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | grep -v '^\(<%= $excludedatabases.join('|') %>\)$' | while read dbname
+mysql --defaults-extra-file=$TMPFILE -s -r -N -e 'SHOW DATABASES' | grep -v '^\(<%= $excludedatabases.join('\\|') %>\)$' | while read dbname
 <% } -%>
 do
   <%= $backupmethod %> --defaults-extra-file=$TMPFILE --opt --flush-logs --single-transaction \
