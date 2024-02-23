@@ -23,10 +23,10 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       # rubocop:enable Layout/LineLength
       @max_user_connections, @max_connections_per_hour, @max_queries_per_hour, @max_updates_per_hour, ssl_type, ssl_cipher,
       x509_issuer, x509_subject, @password, @plugin, @authentication_string = mysql_caller(query, 'regular').chomp.split(%r{\t})
-      
+
       if @plugin == 'caching_sha2_password'
         # Escaping all single quotes to prevent errors when password generated it
-        @password = @password.gsub("'"){"\\'"}
+        @password = @password.gsub("'") { "\\'" }
         @password = mysql_caller("SELECT CONCAT('0x',HEX('#{@password}'))", 'regular').chomp
       end
 
@@ -83,7 +83,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     if !plugin.nil?
       if password_hash.nil?
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}'", 'system')
-      elsif plugin.eql? "caching_sha2_password"
+      elsif plugin.eql? 'caching_sha2_password'
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS X'#{password_hash[2..-1]}'", 'system')
       else
         self.class.mysql_caller("CREATE USER '#{merged_name}' IDENTIFIED WITH '#{plugin}' AS '#{password_hash}'", 'system')
@@ -168,12 +168,14 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       end
       self.class.mysql_caller(sql, 'system')
     elsif !mysqld_version.nil? && newer_than('mysql' => '5.7.6', 'percona' => '5.7.6', 'mariadb' => '10.2.0')
-      raise ArgumentError, _('Only mysql_native_password (*ABCD...XXX) or caching_sha2_password (0x1234ABC...XXX) hashes are supported.') unless %r{^\*|^$}.match?(string) || %r{0x[A-F0-9]+$}.match?(string)
+      raise ArgumentError, _('Only mysql_native_password (*ABCD...XXX) or caching_sha2_password (0x1234ABC...XXX) hashes are supported.') unless
+      %r{^\*|^$}.match?(string) || %r{0x[A-F0-9]+$}.match?(string)
+
       sql = "ALTER USER #{merged_name} IDENTIFIED WITH"
       if plugin == 'caching_sha2_password'
-        sql += " 'caching_sha2_password' AS X'#{string[2..-1]}'"
+        sql << " 'caching_sha2_password' AS X'#{string[2..-1]}'"
       else
-        sql += " 'mysql_native_password' AS '#{string}'"
+        sql << " 'mysql_native_password' AS '#{string}'"
       end
       self.class.mysql_caller(sql, 'system')
     else
