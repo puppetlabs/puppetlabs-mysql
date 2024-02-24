@@ -176,7 +176,6 @@ class mysql::params {
       $config_file             = '/etc/mysql/my.cnf'
       $includedir              = '/etc/mysql/conf.d'
       $datadir                 = '/var/lib/mysql'
-      $log_error               = '/var/log/mysql/error.log'
       $pidfile                 = '/var/run/mysqld/mysqld.pid'
       $root_group              = 'root'
       $mysql_group             = 'adm'
@@ -186,6 +185,14 @@ class mysql::params {
       $ssl_key                 = '/etc/mysql/server-key.pem'
       $tmpdir                  = '/tmp'
       $managed_dirs            = ['tmpdir','basedir','datadir','innodb_data_home_dir','innodb_log_group_home_dir','innodb_undo_directory','innodb_tmpdir']
+
+      # log_error base directory absent in Debian >= 12
+      if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['full'], '12') >= 0) or
+      ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['full'], '23.10') >= 0) {
+        $log_error = undef
+      } else {
+        $log_error = '/var/log/mysql/error.log'
+      }
 
       # mysql::bindings
       if ($facts['os']['name'] == 'Debian' and versioncmp($facts['os']['release']['full'], '10') >= 0) or
