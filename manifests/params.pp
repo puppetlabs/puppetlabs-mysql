@@ -162,7 +162,7 @@ class mysql::params {
         $client_package_name     = 'mariadb-client'
         $server_package_name     = 'mariadb-server'
         $server_service_name     = 'mariadb'
-        $client_dev_package_name = 'libmariadbclient-dev'
+        $client_dev_package_name = 'libmariadb-dev'
         $daemon_dev_package_name = 'libmariadbd-dev'
       } else {
         $client_package_name     = 'mysql-client'
