@@ -50,22 +50,22 @@
 #   Specify the path in which mysql has been installed if done in the non-standard bin/sbin path.   
 #
 define mysql::db (
-  String[1]                                              $user,
-  Variant[String, Sensitive[String]]                     $password,
-  String[1]                                              $plugin          = 'mysql_native_password',
-  Optional[Array[String[1]]]                             $tls_options     = undef,
-  String                                                 $dbname          = $name,
-  String[1]                                              $charset         = 'utf8',
-  String[1]                                              $collate         = 'utf8_general_ci',
-  String[1]                                              $host            = 'localhost',
-  Variant[String[1], Array[String[1]]]                   $grant           = 'ALL',
-  Optional[Variant[String[1], Array[String[1]]]]         $grant_options   = undef,
-  Optional[Array]                                        $sql             = undef,
-  Boolean                                                $enforce_sql     = false,
-  Enum['absent', 'present']                              $ensure          = 'present',
-  Integer                                                $import_timeout  = 300,
-  Enum['cat', 'zcat', 'bzcat']                           $import_cat_cmd  = 'cat',
-  Optional[String]                                       $mysql_exec_path = undef,
+  String[1]                                      $user,
+  Variant[String, Sensitive[String]]             $password,
+  String[1]                                      $plugin          = 'mysql_native_password',
+  Optional[Array[String[1]]]                     $tls_options     = undef,
+  String                                         $dbname          = $name,
+  String[1]                                      $charset         = 'utf8',
+  String[1]                                      $collate         = 'utf8_general_ci',
+  String[1]                                      $host            = 'localhost',
+  Variant[String[1], Array[String[1]]]           $grant           = 'ALL',
+  Optional[Variant[String[1], Array[String[1]]]] $grant_options   = undef,
+  Optional[Array]                                $sql             = undef,
+  Boolean                                        $enforce_sql     = false,
+  Enum['absent', 'present']                      $ensure          = 'present',
+  Integer                                        $import_timeout  = 300,
+  Enum['cat', 'zcat', 'bzcat']                   $import_cat_cmd  = 'cat',
+  Optional[String]                               $mysql_exec_path = undef,
 ) {
   include 'mysql::client'
 
