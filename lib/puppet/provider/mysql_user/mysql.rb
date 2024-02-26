@@ -173,10 +173,10 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
 
       sql = "ALTER USER #{merged_name} IDENTIFIED WITH"
       sql << if plugin == 'caching_sha2_password'
-        " 'caching_sha2_password' AS X'#{string[2..-1]}'"
-      else
-        " 'mysql_native_password' AS '#{string}'"
-      end
+               " 'caching_sha2_password' AS X'#{string[2..-1]}'"
+             else
+               " 'mysql_native_password' AS '#{string}'"
+             end
       self.class.mysql_caller(sql, 'system')
     else
       # default ... if mysqld_version does not work
