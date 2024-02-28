@@ -56,6 +56,8 @@
 #   `create_root_my_cnf` are assumed to be false --- that is, the MySQL root user and `/root/.my.cnf` are not created. 
 #   Password changes are supported; however, the old password must be set in `/root/.my.cnf`. Effectively, Puppet uses the old 
 #   password, configured in `/root/my.cnf`, to set the new password in MySQL, and then updates `/root/.my.cnf` with the new password.
+# @param root_plugin
+#   Specifies which plugin the root user should use. Defaults to 'mysql_native_password'.
 # @param service_enabled
 #   Specifies whether the service should be enabled. Valid values are `true`, `false`. Defaults to `true`.
 # @param service_manage
@@ -114,6 +116,7 @@ class mysql::server (
   Optional[String[1]]                                                   $mycnf_owner             = undef,
   Optional[String[1]]                                                   $mycnf_group             = undef,
   Variant[String, Sensitive[String]]                                    $root_password           = 'UNSET',
+  String[1]                                                             $root_plugin             = 'mysql_native_password',
   Variant[Boolean, String[1]]                                           $service_enabled         = true,
   Variant[Boolean, String[1]]                                           $service_manage          = true,
   String[1]                                                             $service_name            = $mysql::params::server_service_name,

@@ -33,6 +33,7 @@ class mysql::server::root_password {
     mysql_user { 'root@localhost':
       ensure        => present,
       password_hash => Deferred('mysql::password', [$mysql::server::root_password]),
+      plugin        => $mysql::server::root_plugin,
       require       => Exec['remove install pass'],
     }
   }
