@@ -52,7 +52,7 @@
 define mysql::db (
   String[1]                                      $user,
   Variant[String, Sensitive[String]]             $password,
-  String[1]                                      $plugin          = 'mysql_native_password',
+  Optional[String[1]]                            $plugin          = undef,
   Optional[Array[String[1]]]                     $tls_options     = undef,
   String                                         $dbname          = $name,
   String[1]                                      $charset         = 'utf8',
