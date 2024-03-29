@@ -38,10 +38,28 @@ class Puppet::Provider::Mysql < Puppet::Provider
   ].join(':')
 
   # rubocop:disable Style/HashSyntax
-  commands :mysql_raw  => 'mysql'
-  commands :mysqld     => 'mysqld'
-  commands :mysqladmin => 'mysqladmin'
+  commands :mysql_client     => 'mysql'
+  commands :mariadb_client   => 'mariadb'
+  commands :mysqld_service   => 'mysqld'
+  commands :mariadbd_service => 'mariadbd'
+  commands :mysql_admin      => 'mysqladmin'
+  commands :mariadb_admin    => 'mysqladmin'
   # rubocop:enable Style/HashSyntax
+
+  def self.mysql_raw(*args)
+    mysqld_version_string.scan(%r{mariadb}i) { return mariadb_client(*args) }
+    mysql_client(*args)
+  end
+
+  def self.mysqld(*args)
+    mysqld_version_string.scan(%r{mariadb}i) { return mariadbd_service(*args) }
+    mysqld_service(*args)
+  end
+
+  def self.mysqladmin(*args)
+    mysqld_version_string.scan(%r{mariadb}i) { return mariadb_admin(*args) }
+    mysql_admin(*args)
+  end
 
   # Optional defaults file
   def self.defaults_file
