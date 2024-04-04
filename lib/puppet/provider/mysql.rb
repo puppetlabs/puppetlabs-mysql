@@ -43,7 +43,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   commands :mysqld_service   => 'mysqld'
   commands :mariadbd_service => 'mariadbd'
   commands :mysql_admin      => 'mysqladmin'
-  commands :mariadb_admin    => 'mysqladmin'
+  commands :mariadb_admin    => 'mariadb-admin'
   # rubocop:enable Style/HashSyntax
 
   def self.mysql_raw(*args)
