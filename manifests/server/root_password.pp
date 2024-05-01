@@ -23,7 +23,12 @@ class mysql::server::root_password {
   # below exec will remove this default password. If the user has supplied a root
   # password it will be set further down with the mysql_user resource.
   exec { 'remove install pass':
-    command => "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' /.mysql_secret) password && (rm -f  /.mysql_secret; exit 0) || (rm -f /.mysql_secret; exit 1)",
+    command => @(EOD)
+      mysqladmin -u root --password=$(grep -o '[^ ]+$' /.mysql_secret) password && \
+      (rm -f  /.mysql_secret; exit 0) || \
+      (rm -f /.mysql_secret; exit 1)
+      | EOD
+    ,
     onlyif  => [['test', '-f' ,'/.mysql_secret']],
     path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
   }
