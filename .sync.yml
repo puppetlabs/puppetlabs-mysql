@@ -11,11 +11,11 @@ spec/spec_helper.rb:
 .github/workflows/ci.yml:
   unmanaged: true
 .github/workflows/nightly.yml:
-  unmanaged: false
+  unmanaged: true
 .github/workflows/release_prep.yml:
-  unmanaged: false
+  unmanaged: true
 .github/workflows/release.yml:
-  unmanaged: false
+  unmanaged: true
 
 Rakefile:
   changelog_since_tag: 'v11.0.3'
