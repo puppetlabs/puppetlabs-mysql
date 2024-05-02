@@ -43,6 +43,8 @@ describe 'mysql::backup::mysqldump' do
       context 'with defaults' do
         let(:params) { default_params }
 
+        it { is_expected.to contain_class('mysql::params') }
+
         it {
           expect(subject).to contain_cron('mysql-backup').with(
             command: '/usr/local/sbin/mysqlbackup.sh',

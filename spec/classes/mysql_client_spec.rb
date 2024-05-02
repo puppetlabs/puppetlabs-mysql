@@ -10,6 +10,8 @@ describe 'mysql::client' do
       end
 
       context 'with defaults' do
+        it { is_expected.to contain_class('mysql::params') }
+        it { is_expected.to contain_class('mysql::client::install') }
         it { is_expected.not_to contain_class('mysql::bindings') }
         it { is_expected.to contain_package('mysql_client') }
       end

@@ -25,6 +25,8 @@ describe 'mysql::backup::xtrabackup' do
           default_params
         end
 
+        it { is_expected.to contain_class('mysql::params') }
+
         it 'does not contain the touch command' do
           expect(subject).to contain_file('xtrabackup.sh').without_content(
             %r{(^\s+touch\s+$)},

@@ -27,6 +27,8 @@ describe 'mysql::server::backup' do
       context 'standard conditions' do
         let(:params) { default_params }
 
+        it { is_expected.to contain_class('mysql::params') }
+
         # Cannot use that_requires here, doesn't work on classes.
         it {
           expect(subject).to contain_mysql_user('testuser@localhost').with(

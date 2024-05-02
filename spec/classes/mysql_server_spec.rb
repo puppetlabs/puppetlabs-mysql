@@ -10,8 +10,11 @@ describe 'mysql::server' do
       end
 
       context 'with defaults' do
+        it { is_expected.to contain_class('mysql::params') }
         it { is_expected.to contain_class('mysql::server::install') }
         it { is_expected.to contain_class('mysql::server::config') }
+        it { is_expected.to contain_class('mysql::server::managed_dirs') }
+        it { is_expected.to contain_class('mysql::server::installdb') }
         it { is_expected.to contain_class('mysql::server::service') }
         it { is_expected.to contain_class('mysql::server::root_password') }
         it { is_expected.to contain_class('mysql::server::providers') }
