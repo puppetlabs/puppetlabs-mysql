@@ -7,6 +7,7 @@ spec/spec_helper.rb:
   spec_overrides:
   - require 'spec_helper_local'
   coverage_report: true
+  minimum_code_coverage_percentage: 69
 
 .github/workflows/ci.yml:
   unmanaged: true
