@@ -2,21 +2,22 @@
 
 require 'spec_helper_acceptance'
 
-support_bin_dir = '/root/mysql_login_path'
-mysql_version = if (os[:family] == 'redhat' && os[:release].to_i == 8) || (os[:family] == 'debian' && os[:release] =~ %r{9|10|11})
-                  '8.0'
-                elsif os[:family] == 'ubuntu' && os[:release] =~ %r{18\.04|20\.04}
-                  '5.7'
-                else
-                  '5.6'
-                end
+describe 'mysql_login_path' do
+  begin
+    # mysql_config_editor is not supported on mariadb
+    # all tests should be skipped
+    run_shell('mysql_config_editor -V')
+  rescue
+    return
+  end
 
-describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".include?('suse') do
-  before(:all) do
-    run_shell("rm -rf #{support_bin_dir}")
-    bolt_upload_file('spec/support/mysql_login_path', support_bin_dir)
-    run_shell("cp #{support_bin_dir}/mysql-#{mysql_version}/my_print_defaults /usr/bin/.")
-    run_shell("cp #{support_bin_dir}/mysql-#{mysql_version}/mysql_config_editor /usr/bin/.")
+  let(:base_pp) do
+    <<-MANIFEST
+      user { 'loginpath_test':
+        ensure => present,
+        managehome => true,
+      }
+    MANIFEST
   end
 
   after(:all) do
@@ -29,36 +30,13 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
       }
     MANIFEST
     apply_manifest(pp_cleanup, catch_failures: true)
-    run_shell("rm -rf #{support_bin_dir}")
-  end
-
-  describe 'setup' do
-    pp = <<-MANIFEST
-      user { 'loginpath_test':
-        ensure => present,
-        managehome => true,
-      }
-    MANIFEST
-    it 'works with no errors' do
-      apply_manifest(pp, catch_failures: true)
-    end
-
-    it 'finds mysql_config_editor binary for the provider' do
-      run_shell('mysql_config_editor -V') do |r|
-        expect(r.stdout).to match(%r{Ver.*#{mysql_version}.*x86_64})
-      end
-    end
-
-    it 'finds my_print_defaults binary for the provider' do
-      run_shell('my_print_defaults -V') do |r|
-        expect(r.exit_status).to eq(0)
-      end
-    end
   end
 
   context 'for user root' do
     describe 'add login path' do
-      pp = <<-MANIFEST
+      let(:pp) do
+        <<-MANIFEST
+        #{base_pp}
         mysql_login_path { 'local_socket':
           owner    => root,
           host     => 'localhost',
@@ -75,7 +53,9 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
           port     => 3306,
           ensure   => present,
         }
-      MANIFEST
+        MANIFEST
+      end
+
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
@@ -102,7 +82,9 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
     end
 
     describe 'update login path' do
-      pp = <<-MANIFEST
+      let(:pp) do
+        <<-MANIFEST
+        #{base_pp}
         mysql_login_path { 'local_tcp-root':
           owner    => root,
           host     => '10.0.0.1',
@@ -111,13 +93,18 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
           port     => 3307,
           ensure   => present,
         }
-      MANIFEST
-      pp2 = <<-MANIFEST
+        MANIFEST
+      end
+
+      let(:pp2) do
+        <<-MANIFEST
         mysql_login_path { 'local_tcp-root':
           ensure  => present,
           host    => '192.168.0.1'
         }
-      MANIFEST
+        MANIFEST
+      end
+
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
@@ -193,7 +180,9 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
 
   context 'for user loginpath_test' do
     describe 'add login path' do
-      pp = <<-MANIFEST
+      let(:pp) do
+        <<-MANIFEST
+        #{base_pp}
         mysql_login_path { 'local_tcp':
           owner    => loginpath_test,
           host     => '10.0.0.2',
@@ -202,7 +191,9 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
           port     => 3306,
           ensure   => present,
         }
-      MANIFEST
+        MANIFEST
+      end
+
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
@@ -225,7 +216,9 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
     end
 
     describe 'update login path' do
-      pp = <<-MANIFEST
+      let(:pp) do
+        <<-MANIFEST
+        #{base_pp}
         mysql_login_path { 'local_tcp-loginpath_test':
           host     => '10.0.0.3',
           user     => 'other2',
@@ -233,7 +226,9 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
           port     => 3307,
           ensure   => present,
         }
-      MANIFEST
+        MANIFEST
+      end
+
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
@@ -256,12 +251,16 @@ describe 'mysql_login_path', unless: "#{os[:family]}-#{os[:release].to_i}".inclu
     end
 
     describe 'delete login path' do
-      pp = <<-MANIFEST
+      let(:pp) do
+        <<-MANIFEST
+        #{base_pp}
         mysql_login_path { 'local_tcp':
           owner  => loginpath_test,
           ensure => absent,
         }
-      MANIFEST
+        MANIFEST
+      end
+
       it 'works without errors' do
         apply_manifest(pp, catch_failures: true)
       end
