@@ -31,13 +31,13 @@ describe 'mysql::server::backup' do
 
         # Cannot use that_requires here, doesn't work on classes.
         it {
-          expect(subject).to contain_mysql_user('testuser@localhost').with(
+          is_expected.to contain_mysql_user('testuser@localhost').with(
             require: 'Class[Mysql::Server::Root_password]',
           )
         }
 
         it {
-          expect(subject).to contain_mysql_grant('testuser@localhost/*.*').with(
+          is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
             privileges: ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS'],
           ).that_requires('Mysql_user[testuser@localhost]')
         }
@@ -48,63 +48,63 @@ describe 'mysql::server::backup' do
           end
 
           it {
-            expect(subject).to contain_mysql_grant('testuser@localhost/*.*').with(
+            is_expected.to contain_mysql_grant('testuser@localhost/*.*').with(
               privileges: ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER'],
             ).that_requires('Mysql_user[testuser@localhost]')
           }
         end
 
         it {
-          expect(subject).to contain_cron('mysql-backup').with(
+          is_expected.to contain_cron('mysql-backup').with(
             command: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
           )
         }
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with(
+          is_expected.to contain_file('mysqlbackup.sh').with(
             path: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
           )
         }
 
         it {
-          expect(subject).to contain_file('/tmp/mysql-backup').with(
+          is_expected.to contain_file('/tmp/mysql-backup').with(
             ensure: 'directory',
           )
         }
 
         it 'has compression by default' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{bzcat -zc},
           )
         end
 
         it 'skips backing up events table by default' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{ADDITIONAL_OPTIONS="--ignore-table=mysql.event"},
           )
         end
 
         it 'does not mention triggers by default because file_per_database is false' do
-          expect(subject).to contain_file('mysqlbackup.sh').without_content(
+          is_expected.to contain_file('mysqlbackup.sh').without_content(
             %r{.*triggers.*},
           )
         end
 
         it 'does not mention routines by default because file_per_database is false' do
-          expect(subject).to contain_file('mysqlbackup.sh').without_content(
+          is_expected.to contain_file('mysqlbackup.sh').without_content(
             %r{.*routines.*},
           )
         end
 
         it 'has 25 days of rotation' do
           # MySQL counts from 0
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(%r{.*ROTATE=24.*})
+          is_expected.to contain_file('mysqlbackup.sh').with_content(%r{.*ROTATE=24.*})
         end
 
         it 'has a standard PATH' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
+          is_expected.to contain_file('mysqlbackup.sh').with_content(%r{PATH=/usr/bin:/usr/sbin:/bin:/sbin:/opt/zimbra/bin})
         end
       end
 
@@ -143,7 +143,7 @@ describe 'mysql::server::backup' do
         end
 
         it {
-          expect(subject).to contain_file('/tmp/mysql-backup').with(
+          is_expected.to contain_file('/tmp/mysql-backup').with(
             ensure: 'directory',
             mode: '0750',
             owner: 'testuser',
@@ -158,14 +158,14 @@ describe 'mysql::server::backup' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with(
+          is_expected.to contain_file('mysqlbackup.sh').with(
             path: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
           )
         }
 
         it 'is able to disable compression' do
-          expect(subject).to contain_file('mysqlbackup.sh').without_content(
+          is_expected.to contain_file('mysqlbackup.sh').without_content(
             %r{.*bzcat -zc.*},
           )
         end
@@ -177,14 +177,14 @@ describe 'mysql::server::backup' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with(
+          is_expected.to contain_file('mysqlbackup.sh').with(
             path: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
           )
         }
 
         it 'is able to backup events table' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{ADDITIONAL_OPTIONS="--events"},
           )
         end
@@ -196,26 +196,26 @@ describe 'mysql::server::backup' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with(
+          is_expected.to contain_file('mysqlbackup.sh').with(
             path: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
           )
         }
 
         it 'has a backup file for each database' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{mysql | bzcat -zc \${DIR}\\\${PREFIX}mysql_`date'},
           )
         end
 
         it 'skips backup triggers by default' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"},
           )
         end
 
         it 'skips backing up routines by default' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"},
           )
         end
@@ -227,7 +227,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'backups triggers when asked' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"},
             )
           end
@@ -240,7 +240,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'skips backing up triggers when asked to skip' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"},
             )
           end
@@ -253,7 +253,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'backups routines when asked' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines"},
             )
           end
@@ -266,7 +266,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'skips backing up routines when asked to skip' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"},
             )
           end
@@ -279,7 +279,7 @@ describe 'mysql::server::backup' do
         end
 
         it 'loops through backup all databases' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(%r{.*SHOW DATABASES.*})
+          is_expected.to contain_file('mysqlbackup.sh').with_content(%r{.*SHOW DATABASES.*})
         end
 
         context 'with compression disabled' do
@@ -288,22 +288,22 @@ describe 'mysql::server::backup' do
           end
 
           it 'loops through backup all databases without compression #show databases' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(%r{.*SHOW DATABASES.*})
+            is_expected.to contain_file('mysqlbackup.sh').with_content(%r{.*SHOW DATABASES.*})
           end
 
           it 'loops through backup all databases without compression #bzcat' do
-            expect(subject).to contain_file('mysqlbackup.sh').without_content(%r{.*bzcat -zc.*})
+            is_expected.to contain_file('mysqlbackup.sh').without_content(%r{.*bzcat -zc.*})
           end
         end
 
         it 'skips backup triggers by default' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"},
           )
         end
 
         it 'skips backing up routines by default' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"},
           )
         end
@@ -315,7 +315,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'backups triggers when asked' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --triggers"},
             )
           end
@@ -328,7 +328,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'skips backing up triggers when asked to skip' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-triggers"},
             )
           end
@@ -341,7 +341,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'backups routines when asked' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --routines"},
             )
           end
@@ -354,7 +354,7 @@ describe 'mysql::server::backup' do
           end
 
           it 'skips backing up routines when asked to skip' do
-            expect(subject).to contain_file('mysqlbackup.sh').with_content(
+            is_expected.to contain_file('mysqlbackup.sh').with_content(
               %r{ADDITIONAL_OPTIONS="\$ADDITIONAL_OPTIONS --skip-routines"},
             )
           end
@@ -367,7 +367,7 @@ describe 'mysql::server::backup' do
         end
 
         it 'is add postscript' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{rsync -a /tmp backup01.local-lan:},
           )
         end
@@ -382,7 +382,7 @@ describe 'mysql::server::backup' do
         end
 
         it 'is add postscript' do
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{.*rsync -a /tmp backup01.local-lan:\n\nrsync -a /tmp backup02.local-lan:.*},
           )
         end

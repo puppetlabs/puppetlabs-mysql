@@ -44,7 +44,7 @@ describe 'mysql::client' do
         end
 
         it do
-          expect(subject).to contain_package('mysql_client').with(
+          is_expected.to contain_package('mysql_client').with(
             provider: 'dpkg',
             source: '/somewhere',
           )

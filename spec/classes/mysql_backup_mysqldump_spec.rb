@@ -30,7 +30,7 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_cron('mysql-backup').with(
+          is_expected.to contain_cron('mysql-backup').with(
             hour: 23,
             minute: 59,
             monthday: 30,
@@ -46,7 +46,7 @@ describe 'mysql::backup::mysqldump' do
         it { is_expected.to contain_class('mysql::params') }
 
         it {
-          expect(subject).to contain_cron('mysql-backup').with(
+          is_expected.to contain_cron('mysql-backup').with(
             command: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
             hour: 23,
@@ -64,13 +64,13 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{(\| TEST -TEST)},
           )
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{(\.TEST)},
           )
-          expect(subject).not_to contain_package('bzip2')
+          is_expected.not_to contain_package('bzip2')
         }
       end
 
@@ -83,7 +83,7 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{information_schema},
           )
         }

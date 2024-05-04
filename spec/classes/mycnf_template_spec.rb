@@ -13,7 +13,7 @@ describe 'mysql::server' do
         let(:params) { { override_options: { 'mysqld' => { 'socket' => '/var/lib/mysql/mysql.sock' } } } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0644',
+          is_expected.to contain_file('mysql-config-file').with(mode: '0644',
                                                                     selinux_ignore_defaults: true).with_content(%r{socket = /var/lib/mysql/mysql.sock})
         end
       end
@@ -22,7 +22,7 @@ describe 'mysql::server' do
         let(:params) { { override_options: { 'mysqld' => { 'replicate-do-db' => ['base1', 'base2'] } } } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with_content(
+          is_expected.to contain_file('mysql-config-file').with_content(
             %r{.*replicate-do-db = base1\nreplicate-do-db = base2.*},
           )
         end
@@ -80,7 +80,7 @@ describe 'mysql::server' do
         let(:params) { { includedir: '/etc/my.cnf.d' } }
 
         it 'makes the directory' do
-          expect(subject).to contain_file('/etc/my.cnf.d').with(ensure: :directory,
+          is_expected.to contain_file('/etc/my.cnf.d').with(ensure: :directory,
                                                                 mode: '0755')
         end
 
@@ -91,7 +91,7 @@ describe 'mysql::server' do
         let(:params) { { includedir: '' } }
 
         it 'shouldnt contain the directory' do
-          expect(subject).not_to contain_file('mysql-config-file').with(ensure: :directory,
+          is_expected.not_to contain_file('mysql-config-file').with(ensure: :directory,
                                                                         mode: '0755')
         end
 
@@ -102,7 +102,7 @@ describe 'mysql::server' do
         let(:params) { { 'config_file_mode' => '0644' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0644')
+          is_expected.to contain_file('mysql-config-file').with(mode: '0644')
         end
       end
 
@@ -110,7 +110,7 @@ describe 'mysql::server' do
         let(:params) { { 'config_file_mode' => '0664' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0664')
+          is_expected.to contain_file('mysql-config-file').with(mode: '0664')
         end
       end
 
@@ -118,7 +118,7 @@ describe 'mysql::server' do
         let(:params) { { 'config_file_mode' => '0660' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0660')
+          is_expected.to contain_file('mysql-config-file').with(mode: '0660')
         end
       end
 
@@ -126,7 +126,7 @@ describe 'mysql::server' do
         let(:params) { { 'config_file_mode' => '0641' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0641')
+          is_expected.to contain_file('mysql-config-file').with(mode: '0641')
         end
       end
 
@@ -134,7 +134,7 @@ describe 'mysql::server' do
         let(:params) { { 'config_file_mode' => '0610' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0610')
+          is_expected.to contain_file('mysql-config-file').with(mode: '0610')
         end
       end
 
@@ -142,7 +142,7 @@ describe 'mysql::server' do
         let(:params) { { 'config_file_mode' => '0600' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0600')
+          is_expected.to contain_file('mysql-config-file').with(mode: '0600')
         end
       end
 
@@ -150,7 +150,7 @@ describe 'mysql::server' do
         let(:params) { { 'mycnf_owner' => '12345' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(
+          is_expected.to contain_file('mysql-config-file').with(
             owner: '12345',
           )
         end
@@ -160,7 +160,7 @@ describe 'mysql::server' do
         let(:params) { { 'mycnf_group' => '12345' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(
+          is_expected.to contain_file('mysql-config-file').with(
             group: '12345',
           )
         end
@@ -170,7 +170,7 @@ describe 'mysql::server' do
         let(:params) { { 'mycnf_owner' => '12345', 'mycnf_group' => '12345' } }
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(
+          is_expected.to contain_file('mysql-config-file').with(
             owner: '12345',
             group: '12345',
           )

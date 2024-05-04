@@ -68,7 +68,7 @@ describe 'mysql::server' do
 
       context 'mysql::server::install' do
         it 'contains the package by default' do
-          expect(subject).to contain_package('mysql-server').with(ensure: :present)
+          is_expected.to contain_package('mysql-server').with(ensure: :present)
         end
 
         context 'with package_manage set to true' do
@@ -98,7 +98,7 @@ describe 'mysql::server' do
           end
 
           it do
-            expect(subject).to contain_package('mysql-server').with(
+            is_expected.to contain_package('mysql-server').with(
               provider: 'dpkg',
               source: '/somewhere',
             )
@@ -128,7 +128,7 @@ describe 'mysql::server' do
           let(:params) { { service_enabled: false } }
 
           it do
-            expect(subject).to contain_service('mysqld').with(ensure: :stopped)
+            is_expected.to contain_service('mysqld').with(ensure: :stopped)
           end
 
           context 'with package_manage set to true' do
@@ -182,7 +182,7 @@ describe 'mysql::server' do
       context 'mysql::server::root_password' do
         describe 'when defaults' do
           it {
-            expect(subject).to contain_exec('remove install pass').with(
+            is_expected.to contain_exec('remove install pass').with(
               command: <<-'CMD'.gsub(%r{^\s+}, ''),
                 mysqladmin -u root --password=$(grep -o '[^ ]+$' /.mysql_secret) password && \
                 (rm -f  /.mysql_secret; exit 0) || \
@@ -244,7 +244,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_user('foo@localhost').with(
+            is_expected.to contain_mysql_user('foo@localhost').with(
               max_connections_per_hour: '1', max_queries_per_hour: '2',
               max_updates_per_hour: '3', max_user_connections: '4',
               password_hash: '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
@@ -252,7 +252,7 @@ describe 'mysql::server' do
           }
 
           it {
-            expect(subject).to contain_mysql_user('foo2@localhost').with(
+            is_expected.to contain_mysql_user('foo2@localhost').with(
               max_connections_per_hour: nil, max_queries_per_hour: nil,
               max_updates_per_hour: nil, max_user_connections: nil,
               password_hash: nil
@@ -275,7 +275,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_user('foo@localhost').with(
+            is_expected.to contain_mysql_user('foo@localhost').with(
               max_connections_per_hour: '1', max_queries_per_hour: '2',
               max_updates_per_hour: '3', max_user_connections: '4',
               password_hash: 'Sensitive [value redacted]'
@@ -301,14 +301,14 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_grant('foo@localhost/somedb.*').with(
+            is_expected.to contain_mysql_grant('foo@localhost/somedb.*').with(
               user: 'foo@localhost', table: 'somedb.*',
               privileges: ['SELECT', 'UPDATE'], options: ['GRANT']
             )
           }
 
           it {
-            expect(subject).to contain_mysql_grant('foo2@localhost/*.*').with(
+            is_expected.to contain_mysql_grant('foo2@localhost/*.*').with(
               user: 'foo2@localhost', table: '*.*',
               privileges: ['SELECT'], options: nil
             )
@@ -327,7 +327,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_database('somedb').with(
+            is_expected.to contain_mysql_database('somedb').with(
               charset: 'latin1',
               collate: 'latin1',
             )
