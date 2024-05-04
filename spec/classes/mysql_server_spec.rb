@@ -202,11 +202,7 @@ describe 'mysql::server' do
 
           it { is_expected.to contain_mysql_user('root@localhost') }
 
-          if Puppet.version.to_f >= 3.0
-            it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false).that_requires('Mysql_user[root@localhost]') }
-          else
-            it { is_expected.to contain_file('/root/.my.cnf').that_requires('Mysql_user[root@localhost]') }
-          end
+          it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false).that_requires('Mysql_user[root@localhost]') }
         end
 
         describe 'when root_password set, create_root_user set to false' do
@@ -214,11 +210,7 @@ describe 'mysql::server' do
 
           it { is_expected.not_to contain_mysql_user('root@localhost') }
 
-          if Puppet.version.to_f >= 3.0
-            it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false) }
-          else
-            it { is_expected.to contain_file('/root/.my.cnf') }
-          end
+          it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false) }
         end
 
         describe 'when root_password set, create_root_my_cnf set to false' do
