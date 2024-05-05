@@ -20,3 +20,7 @@ Rakefile:
   extra_disabled_lint_checks:
     - anchor_resource
     - params_empty_string_assignment
+
+spec/default_facts.yml:
+  extra_facts:
+    root_home: /root

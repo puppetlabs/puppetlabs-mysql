@@ -11,8 +11,7 @@ describe 'mysql::backup::xtrabackup' do
         MANIFEST
       end
       let(:facts) do
-        facts.merge(root_home: '/root',
-                    mysql_version: '5.7',
+        facts.merge(mysql_version: '5.7',
                     mysld_version: 'mysqld  Ver 5.7.38 for Linux on x86_64 (MySQL Community Server - (GPL)')
       end
 

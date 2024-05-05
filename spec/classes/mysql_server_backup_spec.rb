@@ -10,9 +10,7 @@ describe 'mysql::server::backup' do
           class { 'mysql::server': }
         MANIFEST
       end
-      let(:facts) do
-        facts.merge(root_home: '/root')
-      end
+      let(:facts) { facts }
 
       let(:default_params) do
         { 'backupuser' => 'testuser',

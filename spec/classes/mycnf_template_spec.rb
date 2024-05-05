@@ -5,9 +5,7 @@ require 'spec_helper'
 describe 'mysql::server' do
   on_supported_os.each do |os, facts|
     context "my.cnf template - on #{os}" do
-      let(:facts) do
-        facts.merge(root_home: '/root')
-      end
+      let(:facts) { facts }
 
       context 'normal entry' do
         let(:params) { { override_options: { 'mysqld' => { 'socket' => '/var/lib/mysql/mysql.sock' } } } }

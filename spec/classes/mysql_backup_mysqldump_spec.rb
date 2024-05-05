@@ -5,13 +5,11 @@ require 'spec_helper'
 describe 'mysql::backup::mysqldump' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
+      let(:facts) { facts }
       let(:pre_condition) do
         <<-MANIFEST
           class { 'mysql::server': }
         MANIFEST
-      end
-      let(:facts) do
-        facts.merge(root_home: '/root')
       end
 
       let(:default_params) do

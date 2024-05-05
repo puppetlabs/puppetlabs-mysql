@@ -7,10 +7,7 @@ describe 'mysql::bindings' do
     next if facts[:os]['family'] == 'Archlinux'
 
     context "on #{os}" do
-      let(:facts) do
-        facts.merge(root_home: '/root')
-      end
-
+      let(:facts) { facts }
       let(:params) do
         {
           'java_enable' => true,
