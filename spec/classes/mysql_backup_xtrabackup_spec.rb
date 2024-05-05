@@ -5,6 +5,29 @@ require 'spec_helper'
 describe 'mysql::backup::xtrabackup' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
+      let(:package) do
+        if facts[:os]['family'] == 'RedHat'
+          if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '8') >= 0
+            'percona-xtrabackup-24'
+          else
+            'percona-xtrabackup'
+          end
+        elsif facts[:os]['name'] == 'Debian'
+          'percona-xtrabackup-24'
+        elsif facts[:os]['name'] == 'Ubuntu'
+          if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '20') < 0 &&
+             Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '16') >= 0
+            'percona-xtrabackup'
+          else
+            'percona-xtrabackup-24'
+          end
+        elsif facts[:os]['family'] == 'Suse'
+          'xtrabackup'
+        else
+          'percona-xtrabackup'
+        end
+      end
+
       let(:pre_condition) do
         <<-MANIFEST
           class { 'mysql::server': }
@@ -38,26 +61,7 @@ describe 'mysql::backup::xtrabackup' do
           )
         end
 
-        package = if facts[:os]['family'] == 'RedHat'
-                    if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '8') >= 0
-                      'percona-xtrabackup-24'
-                    else
-                      'percona-xtrabackup'
-                    end
-                  elsif facts[:os]['name'] == 'Debian'
-                    'percona-xtrabackup-24'
-                  elsif facts[:os]['name'] == 'Ubuntu'
-                    if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '20') < 0 &&
-                       Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '16') >= 0
-                      'percona-xtrabackup'
-                    else
-                      'percona-xtrabackup-24'
-                    end
-                  elsif facts[:os]['family'] == 'Suse'
-                    'xtrabackup'
-                  else
-                    'percona-xtrabackup'
-                  end
+        it { is_expected.to contain_package(package) }
 
         it 'contains the weekly cronjob' do
           is_expected.to contain_cron('xtrabackup-weekly')
@@ -71,6 +75,11 @@ describe 'mysql::backup::xtrabackup' do
             )
             .that_requires("Package[#{package}]")
         end
+
+        it {
+          package_name = (facts[:os]['family'] == 'RedHat') ? 'cronie' : 'cron'
+          is_expected.to contain_package(package_name)
+        }
 
         it 'contains the daily cronjob for weekdays 1-6' do
           dateformat = case facts[:os]['name']
@@ -304,6 +313,8 @@ describe 'mysql::backup::xtrabackup' do
             %r{(\n*^mariabackup\s+.*\$@)},
           )
         end
+
+        it { is_expected.to contain_package(params[:backupmethod_package]) }
       end
 
       context 'with backup_success_file_path' do

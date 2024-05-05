@@ -12,6 +12,8 @@ describe 'mysql::client' do
         it { is_expected.to contain_class('mysql::client::install') }
         it { is_expected.not_to contain_class('mysql::bindings') }
         it { is_expected.to contain_package('mysql_client') }
+        it { is_expected.to contain_anchor('mysql::client::start') }
+        it { is_expected.to contain_anchor('mysql::client::end') }
       end
 
       context 'with bindings enabled' do

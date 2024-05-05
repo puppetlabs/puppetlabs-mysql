@@ -51,6 +51,25 @@ describe 'mysql::backup::mysqldump' do
             minute: 5,
           )
         }
+
+        it {
+          is_expected.to contain_package('bzip2')
+        }
+
+        it {
+          package_name = (facts[:os]['family'] == 'RedHat') ? 'cronie' : 'cron'
+          is_expected.to contain_package(package_name)
+        }
+      end
+
+      context 'without backupcomress' do
+        let(:params) do
+          { 'backupcompress' => false, }.merge(default_params)
+        end
+
+        it {
+          is_expected.not_to contain_package('bzip2')
+        }
       end
 
       context 'with compression_command' do

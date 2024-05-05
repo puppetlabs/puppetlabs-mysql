@@ -18,6 +18,21 @@ describe 'mysql::server' do
         it { is_expected.to contain_class('mysql::server::providers') }
         it { is_expected.to contain_file('mysql-config-file').that_comes_before('Service[mysqld]') }
         it { is_expected.not_to contain_file('mysql-config-file').that_notifies('Service[mysqld]') }
+
+        it { is_expected.to contain_anchor('mysql::server::start') }
+        it { is_expected.to contain_anchor('mysql::server::end') }
+
+        it {
+          is_expected.to contain_exec('wait_for_mysql_socket_to_open')
+            .with(
+              command:   ['test', '-S', %r{.*\.sock}],
+              unless:    [['test', '-S', %r{.*\.sock}]],
+              tries:     '3',
+              try_sleep: '10',
+              require:   'Service[mysqld]',
+              path:      '/bin:/usr/bin',
+            )
+        }
       end
 
       context 'with remove_default_accounts set' do
