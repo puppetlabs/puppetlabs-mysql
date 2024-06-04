@@ -49,7 +49,7 @@
 define mysql::db (
   String[1]                                      $user,
   Variant[String, Sensitive[String]]             $password,
-  Optional[Array[String[1]]]                     $tls_options     = undef,
+  Optional[Variant[String[1], Array[String[1]]]] $tls_options     = undef,
   String                                         $dbname          = $name,
   String[1]                                      $charset         = 'utf8',
   String[1]                                      $collate         = 'utf8_general_ci',
