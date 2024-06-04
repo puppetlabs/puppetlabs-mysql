@@ -6,7 +6,7 @@ on:
       - opened
       - labeled
       - unlabeled
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - labeled
