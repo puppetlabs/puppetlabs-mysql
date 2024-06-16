@@ -5,18 +5,34 @@ require 'spec_helper'
 describe 'mysql::server' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
-      let(:facts) do
-        facts.merge(root_home: '/root')
-      end
+      let(:facts) { facts }
 
       context 'with defaults' do
+        it { is_expected.to contain_class('mysql::params') }
         it { is_expected.to contain_class('mysql::server::install') }
         it { is_expected.to contain_class('mysql::server::config') }
+        it { is_expected.to contain_class('mysql::server::managed_dirs') }
+        it { is_expected.to contain_class('mysql::server::installdb') }
         it { is_expected.to contain_class('mysql::server::service') }
         it { is_expected.to contain_class('mysql::server::root_password') }
         it { is_expected.to contain_class('mysql::server::providers') }
         it { is_expected.to contain_file('mysql-config-file').that_comes_before('Service[mysqld]') }
         it { is_expected.not_to contain_file('mysql-config-file').that_notifies('Service[mysqld]') }
+
+        it { is_expected.to contain_anchor('mysql::server::start') }
+        it { is_expected.to contain_anchor('mysql::server::end') }
+
+        it {
+          is_expected.to contain_exec('wait_for_mysql_socket_to_open')
+            .with(
+              command:   ['test', '-S', %r{.*\.sock}],
+              unless:    [['test', '-S', %r{.*\.sock}]],
+              tries:     '3',
+              try_sleep: '10',
+              require:   'Service[mysqld]',
+              path:      '/bin:/usr/bin',
+            )
+        }
       end
 
       context 'with remove_default_accounts set' do
@@ -65,7 +81,7 @@ describe 'mysql::server' do
 
       context 'mysql::server::install' do
         it 'contains the package by default' do
-          expect(subject).to contain_package('mysql-server').with(ensure: :present)
+          is_expected.to contain_package('mysql-server').with(ensure: :present)
         end
 
         context 'with package_manage set to true' do
@@ -95,7 +111,7 @@ describe 'mysql::server' do
           end
 
           it do
-            expect(subject).to contain_package('mysql-server').with(
+            is_expected.to contain_package('mysql-server').with(
               provider: 'dpkg',
               source: '/somewhere',
             )
@@ -125,7 +141,7 @@ describe 'mysql::server' do
           let(:params) { { service_enabled: false } }
 
           it do
-            expect(subject).to contain_service('mysqld').with(ensure: :stopped)
+            is_expected.to contain_service('mysqld').with(ensure: :stopped)
           end
 
           context 'with package_manage set to true' do
@@ -179,8 +195,12 @@ describe 'mysql::server' do
       context 'mysql::server::root_password' do
         describe 'when defaults' do
           it {
-            expect(subject).to contain_exec('remove install pass').with(
-              command: "mysqladmin -u root --password=$(grep -o '[^ ]\\+$' /.mysql_secret) password && (rm -f  /.mysql_secret; exit 0) || (rm -f /.mysql_secret; exit 1)",
+            is_expected.to contain_exec('remove install pass').with(
+              command: <<-'CMD'.gsub(%r{^\s+}, ''),
+                mysqladmin -u root --password=$(grep -o '[^ ]+$' /.mysql_secret) password && \
+                (rm -f  /.mysql_secret; exit 0) || \
+                (rm -f /.mysql_secret; exit 1)
+                CMD
               onlyif: [['test', '-f', '/.mysql_secret']],
               path: '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
             )
@@ -195,11 +215,7 @@ describe 'mysql::server' do
 
           it { is_expected.to contain_mysql_user('root@localhost') }
 
-          if Puppet.version.to_f >= 3.0
-            it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false).that_requires('Mysql_user[root@localhost]') }
-          else
-            it { is_expected.to contain_file('/root/.my.cnf').that_requires('Mysql_user[root@localhost]') }
-          end
+          it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false).that_requires('Mysql_user[root@localhost]') }
         end
 
         describe 'when root_password set, create_root_user set to false' do
@@ -207,11 +223,7 @@ describe 'mysql::server' do
 
           it { is_expected.not_to contain_mysql_user('root@localhost') }
 
-          if Puppet.version.to_f >= 3.0
-            it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false) }
-          else
-            it { is_expected.to contain_file('/root/.my.cnf') }
-          end
+          it { is_expected.to contain_file('/root/.my.cnf').with(show_diff: false) }
         end
 
         describe 'when root_password set, create_root_my_cnf set to false' do
@@ -245,7 +257,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_user('foo@localhost').with(
+            is_expected.to contain_mysql_user('foo@localhost').with(
               max_connections_per_hour: '1', max_queries_per_hour: '2',
               max_updates_per_hour: '3', max_user_connections: '4',
               password_hash: '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
@@ -253,7 +265,7 @@ describe 'mysql::server' do
           }
 
           it {
-            expect(subject).to contain_mysql_user('foo2@localhost').with(
+            is_expected.to contain_mysql_user('foo2@localhost').with(
               max_connections_per_hour: nil, max_queries_per_hour: nil,
               max_updates_per_hour: nil, max_user_connections: nil,
               password_hash: nil
@@ -276,7 +288,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_user('foo@localhost').with(
+            is_expected.to contain_mysql_user('foo@localhost').with(
               max_connections_per_hour: '1', max_queries_per_hour: '2',
               max_updates_per_hour: '3', max_user_connections: '4',
               password_hash: 'Sensitive [value redacted]'
@@ -302,14 +314,14 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_grant('foo@localhost/somedb.*').with(
+            is_expected.to contain_mysql_grant('foo@localhost/somedb.*').with(
               user: 'foo@localhost', table: 'somedb.*',
               privileges: ['SELECT', 'UPDATE'], options: ['GRANT']
             )
           }
 
           it {
-            expect(subject).to contain_mysql_grant('foo2@localhost/*.*').with(
+            is_expected.to contain_mysql_grant('foo2@localhost/*.*').with(
               user: 'foo2@localhost', table: '*.*',
               privileges: ['SELECT'], options: nil
             )
@@ -328,7 +340,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_database('somedb').with(
+            is_expected.to contain_mysql_database('somedb').with(
               charset: 'latin1',
               collate: 'latin1',
             )

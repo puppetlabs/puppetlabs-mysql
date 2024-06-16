@@ -209,7 +209,7 @@ If required, the password can also be an empty string to allow connections witho
 
 ### Create login paths
 
-This feature works only for the MySQL Community Edition >= 5.6.6.
+This feature works only for the MySQL Community Edition >= 5.6.6, [not MariaDB](https://mariadb.com/kb/en/mysql_config_editor-compatibility/).
 
 A login path is a set of options (host, user, password, port and socket) that specify which MySQL server to connect to and which account to authenticate as. The authentication credentials and the other options are stored in an encrypted login file named .mylogin.cnf typically under the users home directory.
 

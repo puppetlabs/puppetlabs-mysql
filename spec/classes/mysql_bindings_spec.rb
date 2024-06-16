@@ -7,10 +7,7 @@ describe 'mysql::bindings' do
     next if facts[:os]['family'] == 'Archlinux'
 
     context "on #{os}" do
-      let(:facts) do
-        facts.merge(root_home: '/root')
-      end
-
+      let(:facts) { facts }
       let(:params) do
         {
           'java_enable' => true,
@@ -25,11 +22,27 @@ describe 'mysql::bindings' do
         }
       end
 
+      it { is_expected.to contain_class('mysql::params') }
+
+      it { is_expected.to contain_class('mysql::bindings::java') }
       it { is_expected.to contain_package('mysql-connector-java') }
+
+      it { is_expected.to contain_class('mysql::bindings::perl') }
       it { is_expected.to contain_package('perl_mysql') }
+
+      it { is_expected.to contain_class('mysql::bindings::python') }
       it { is_expected.to contain_package('python-mysqldb') }
+
+      it { is_expected.to contain_class('mysql::bindings::ruby') }
       it { is_expected.to contain_package('ruby_mysql') }
+
+      it { is_expected.to contain_class('mysql::bindings::php') }
+      it { is_expected.to contain_package('php-mysql') }
+
+      it { is_expected.to contain_class('mysql::bindings::client_dev') }
       it { is_expected.to contain_package('mysql-client_dev') }
+
+      it { is_expected.to contain_class('mysql::bindings::daemon_dev') }
       it { is_expected.to contain_package('mysql-daemon_dev') }
     end
   end

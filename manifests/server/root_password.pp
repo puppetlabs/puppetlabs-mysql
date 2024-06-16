@@ -23,7 +23,12 @@ class mysql::server::root_password {
   # below exec will remove this default password. If the user has supplied a root
   # password it will be set further down with the mysql_user resource.
   exec { 'remove install pass':
-    command => "mysqladmin -u root --password=\$(grep -o '[^ ]\\+\$' /.mysql_secret) password && (rm -f  /.mysql_secret; exit 0) || (rm -f /.mysql_secret; exit 1)",
+    command => @(EOD)
+      mysqladmin -u root --password=$(grep -o '[^ ]+$' /.mysql_secret) password && \
+      (rm -f  /.mysql_secret; exit 0) || \
+      (rm -f /.mysql_secret; exit 1)
+      | EOD
+    ,
     onlyif  => [['test', '-f' ,'/.mysql_secret']],
     path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
   }
@@ -46,15 +51,12 @@ class mysql::server::root_password {
   if $mysql::server::create_root_my_cnf and $root_password_set {
     # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
     file { "${facts['root_home']}/.my.cnf":
-      content => epp('mysql/my.cnf.pass.epp',$parameters),
-      owner   => 'root',
-      mode    => '0600',
+      content   => epp('mysql/my.cnf.pass.epp',$parameters),
+      owner     => 'root',
+      mode      => '0600',
+      show_diff => false,
     }
 
-    # show_diff was added with puppet 3.0
-    if versioncmp($facts['puppetversion'], '3.0') >= 0 {
-      File["${facts['root_home']}/.my.cnf"] { show_diff => false }
-    }
     if $mysql::server::create_root_user {
       Mysql_user['root@localhost'] -> File["${facts['root_home']}/.my.cnf"]
     }

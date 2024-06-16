@@ -1,4 +1,6 @@
 name: "Release Prep"
+run-name: >
+  version=${{ inputs.version }}
 
 on:
   workflow_dispatch:
@@ -11,5 +13,5 @@ jobs:
   release_prep:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_release_prep.yml@main"
     with:
-      version: "${{ github.event.inputs.version }}"
+      version: "${{ inputs.version }}"
     secrets: "inherit"
