@@ -23,13 +23,6 @@
       ]
     },
     {
-      "operatingsystem": "CentOS",
-      "operatingsystemrelease": [
-        "7",
-        "8"
-      ]
-    },
-    {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
         "7"
@@ -58,7 +51,6 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "18.04",
         "20.04",
         "22.04"
       ]
