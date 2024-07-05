@@ -5,7 +5,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   # Without initvars commands won't work.
   initvars
 
-  # Make sure we find mysql commands on CentOS and FreeBSD
+  # Make sure we find mysql commands on FreeBSD
   ENV['PATH'] = "#{ENV.fetch('PATH', nil)}:/usr/libexec:/usr/local/libexec:/usr/local/bin"
   ENV['LD_LIBRARY_PATH'] = [
     ENV.fetch('LD_LIBRARY_PATH', nil),

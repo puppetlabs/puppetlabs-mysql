@@ -6,7 +6,7 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
 
   initvars
 
-  # Make sure we find mysqld on CentOS and mysql_install_db on Gentoo and Solaris 11
+  # Make sure we find mysql_install_db on Gentoo and Solaris 11
   ENV['PATH'] = [
     ENV.fetch('PATH', nil),
     '/usr/libexec',
