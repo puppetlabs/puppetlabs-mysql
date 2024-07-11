@@ -5,13 +5,11 @@ require 'spec_helper'
 describe 'mysql::backup::mysqldump' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
+      let(:facts) { facts }
       let(:pre_condition) do
         <<-MANIFEST
           class { 'mysql::server': }
         MANIFEST
-      end
-      let(:facts) do
-        facts.merge(root_home: '/root')
       end
 
       let(:default_params) do
@@ -30,7 +28,7 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_cron('mysql-backup').with(
+          is_expected.to contain_cron('mysql-backup').with(
             hour: 23,
             minute: 59,
             monthday: 30,
@@ -43,13 +41,34 @@ describe 'mysql::backup::mysqldump' do
       context 'with defaults' do
         let(:params) { default_params }
 
+        it { is_expected.to contain_class('mysql::params') }
+
         it {
-          expect(subject).to contain_cron('mysql-backup').with(
+          is_expected.to contain_cron('mysql-backup').with(
             command: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
             hour: 23,
             minute: 5,
           )
+        }
+
+        it {
+          is_expected.to contain_package('bzip2')
+        }
+
+        it {
+          package_name = (facts[:os]['family'] == 'RedHat') ? 'cronie' : 'cron'
+          is_expected.to contain_package(package_name)
+        }
+      end
+
+      context 'without backupcomress' do
+        let(:params) do
+          { 'backupcompress' => false, }.merge(default_params)
+        end
+
+        it {
+          is_expected.not_to contain_package('bzip2')
         }
       end
 
@@ -62,13 +81,13 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{(\| TEST -TEST)},
           )
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{(\.TEST)},
           )
-          expect(subject).not_to contain_package('bzip2')
+          is_expected.not_to contain_package('bzip2')
         }
       end
 
@@ -81,7 +100,7 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          is_expected.to contain_file('mysqlbackup.sh').with_content(
             %r{information_schema},
           )
         }

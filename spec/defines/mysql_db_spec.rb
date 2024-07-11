@@ -5,10 +5,7 @@ require 'spec_helper'
 describe 'mysql::db', type: :define do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
-      let(:facts) do
-        facts.merge(root_home: '/root')
-      end
-
+      let(:facts) { facts }
       let(:title) { 'test_db' }
 
       let(:params) do
@@ -20,66 +17,66 @@ describe 'mysql::db', type: :define do
       let(:sql) { ['/tmp/test.sql'] }
 
       it 'does not notify the import sql exec if no sql script was provided' do
-        expect(subject).to contain_mysql_database('test_db').without_notify
+        is_expected.to contain_mysql_database('test_db').without_notify
       end
 
       it 'subscribes to database if sql script is given' do
         params['sql'] = sql
-        expect(subject).to contain_mysql_database('test_db')
-        expect(subject).to contain_exec('test_db-import').with_subscribe('Mysql_database[test_db]')
+        is_expected.to contain_mysql_database('test_db')
+        is_expected.to contain_exec('test_db-import').with_subscribe('Mysql_database[test_db]')
       end
 
       it 'onlies import sql script on creation if not enforcing' do
         params.merge!('sql' => sql, 'enforce_sql' => false)
-        expect(subject).to contain_exec('test_db-import').with_refreshonly(true)
+        is_expected.to contain_exec('test_db-import').with_refreshonly(true)
       end
 
       it 'imports sql script on creation' do
         params.merge!('sql' => sql, 'enforce_sql' => true)
         # ' if enforcing #refreshonly'
-        expect(subject).to contain_exec('test_db-import').with_refreshonly(false)
+        is_expected.to contain_exec('test_db-import').with_refreshonly(false)
         # 'if enforcing #command'
-        expect(subject).to contain_exec('test_db-import').with_command('cat /tmp/test.sql | mysql test_db')
+        is_expected.to contain_exec('test_db-import').with_command('cat /tmp/test.sql | mysql test_db')
       end
 
       it 'imports sql script with custom command on creation' do
         params.merge!('sql' => sql, 'enforce_sql' => true, 'import_cat_cmd' => 'zcat')
         # if enforcing #refreshonly
-        expect(subject).to contain_exec('test_db-import').with_refreshonly(false)
+        is_expected.to contain_exec('test_db-import').with_refreshonly(false)
         # if enforcing #command
-        expect(subject).to contain_exec('test_db-import').with_command('zcat /tmp/test.sql | mysql test_db')
+        is_expected.to contain_exec('test_db-import').with_command('zcat /tmp/test.sql | mysql test_db')
       end
 
       it 'imports sql scripts when more than one is specified' do
         params['sql'] = ['/tmp/test.sql', '/tmp/test_2.sql']
-        expect(subject).to contain_exec('test_db-import').with_command('cat /tmp/test.sql /tmp/test_2.sql | mysql test_db')
+        is_expected.to contain_exec('test_db-import').with_command('cat /tmp/test.sql /tmp/test_2.sql | mysql test_db')
       end
 
       it 'does not create database' do
         params.merge!('ensure' => 'absent', 'host' => 'localhost')
-        expect(subject).to contain_mysql_database('test_db').with_ensure('absent')
-        expect(subject).to contain_mysql_user('testuser@localhost').with_ensure('absent')
+        is_expected.to contain_mysql_database('test_db').with_ensure('absent')
+        is_expected.to contain_mysql_user('testuser@localhost').with_ensure('absent')
       end
 
       it 'creates with an appropriate collate and charset' do
         params.merge!('charset' => 'utf8', 'collate' => 'utf8_danish_ci')
-        expect(subject).to contain_mysql_database('test_db').with('charset' => 'utf8',
+        is_expected.to contain_mysql_database('test_db').with('charset' => 'utf8',
                                                                   'collate' => 'utf8_danish_ci')
       end
 
       it 'uses dbname parameter as database name instead of name' do
         params['dbname'] = 'real_db'
-        expect(subject).to contain_mysql_database('real_db')
+        is_expected.to contain_mysql_database('real_db')
       end
 
       it 'uses tls_options for user when set' do
         params['tls_options'] = ['SSL']
-        expect(subject).to contain_mysql_user('testuser@localhost').with_tls_options(['SSL'])
+        is_expected.to contain_mysql_user('testuser@localhost').with_tls_options(['SSL'])
       end
 
       it 'uses grant_options for grant when set' do
         params['grant_options'] = ['GRANT']
-        expect(subject).to contain_mysql_grant('testuser@localhost/test_db.*').with_options(['GRANT'])
+        is_expected.to contain_mysql_grant('testuser@localhost/test_db.*').with_options(['GRANT'])
       end
 
       # Invalid file paths
@@ -94,7 +91,7 @@ describe 'mysql::db', type: :define do
       ].each do |path|
         it "fails when provided '#{path}' as a value to the 'sql' parameter" do
           params['sql'] = [path]
-          expect(subject).to raise_error(Puppet::PreformattedError, %r{The file '#{Regexp.escape(path)}' is invalid. A valid file path is expected.})
+          is_expected.to raise_error(Puppet::PreformattedError, %r{The file '#{Regexp.escape(path)}' is invalid. A valid file path is expected.})
         end
       end
 
@@ -111,7 +108,7 @@ describe 'mysql::db', type: :define do
       ].each do |path|
         it "succeeds when provided '#{path}' as a value to the 'sql' parameter" do
           params['sql'] = [path]
-          expect(subject).to contain_exec('test_db-import').with_command("cat #{path} | mysql test_db")
+          is_expected.to contain_exec('test_db-import').with_command("cat #{path} | mysql test_db")
         end
       end
 
@@ -125,7 +122,7 @@ describe 'mysql::db', type: :define do
       ].each do |name|
         it "fails when provided '#{name}' as a value to the 'name' parameter" do
           params['name'] = name
-          expect(subject).to raise_error(Puppet::PreformattedError, %r{The database name '#{name}' is invalid.})
+          is_expected.to raise_error(Puppet::PreformattedError, %r{The database name '#{name}' is invalid.})
         end
       end
 
@@ -138,7 +135,7 @@ describe 'mysql::db', type: :define do
       ].each do |name|
         it "succeeds when the provided '#{name}' as a value to the 'dbname' parameter" do
           params['dbname'] = name
-          expect(subject).to contain_mysql_database(name)
+          is_expected.to contain_mysql_database(name)
         end
       end
     end

@@ -1,34 +1,26 @@
 ---
-".gitlab-ci.yml":
-  delete: true
-appveyor.yml:
-  delete: true
-rubocop.yml:
-  include_todos: true
-
-
 spec/spec_helper.rb:
   spec_overrides:
   - require 'spec_helper_local'
   coverage_report: true
-"  changelog_user": puppetlabs
-.gitpod.Dockerfile:
-  unmanaged: false
-.gitpod.yml:
-  unmanaged: false
-.github/workflows/auto_release.yml:
-  unmanaged: false
+  minimum_code_coverage_percentage: 81
+
 .github/workflows/ci.yml:
   unmanaged: true
 .github/workflows/nightly.yml:
   unmanaged: true
+.github/workflows/release_prep.yml:
+  unmanaged: true
 .github/workflows/release.yml:
-  unmanaged: false
-.travis.yml:
-  delete: true
-changelog_since_tag: 'v11.0.3'
+  unmanaged: true
+
 Rakefile:
+  changelog_since_tag: 'v11.0.3'
   changelog_max_issues: 500
   extra_disabled_lint_checks:
     - anchor_resource
     - params_empty_string_assignment
+
+spec/default_facts.yml:
+  extra_facts:
+    root_home: /root

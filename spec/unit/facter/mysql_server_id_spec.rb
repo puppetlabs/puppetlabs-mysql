@@ -14,7 +14,7 @@ describe Facter::Util::Fact.to_s do
       end
 
       it do
-        Facter.fact(:mysql_server_id).value.to_s.should == '241857808'
+        expect(Facter.fact(:mysql_server_id).value).to be(241_857_808)
       end
     end
 
@@ -24,7 +24,7 @@ describe Facter::Util::Fact.to_s do
       end
 
       it do
-        Facter.fact(:mysql_server_id).value.to_s.should == '1'
+        expect(Facter.fact(:mysql_server_id).value).to be(1)
       end
     end
 
@@ -34,7 +34,7 @@ describe Facter::Util::Fact.to_s do
       end
 
       it do
-        Facter.fact(:mysql_server_id).value.to_s.should == ''
+        expect(Facter.fact(:mysql_server_id).value).to be(nil)
       end
     end
   end

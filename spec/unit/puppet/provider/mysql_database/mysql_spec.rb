@@ -25,7 +25,7 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
   end
 
   before :each do
-    allow(Facter.fact(:value)).to receive(:root_home).and_return('/root')
+    allow(Facter).to receive(:value).with(:root_home).and_return('/root')
     allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
     allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
     allow(provider.class).to receive(:mysql_caller).with('show databases', 'regular').and_return('new_database')
