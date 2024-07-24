@@ -35,7 +35,7 @@ describe 'mysql::server::backup class' do
     end
   end
 
-  describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
+  describe 'mysqlbackup.sh' do
     it 'runs mysqlbackup.sh with no errors' do
       run_shell('/usr/local/sbin/mysqlbackup.sh') do |r|
         expect(r.stderr).to eq('')
@@ -98,7 +98,7 @@ describe 'mysql::server::backup class' do
       end
     end
 
-    describe 'mysqlbackup.sh', if: Gem::Version.new(mysql_version) < Gem::Version.new('5.7.0') do
+    describe 'mysqlbackup.sh' do
       it 'runs mysqlbackup.sh with no errors without root credentials' do
         run_shell('HOME=/tmp/dontreadrootcredentials /usr/local/sbin/mysqlbackup.sh') do |r|
           expect(r.stderr).to eq('')
