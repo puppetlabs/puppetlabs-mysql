@@ -7,3 +7,10 @@ Facter.add('mysqld_version') do
     Facter::Core::Execution.execute('env PATH=$PATH:/usr/libexec mysqld --no-defaults -V 2>/dev/null')
   end
 end
+
+Facter.add('mysqld_version') do
+  confine { Facter::Core::Execution.which('mariadbd') }
+  setcode do
+    Facter::Core::Execution.execute('mariadbd --no-defaults -V 2>/dev/null')
+  end
+end
