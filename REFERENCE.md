@@ -56,6 +56,7 @@
 
 ### Functions
 
+* [`mysql::innobackupex_args`](#mysql--innobackupex_args): This function populates and returns the string of arguments which later gets injected in template. Arguments that return string holds is conditional and decided by the the input given to function.
 * [`mysql::normalise_and_deepmerge`](#mysql--normalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashes and underscores.
 * [`mysql::password`](#mysql--password): Hash a string as mysql's "PASSWORD()" function would do it
 * [`mysql::strip_hash`](#mysql--strip_hash): When given a hash this function strips out all blank entries.
@@ -707,7 +708,7 @@ Data type: `Optional[String[1]]`
 
 The provider to use to manage the service. For Ubuntu, defaults to 'upstart'; otherwise, default is undefined.
 
-Default value: `$mysql::params::server_service_provider`
+Default value: `undef`
 
 ##### <a name="-mysql--server--create_root_user"></a>`create_root_user`
 
@@ -1197,7 +1198,7 @@ Data type: `String[1]`
 
 The character set for the database. Must have the same value as collate to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 
-Default value: `'utf8'`
+Default value: `'utf8mb3'`
 
 ##### <a name="-mysql--db--collate"></a>`collate`
 
@@ -1205,7 +1206,7 @@ Data type: `String[1]`
 
 The collation for the database. Must have the same value as charset to avoid corrective changes. See https://dev.mysql.com/doc/refman/8.0/en/charset-mysql.html for charset and collation pairs.
 
-Default value: `'utf8_general_ci'`
+Default value: `'utf8mb3_general_ci'`
 
 ##### <a name="-mysql--db--host"></a>`host`
 
@@ -1605,6 +1606,49 @@ The specific backend to use for this `mysql_user` resource. You will seldom need
 discover the appropriate provider for your platform.
 
 ## Functions
+
+### <a name="mysql--innobackupex_args"></a>`mysql::innobackupex_args`
+
+Type: Ruby 4.x API
+
+This function populates and returns the string of arguments which later gets injected in template. Arguments that return string holds is conditional and decided by the the input given to function.
+
+#### `mysql::innobackupex_args(Optional[String] $backupuser, Boolean $backupcompress, Optional[Variant[String, Sensitive[String]]] $backuppassword_unsensitive, Array[String[1]] $backupdatabases, Array[String[1]] $optional_args)`
+
+The mysql::innobackupex_args function.
+
+Returns: `Variant[String]` String
+Generated on the basis of provided values.
+
+##### `backupuser`
+
+Data type: `Optional[String]`
+
+The user to use for the backup.
+
+##### `backupcompress`
+
+Data type: `Boolean`
+
+If the backup should be compressed.
+
+##### `backuppassword_unsensitive`
+
+Data type: `Optional[Variant[String, Sensitive[String]]]`
+
+The password to use for the backup.
+
+##### `backupdatabases`
+
+Data type: `Array[String[1]]`
+
+The databases to backup.
+
+##### `optional_args`
+
+Data type: `Array[String[1]]`
+
+Additional arguments to pass to innobackupex.
 
 ### <a name="mysql--normalise_and_deepmerge"></a>`mysql::normalise_and_deepmerge`
 
