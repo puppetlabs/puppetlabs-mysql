@@ -38,7 +38,12 @@ class Puppet::Provider::Mysql < Puppet::Provider
   ].join(':')
 
   # rubocop:disable Style/HashSyntax
-  commands :mysql_raw  => 'mysql'
+  if File.symlink?(Facter::Core::Execution.which('mysql'))
+    real_command = File.readlink(Facter::Core::Execution.which('mysql'))
+  else
+    real_command = Facter::Core::Execution.which('mysql')
+  end
+  commands :mysql_raw  => real_command
   commands :mysqld     => 'mysqld'
   commands :mysqladmin => 'mysqladmin'
   # rubocop:enable Style/HashSyntax
