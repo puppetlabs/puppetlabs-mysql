@@ -39,13 +39,20 @@ class Puppet::Provider::Mysql < Puppet::Provider
 
   # rubocop:disable Style/HashSyntax
   if File.symlink?(Facter::Core::Execution.which('mysql'))
-    real_command = File.readlink(Facter::Core::Execution.which('mysql'))
+    commands :mysql_raw  => File.readlink(Facter::Core::Execution.which('mysql'))
   else
-    real_command = Facter::Core::Execution.which('mysql')
+    commands :mysql_raw  => Facter::Core::Execution.which('mysql')
   end
-  commands :mysql_raw  => real_command
-  commands :mysqld     => 'mysqld'
-  commands :mysqladmin => 'mysqladmin'
+  if File.symlink?(Facter::Core::Execution.which('mysqld'))
+    commands :mysqld     => File.readlink(Facter::Core::Execution.which('mysqld'))
+  else
+    commands :mysqld     => 'mysqld'
+  end
+  if File.symlink?(Facter::Core::Execution.which('mysqladmin'))
+    commands :mysqladmin => File.readlink(Facter::Core::Execution.which('mysqladmin'))
+  else
+    commands :mysqladmin => 'mysqladmin'
+  end
   # rubocop:enable Style/HashSyntax
 
   # Optional defaults file

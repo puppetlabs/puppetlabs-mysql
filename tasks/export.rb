@@ -6,7 +6,11 @@ require 'open3'
 require 'puppet'
 
 def get(file, database, user, password)
-  cmd_string = 'mysqldump'
+  if File.symlink?(Facter::Core::Execution.which('mysqldump'))
+    cmd_string = File.readlink(Facter::Core::Execution.which('mysqldump'))
+  else
+    cmd_string = 'mysqldump'
+  end
   cmd_string << " --databases #{database}" unless database.nil?
   cmd_string << " --user=#{user}" unless user.nil?
   cmd_string << " --password=#{password}" unless password.nil?
