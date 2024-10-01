@@ -279,7 +279,7 @@ describe 'mysql::server' do
             expect(subject).to contain_mysql_user('foo@localhost').with(
               max_connections_per_hour: '1', max_queries_per_hour: '2',
               max_updates_per_hour: '3', max_user_connections: '4',
-              password_hash: 'Sensitive [value redacted]'
+              password_hash: sensitive('*F3A2A51A9B0F2BE2468926B4132313728C250DBF')
             )
           }
         end
