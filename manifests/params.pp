@@ -217,6 +217,7 @@ class mysql::params {
         '9'     => 'ruby-mysql2', # stretch
         '10'    => 'ruby-mysql2', # buster
         '11'    => 'ruby-mysql2', # bullseye
+        '12'    => 'ruby-mysql2', # bookworm
         '16.04' => 'ruby-mysql', # xenial
         '18.04' => 'ruby-mysql2', # bionic
         '20.04' => 'ruby-mysql2', # focal
