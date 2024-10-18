@@ -86,7 +86,7 @@ class mysql::backup::xtrabackup (
       }
     }
     else {
-      if $facts['os']['family'] == 'debian' and $facts['os']['release']['major'] == '11' or
+      if ($facts['os']['name'] == 'debian' and versioncmp($facts['os']['release']['major'], '11') >= 0) or
       ($facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['major'], '22.04') >= 0) {
         mysql_grant { "${backupuser}@localhost/*.*":
           ensure     => $ensure,
