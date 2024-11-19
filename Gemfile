@@ -34,7 +34,7 @@ group :development do
   gem "rubocop-performance", '= 1.16.0',         require: false
   gem "rubocop-rspec", '= 2.19.0',               require: false
   gem "rb-readline", '= 0.5.5',                  require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "rexml", '>= 3.0.0', '< 3.2.7',            require: false
+  gem "rexml", '>= 3.3.9',                       require: false
 end
 group :development, :release_prep do
   gem "puppet-strings", '~> 4.0',         require: false
