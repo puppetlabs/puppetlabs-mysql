@@ -86,6 +86,7 @@
 #   The package which provides the binary specified by the backupmethod parameter.
 # @param excludedatabases
 #   Give a list of excluded databases when using file_per_database, e.g.: [ 'information_schema', 'performance_schema' ]
+#   Only used for the mysqldump and xtrabackup providers
 class mysql::server::backup (
   Optional[String[1]]                                                   $backupuser               = undef,
   Optional[Variant[String, Sensitive[String]]]                          $backuppassword           = undef,
