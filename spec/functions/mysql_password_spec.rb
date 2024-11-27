@@ -36,6 +36,10 @@ shared_examples 'mysql::password function' do
     expect(subject).to run.with_params('').and_return('')
   end
 
+  it 'converts the password when its given in caps with * sign' do
+    expect(subject).to run.with_params('AFDJKFD1*94BDCEBE19083CE2A1F959FD02F964C7AF4CFC29').and_return('*91FF6DD4E1FC57D2EFC57F49552D0596F7D46BAF')
+  end
+
   it 'does not convert a password that is already a hash' do
     expect(subject).to run.with_params('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19').and_return('*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19')
   end
