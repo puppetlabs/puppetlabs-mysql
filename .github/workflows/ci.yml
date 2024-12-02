@@ -39,7 +39,7 @@ jobs:
     - name: Setup Acceptance Test Matrix
       id: get-matrix
       run: |
-        bundle exec matrix_from_metadata_v2 --exclude-platforms '["Ubuntu-22.04-arm", "RedHat-9-arm"]'
+        bundle exec matrix_from_metadata_v2 --exclude-platforms '["Debian-12-arm", "Ubuntu-22.04-arm", "RedHat-9-arm"]'
 
   Acceptance:
     name: "${{matrix.platforms.label}}, ${{matrix.collection}}"
