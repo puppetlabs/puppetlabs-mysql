@@ -22,7 +22,8 @@ Puppet::Functions.create_function(:'mysql::password') do
   def password(password, sensitive = false)
     password = password.unwrap if password.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
 
-    result_string = if %r{^\*[A-F0-9]{40}$}.match?(password)
+    # This magic string is the hex encoded form of `$A$005${SALT}{SHA DIGEST}`, matching MySQL's expected format
+    result_string = if %r{\*[A-F0-9]{40}$}.match?(password) || %r{0x24412430303524[A-F0-9]{63}$}.match?(password)
                       password
                     elsif password.empty?
                       ''
