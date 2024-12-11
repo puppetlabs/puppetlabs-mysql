@@ -13,7 +13,6 @@ class mysql::server::installdb {
     $basedir = $mysql::server::_options['mysqld']['basedir']
     $config_file = $mysql::server::config_file
     $log_error = $mysql::server::_options['mysqld']['log-error']
-    $log_dir = '/var/log/mysql'
 
     if $mysql::server::manage_config_file and $config_file != $mysql::params::config_file {
       $_config_file=$config_file
@@ -22,6 +21,11 @@ class mysql::server::installdb {
     }
 
     if $options['mysqld']['log-error'] {
+      file { dirname($options['mysqld']['log-error']):
+        ensure => 'directory',
+        owner  => $mysqluser,
+        group  => $mysql::server::mysql_group,
+      }
       file { $options['mysqld']['log-error']:
         ensure => file,
         owner  => $mysqluser,
@@ -29,12 +33,6 @@ class mysql::server::installdb {
         mode   => 'u+rw',
         before => Mysql_datadir[$datadir],
       }
-    }
-
-    file { $log_dir:
-      ensure => 'directory',
-      owner  => $mysqluser,
-      group  => $mysql::server::mysql_group,
     }
 
     mysql_datadir { $datadir:
