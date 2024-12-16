@@ -5,18 +5,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v16.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.1.0) - 2024-12-07
+## [v16.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.2.0) - 2024-12-16
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.1.0...v16.2.0)
+
+## [v16.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.1.0) - 2024-12-09
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.0.0...v16.1.0)
 
+### Added
+
+- (CAT-2100) Add Debian 12 support [#1653](https://github.com/puppetlabs/puppetlabs-mysql/pull/1653) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
 ### Fixed
 
-- Fix backup/rotation with multiple excluded databases [#1610](https://github.com/puppetlabs/puppetlabs-mysql/pull/1610) ([BuJo](https://github.com/BuJo))
-
-### Other
-
 - (CAT-2158) Upgrade rexml to address CVE-2024-49761 [#1656](https://github.com/puppetlabs/puppetlabs-mysql/pull/1656) ([amitkarsale](https://github.com/amitkarsale))
-- (CAT-2100) Add Debian 12 support [#1653](https://github.com/puppetlabs/puppetlabs-mysql/pull/1653) ([shubhamshinde360](https://github.com/shubhamshinde360))
+- Fix backup/rotation with multiple excluded databases [#1610](https://github.com/puppetlabs/puppetlabs-mysql/pull/1610) ([BuJo](https://github.com/BuJo))
 
 ## [v16.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.0.0) - 2024-07-11
 
