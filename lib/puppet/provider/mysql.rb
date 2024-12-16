@@ -38,10 +38,34 @@ class Puppet::Provider::Mysql < Puppet::Provider
   ].join(':')
 
   # rubocop:disable Style/HashSyntax
-  commands :mysql_raw  => 'mysql'
-  commands :mysqld     => 'mysqld'
-  commands :mysqladmin => 'mysqladmin'
+  commands :mysql_client     => 'mysql'
+  commands :mariadb_client   => 'mariadb'
+  commands :mysqld_service   => 'mysqld'
+  commands :mariadbd_service => 'mariadbd'
+  commands :mysql_admin      => 'mysqladmin'
+  commands :mariadb_admin    => 'mariadb-admin'
   # rubocop:enable Style/HashSyntax
+
+  def self.mysql_raw(*args)
+    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
+      return mariadb_client(*args)
+    end
+    mysql_client(*args)
+  end
+
+  def self.mysqld(*args)
+    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
+      return mariadb_client(*args)
+    end
+    mysqld_service(*args)
+  end
+
+  def self.mysqladmin(*args)
+    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
+      return mariadb_client(*args)
+    end
+    mysql_admin(*args)
+  end
 
   # Optional defaults file
   def self.defaults_file
@@ -62,8 +86,8 @@ class Puppet::Provider::Mysql < Puppet::Provider
   def self.mysqld_version_string
     # As the possibility of the mysqld being remote we need to allow the version string to be overridden,
     # this can be done by facter.value as seen below. In the case that it has not been set and the facter
-    # value is nil we use the mysql -v command to ensure we report the correct version of mysql for later use cases.
-    @mysqld_version_string ||= Facter.value(:mysqld_version) || mysqld('-V')
+    # value is nil we use an empty string so that default client/service are used.
+    @mysqld_version_string ||= Facter.value(:mysqld_version) || ''
   end
 
   def mysqld_version_string
