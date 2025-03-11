@@ -56,7 +56,7 @@ ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS --skip-routines"
 <% } -%>
 <% } -%>
 
-<%- if $optional_args and type($optional_args) =~ Type(Array) { -%>
+<%- if $optional_args and type($optional_args) =~ Type[Array] { -%>
 <% $optional_args.each |$arg| { -%>
 ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS <%= $arg %>"
 <%- } -%>
