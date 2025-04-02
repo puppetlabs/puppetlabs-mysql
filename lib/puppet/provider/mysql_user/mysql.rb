@@ -28,7 +28,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
       if @plugin == 'caching_sha2_password'
         # Escaping all single quotes to prevent errors when password generated it
         @password = @password.gsub("'") { "\\'" }
-        @password = '0x' + @password.each_byte.map { |b| '%02X' % b.to_i }.join
+        @password = mysql_caller("SELECT CONCAT('0x',HEX('#{@password}'))", 'regular').chomp
       end
 
       @tls_options = parse_tls_options(ssl_type, ssl_cipher, x509_issuer, x509_subject)
