@@ -10,13 +10,13 @@ jobs:
   Spec:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
     with:
-      runs_on: "ubuntu-20.04"
+      runs_on: "ubuntu-24.04"
     secrets: "inherit"
 
   setup_matrix:
     name: "Setup Test Matrix"
     needs: "Spec"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.get-matrix.outputs.matrix }}
 
@@ -47,7 +47,7 @@ jobs:
       - setup_matrix
     if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
