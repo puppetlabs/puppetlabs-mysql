@@ -24,10 +24,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v3
 
-    - name: Activate Ruby 2.7
+    - name: Activate Ruby 3.1
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "2.7"
+        ruby-version: "3.1"
         bundler-cache: true
 
     - name: Print bundle environment
@@ -60,10 +60,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v3
 
-    - name: Activate Ruby 2.7
+    - name: Activate Ruby 3.1
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "2.7"
+        ruby-version: "3.1"
         bundler-cache: true
 
     - name: Print bundle environment
