@@ -44,6 +44,10 @@ def charset
   @charset ||= (debian_12? || ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
 end
 
+def get_db_cmd
+  run_shell('mariadb -V', expect_failures: true).stdout.empty? ? 'mysql' : 'mariadb'
+end
+
 RSpec.configure do |c|
   c.before :suite do
     if os[:family] == 'debian' || os[:family] == 'ubuntu'
