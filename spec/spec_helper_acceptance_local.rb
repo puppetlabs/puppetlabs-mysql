@@ -32,6 +32,10 @@ def ubuntu_2204?
   os[:family] == 'ubuntu' && os[:release].to_f == 22.04
 end
 
+def ubuntu_2404?
+  os[:family] == 'ubuntu' && os[:release].to_f == 24.04
+end
+
 def sles_15?
   os[:family] == 'sles' && os[:release].to_i == 15
 end
@@ -41,7 +45,7 @@ def debian_12?
 end
 
 def charset
-  @charset ||= (debian_12? || ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
+  @charset ||= (ubuntu_2404? || debian_12? || ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
 end
 
 def get_db_cmd
