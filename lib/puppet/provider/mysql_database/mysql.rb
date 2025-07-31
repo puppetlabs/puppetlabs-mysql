@@ -7,16 +7,12 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
   commands mysql_raw: 'mysql'
 
   def self.instances
-    mysql_caller('show databases', 'regular').split("\n").map do |name|
-      attributes = {}
-      mysql_caller(["show variables like '%_database'", name], 'regular').split("\n").each do |line|
-        k, v = line.split(%r{\s})
-        attributes[k] = v
-      end
+    mysql_caller('SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA', 'regular').split("\n").map do |line|
+      name, charset, collate = line.split(%r{\s})
       new(name: name,
           ensure: :present,
-          charset: attributes['character_set_database'],
-          collate: attributes['collation_database'])
+          charset: charset,
+          collate: collate)
     end
   end
 
