@@ -15,76 +15,20 @@
   ],
   "operatingsystem_support": [
     {
-      "operatingsystem": "RedHat",
-      "operatingsystemrelease": [
-        "7",
-        "8",
-        "9"
-      ]
-    },
-    {
-      "operatingsystem": "CentOS",
-      "operatingsystemrelease": [
-        "7",
-        "8"
-      ]
-    },
-    {
-      "operatingsystem": "OracleLinux",
-      "operatingsystemrelease": [
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": [
-        "10",
-        "11",
-        "12"
-      ]
-    },
-    {
-      "operatingsystem": "Scientific",
-      "operatingsystemrelease": [
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "SLES",
-      "operatingsystemrelease": [
-        "12",
-        "15"
-      ]
-    },
-    {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "18.04",
-        "20.04",
-        "22.04"
-      ]
-    },
-    {
-      "operatingsystem": "Rocky",
-      "operatingsystemrelease": [
-        "8"
-      ]
-    },
-    {
-      "operatingsystem": "AlmaLinux",
-      "operatingsystemrelease": [
-        "8"
+        "24.04"
       ]
     }
   ],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 7.0.0 < 9.0.0"
+      "version_requirement": ">= 8.0.0 < 9.0.0"
     }
   ],
   "description": "MySQL module",
+  "pdk-version": "3.5.0 (ga43db72)",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "tags/3.2.0.4-0-g5d17ec1",
-  "pdk-version": "3.2.0"
+  "template-ref": "heads/main-0-g11c0f3d"
 }

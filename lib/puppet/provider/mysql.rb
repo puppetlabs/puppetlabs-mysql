@@ -141,7 +141,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
         mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact).scrub
       end
     else
-      raise Puppet::Error, _("#mysql_caller: Unrecognised type '%{type}'" % { type: type })
+      raise Puppet::Error, _("#mysql_caller: Unrecognised type '%{type}'" % { type: })
     end
   end
 
