@@ -30,7 +30,7 @@ class Puppet::Provider::MysqlLoginPath::IniFile < Puppet::Provider
   def self.load(filename, opts = {})
     return unless File.file? filename
 
-    new(opts.merge(filename: filename))
+    new(opts.merge(filename:))
   end
 
   # Get and set the filename
