@@ -34,8 +34,8 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     '/usr/mysql/5.7/bin',
   ].join(':')
 
-  commands mysqld: 'mysqld'
-  optional_commands mysql_install_db: 'mysql_install_db'
+  commands mysqld: pick_correct_binary('mysqld', 'mariadbd')
+  optional_commands mysql_install_db: pick_correct_binary('mysql_install_db', 'mariadb-install-db')
   # rubocop:disable Lint/UselessAssignment
   def create
     name                     = @resource[:name]
