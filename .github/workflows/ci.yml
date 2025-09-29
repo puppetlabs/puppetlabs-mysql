@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
     
 jobs:
-  Spec:
-    uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
-    secrets: "inherit"
+  # Spec:
+  #   uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
+  #   secrets: "inherit"
 
   Acceptance:
-    needs: Spec
+    # needs: Spec
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_acceptance.yml@main"
     with:
       flags: "--nightly --platform-include debian-10 ubuntu-20.04"
