@@ -15,6 +15,6 @@ jobs:
     # needs: Spec
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_acceptance.yml@main"
     with:
-      flags: "--nightly --platform-include debian-10 ubuntu-20.04"
+      flags: "--nightly --platform-include debian-10 --platform-include ubuntu-20.04"
       # flags: "--nightly --platform-exclude centos-7 --platform-exclude scientific-7 --platform-exclude oraclelinux-7 --platform-exclude almalinux-8 --arch-exclude arm"
     secrets: "inherit"
