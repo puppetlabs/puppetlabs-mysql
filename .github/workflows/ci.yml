@@ -9,100 +9,11 @@ on:
 jobs:
   Spec:
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
-    with:
-      runs_on: "ubuntu-24.04"
     secrets: "inherit"
 
-  setup_matrix:
-    name: "Setup Test Matrix"
-    needs: "Spec"
-    runs-on: ubuntu-24.04
-    outputs:
-      matrix: ${{ steps.get-matrix.outputs.matrix }}
-
-    steps:
-    - name: Checkout Source
-      uses: actions/checkout@v3
-
-    - name: Activate Ruby 3.1
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: "3.1"
-        bundler-cache: true
-
-    - name: Print bundle environment
-      run: |
-        echo ::group::bundler environment
-        bundle env
-        echo ::endgroup::
-
-    - name: Setup Acceptance Test Matrix
-      id: get-matrix
-      run: |
-        bundle exec matrix_from_metadata_v2 --exclude-platforms '["Debian-12-arm", "Ubuntu-22.04-arm", "RedHat-9-arm"]'
-
   Acceptance:
-    name: "${{matrix.platforms.label}}, ${{matrix.collection}}"
-    needs:
-      - setup_matrix
-    if: ${{ needs.setup_matrix.outputs.matrix != '{}' }}
-
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
-    
-    env:
-      PUPPET_GEM_VERSION: '~> 7.24'
-      FACTER_GEM_VERSION: 'https://github.com/puppetlabs/facter#main'
-    
-    steps:
-    - name: "Install Twingate"
-      uses: "twingate/github-action@v1"
-      with:
-        service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
-
-    - name: Checkout Source
-      uses: actions/checkout@v3
-
-    - name: Activate Ruby 3.1
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: "3.1"
-        bundler-cache: true
-
-    - name: Print bundle environment
-      run: |
-        bundle env
-
-    - name: "Disable mysqld apparmor profile"	
-      if: ${{matrix.platforms.provider == 'docker'}}
-      run: |
-        sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/	
-        sudo apparmor_parser -R /etc/apparmor.d/disable/usr.sbin.mysqld
-        sudo systemctl disable apparmor
-        sudo systemctl stop apparmor
-
-    - name: Provision test environment
-      run: |
-        bundle exec rake 'litmus:provision[${{matrix.platforms.provider}},${{ matrix.platforms.image }}]'
-        FILE='spec/fixtures/litmus_inventory.yaml'
-        sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
-
-    - name: Install agent
-      run: |
-        bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
-
-    - name: Install module
-      run: |
-        bundle exec rake 'litmus:install_module'
-
-    - name: Run acceptance tests
-      run: |
-        bundle exec rake 'litmus:acceptance:parallel'
-
-    - name: Remove test environment
-      if: ${{ always() }}
-      continue-on-error: true
-      run: |
-        bundle exec rake 'litmus:tear_down'
+    needs: Spec
+    uses: "puppetlabs/cat-github-actions/.github/workflows/module_acceptance.yml@main"
+    with:
+      flags: "--nightly --platform-exclude centos-7 --platform-exclude scientific-7 --platform-exclude oraclelinux-7 --platform-exclude almalinux-8 --arch-exclude arm"
+    secrets: "inherit"

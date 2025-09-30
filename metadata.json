@@ -80,11 +80,11 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 7.0.0 < 9.0.0"
+      "version_requirement": ">= 8.0.0 < 9.0.0"
     }
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "tags/3.2.0.4-0-g5d17ec1",
-  "pdk-version": "3.2.0"
+  "template-ref": "heads/main-0-g19976cd",
+  "pdk-version": "3.5.0"
 }
