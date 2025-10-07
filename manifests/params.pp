@@ -36,7 +36,7 @@ class mysql::params {
           $python_package_name = 'MySQL-python'
         }
         'Amazon': {
-          if versioncmp($facts['os']['release']['full'], '2') >= 0 {
+          if versioncmp($facts['os']['release']['full'], '2022') >= 0 or $facts['os']['release']['full'] == '2' {
             $provider = 'mariadb'
           } else {
             $provider = 'mysql'
