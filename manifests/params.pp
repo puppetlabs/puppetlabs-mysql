@@ -217,6 +217,7 @@ class mysql::params {
         '9'     => 'ruby-mysql2', # stretch
         '10'    => 'ruby-mysql2', # buster
         '11'    => 'ruby-mysql2', # bullseye
+        '12'    => 'ruby-mysql2', # bookworm
         '16.04' => 'ruby-mysql', # xenial
         '18.04' => 'ruby-mysql2', # bionic
         '20.04' => 'ruby-mysql2', # focal
@@ -400,25 +401,16 @@ class mysql::params {
     }
   }
 
-  case $facts['os']['name'] {
-    'Ubuntu': {
-      $server_service_provider = 'systemd'
-    }
-    'Alpine': {
-      $server_service_provider = 'rc-service'
-    }
-    'FreeBSD': {
-      $server_service_provider = 'freebsd'
-    }
-    default: {
-      $server_service_provider = undef
-    }
+  $skip_ssl = ($facts['os']['name'] == 'SLES' and $facts['os']['release']['major'] =~ /^15/) ? {
+    true  => true,
+    false => undef,
   }
 
   $default_options = {
     'client'          => {
       'port'          => '3306',
       'socket'        => $mysql::params::socket,
+      'skip-ssl'      => $skip_ssl,
     },
     'mysqld_safe'        => {
       'nice'             => '0',
@@ -450,7 +442,6 @@ class mysql::params {
       'basedir'               => $mysql::params::basedir,
       'bind-address'          => '127.0.0.1',
       'datadir'               => $mysql::params::datadir,
-      'expire_logs_days'      => '10',
       'key_buffer_size'       => '16M',
       'log-error'             => $mysql::params::log_error,
       'max_allowed_packet'    => '16M',
@@ -485,7 +476,7 @@ class mysql::params {
   }
 
   ## Additional graceful failures
-  if $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] == '4' and $facts['os']['name'] != 'Amazon' {
-    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 6.0 and beyond.")
+  if $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] < '7' and $facts['os']['name'] != 'Amazon' {
+    fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 7.0 and beyond.")
   }
 }

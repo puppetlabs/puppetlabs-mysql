@@ -101,14 +101,14 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
     allow(Puppet::Util).to receive(:which).with('mysqld').and_return('/usr/sbin/mysqld')
     allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
-    allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return('joe@localhost')
+    allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return('joe@localhost')
     allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').and_return('10	10	10	10					*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Layout/LineLength
   end
 
   describe 'self.instances' do
     it 'returns an array of users MySQL 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.5'][:string])
-      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
@@ -117,7 +117,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
 
     it 'returns an array of users MySQL 5.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.6'][:string])
-      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
@@ -126,7 +126,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
 
     it 'returns an array of users MySQL >= 5.7.0 < 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.1'][:string])
-      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
@@ -135,7 +135,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
 
     it 'returns an array of users MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
-      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
@@ -144,7 +144,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
 
     it 'returns an array of users mariadb 10.0' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.0'][:string])
-      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
@@ -153,7 +153,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
 
     it 'returns an array of users mariadb >= 10.1.21' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mariadb-10.1.44'][:string])
-      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD, PLUGIN, AUTHENTICATION_STRING FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
@@ -162,7 +162,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
 
     it 'returns an array of users percona 5.5' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['percona-5.5'][:string])
-      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user", 'regular').and_return(raw_users)
+      allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
       parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
