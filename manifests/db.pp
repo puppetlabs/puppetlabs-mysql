@@ -124,7 +124,7 @@ define mysql::db (
 
     if $sql {
       exec { "${dbname}-import":
-        command     => "${import_cat_cmd} ${shell_join($sql)} | mysql ${dbname}",
+        command     => "${import_cat_cmd} ${shell_join($sql)} | ${mysql::params::provider} ${dbname}",
         logoutput   => true,
         environment => "HOME=${facts['root_home']}",
         refreshonly => ! $enforce_sql,

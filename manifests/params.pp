@@ -129,6 +129,7 @@ class mysql::params {
           fail("Unsupported platform: puppetlabs-${module_name} currently doesn\'t support ${facts['os']['name']}.")
         }
       }
+      $provider            = 'mariadb'
       $config_file         = '/etc/my.cnf'
       $includedir          = '/etc/my.cnf.d'
       $datadir             = '/var/lib/mysql'
@@ -227,6 +228,7 @@ class mysql::params {
     }
 
     'Archlinux': {
+      $provider                = 'mariadb'
       $daemon_dev_package_name = undef
       $client_dev_package_name = undef
       $includedir              = undef
@@ -255,6 +257,7 @@ class mysql::params {
     }
 
     'Gentoo': {
+      $provider            = 'mysql'
       $client_package_name = 'virtual/mysql'
       $includedir          = undef
       $server_package_name = 'virtual/mysql'
@@ -281,6 +284,7 @@ class mysql::params {
     }
 
     'FreeBSD': {
+      $provider            = 'mysql'
       $client_package_name = 'databases/mysql57-client'
       $server_package_name = 'databases/mysql57-server'
       $basedir             = '/usr/local'
@@ -310,6 +314,7 @@ class mysql::params {
     }
 
     'OpenBSD': {
+      $provider            = 'mariadb'
       $client_package_name = 'mariadb-client'
       $server_package_name = 'mariadb-server'
       $basedir             = '/usr/local'
@@ -341,6 +346,7 @@ class mysql::params {
     default: {
       case $facts['os']['name'] {
         'Alpine': {
+          $provider            = 'mariadb'
           $client_package_name = 'mariadb-client'
           $server_package_name = 'mariadb'
           $basedir             = '/usr'
@@ -366,6 +372,7 @@ class mysql::params {
           $daemon_dev_package_name     = undef
         }
         'Amazon': {
+          $provider            = 'mysql'
           $client_package_name = 'mysql'
           $server_package_name = 'mysql-server'
           $basedir             = '/usr'
