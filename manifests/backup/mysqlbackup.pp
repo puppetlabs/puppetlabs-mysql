@@ -32,6 +32,7 @@ class mysql::backup::mysqlbackup (
   Optional[String[1]]                           $compression_command      = undef,
   Optional[String[1]]                           $compression_extension    = undef,
   Optional[String[1]]                           $backupmethod_package     = undef,
+  Array                                         $excludedatabases         = [], # unused, compatibility variable for mysql::server::backup class
 ) inherits mysql::params {
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
