@@ -37,16 +37,16 @@ class mysql::server::root_password {
     }
   }
 
-  $parameters = {
-    'root_password_set' => $root_password_set,
-    'root_password' => $root_password,
-    'options' => $options,
-  }
-
   if $mysql::server::create_root_my_cnf and $root_password_set {
-    # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
     file { "${facts['root_home']}/.my.cnf":
-      content => epp('mysql/my.cnf.pass.epp',$parameters),
+      content => stdlib::deferrable_epp(
+        'mysql/my.cnf.pass.epp',
+        {
+          'root_password_set' => $root_password_set,
+          'root_password'     => $root_password,
+          'options'           => $options,
+        }
+      ),
       owner   => 'root',
       mode    => '0600',
     }
