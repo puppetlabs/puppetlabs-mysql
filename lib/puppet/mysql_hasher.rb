@@ -52,7 +52,7 @@ module Puppet
 
       salt = String.new(capacity: 20)
       20.times do |i|
-        byte_value = hash_bytes[i % hash_bytes.length].ord
+        byte_value = hash_bytes[i].ord
         salt << SALT_CHARS[byte_value % SALT_CHARS.length]
       end
       salt
