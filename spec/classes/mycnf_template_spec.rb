@@ -77,11 +77,27 @@ describe 'mysql::server' do
       end
 
       context 'with includedir' do
-        let(:params) { { includedir: '/etc/my.cnf.d' } }
+        let(:params) {{ includedir: '/etc/my.cnf.d' } }
 
-        it 'makes the directory' do
-          expect(subject).to contain_file('/etc/my.cnf.d').with(ensure: :directory,
-                                                                mode: '0755')
+        context 'when purge_conf_dir is false' do
+          let(:params) { super().merge({'purge_conf_dir' =>  false })}
+
+          it 'makes the directory without recursion' do
+            expect(subject).to contain_file('/etc/my.cnf.d').with(ensure: :directory,
+                                                                  mode: '0755',
+                                                                  recurse: false,
+                                                                  purge: false)
+          end
+        end
+
+        context 'when purge_conf_dir is true' do
+          let(:params) { super().merge({'purge_conf_dir' =>  true })}
+
+          it 'makes the directory with purge and recursion' do
+            expect(subject).to contain_file('/etc/my.cnf.d').with(ensure: :directory,
+                                                                  recurse: true,
+                                                                  purge: true )
+          end
         end
 
         it { is_expected.to contain_file('mysql-config-file').with_content(%r{!includedir}) }
