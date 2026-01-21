@@ -15,15 +15,14 @@ module Puppet
     # Generate MySQL caching_sha2_password hash in expected hex format
     # @param password [String] The plain text password to hash
     # @param salt [String, nil] Optional salt (20 bytes). If not provided, a deterministic salt is generated
-    # @param username [String, nil] Optional username for deterministic salt generation
     # @return [String] The MySQL caching_sha2_password hash in hex format (with 0x prefix)
-    def self.caching_sha2_password(password, salt = nil, username = nil)
+    def self.caching_sha2_password(password, salt: nil)
       return password if password =~ /^0x[A-F0-9]+$/i
 
       validate_password(password)
 
       if salt.nil?
-        salt = generate_deterministic_salt(password, username)
+        salt = generate_deterministic_salt(password)
       else
         raise ArgumentError, "salt must be exactly 20 bytes (got #{salt.bytesize})" unless salt.bytesize == 20
       end
@@ -46,9 +45,8 @@ module Puppet
     end
 
     # Generate deterministic salt to ensure idempotency
-    def self.generate_deterministic_salt(password, username = nil)
-      input = "#{password}#{username}"
-      hash_bytes = Digest::SHA256.digest(input)
+    def self.generate_deterministic_salt(password)
+      hash_bytes = Digest::SHA256.digest(password)
 
       salt = String.new(capacity: 20)
       20.times do |i|
@@ -56,10 +54,6 @@ module Puppet
         salt << SALT_CHARS[byte_value % SALT_CHARS.length]
       end
       salt
-    end
-
-    def self.generate_utf8_salt(length)
-      length.times.map { SALT_CHARS.sample }.join
     end
 
     # Base64-like encoding used in crypt

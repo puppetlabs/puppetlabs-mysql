@@ -78,7 +78,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     password_hash = password_hash.unwrap if password_hash.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
 
     if !password_hash.nil? && plugin == 'caching_sha2_password' && !password_hash.match?(/^0x[A-F0-9]+$/i)
-      password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash, nil, @resource[:name])
+      password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash)
     end
 
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
@@ -156,7 +156,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     plugin = @resource.value(:plugin)
 
     if plugin == 'caching_sha2_password' && !string.match?(/^0x[A-F0-9]+$/i)
-      string = Puppet::MysqlHasher.caching_sha2_password(string, nil, @resource[:name])
+      string = Puppet::MysqlHasher.caching_sha2_password(string)
     end
 
     # We have a fact for the mysql version ...
@@ -238,7 +238,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     password_hash = @resource[:password_hash]
 
     if string == 'caching_sha2_password' && !password_hash.nil? && !password_hash.match?(/^0x[A-F0-9]+$/i)
-      password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash, nil, @resource[:name])
+      password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash)
     end
 
       if newer_than('mariadb' => '10.1.21') && string == 'ed25519'
