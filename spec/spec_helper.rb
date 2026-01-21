@@ -25,7 +25,8 @@ default_fact_files.each do |f|
   next unless File.exist?(f) && File.readable?(f) && File.size?(f)
 
   begin
-    default_facts.merge!(YAML.safe_load(File.read(f), permitted_classes: [], permitted_symbols: [], aliases: true))
+    require 'deep_merge'
+    default_facts.deep_merge!(YAML.safe_load(File.read(f), permitted_classes: [], permitted_symbols: [], aliases: true))
   rescue StandardError => e
     RSpec.configuration.reporter.message "WARNING: Unable to load #{f}: #{e}"
   end
@@ -33,7 +34,7 @@ end
 
 # read default_facts and merge them over what is provided by facterdb
 default_facts.each do |fact, value|
-  add_custom_fact fact, value
+  add_custom_fact fact, value, merge_facts: true
 end
 
 RSpec.configure do |c|

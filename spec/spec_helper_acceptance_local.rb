@@ -36,8 +36,16 @@ def sles_15?
   os[:family] == 'sles' && os[:release].to_i == 15
 end
 
+def debian_12?
+  os[:family] == 'debian' && os[:release].to_i == 12
+end
+
 def charset
-  @charset ||= (ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
+  @charset ||= (debian_12? || ubuntu_2204? || sles_15?) ? 'utf8mb3' : 'utf8'
+end
+
+def get_db_cmd
+  run_shell('mariadb -V', expect_failures: true).stdout.empty? ? 'mysql' : 'mariadb'
 end
 
 RSpec.configure do |c|

@@ -217,6 +217,7 @@ class mysql::params {
         '9'     => 'ruby-mysql2', # stretch
         '10'    => 'ruby-mysql2', # buster
         '11'    => 'ruby-mysql2', # bullseye
+        '12'    => 'ruby-mysql2', # bookworm
         '16.04' => 'ruby-mysql', # xenial
         '18.04' => 'ruby-mysql2', # bionic
         '20.04' => 'ruby-mysql2', # focal
@@ -400,10 +401,16 @@ class mysql::params {
     }
   }
 
+  $skip_ssl = ($facts['os']['name'] == 'SLES' and $facts['os']['release']['major'] =~ /^15/) ? {
+    true  => true,
+    false => undef,
+  }
+
   $default_options = {
     'client'          => {
       'port'          => '3306',
       'socket'        => $mysql::params::socket,
+      'skip-ssl'      => $skip_ssl,
     },
     'mysqld_safe'        => {
       'nice'             => '0',

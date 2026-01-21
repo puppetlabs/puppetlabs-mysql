@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v16.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.3.0) - 2025-07-29
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.2.0...v16.3.0)
+
+### Added
+
+- Add support for Mariadb 11.x [#1645](https://github.com/puppetlabs/puppetlabs-mysql/pull/1645) ([Marc-DRI](https://github.com/Marc-DRI))
+
+### Other
+
+- ci(MODULES-11557): add Twingate setup step to GitHub Actions workflow [#1678](https://github.com/puppetlabs/puppetlabs-mysql/pull/1678) ([imaqsood](https://github.com/imaqsood))
+- MODULES-11577 chore(ruby): upgrade Ruby from 2.7 to 3.1 [#1671](https://github.com/puppetlabs/puppetlabs-mysql/pull/1671) ([imaqsood](https://github.com/imaqsood))
+- (CAT-2296) Update github runner image to ubuntu-24.04 [#1669](https://github.com/puppetlabs/puppetlabs-mysql/pull/1669) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
+## [v16.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.2.0) - 2024-12-16
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.1.0...v16.2.0)
+
+## [v16.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.1.0) - 2024-12-09
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.0.0...v16.1.0)
+
+### Added
+
+- (CAT-2100) Add Debian 12 support [#1653](https://github.com/puppetlabs/puppetlabs-mysql/pull/1653) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
+### Fixed
+
+- (CAT-2158) Upgrade rexml to address CVE-2024-49761 [#1656](https://github.com/puppetlabs/puppetlabs-mysql/pull/1656) ([amitkarsale](https://github.com/amitkarsale))
+- Fix backup/rotation with multiple excluded databases [#1610](https://github.com/puppetlabs/puppetlabs-mysql/pull/1610) ([BuJo](https://github.com/BuJo))
+
 ## [v16.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.0.0) - 2024-07-11
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v15.0.0...v16.0.0)
@@ -178,7 +209,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 
-- Fix mysql_user parameters update on modern MySQL [#1415](https://github.com/puppetlabs/puppetlabs-mysql/pull/1415) ([weastur](https://github.com/weastur))
+- Fix mysql_user parameters update on modern MySQL [#1415](https://github.com/puppetlabs/puppetlabs-mysql/pull/1415) ([psapezhka](https://github.com/psapezhka))
 - (IAC-1677) Fix issue with deprecated rspec [#1414](https://github.com/puppetlabs/puppetlabs-mysql/pull/1414) ([ghoneycutt](https://github.com/ghoneycutt))
 - Fix broken link and style in documentation [#1403](https://github.com/puppetlabs/puppetlabs-mysql/pull/1403) ([ghoneycutt](https://github.com/ghoneycutt))
 
@@ -842,7 +873,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - PR 654 was incorrectly using stdlib dirname [#677](https://github.com/puppetlabs/puppetlabs-mysql/pull/677) ([underscorgan](https://github.com/underscorgan))
-- Fix bug in 578 [#671](https://github.com/puppetlabs/puppetlabs-mysql/pull/671) ([aldavud](https://github.com/aldavud))
+- Fix bug in 578 [#671](https://github.com/puppetlabs/puppetlabs-mysql/pull/671) ([](https://github.com/))
 - Check for full path for log-bin to stop puppet from managing directory “." [#654](https://github.com/puppetlabs/puppetlabs-mysql/pull/654) ([NoodlesNZ](https://github.com/NoodlesNZ))
 
 ## [3.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/3.2.0) - 2015-02-10
@@ -1167,7 +1198,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Refactor to put a knob on all parameters [#169](https://github.com/puppetlabs/puppetlabs-mysql/pull/169) ([wolfspyre](https://github.com/wolfspyre))
 - Puppet 2.6 fix [#163](https://github.com/puppetlabs/puppetlabs-mysql/pull/163) ([domcleal](https://github.com/domcleal))
 - Restrict the versions and add 3.1 [#155](https://github.com/puppetlabs/puppetlabs-mysql/pull/155) ([richardc](https://github.com/richardc))
-- Fix issue with redeclaration of database_user via mysql::db  [#154](https://github.com/puppetlabs/puppetlabs-mysql/pull/154) ([pbrit](https://github.com/pbrit))
+- Fix issue with redeclaration of database_user via mysql::db  [#154](https://github.com/puppetlabs/puppetlabs-mysql/pull/154) ([paaloeye](https://github.com/paaloeye))
 - Update travis config file [#148](https://github.com/puppetlabs/puppetlabs-mysql/pull/148) ([blkperl](https://github.com/blkperl))
 
 ## [0.6.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/0.6.1) - 2013-01-11
@@ -1190,7 +1221,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - allow logging via syslog [#130](https://github.com/puppetlabs/puppetlabs-mysql/pull/130) ([saz](https://github.com/saz))
 - Optionally manage the mysqld service [#122](https://github.com/puppetlabs/puppetlabs-mysql/pull/122) ([hunner](https://github.com/hunner))
 - Mysql::backup Compression Optional [#117](https://github.com/puppetlabs/puppetlabs-mysql/pull/117) ([hunner](https://github.com/hunner))
-- Add show view privilege for backup user [#108](https://github.com/puppetlabs/puppetlabs-mysql/pull/108) ([pbrit](https://github.com/pbrit))
+- Add show view privilege for backup user [#108](https://github.com/puppetlabs/puppetlabs-mysql/pull/108) ([paaloeye](https://github.com/paaloeye))
 - new config define and a small bugfix [#93](https://github.com/puppetlabs/puppetlabs-mysql/pull/93) ([savar](https://github.com/savar))
 
 ### Fixed
