@@ -19,11 +19,13 @@ Puppet::Functions.create_function(:'mysql::password') do
     return_type 'Variant[String, Sensitive[String]]'
   end
 
-  def password(password, sensitive = false)
+  def password(password, sensitive = false) # rubocop:disable Style/OptionalBooleanParameter
     password = password.unwrap if password.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
 
-    # This magic string is the hex encoded form of `$A$005${SALT}{SHA DIGEST}`, matching MySQL's expected format
-    result_string = if %r{\*[A-F0-9]{40}$}.match?(password) || %r{0x24412430303524[A-F0-9]{63}$}.match?(password)
+    # Check if password is already hashed
+    # - mysql_native_password: *{40 hex chars}
+    # - caching_sha2_password: 0x + hex($A${iterations}${salt}{digest})
+    result_string = if %r{\*[A-F0-9]{40}$}.match?(password) || %r{^0x2441243[A-F0-9]+$}i.match?(password)
                       password
                     elsif password.empty?
                       ''
