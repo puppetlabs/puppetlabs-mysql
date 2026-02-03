@@ -17,11 +17,11 @@ def configure_sles_repos_once
   base_url = (sles_version == 12) ? 'http://download.opensuse.org/distribution/leap/42.3/repo' : 'http://download.opensuse.org/distribution/leap/15.6/repo'
   mariadb_version = (sles_version == 12) ? '10.6' : '10.11'
 
-  run_shell("zypper --non-interactive --gpg-auto-import-keys ar #{base_url}/oss/ opensuse-leap-oss || true", expect_failures: true)
-  run_shell("zypper --non-interactive --gpg-auto-import-keys ar #{base_url}/non-oss/ opensuse-leap-non-oss || true", expect_failures: true)
-  run_shell('rpm --import https://supplychain.mariadb.com/MariaDB-Server-GPG-KEY', expect_failures: true)
-  run_shell("zypper --non-interactive --gpg-auto-import-keys ar https://rpm.mariadb.org/#{mariadb_version}/sles/#{sles_version}/x86_64 mariadb || true", expect_failures: true)
-  run_shell('zypper --non-interactive --gpg-auto-import-keys refresh', expect_failures: false)
+  LitmusHelper.instance.run_shell("zypper --non-interactive --gpg-auto-import-keys ar #{base_url}/oss/ opensuse-leap-oss || true", expect_failures: true)
+  LitmusHelper.instance.run_shell("zypper --non-interactive --gpg-auto-import-keys ar #{base_url}/non-oss/ opensuse-leap-non-oss || true", expect_failures: true)
+  LitmusHelper.instance.run_shell('rpm --import https://supplychain.mariadb.com/MariaDB-Server-GPG-KEY', expect_failures: true)
+  LitmusHelper.instance.run_shell("zypper --non-interactive --gpg-auto-import-keys ar https://rpm.mariadb.org/#{mariadb_version}/sles/#{sles_version}/x86_64 mariadb || true", expect_failures: true)
+  LitmusHelper.instance.run_shell('zypper --non-interactive --gpg-auto-import-keys refresh', expect_failures: false)
   LitmusHelper.instance.apply_manifest("package { 'net-tools-deprecated': ensure => 'latest', }", expect_failures: false)
 
   @sles_repos_configured = true
