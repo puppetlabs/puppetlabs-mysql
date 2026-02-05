@@ -7,7 +7,29 @@ class LitmusHelper
   include PuppetLitmus
 end
 
+# TEMPORARY FIX for unregistered SLES CI systems with no repos configured.
+# Configures openSUSE Leap and MariaDB repos to enable package installation.
+# DO NOT use in production - not enterprise-supported.
+def configure_sles_repos_once
+  return if @sles_repos_configured || os[:family] != 'sles'
+
+  sles_version = os[:release].to_i
+  base_url = (sles_version == 12) ? 'http://download.opensuse.org/distribution/leap/42.3/repo' : 'http://download.opensuse.org/distribution/leap/15.6/repo'
+  mariadb_version = (sles_version == 12) ? '10.6' : '10.11'
+
+  LitmusHelper.instance.run_shell("zypper --non-interactive --gpg-auto-import-keys ar #{base_url}/oss/ opensuse-leap-oss || true", expect_failures: true)
+  LitmusHelper.instance.run_shell("zypper --non-interactive --gpg-auto-import-keys ar #{base_url}/non-oss/ opensuse-leap-non-oss || true", expect_failures: true)
+  LitmusHelper.instance.run_shell('rpm --import https://supplychain.mariadb.com/MariaDB-Server-GPG-KEY', expect_failures: true)
+  LitmusHelper.instance.run_shell("zypper --non-interactive --gpg-auto-import-keys ar https://rpm.mariadb.org/#{mariadb_version}/sles/#{sles_version}/x86_64 mariadb || true", expect_failures: true)
+  LitmusHelper.instance.run_shell('zypper --non-interactive --gpg-auto-import-keys refresh', expect_failures: false)
+  LitmusHelper.instance.apply_manifest("package { 'net-tools-deprecated': ensure => 'latest', }", expect_failures: false)
+
+  @sles_repos_configured = true
+end
+
 def mysql_version
+  configure_sles_repos_once
+
   shell_output = LitmusHelper.instance.run_shell('mysql --version', expect_failures: true)
   if shell_output.stdout.match(%r{\d+\.\d+\.\d+}).nil?
     # mysql is not yet installed, so we apply this class to install it
