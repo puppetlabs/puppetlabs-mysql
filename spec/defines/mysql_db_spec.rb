@@ -5,6 +5,21 @@ require 'spec_helper'
 describe 'mysql::db', type: :define do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
+      provider = if facts[:os]['family'] == 'RedHat'
+                   'mariadb'
+                elsif facts[:os]['family'] == 'Suse'
+                   'mariadb'
+                elsif facts[:os]['name'] == 'Debian'
+                   'mariadb'
+                elsif facts[:os]['name'] == 'Ubuntu'
+                  if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '20') < 0 &&
+                     Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '16') >= 0
+                    'mysql'
+                  else
+                    'mariadb'
+                  end
+                end
+
       let(:facts) do
         facts.merge(root_home: '/root')
       end
@@ -39,7 +54,7 @@ describe 'mysql::db', type: :define do
         # ' if enforcing #refreshonly'
         expect(subject).to contain_exec('test_db-import').with_refreshonly(false)
         # 'if enforcing #command'
-        expect(subject).to contain_exec('test_db-import').with_command('cat /tmp/test.sql | mysql test_db')
+        expect(subject).to contain_exec('test_db-import').with_command("cat /tmp/test.sql | #{provider} test_db")
       end
 
       it 'imports sql script with custom command on creation' do
@@ -47,12 +62,12 @@ describe 'mysql::db', type: :define do
         # if enforcing #refreshonly
         expect(subject).to contain_exec('test_db-import').with_refreshonly(false)
         # if enforcing #command
-        expect(subject).to contain_exec('test_db-import').with_command('zcat /tmp/test.sql | mysql test_db')
+        expect(subject).to contain_exec('test_db-import').with_command("zcat /tmp/test.sql | #{provider} test_db")
       end
 
       it 'imports sql scripts when more than one is specified' do
         params['sql'] = ['/tmp/test.sql', '/tmp/test_2.sql']
-        expect(subject).to contain_exec('test_db-import').with_command('cat /tmp/test.sql /tmp/test_2.sql | mysql test_db')
+        expect(subject).to contain_exec('test_db-import').with_command("cat /tmp/test.sql /tmp/test_2.sql | #{provider} test_db")
       end
 
       it 'does not create database' do
@@ -111,7 +126,7 @@ describe 'mysql::db', type: :define do
       ].each do |path|
         it "succeeds when provided '#{path}' as a value to the 'sql' parameter" do
           params['sql'] = [path]
-          expect(subject).to contain_exec('test_db-import').with_command("cat #{path} | mysql test_db")
+          expect(subject).to contain_exec('test_db-import').with_command("cat #{path} | #{provider} test_db")
         end
       end
 
