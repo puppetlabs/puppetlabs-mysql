@@ -32,7 +32,7 @@ class mysql::server::installdb {
     }
 
     file { $log_dir:
-      ensure => 'directory',
+      ensure => 'present',
       owner  => $mysqluser,
       group  => $mysql::server::mysql_group,
     }
