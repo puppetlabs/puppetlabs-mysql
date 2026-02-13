@@ -37,33 +37,33 @@ class Puppet::Provider::Mysql < Puppet::Provider
     '/usr/mysql/5.7/lib64',
   ].join(':')
 
+  def self.pick_correct_binary(mysql_variant, mariadb_variant)
+    version = Facter.value(:mysqld_version)
+    if version.scan(%r{mariadb}i) && Puppet::Util::Package.versioncmp(version&.scan(%r{\d+\.\d+\.\d+})&.first, '11.0.0') >= 0
+      return mariadb_variant
+    end
+    mysql_variant
+  end
+
+  def pick_correct_binary(mysql_variant, mariadb_variant)
+    self.class.pick_correct_binary(mysql_variant, mariadb_variant)
+  end
+
   # rubocop:disable Style/HashSyntax
-  commands :mysql_client     => 'mysql'
-  commands :mariadb_client   => 'mariadb'
-  commands :mysqld_service   => 'mysqld'
-  commands :mariadbd_service => 'mariadbd'
-  commands :mysql_admin      => 'mysqladmin'
-  commands :mariadb_admin    => 'mariadb-admin'
+  commands :mysql_client     => pick_correct_binary('mysql', 'mariadb')
+  commands :mysqld_service   => pick_correct_binary('mysqld', 'mariadbd')
+  commands :mysql_admin      => pick_correct_binary('mysqladmin', 'mariadb-admin')
   # rubocop:enable Style/HashSyntax
 
   def self.mysql_raw(*args)
-    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
-      return mariadb_client(*args)
-    end
     mysql_client(*args)
   end
 
   def self.mysqld(*args)
-    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
-      return mariadb_client(*args)
-    end
     mysqld_service(*args)
   end
 
   def self.mysqladmin(*args)
-    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
-      return mariadb_client(*args)
-    end
     mysql_admin(*args)
   end
 

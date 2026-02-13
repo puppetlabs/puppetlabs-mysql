@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Set grants for users in MySQL.'
 
-  commands mysql_raw: 'mysql'
+  commands mysql_raw: pick_correct_binary('mysql', 'mariadb')
 
   def self.instances
     instance_configs = {}
