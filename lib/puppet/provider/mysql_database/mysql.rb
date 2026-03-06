@@ -18,7 +18,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
         mysql_caller(["show variables like '%_database'", name], 'regular').split("\n").each do |line|
           k, v = line.split(%r{\s})
           attributes[k] = v
-      end
+        end
       rescue Puppet::ExecutionFailure => e
         raise unless e.message.include?('Unknown database')
 
