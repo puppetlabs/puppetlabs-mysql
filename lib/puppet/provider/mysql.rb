@@ -86,8 +86,16 @@ class Puppet::Provider::Mysql < Puppet::Provider
   def self.mysqld_version_string
     # As the possibility of the mysqld being remote we need to allow the version string to be overridden,
     # this can be done by facter.value as seen below. In the case that it has not been set and the facter
-    # value is nil we use an empty string so that default client/service are used.
-    @mysqld_version_string ||= Facter.value(:mysqld_version) || ''
+    # value is nil we use the mariadbd or mysql command to ensure we report the correct version of engine
+    # for later use cases.
+    @mysqld_version_string ||= Facter.value(:mysqld_version) || version_raw
+  end
+
+  def self.version_raw
+    # get either version of mariadb or mysql
+    `mariadbd -V`
+  rescue
+    `mysqld -V`
   end
 
   def mysqld_version_string
