@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe 'mysql::server' do
+  let(:function) { subject }
+
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) do
@@ -65,7 +67,7 @@ describe 'mysql::server' do
 
       context 'mysql::server::install' do
         it 'contains the package by default' do
-          expect(subject).to contain_package('mysql-server').with(ensure: :present)
+          expect(function).to contain_package('mysql-server').with(ensure: :present)
         end
 
         context 'with package_manage set to true' do
@@ -95,7 +97,7 @@ describe 'mysql::server' do
           end
 
           it do
-            expect(subject).to contain_package('mysql-server').with(
+            expect(function).to contain_package('mysql-server').with(
               provider: 'dpkg',
               source: '/somewhere',
             )
@@ -125,7 +127,7 @@ describe 'mysql::server' do
           let(:params) { { service_enabled: false } }
 
           it do
-            expect(subject).to contain_service('mysqld').with(ensure: :stopped)
+            expect(function).to contain_service('mysqld').with(ensure: :stopped)
           end
 
           context 'with package_manage set to true' do
@@ -179,7 +181,7 @@ describe 'mysql::server' do
       context 'mysql::server::root_password' do
         describe 'when defaults' do
           it {
-            expect(subject).to contain_exec('remove install pass').with(
+            expect(function).to contain_exec('remove install pass').with(
               command: "mysqladmin -u root --password=$(grep -o '[^ ]\\+$' /.mysql_secret) password && (rm -f  /.mysql_secret; exit 0) || (rm -f /.mysql_secret; exit 1)",
               onlyif: [['test', '-f', '/.mysql_secret']],
               path: '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
@@ -245,7 +247,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_user('foo@localhost').with(
+            expect(function).to contain_mysql_user('foo@localhost').with(
               max_connections_per_hour: '1', max_queries_per_hour: '2',
               max_updates_per_hour: '3', max_user_connections: '4',
               password_hash: '*F3A2A51A9B0F2BE2468926B4132313728C250DBF'
@@ -253,7 +255,7 @@ describe 'mysql::server' do
           }
 
           it {
-            expect(subject).to contain_mysql_user('foo2@localhost').with(
+            expect(function).to contain_mysql_user('foo2@localhost').with(
               max_connections_per_hour: nil, max_queries_per_hour: nil,
               max_updates_per_hour: nil, max_user_connections: nil,
               password_hash: nil
@@ -276,7 +278,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_user('foo@localhost').with(
+            expect(function).to contain_mysql_user('foo@localhost').with(
               max_connections_per_hour: '1', max_queries_per_hour: '2',
               max_updates_per_hour: '3', max_user_connections: '4',
               password_hash: sensitive('*F3A2A51A9B0F2BE2468926B4132313728C250DBF')
@@ -302,14 +304,14 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_grant('foo@localhost/somedb.*').with(
+            expect(function).to contain_mysql_grant('foo@localhost/somedb.*').with(
               user: 'foo@localhost', table: 'somedb.*',
               privileges: ['SELECT', 'UPDATE'], options: ['GRANT']
             )
           }
 
           it {
-            expect(subject).to contain_mysql_grant('foo2@localhost/*.*').with(
+            expect(function).to contain_mysql_grant('foo2@localhost/*.*').with(
               user: 'foo2@localhost', table: '*.*',
               privileges: ['SELECT'], options: nil
             )
@@ -328,7 +330,7 @@ describe 'mysql::server' do
           end
 
           it {
-            expect(subject).to contain_mysql_database('somedb').with(
+            expect(function).to contain_mysql_database('somedb').with(
               charset: 'latin1',
               collate: 'latin1',
             )

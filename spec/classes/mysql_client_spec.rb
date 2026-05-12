@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe 'mysql::client' do
+  let(:function) { subject }
+
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) do
@@ -42,7 +44,7 @@ describe 'mysql::client' do
         end
 
         it do
-          expect(subject).to contain_package('mysql_client').with(
+          expect(function).to contain_package('mysql_client').with(
             provider: 'dpkg',
             source: '/somewhere',
           )

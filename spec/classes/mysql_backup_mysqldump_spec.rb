@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe 'mysql::backup::mysqldump' do
+  let(:function) { subject }
+
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:pre_condition) do
@@ -30,7 +32,7 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_cron('mysql-backup').with(
+          expect(function).to contain_cron('mysql-backup').with(
             hour: 23,
             minute: 59,
             monthday: 30,
@@ -44,7 +46,7 @@ describe 'mysql::backup::mysqldump' do
         let(:params) { default_params }
 
         it {
-          expect(subject).to contain_cron('mysql-backup').with(
+          expect(function).to contain_cron('mysql-backup').with(
             command: '/usr/local/sbin/mysqlbackup.sh',
             ensure: 'present',
             hour: 23,
@@ -62,13 +64,13 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          expect(function).to contain_file('mysqlbackup.sh').with_content(
             %r{(\| TEST -TEST)},
           )
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          expect(function).to contain_file('mysqlbackup.sh').with_content(
             %r{(\.TEST)},
           )
-          expect(subject).not_to contain_package('bzip2')
+          expect(function).not_to contain_package('bzip2')
         }
       end
 
@@ -81,7 +83,7 @@ describe 'mysql::backup::mysqldump' do
         end
 
         it {
-          expect(subject).to contain_file('mysqlbackup.sh').with_content(
+          expect(function).to contain_file('mysqlbackup.sh').with_content(
             %r{information_schema\\\|performance_schema},
           )
         }

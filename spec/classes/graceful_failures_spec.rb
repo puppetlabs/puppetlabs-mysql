@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe 'mysql::server' do
+  let(:function) { subject }
+
   context 'on an unsupported OS' do
     let(:facts) do
       {
@@ -12,7 +14,7 @@ describe 'mysql::server' do
     end
 
     it 'gracefully fails' do
-      expect(subject).to compile.and_raise_error(%r{Unsupported platform:})
+      expect(function).to compile.and_raise_error(%r{Unsupported platform:})
     end
   end
 end

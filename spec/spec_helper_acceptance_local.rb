@@ -72,7 +72,7 @@ end
 
 RSpec.configure do |c|
   c.before :suite do
-    if os[:family] == 'debian' || os[:family] == 'ubuntu'
+    if ['debian', 'ubuntu'].include?(os[:family])
       # needed for the puppet fact
       LitmusHelper.instance.apply_manifest("package { 'lsb-release': ensure => installed, }", expect_failures: false)
       LitmusHelper.instance.apply_manifest("package { 'ap': ensure => installed, }", expect_failures: false)

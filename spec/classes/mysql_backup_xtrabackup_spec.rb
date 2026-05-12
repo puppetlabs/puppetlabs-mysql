@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe 'mysql::backup::xtrabackup' do
+  let(:function) { subject }
+
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:pre_condition) do
@@ -26,13 +28,13 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'does not contain the touch command' do
-          expect(subject).to contain_file('xtrabackup.sh').without_content(
+          expect(function).to contain_file('xtrabackup.sh').without_content(
             %r{(^\s+touch\s+$)},
           )
         end
 
         it 'contains the wrapper script' do
-          expect(subject).to contain_file('xtrabackup.sh').with_content(
+          expect(function).to contain_file('xtrabackup.sh').with_content(
             %r{(\n*^xtrabackup\s+.*\$@)},
           )
         end
@@ -59,7 +61,7 @@ describe 'mysql::backup::xtrabackup' do
                   end
 
         it 'contains the weekly cronjob' do
-          expect(subject).to contain_cron('xtrabackup-weekly')
+          expect(function).to contain_cron('xtrabackup-weekly')
             .with(
               ensure: 'present',
               command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F)_full --backup',
@@ -78,7 +80,7 @@ describe 'mysql::backup::xtrabackup' do
                        else
                          '$(date -d "last sunday" +\%F)_full'
                        end
-          expect(subject).to contain_cron('xtrabackup-daily')
+          expect(function).to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
               command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\%F_\\%H-\\%M-\\%S) --backup",
@@ -98,14 +100,14 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contains the defined mysql user' do
-          expect(subject).to contain_mysql_user('backupuser@localhost')
+          expect(function).to contain_mysql_user('backupuser@localhost')
             .with(
               ensure: 'present',
               password_hash: '*4110E08DF51E70A4BA1D4E33A84205E38CF3FE58',
             )
             .that_requires('Class[mysql::server::root_password]')
 
-          expect(subject).to contain_mysql_grant('backupuser@localhost/*.*')
+          expect(function).to contain_mysql_grant('backupuser@localhost/*.*')
             .with(
               ensure: 'present',
               user: 'backupuser@localhost',
@@ -127,9 +129,9 @@ describe 'mysql::backup::xtrabackup' do
           end
 
           it {
-            expect(subject).not_to contain_mysql_grant('backupuser@localhost/performance_schema.keyring_component_status')
-            expect(subject).not_to contain_mysql_grant('backupuser@localhost/performance_schema.log_status')
-            expect(subject).not_to contain_mysql_grant('backupuser@localhost/*.*')
+            expect(function).not_to contain_mysql_grant('backupuser@localhost/performance_schema.keyring_component_status')
+            expect(function).not_to contain_mysql_grant('backupuser@localhost/performance_schema.log_status')
+            expect(function).not_to contain_mysql_grant('backupuser@localhost/*.*')
               .with(
                 ensure: 'present',
                 user: 'backupuser@localhost',
@@ -148,7 +150,7 @@ describe 'mysql::backup::xtrabackup' do
           end
 
           it {
-            expect(subject).to contain_mysql_grant('backupuser@localhost/*.*')
+            expect(function).to contain_mysql_grant('backupuser@localhost/*.*')
               .with(
                 ensure: 'present',
                 user: 'backupuser@localhost',
@@ -162,7 +164,7 @@ describe 'mysql::backup::xtrabackup' do
                 end,
               )
               .that_requires('Mysql_user[backupuser@localhost]')
-            expect(subject).to contain_mysql_grant('backupuser@localhost/performance_schema.keyring_component_status')
+            expect(function).to contain_mysql_grant('backupuser@localhost/performance_schema.keyring_component_status')
               .with(
                 ensure: 'present',
                 user: 'backupuser@localhost',
@@ -172,7 +174,7 @@ describe 'mysql::backup::xtrabackup' do
               )
               .that_requires('Mysql_user[backupuser@localhost]')
 
-            expect(subject).to contain_mysql_grant('backupuser@localhost/performance_schema.log_status')
+            expect(function).to contain_mysql_grant('backupuser@localhost/performance_schema.log_status')
               .with(
                 ensure: 'present',
                 user: 'backupuser@localhost',
@@ -219,7 +221,7 @@ describe 'mysql::backup::xtrabackup' do
                      end
 
         it 'contains the weekly cronjob' do
-          expect(subject).to contain_cron('xtrabackup-weekly')
+          expect(function).to contain_cron('xtrabackup-weekly')
             .with(
               ensure: 'present',
               command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F)_full --backup --skip-ssl',
@@ -232,7 +234,7 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contains the daily cronjob for weekdays 1-6' do
-          expect(subject).to contain_cron('xtrabackup-daily')
+          expect(function).to contain_cron('xtrabackup-daily')
             .with(
               ensure: 'present',
               command: "/usr/local/sbin/xtrabackup.sh --incremental-basedir=/tmp/#{dateformat} --target-dir=/tmp/$(date +\\%F_\\%H-\\%M-\\%S) --backup --skip-ssl",
@@ -251,11 +253,11 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'not contains the weekly cronjob' do
-          expect(subject).not_to contain_cron('xtrabackup-weekly')
+          expect(function).not_to contain_cron('xtrabackup-weekly')
         end
 
         it 'contains the daily cronjob with all weekdays' do
-          expect(subject).to contain_cron('xtrabackup-daily').with(
+          expect(function).to contain_cron('xtrabackup-daily').with(
             ensure: 'present',
             command: '/usr/local/sbin/xtrabackup.sh --target-dir=/tmp/$(date +\%F_\%H-\%M-\%S) --backup',
             user: 'root',
@@ -273,7 +275,7 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contains the prescript' do
-          expect(subject).to contain_file('xtrabackup.sh').with_content(
+          expect(function).to contain_file('xtrabackup.sh').with_content(
             %r{.*rsync -a /tmp backup01.local-lan:\n\nrsync -a /tmp backup02.local-lan:.*},
           )
         end
@@ -286,7 +288,7 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contains the prostscript' do
-          expect(subject).to contain_file('xtrabackup.sh').with_content(
+          expect(function).to contain_file('xtrabackup.sh').with_content(
             %r{.*rsync -a /tmp backup01.local-lan:\n\nrsync -a /tmp backup02.local-lan:.*},
           )
         end
@@ -299,7 +301,7 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contain the mariabackup executor' do
-          expect(subject).to contain_file('xtrabackup.sh').with_content(
+          expect(function).to contain_file('xtrabackup.sh').with_content(
             %r{(\n*^mariabackup\s+.*\$@)},
           )
         end
@@ -311,7 +313,7 @@ describe 'mysql::backup::xtrabackup' do
         end
 
         it 'contain the touch /tmp/backup_success command' do
-          expect(subject).to contain_file('xtrabackup.sh').with_content(
+          expect(function).to contain_file('xtrabackup.sh').with_content(
             %r{(^\s+touch /tmp/backup_success$)},
           )
         end

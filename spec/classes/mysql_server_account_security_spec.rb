@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe 'mysql::server::account_security' do
+  let(:function) { subject }
+
   on_supported_os.each do |os, os_facts|
     let(:facts) { os_facts }
     context "on #{os}" do
@@ -33,7 +35,7 @@ describe 'mysql::server::account_security' do
          '@localhost',
          '@%'].each do |user|
           it "removes Mysql_User[#{user}]" do # rubocop:disable RSpec/RepeatedExample,RSpec/RepeatedDescription
-            expect(subject).to contain_mysql_user(user).with_ensure('absent')
+            expect(function).to contain_mysql_user(user).with_ensure('absent')
           end
         end
 
@@ -42,12 +44,12 @@ describe 'mysql::server::account_security' do
         # covered by the above list.
         ['root@myhost', '@myhost'].each do |user|
           it "removes Mysql_User[#{user}]" do # rubocop:disable RSpec/RepeatedExample,RSpec/RepeatedDescription
-            expect(subject).to contain_mysql_user(user).with_ensure('absent')
+            expect(function).to contain_mysql_user(user).with_ensure('absent')
           end
         end
 
         it 'removes Mysql_database[test]' do
-          expect(subject).to contain_mysql_database('test').with_ensure('absent')
+          expect(function).to contain_mysql_database('test').with_ensure('absent')
         end
       end
 
@@ -70,7 +72,7 @@ describe 'mysql::server::account_security' do
          '@localhost.localdomain',
          '@%'].each do |user|
           it "removes Mysql_User[#{user}] for fqdn==localhost" do
-            expect(subject).to contain_mysql_user(user).with_ensure('absent')
+            expect(function).to contain_mysql_user(user).with_ensure('absent')
           end
         end
       end
@@ -94,7 +96,7 @@ describe 'mysql::server::account_security' do
          '@localhost.localdomain',
          '@%'].each do |user|
           it "removes Mysql_User[#{user}] for fqdn==localhost.localdomain" do
-            expect(subject).to contain_mysql_user(user).with_ensure('absent')
+            expect(function).to contain_mysql_user(user).with_ensure('absent')
           end
         end
       end
