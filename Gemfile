@@ -52,11 +52,14 @@ group :development do
   gem "pry", '~> 0.10',                          require: false
   gem "simplecov-console", '~> 0.9',             require: false
   gem "puppet-debugger", '~> 1.6',               require: false
-  gem "rubocop", '~> 1.50.0',                    require: false
-  gem "rubocop-performance", '= 1.16.0',         require: false
-  gem "rubocop-rspec", '= 2.19.0',               require: false
-  gem "rb-readline", '= 0.5.5',                  require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "bigdecimal", '< 3.2.2',                   require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "rubocop", '~> 1.73.0',                    require: false
+  gem "rubocop-performance", '~> 1.24.0',        require: false
+  gem "rubocop-rspec", '~> 3.5.0',               require: false
+  gem "rubocop-rspec_rails", '~> 2.31.0',        require: false
+  gem "rubocop-factory_bot", '~> 2.27.0',        require: false
+  gem "rubocop-capybara", '~> 2.22.0',           require: false
+  gem "rb-readline", '= 0.5.5',                  require: false, platforms: [:windows]
+  gem "bigdecimal", '< 3.2.2',                   require: false, platforms: [:windows]
 end
 group :development, :release_prep do
   gem "puppet-strings", '~> 4.0',         require: false
@@ -64,17 +67,19 @@ group :development, :release_prep do
   gem "puppet-blacksmith", '~> 7.0',      require: false
 end
 group :system_tests do
-  gem "puppet_litmus", '~> 2.0',   require: false, platforms: [:ruby, :x64_mingw] if !ENV['PUPPET_FORGE_TOKEN'].to_s.empty?
-  gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:ruby, :x64_mingw] if ENV['PUPPET_FORGE_TOKEN'].to_s.empty?
-  gem "CFPropertyList", '< 3.0.7', require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet_litmus", '~> 2.0',   require: false, platforms: [:ruby, :windows] if !ENV['PUPPET_FORGE_TOKEN'].to_s.empty?
+  gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:ruby, :windows] if ENV['PUPPET_FORGE_TOKEN'].to_s.empty?
+  gem "CFPropertyList", '< 3.0.7', require: false if RUBY_PLATFORM.include?('darwin')
   gem "serverspec", '~> 2.41',     require: false
 end
 
 gems = {}
+bolt_version = ENV.fetch('BOLT_GEM_VERSION', nil)
 puppet_version = ENV.fetch('PUPPET_GEM_VERSION', nil)
 facter_version = ENV.fetch('FACTER_GEM_VERSION', nil)
 hiera_version = ENV.fetch('HIERA_GEM_VERSION', nil)
 
+gems['bolt'] = location_for(bolt_version, nil, { source: gemsource_puppetcore })
 gems['puppet'] = location_for(puppet_version, nil, { source: gemsource_puppetcore })
 gems['facter'] = location_for(facter_version, nil, { source: gemsource_puppetcore })
 gems['hiera'] = location_for(hiera_version, nil, {}) if hiera_version
