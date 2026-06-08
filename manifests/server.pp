@@ -117,7 +117,7 @@ class mysql::server (
   Variant[Boolean, String[1]]                                           $service_enabled         = true,
   Variant[Boolean, String[1]]                                           $service_manage          = true,
   String[1]                                                             $service_name            = $mysql::params::server_service_name,
-  Optional[String[1]]                                                   $service_provider        = $mysql::params::server_service_provider,
+  Optional[String[1]]                                                   $service_provider        = undef,
   Boolean                                                               $create_root_user        = true,
   Boolean                                                               $create_root_my_cnf      = true,
   Boolean                                                               $create_root_login_file  = false,

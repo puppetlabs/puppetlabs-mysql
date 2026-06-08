@@ -9,11 +9,6 @@ require 'spec_helper_acceptance'
 case os[:family]
 when 'redhat'
   case os[:release].to_i
-  when 5
-    plugin = nil # Plugins not supported on mysql on RHEL 5
-  when 6
-    plugin     = 'example'
-    plugin_lib = 'ha_example.so'
   when 7
     plugin     = 'pam'
     plugin_lib = 'auth_pam.so'

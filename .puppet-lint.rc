@@ -1,3 +1,11 @@
+--fail-on-warnings
 --relative
+--no-80chars-check
+--no-140chars-check
+--no-class_inherits_from_params_class-check
+--no-autoloader_layout-check
+--no-documentation-check
+--no-single_quote_string_with_variables-check
 --no-anchor_resource-check
 --no-params_empty_string_assignment-check
+--ignore-paths=.vendor/**/*.pp,.bundle/**/*.pp,pkg/**/*.pp,spec/**/*.pp,tests/**/*.pp,types/**/*.pp,vendor/**/*.pp

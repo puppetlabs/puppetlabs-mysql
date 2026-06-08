@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-# @summary this function populates and returns the string of arguments which later gets injected in template.
-# arguments that return string holds is conditional and decided by the the input given to function.
-
+# @summary
+#   This function populates and returns the string of arguments which later gets injected in template. Arguments that return string holds is conditional and decided by the the input given to function.
+#
 Puppet::Functions.create_function(:'mysql::innobackupex_args') do
-  # @param args
-  #   String backupuser
-  #   Boolean backupcompress
-  #   String backuppassword_unsensitive
-  #   Array backupdatabases
-  #   Array optional_args
+  # @param backupuser
+  #   The user to use for the backup.
+  # @param backupcompress
+  #   If the backup should be compressed.
+  # @param backuppassword_unsensitive
+  #   The password to use for the backup.
+  # @param backupdatabases
+  #   The databases to backup.
+  # @param optional_args
+  #   Additional arguments to pass to innobackupex.
   #
   # @return String
   #   Generated on the basis of provided values.

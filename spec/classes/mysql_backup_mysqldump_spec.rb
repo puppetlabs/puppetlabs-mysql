@@ -76,13 +76,13 @@ describe 'mysql::backup::mysqldump' do
         let(:params) do
           {
             'file_per_database' => true,
-            'excludedatabases' => ['information_schema']
+            'excludedatabases' => ['information_schema', 'performance_schema']
           }.merge(default_params)
         end
 
         it {
           expect(subject).to contain_file('mysqlbackup.sh').with_content(
-            %r{information_schema},
+            %r{information_schema\\\|performance_schema},
           )
         }
       end

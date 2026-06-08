@@ -45,7 +45,7 @@ class mysql::backup::mysqlbackup (
   }
 
   package { 'meb':
-    ensure    => $ensure,
+    ensure => $ensure,
   }
 
   # http://dev.mysql.com/doc/mysql-enterprise-backup/3.11/en/mysqlbackup.privileges.html

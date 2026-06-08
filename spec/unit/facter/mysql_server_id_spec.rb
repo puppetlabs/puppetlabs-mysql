@@ -10,7 +10,7 @@ describe Facter::Util::Fact.to_s do
   describe 'mysql_server_id' do
     context "igalic's laptop" do
       before :each do
-        allow(Facter.fact(:macaddress)).to receive(:value).and_return('3c:97:0e:69:fb:e1')
+        allow(Facter).to receive(:value).with(:macaddress).and_return('3c:97:0e:69:fb:e1')
       end
 
       it do
@@ -20,7 +20,7 @@ describe Facter::Util::Fact.to_s do
 
     context 'node with lo only' do
       before :each do
-        allow(Facter.fact(:macaddress)).to receive(:value).and_return('00:00:00:00:00:00')
+        allow(Facter).to receive(:value).with(:macaddress).and_return('00:00:00:00:00:00')
       end
 
       it do
@@ -30,7 +30,7 @@ describe Facter::Util::Fact.to_s do
 
     context 'test nil case' do
       before :each do
-        allow(Facter.fact(:macaddress)).to receive(:value).and_return(nil)
+        allow(Facter).to receive(:value).with(:macaddress).and_return(nil)
       end
 
       it do

@@ -40,10 +40,8 @@ describe 'mysql::backup::xtrabackup' do
         package = if facts[:os]['family'] == 'RedHat'
                     if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '8') >= 0
                       'percona-xtrabackup-24'
-                    elsif Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '7') >= 0
-                      'percona-xtrabackup'
                     else
-                      'percona-xtrabackup-20'
+                      'percona-xtrabackup'
                     end
                   elsif facts[:os]['name'] == 'Debian'
                     'percona-xtrabackup-24'
@@ -195,10 +193,8 @@ describe 'mysql::backup::xtrabackup' do
         package = if facts[:os]['family'] == 'RedHat'
                     if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '8') >= 0
                       'percona-xtrabackup-24'
-                    elsif Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '7') >= 0
-                      'percona-xtrabackup'
                     else
-                      'percona-xtrabackup-20'
+                      'percona-xtrabackup'
                     end
                   elsif facts[:os]['name'] == 'Debian'
                     'percona-xtrabackup-24'

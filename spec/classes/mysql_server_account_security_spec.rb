@@ -3,7 +3,8 @@
 require 'spec_helper'
 
 describe 'mysql::server::account_security' do
-  on_supported_os.each do |os, facts|
+  on_supported_os.each do |os, os_facts|
+    let(:facts) { os_facts }
     context "on #{os}" do
       let(:pre_condition) do
         <<-MANIFEST
@@ -13,14 +14,19 @@ describe 'mysql::server::account_security' do
 
       context 'with fqdn==myhost.mydomain' do
         let(:facts) do
-          facts.merge(root_home: '/root',
-                      networking: {
-                        fqdn: 'myhost.mydomain',
-                        hostname: 'myhost'
-                      })
+          override_facts(
+            super(),
+            'root_home' => '/root',
+            'networking' => {
+              'fqdn' => 'myhost.mydomain',
+              'hostname' => 'myhost',
+            },
+          )
         end
 
-        ['root@myhost.mydomain',
+        ['root@localhost.localdomain',
+         '@localhost.localdomain',
+         'root@myhost.mydomain',
          'root@127.0.0.1',
          'root@::1',
          '@myhost.mydomain',
@@ -47,11 +53,14 @@ describe 'mysql::server::account_security' do
 
       context 'with fqdn==localhost' do
         let(:facts) do
-          facts.merge(root_home: '/root',
-                      networking: {
-                        fqdn: 'localhost',
-                        hostname: 'localhost'
-                      })
+          override_facts(
+            super(),
+            'root_home' => '/root',
+            'networking' => {
+              'fqdn' => 'localhost',
+              'hostname' => 'localhost',
+            },
+          )
         end
 
         ['root@127.0.0.1',
@@ -68,11 +77,14 @@ describe 'mysql::server::account_security' do
 
       context 'with fqdn==localhost.localdomain' do
         let(:facts) do
-          facts.merge(root_home: '/root',
-                      networking: {
-                        fqdn: 'localhost.localdomain',
-                        hostname: 'localhost'
-                      })
+          override_facts(
+            super(),
+            'root_home' => '/root',
+            'networking' => {
+              'fqdn' => 'localhost.localdomain',
+              'hostname' => 'localhost',
+            },
+          )
         end
 
         ['root@127.0.0.1',
