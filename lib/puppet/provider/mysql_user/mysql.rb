@@ -34,7 +34,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
         # https://jira.mariadb.org/browse/MDEV-16238 https://jira.mariadb.org/browse/MDEV-16774
         @password = @authentication_string
       end
-      new(name: name,
+      new(name:,
           ensure: :present,
           password_hash: @password,
           plugin: @plugin,

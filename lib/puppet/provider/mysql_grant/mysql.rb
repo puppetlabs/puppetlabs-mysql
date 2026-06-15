@@ -99,7 +99,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
         instance_configs[name] = {
           privileges: sorted_privileges,
-          table: table,
+          table:,
           user: "#{user}@#{host}",
           options: options.uniq
         }
@@ -108,7 +108,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     instances = []
     instance_configs.map do |name, config|
       instances << new(
-        name: name,
+        name:,
         ensure: :present,
         privileges: config[:privileges],
         table: config[:table],

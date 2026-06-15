@@ -59,7 +59,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     Puppet::Util::Execution.execute(
       args,
       failonfail: true,
-      uid: uid,
+      uid:,
       custom_environment: { 'HOME' => homedir },
     )
   end
@@ -70,7 +70,7 @@ class Puppet::Provider::MysqlLoginPath::MysqlLoginPath < Puppet::ResourceApi::Si
     Puppet::Util::Execution.execute(
       args,
       failonfail: true,
-      uid: uid,
+      uid:,
       custom_environment: { 'HOME' => homedir },
     )
   end

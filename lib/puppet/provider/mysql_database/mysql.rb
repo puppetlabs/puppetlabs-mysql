@@ -13,7 +13,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
         k, v = line.split(%r{\s})
         attributes[k] = v
       end
-      new(name: name,
+      new(name:,
           ensure: :present,
           charset: attributes['character_set_database'],
           collate: attributes['collation_database'])

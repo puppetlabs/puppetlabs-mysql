@@ -401,10 +401,16 @@ class mysql::params {
     }
   }
 
+  $skip_ssl = ($facts['os']['name'] == 'SLES' and $facts['os']['release']['major'] =~ /^15/) ? {
+    true  => true,
+    false => undef,
+  }
+
   $default_options = {
     'client'          => {
       'port'          => '3306',
       'socket'        => $mysql::params::socket,
+      'skip-ssl'      => $skip_ssl,
     },
     'mysqld_safe'        => {
       'nice'             => '0',
@@ -470,7 +476,7 @@ class mysql::params {
   }
 
   ## Additional graceful failures
-  if $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] < '7' and $facts['os']['name'] != 'Amazon' {
+  if $facts['os']['family'] == 'RedHat' and versioncmp($facts['os']['release']['major'], '7') < 0 and $facts['os']['name'] != 'Amazon' {
     fail("Unsupported platform: puppetlabs-${module_name} only supports RedHat 7.0 and beyond.")
   }
 }
