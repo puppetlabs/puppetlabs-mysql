@@ -34,7 +34,6 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     '/usr/mysql/5.7/bin',
   ].join(':')
 
-  commands mysqld: 'mysqld'
   optional_commands mysql_install_db: 'mysql_install_db'
   # rubocop:disable Lint/UselessAssignment
   def create

@@ -4,8 +4,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL databases.'
 
-  commands mysql_raw: 'mysql'
-
   def self.instances
     mysql_caller('show databases', 'regular').split("\n").map do |name|
       attributes = {}
