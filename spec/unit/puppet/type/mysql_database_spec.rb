@@ -51,5 +51,15 @@ describe Puppet::Type.type(:mysql_database) do
       resource = Puppet::Type.type(:mysql_database).new(name: 'test', collate: 'utf8_general_ci')
       expect(resource.property(:collate).insync?('latin1_swedish_ci')).to be false
     end
+
+    it 'treats uppercase charset input as in sync with the lowercase server value' do
+      resource = Puppet::Type.type(:mysql_database).new(name: 'test', charset: 'UTF8')
+      expect(resource.property(:charset).insync?('utf8mb3')).to be true
+    end
+
+    it 'treats uppercase collate input as in sync with the lowercase server value' do
+      resource = Puppet::Type.type(:mysql_database).new(name: 'test', collate: 'UTF8_GENERAL_CI')
+      expect(resource.property(:collate).insync?('utf8mb3_general_ci')).to be true
+    end
   end
 end

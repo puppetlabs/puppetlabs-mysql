@@ -17,9 +17,11 @@ Puppet::Type.newtype(:mysql_database) do
   # `utf8` is a deprecated alias for `utf8mb3` in both MySQL and MariaDB. Newer
   # servers (e.g. MariaDB 11 on RHEL 10) report the canonical `utf8mb3` name back,
   # while users typically request `utf8`. Treat the two spellings as equivalent so
-  # the resource stays idempotent regardless of which the server reports.
+  # the resource stays idempotent regardless of which the server reports. Charset
+  # and collation names are case-insensitive and the server reports them
+  # lowercased, so downcase first to also match user input such as `UTF8`.
   def self.normalise_utf8(value)
-    value.to_s.sub(%r{^utf8mb3}, 'utf8')
+    value.to_s.downcase.sub(%r{^utf8mb3}, 'utf8')
   end
 
   newproperty(:charset) do
