@@ -1,0 +1,12 @@
+name: "Fork CI Label Guard"
+
+on:
+  pull_request_target:
+    types: [synchronize, closed]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  strip:
+    uses: "puppetlabs/cat-github-actions/.github/workflows/fork_ci_label_guard.yml@main"

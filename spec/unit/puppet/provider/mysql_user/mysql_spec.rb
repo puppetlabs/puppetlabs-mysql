@@ -171,7 +171,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
   end
 
   describe 'mysql version and type detection' do
-    mysql_version_string_hash.each do |_name, line|
+    mysql_version_string_hash.each_value do |line|
       version = line[:version]
       string = line[:string]
       mysql_type = line[:mysql_type]

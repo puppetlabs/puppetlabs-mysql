@@ -5,7 +5,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v16.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.3.0) - 2025-07-29
+## [v17.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.1.0) - 2026-07-02
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.0.0...v17.1.0)
+
+### Added
+
+- (MODULES-11802) Add support for RHEL 10 [#1712](https://github.com/puppetlabs/puppetlabs-mysql/pull/1712) ([skyamgarp](https://github.com/skyamgarp))
+
+## [v17.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.0.0) - 2026-06-29
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.3.0...v17.0.0)
+
+### Changed
+
+- (CAT-2381) Puppetcore update [#1688](https://github.com/puppetlabs/puppetlabs-mysql/pull/1688) ([LukasAud](https://github.com/LukasAud))
+
+### Fixed
+
+- Fix version check for RHEL/CentOS Stream 10 [#1686](https://github.com/puppetlabs/puppetlabs-mysql/pull/1686) ([kajinamit](https://github.com/kajinamit))
+
+### Other
+
+- (MODULES-11840) Allow puppetlabs/stdlib 10.x [#1707](https://github.com/puppetlabs/puppetlabs-mysql/pull/1707) ([imaqsood](https://github.com/imaqsood))
+
+## [v16.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.3.0) - 2025-07-30
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.2.0...v16.3.0)
 

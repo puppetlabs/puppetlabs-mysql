@@ -4,15 +4,33 @@ on:
   pull_request:
     branches:
       - "main"
+  pull_request_target:
+    types: [labeled, reopened]
+    branches:
+      - "main"
   workflow_dispatch:
-    
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   Spec:
+    if: github.event_name != 'pull_request_target'
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
     secrets: "inherit"
 
   Acceptance:
-    needs: Spec
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.fork == false) ||
+      (github.event_name == 'pull_request_target' &&
+       github.event.pull_request.head.repo.fork == true &&
+       contains(github.event.pull_request.labels.*.name, 'allowed-for-ci'))
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_acceptance.yml@main"
     with:
       flags: "--nightly --platform-exclude centos-7 --platform-exclude scientific-7 --platform-exclude oraclelinux-7 --platform-exclude almalinux-8 --arch-exclude arm"
