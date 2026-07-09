@@ -175,7 +175,6 @@ class mysql::backup::xtrabackup (
     group  => $backupdirgroup,
   }
 
-  # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
   $parameters = {
     'innobackupex_args' => mysql::innobackupex_args($backupuser, $backupcompress, $backuppassword_unsensitive, $backupdatabases, $optional_args),
     'backuprotate' => $backuprotate,
