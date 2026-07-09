@@ -112,7 +112,6 @@ class mysql::backup::mysqldump (
     'include_routines' => $include_routines,
   }
 
-  # TODO: use EPP instead of ERB, as EPP can handle Data of Type Sensitive without further ado
   file { 'mysqlbackup.sh':
     ensure  => $ensure,
     path    => '/usr/local/sbin/mysqlbackup.sh',
