@@ -10,11 +10,44 @@ describe 'mysql::server' do
       end
 
       context 'normal entry' do
-        let(:params) { { override_options: { 'mysqld' => { 'socket' => '/var/lib/mysql/mysql.sock' } } } }
+        let(:params) do
+          {
+            'override_options' => {
+              'mysqld' => {
+                'socket' => '/var/lib/mysql/mysql.sock',
+              },
+              'mysqld-5.7' => {
+                'myisam-recover-options' => :undef,
+              },
+              'mysqld-5.6' => {
+                'myisam-recover-options' => :undef,
+              },
+              'mysqld-5.5' => :undef,
+            },
+          }
+        end
 
         it do
-          expect(subject).to contain_file('mysql-config-file').with(mode: '0644',
-                                                                    selinux_ignore_defaults: true).with_content(%r{socket = /var/lib/mysql/mysql.sock})
+          expect(subject).to contain_file('mysql-config-file')
+            .with_mode('0644')
+            .with_selinux_ignore_defaults(true)
+            .with_content(%r{socket = /var/lib/mysql/mysql.sock})
+        end
+        it 'allows undef values in key/value overrides to knock keys out of default_options' do
+          expect(subject).to contain_file('mysql-config-file')
+            .without_content(%r{myisam-recover-options})
+        end
+        it 'allows undef values in section overrides to knock sections out of default_options' do
+          expect(subject).to contain_file('mysql-config-file')
+            .without_content(%r{\[mysqld-5.5\]})
+        end
+        it 'contains no blank lines between entries within a section' do
+          expect(subject).to contain_file('mysql-config-file')
+            .without_content(%r{\w$\R(\R)+^\w})
+        end
+        it 'contains exactly one blank line between any two sections' do
+          expect(subject).to contain_file('mysql-config-file')
+            .without_content(%r{\w$\R\R(\R)+^\[})
         end
       end
 

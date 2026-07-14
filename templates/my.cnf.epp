@@ -1,25 +1,38 @@
 ### MANAGED BY PUPPET ###
 
-<% sort($options.map |$key, $value| { [$key, $value] }).map |$v| { -%>
-<% if type($v[1]) =~ Type[Hash] { -%>
-[<%= $v[0] %>]
-<%sort($v[1].map |$key, $value| { [$key, $value] }).map |$vi| { -%>
-<%- if ($vi[0] == 'ssl-disable') or ($vi[0] =~ /^ssl/ and $v[1]['ssl-disable'] == true) or ($vi[0] =~ /^ssl-/ and $v[1]['ssl'] == false) { -%>
-<%- next -%>
-<%- } elsif $vi[1] == true or $vi[1] == '' { -%>
-<%= $vi[0] -%>
-<%- } elsif type($vi[1]) =~ Type[Array] { -%>
-<%- $vi[1].each |$vii| { -%>
-<%-$base = $vi[0]-%>
-<%= $base %> = <%= $vii %>
-<%- } -%>
-<%- } elsif !($vi[1] ==nil or $vi[1]=='' or $vi[1]==undef) { -%>
-<%-$base = $vi[0]-%>
-<%= $base %> = <%= $vi[1] -%>
-<% } %>
-<% } %>
-<% } %>
-<% } %>
-<% if $includedir and $includedir != '' { -%>
+<%- Array.new($options).sort.each |$section_and_contents| {
+      [$section, $contents] = $section_and_contents
+      unless $contents =~ Hash {
+        next
+      } else { -%>
+[<%= $section %>]
+<%-     Array.new($contents).sort.each |$key_and_value| {
+          [$key, $value] = $key_and_value
+          if
+            # Always discard `ssl-disable`; it's a module feature, not a valid config key, and
+            # we never include it even if it's set to `false`
+            ($key == 'ssl-disable')
+            # If `ssl-disable` is true, discard ALL ssl-related keys, including `ssl`
+            or ($key =~ /^ssl/ and $contents['ssl-disable'])
+            # If `ssl` is specifically `false` (not unset or `undef`), discard all
+            # ssl-related keys EXCEPT `ssl`
+            or ($key =~ /^ssl-/ and $contents['ssl'] == false)
+          {
+            next
+          } elsif $value in [true, ''] { -%>
+<%= $key %>
+<%-       } elsif $value =~ Array {
+            $value.each |$each_value| { -%>
+<%= $key %> = <%= $each_value %>
+<%-         }
+          } elsif $value !~ Undef { -%>
+<%= $key %> = <%= $value %>
+<%-       } -%>
+<%# No line suppression dash below so we get a blank line at the end of each section -%>
+<%-     } %>
+<%-   } -%>
+<%# No line suppression dash below so we get a second blank line before includedir -%>
+<%- } %>
+<%- unless $includedir.empty { -%>
 !includedir <%= $includedir %>
-<% } -%>
+<%- } -%>
