@@ -49,6 +49,20 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
       databases = provider.class.instances(['managed_existing', 'managed_missing']).map(&:name)
       expect(databases).to eq(['managed_existing'])
     end
+
+    it 're-raises unexpected database lookup failures' do
+      allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", 'managed_broken'], 'regular').and_raise(Puppet::ExecutionFailure, 'ERROR 1044 (42000): Access denied')
+
+      expect { provider.class.instances(['managed_broken']) }.to raise_error(Puppet::ExecutionFailure, 'ERROR 1044 (42000): Access denied')
+    end
+
+    it 'falls back to full scan when managed database list is empty' do
+      allow(provider.class).to receive(:mysql_caller).with('show databases', 'regular').and_return("fallback_db\n")
+      allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", 'fallback_db'], 'regular').and_return("character_set_database latin1\ncollation_database latin1_swedish_ci\nskip_show_database OFF") # rubocop:disable Layout/LineLength
+
+      databases = provider.class.instances([]).map(&:name)
+      expect(databases).to eq(['fallback_db'])
+    end
   end
 
   describe 'self.prefetch' do
