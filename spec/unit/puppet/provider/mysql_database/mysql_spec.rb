@@ -41,12 +41,33 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
       databases = provider.class.instances.map(&:name)
       expect(parsed_databases).to match_array(databases)
     end
+
+    it 'skips managed databases that no longer exist' do
+      allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", 'managed_existing'], 'regular').and_return("character_set_database latin1\ncollation_database  latin1_swedish_ci\nskip_show_database  OFF") # rubocop:disable Layout/LineLength
+      allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", 'managed_missing'], 'regular').and_raise(Puppet::ExecutionFailure, 'ERROR 1049 (42000): Unknown database')
+
+      databases = provider.class.instances(['managed_existing', 'managed_missing']).map(&:name)
+      expect(databases).to eq(['managed_existing'])
+    end
   end
 
   describe 'self.prefetch' do
     it 'exists' do
       provider.class.instances
       provider.class.prefetch({})
+    end
+
+    it 'only prefetches managed databases from resources' do
+      resources = {
+        'db_one' => instance_double(Puppet::Type.type(:mysql_database)),
+        'db_two' => instance_double(Puppet::Type.type(:mysql_database))
+      }
+
+      allow(provider.class).to receive(:instances).with(['db_one', 'db_two']).and_return([])
+      resources.values.each { |res| allow(res).to receive(:provider=) }
+
+      provider.class.prefetch(resources)
+      expect(provider.class).to have_received(:instances).with(['db_one', 'db_two'])
     end
   end
 
