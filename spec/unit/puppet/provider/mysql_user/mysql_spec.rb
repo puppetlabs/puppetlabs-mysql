@@ -170,7 +170,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     end
 
     it 'queries only managed users when user list is provided' do
-      managed_users = ["joe@localhost", "o'reilly@localhost"]
+      managed_users = ['joe@localhost', "o'reilly@localhost"]
       user_query = "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user WHERE HOST IS NOT NULL AND HOST != '' AND CONCAT(User, '@', Host) IN ('joe@localhost', 'o''reilly@localhost')"
 
       allow(provider.class).to receive(:mysql_caller).with(user_query, 'regular').and_return("joe@localhost\no'reilly@localhost")
@@ -221,11 +221,10 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
         'jane@localhost' => instance_double(Puppet::Type.type(:mysql_user))
       }
 
-      allow(provider.class).to receive(:instances).with(['joe@localhost', 'jane@localhost']).and_return([])
-      resources.values.each { |res| allow(res).to receive(:provider=) }
+      expect(provider.class).to receive(:instances).with(['joe@localhost', 'jane@localhost']).and_return([])
+      resources.each_value { |res| allow(res).to receive(:provider=) }
 
       provider.class.prefetch(resources)
-      expect(provider.class).to have_received(:instances).with(['joe@localhost', 'jane@localhost'])
     end
   end
 

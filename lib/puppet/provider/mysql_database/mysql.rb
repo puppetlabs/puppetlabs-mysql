@@ -8,11 +8,11 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
 
   def self.instances(managed_databases = nil)
     db_list = if managed_databases && !managed_databases.empty?
-      managed_databases
-    else
-      mysql_caller('show databases', 'regular').split("\n")
-    end
-    db_list.map do |name|
+                managed_databases
+              else
+                mysql_caller('show databases', 'regular').split("\n")
+              end
+    db_list.map { |name|
       attributes = {}
       begin
         mysql_caller(["show variables like '%_database'", name], 'regular').split("\n").each do |line|
@@ -24,11 +24,11 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
 
         next
       end
-      new(name: name,
+      new(name:,
           ensure: :present,
           charset: attributes['character_set_database'],
           collate: attributes['collation_database'])
-    end.compact
+    }.compact
   end
 
   # We iterate over each mysql_database entry in the catalog and compare it against

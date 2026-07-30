@@ -8,7 +8,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
   def self.instances(managed_users = nil)
     instance_configs = {}
-    user_list = managed_users && !managed_users.empty? ? managed_users : users
+    user_list = (managed_users && !managed_users.empty?) ? managed_users : users
     user_list.map do |user|
       user_string = cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
