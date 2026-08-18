@@ -41,7 +41,7 @@ class mysql::backup::mysqlbackup (
   mysql_user { "${backupuser}@localhost":
     ensure        => $ensure,
     password_hash => Deferred('mysql::password', [$backuppassword]),
-    require => Class['mysql::server::root_password'],
+    require       => Class['mysql::server::root_password'],
   }
 
   package { 'meb':
