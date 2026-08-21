@@ -17,7 +17,7 @@ Puppet::Functions.create_function(:'mysql::strip_hash') do
 
   def strip_hash(hash)
     # Filter out all the top level blanks.
-    hash.reject { |_k, v| v == '' }.each do |_k, v|
+    hash.reject { |_k, v| v == '' }.each_value do |v|
       v.reject! { |_ki, vi| vi == '' } if v.is_a?(Hash)
     end
   end

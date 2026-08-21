@@ -5,7 +5,40 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v16.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.3.0) - 2025-07-29
+## [v17.1.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.1.1) - 2026-08-20
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.1.0...v17.1.1)
+
+### Fixed
+
+- Update conditional logic xtrabackup.pp to properly... [#1609](https://github.com/puppetlabs/puppetlabs-mysql/pull/1609) ([ndelic0](https://github.com/ndelic0))
+- allow metacharacters * and ? in sql file path [#1544](https://github.com/puppetlabs/puppetlabs-mysql/pull/1544) ([zivis](https://github.com/zivis))
+
+## [v17.1.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.1.0) - 2026-07-02
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.0.0...v17.1.0)
+
+### Added
+
+- (MODULES-11802) Add support for RHEL 10 [#1712](https://github.com/puppetlabs/puppetlabs-mysql/pull/1712) ([skyamgarp](https://github.com/skyamgarp))
+
+## [v17.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.0.0) - 2026-06-29
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.3.0...v17.0.0)
+
+### Changed
+
+- (CAT-2381) Puppetcore update [#1688](https://github.com/puppetlabs/puppetlabs-mysql/pull/1688) ([LukasAud](https://github.com/LukasAud))
+
+### Fixed
+
+- Fix version check for RHEL/CentOS Stream 10 [#1686](https://github.com/puppetlabs/puppetlabs-mysql/pull/1686) ([kajinamit](https://github.com/kajinamit))
+
+### Other
+
+- (MODULES-11840) Allow puppetlabs/stdlib 10.x [#1707](https://github.com/puppetlabs/puppetlabs-mysql/pull/1707) ([imaqsood](https://github.com/imaqsood))
+
+## [v16.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v16.3.0) - 2025-07-30
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v16.2.0...v16.3.0)
 
@@ -651,7 +684,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - MODULES-5405 interpolation for puppet strings [#984](https://github.com/puppetlabs/puppetlabs-mysql/pull/984) ([tphoney](https://github.com/tphoney))
-- interpolation for ruby & puppet code. [#983](https://github.com/puppetlabs/puppetlabs-mysql/pull/983) ([tphoney](https://github.com/tphoney))
 - Updated pot file, decorated simple strings [#978](https://github.com/puppetlabs/puppetlabs-mysql/pull/978) ([tphoney](https://github.com/tphoney))
 - Fixing empty user/password issue [#972](https://github.com/puppetlabs/puppetlabs-mysql/pull/972) ([ajardan](https://github.com/ajardan))
 - (MODULES-4604) move name validation in mysql_grant type [#961](https://github.com/puppetlabs/puppetlabs-mysql/pull/961) ([eputnam](https://github.com/eputnam))
@@ -758,7 +790,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 
-- (#3028) Fix mysql_grant with MySQL ANSI_QUOTES mode [#796](https://github.com/puppetlabs/puppetlabs-mysql/pull/796) ([jhriggs](https://github.com/jhriggs))
 - Re-Add the ability to set a empty string as option parameter [#791](https://github.com/puppetlabs/puppetlabs-mysql/pull/791) ([roidelapluie](https://github.com/roidelapluie))
 - (MODULES-2676) Fixed new mysql_datadir provider on CentOS for MySQl 5.7.6 compatibility [#789](https://github.com/puppetlabs/puppetlabs-mysql/pull/789) ([elconas](https://github.com/elconas))
 - Fixing error when disabling service management and the service does not exist [#787](https://github.com/puppetlabs/puppetlabs-mysql/pull/787) ([obi11235](https://github.com/obi11235))
@@ -828,7 +859,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - Don't explode if macaddress isn't set [#730](https://github.com/puppetlabs/puppetlabs-mysql/pull/730) ([binford2k](https://github.com/binford2k))
-- fix Evaluation Error with future parser [#728](https://github.com/puppetlabs/puppetlabs-mysql/pull/728) ([timogoebel](https://github.com/timogoebel))
 - (MODULES-2077) Fixes wrong dependency variable [#719](https://github.com/puppetlabs/puppetlabs-mysql/pull/719) ([Spredzy](https://github.com/Spredzy))
 - Fixed server package name so it isn't hardcoded to mysql [#718](https://github.com/puppetlabs/puppetlabs-mysql/pull/718) ([igalic](https://github.com/igalic))
 
@@ -873,7 +903,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - PR 654 was incorrectly using stdlib dirname [#677](https://github.com/puppetlabs/puppetlabs-mysql/pull/677) ([underscorgan](https://github.com/underscorgan))
-- Fix bug in 578 [#671](https://github.com/puppetlabs/puppetlabs-mysql/pull/671) ([](https://github.com/))
 - Check for full path for log-bin to stop puppet from managing directory “." [#654](https://github.com/puppetlabs/puppetlabs-mysql/pull/654) ([NoodlesNZ](https://github.com/NoodlesNZ))
 
 ## [3.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/3.2.0) - 2015-02-10
