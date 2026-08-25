@@ -6,7 +6,7 @@ describe 'mysql::db', type: :define do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       provider = if facts[:os]['family'] == 'RedHat'
-                   'mariadb'
+                   'mysql'
                  elsif facts[:os]['family'] == 'Suse'
                    'mariadb'
                  elsif facts[:os]['name'] == 'Debian'
