@@ -39,7 +39,7 @@ describe 'mysql::db', type: :define do
         # ' if enforcing #refreshonly'
         expect(subject).to contain_exec('test_db-import').with_refreshonly(false)
         # 'if enforcing #command'
-        expect(subject).to contain_exec('test_db-import').with_command("cat /tmp/test.sql | mysql test_db")
+        expect(subject).to contain_exec('test_db-import').with_command('cat /tmp/test.sql | mysql test_db')
       end
 
       it 'imports sql script with custom command on creation' do
@@ -47,12 +47,12 @@ describe 'mysql::db', type: :define do
         # if enforcing #refreshonly
         expect(subject).to contain_exec('test_db-import').with_refreshonly(false)
         # if enforcing #command
-        expect(subject).to contain_exec('test_db-import').with_command("zcat /tmp/test.sql | mysql test_db")
+        expect(subject).to contain_exec('test_db-import').with_command('zcat /tmp/test.sql | mysql test_db')
       end
 
       it 'imports sql scripts when more than one is specified' do
         params['sql'] = ['/tmp/test.sql', '/tmp/test_2.sql']
-        expect(subject).to contain_exec('test_db-import').with_command("cat /tmp/test.sql /tmp/test_2.sql | mysql test_db")
+        expect(subject).to contain_exec('test_db-import').with_command('cat /tmp/test.sql /tmp/test_2.sql | mysql test_db')
       end
 
       it 'does not create database' do
