@@ -44,9 +44,9 @@ class mysql::params {
         }
         /^(RedHat|Rocky|CentOS|Scientific|OracleLinux|AlmaLinux)$/: {
           if versioncmp($facts['os']['release']['major'], '7') >= 0 {
-            $provider = find_file('/usr/bin/mariadb', '/bin/mariadb') ? {
-              undef   => 'mysql',
-              default => 'mariadb',
+            $provider = $facts['mysql_binary'] ? {
+              undef   => 'mariadb',
+              default => $facts['mysql_binary'],
             }
             if versioncmp($facts['os']['release']['major'], '8') >= 0 {
               $xtrabackup_package_name = 'percona-xtrabackup-24'
