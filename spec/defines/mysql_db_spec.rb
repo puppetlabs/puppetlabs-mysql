@@ -21,7 +21,7 @@ describe 'mysql::db', type: :define do
                  end
 
       let(:facts) do
-        facts.merge(root_home: '/root')
+        facts.merge(root_home: '/root', mysql_binary: provider)
       end
 
       let(:title) { 'test_db' }
