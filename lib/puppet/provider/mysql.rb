@@ -43,27 +43,13 @@ class Puppet::Provider::Mysql < Puppet::Provider
     mysqladmin: ['mysqladmin', 'mariadb-admin'],
   }.freeze
 
-  def self.mysql_raw(*args)
-    COMMANDS[:mysql_raw].each_index do |idx|
-      if respond_to?("mysql_raw#{idx}") && command("mysql_raw#{idx}")
-        return send("mysql_raw#{idx}", *args)
+  COMMANDS.each_key do |method_name|
+    define_singleton_method(method_name) do |*args|
+      idx = COMMANDS[method_name].each_index.find(-> { 0 }) do |i|
+        respond_to?("#{method_name}#{i}") && command("#{method_name}#{i}")
       end
-    end
-  end
 
-  def self.mysqld(*args)
-    COMMANDS[:mysqld].each_index do |idx|
-      if respond_to?("mysqld#{idx}") && command("mysqld#{idx}")
-        return send("mysqld#{idx}", *args)
-      end
-    end
-  end
-
-  def self.mysqladmin(*args)
-    COMMANDS[:mysqladmin].each_index do |idx|
-      if respond_to?("mysqladmin#{idx}") && command("mysqladmin#{idx}")
-        return send("mysqladmin#{idx}", *args)
-      end
+      send("#{method_name}#{idx}", *args)
     end
   end
 
