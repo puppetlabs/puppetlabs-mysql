@@ -34,7 +34,10 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
     '/usr/mysql/5.7/bin',
   ].join(':')
 
-  commands mysqld: 'mysqld'
+  superclass::COMMANDS[:mysqld].each_with_index do |binary_name, idx|
+    optional_commands "mysqld#{idx}": binary_name
+  end
+  confine true: -> { superclass::COMMANDS[:mysqld].any? { |binary_name| Puppet::Util.which(binary_name) } }
   optional_commands mysql_install_db: 'mysql_install_db'
   # rubocop:disable Lint/UselessAssignment
   def create

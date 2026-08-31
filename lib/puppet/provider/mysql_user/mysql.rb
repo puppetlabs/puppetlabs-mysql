@@ -3,7 +3,11 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'manage users for a mysql database.'
-  commands mysql_raw: 'mysql'
+
+  superclass::COMMANDS[:mysql_raw].each_with_index do |binary_name, idx|
+    optional_commands "mysql_raw#{idx}": binary_name
+  end
+  confine true: -> { superclass::COMMANDS[:mysql_raw].any? { |binary_name| Puppet::Util.which(binary_name) } }
 
   # Build a property_hash containing all the discovered information about MySQL
   # users.
