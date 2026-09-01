@@ -168,6 +168,28 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
+
+    it 'queries only managed users when user list is provided' do
+      managed_users = ['joe@localhost', "o'reilly@localhost"]
+      user_query = "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user WHERE HOST IS NOT NULL AND HOST != '' AND CONCAT(User, '@', Host) IN ('joe@localhost', 'o''reilly@localhost')"
+
+      allow(provider.class).to receive(:mysql_caller).with(user_query, 'regular').and_return("joe@localhost\no'reilly@localhost")
+      managed_users.each do |user|
+        allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') # rubocop:disable Layout/LineLength
+      end
+
+      usernames = provider.class.instances(managed_users).map(&:name)
+      expect(usernames).to match_array(managed_users)
+    end
+
+    it 'falls back to full user scan when managed user list is empty' do
+      full_scan_query = "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''"
+      allow(provider.class).to receive(:mysql_caller).with(full_scan_query, 'regular').and_return('joe@localhost')
+      allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').and_return('10 10 10 10     ') # rubocop:disable Layout/LineLength
+
+      usernames = provider.class.instances([]).map(&:name)
+      expect(usernames).to eq(['joe@localhost'])
+    end
   end
 
   describe 'mysql version and type detection' do
@@ -191,6 +213,18 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     it 'exists' do
       provider.class.instances
       provider.class.prefetch({})
+    end
+
+    it 'only prefetches managed users from resources' do
+      resources = {
+        'joe@localhost' => instance_double(Puppet::Type.type(:mysql_user)),
+        'jane@localhost' => instance_double(Puppet::Type.type(:mysql_user))
+      }
+
+      expect(provider.class).to receive(:instances).with(['joe@localhost', 'jane@localhost']).and_return([])
+      resources.each_value { |res| allow(res).to receive(:provider=) }
+
+      provider.class.prefetch(resources)
     end
   end
 

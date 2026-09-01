@@ -6,9 +6,10 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
   commands mysql_raw: 'mysql'
 
-  def self.instances
+  def self.instances(managed_users = nil)
     instance_configs = {}
-    users.map do |user|
+    user_list = (managed_users && !managed_users.empty?) ? managed_users : users
+    user_list.map do |user|
       user_string = cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
       begin
@@ -120,7 +121,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
   end
 
   def self.prefetch(resources)
-    users = instances
+    # Extract unique user@host values from grant resource names (format: user@host/table)
+    managed_users = resources.keys.map { |name| name.rpartition('/').first }.uniq
+    users = instances(managed_users)
     resources.each_key do |name|
       if provider = users.find { |user| user.name == name } # rubocop:disable Lint/AssignmentInCondition
         resources[name].provider = provider
