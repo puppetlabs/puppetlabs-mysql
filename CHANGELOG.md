@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v17.1.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.1.1) - 2026-08-20
+## [v17.1.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.1.1) - 2026-09-02
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.1.0...v17.1.1)
 
 ### Fixed
 
+- Use deferrable_epp for .my.cnf to ensure root password resolve correctly [#1698](https://github.com/puppetlabs/puppetlabs-mysql/pull/1698) ([jiayuchen888](https://github.com/jiayuchen888))
 - Update conditional logic xtrabackup.pp to properly... [#1609](https://github.com/puppetlabs/puppetlabs-mysql/pull/1609) ([ndelic0](https://github.com/ndelic0))
 - allow metacharacters * and ? in sql file path [#1544](https://github.com/puppetlabs/puppetlabs-mysql/pull/1544) ([zivis](https://github.com/zivis))
 
@@ -684,6 +685,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - MODULES-5405 interpolation for puppet strings [#984](https://github.com/puppetlabs/puppetlabs-mysql/pull/984) ([tphoney](https://github.com/tphoney))
+- interpolation for ruby & puppet code. [#983](https://github.com/puppetlabs/puppetlabs-mysql/pull/983) ([tphoney](https://github.com/tphoney))
 - Updated pot file, decorated simple strings [#978](https://github.com/puppetlabs/puppetlabs-mysql/pull/978) ([tphoney](https://github.com/tphoney))
 - Fixing empty user/password issue [#972](https://github.com/puppetlabs/puppetlabs-mysql/pull/972) ([ajardan](https://github.com/ajardan))
 - (MODULES-4604) move name validation in mysql_grant type [#961](https://github.com/puppetlabs/puppetlabs-mysql/pull/961) ([eputnam](https://github.com/eputnam))
@@ -790,6 +792,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 
+- (#3028) Fix mysql_grant with MySQL ANSI_QUOTES mode [#796](https://github.com/puppetlabs/puppetlabs-mysql/pull/796) ([jhriggs](https://github.com/jhriggs))
 - Re-Add the ability to set a empty string as option parameter [#791](https://github.com/puppetlabs/puppetlabs-mysql/pull/791) ([roidelapluie](https://github.com/roidelapluie))
 - (MODULES-2676) Fixed new mysql_datadir provider on CentOS for MySQl 5.7.6 compatibility [#789](https://github.com/puppetlabs/puppetlabs-mysql/pull/789) ([elconas](https://github.com/elconas))
 - Fixing error when disabling service management and the service does not exist [#787](https://github.com/puppetlabs/puppetlabs-mysql/pull/787) ([obi11235](https://github.com/obi11235))
@@ -859,6 +862,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - Don't explode if macaddress isn't set [#730](https://github.com/puppetlabs/puppetlabs-mysql/pull/730) ([binford2k](https://github.com/binford2k))
+- fix Evaluation Error with future parser [#728](https://github.com/puppetlabs/puppetlabs-mysql/pull/728) ([timogoebel](https://github.com/timogoebel))
 - (MODULES-2077) Fixes wrong dependency variable [#719](https://github.com/puppetlabs/puppetlabs-mysql/pull/719) ([Spredzy](https://github.com/Spredzy))
 - Fixed server package name so it isn't hardcoded to mysql [#718](https://github.com/puppetlabs/puppetlabs-mysql/pull/718) ([igalic](https://github.com/igalic))
 
