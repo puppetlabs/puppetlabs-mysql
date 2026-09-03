@@ -3,7 +3,8 @@
 # This has to be a separate type to enable collecting
 Puppet::Type.newtype(:mysql_user) do
   @doc = <<-PUPPET
-    @summary Manage a MySQL user. This includes management of users password as well as privileges.
+    @summary
+      Manage a MySQL user. This includes management of users password as well as privileges.
   PUPPET
 
   ensurable
@@ -60,6 +61,32 @@ Puppet::Type.newtype(:mysql_user) do
 
     def should_to_s(_newvalue)
       '[new password hash redacted]'
+    end
+
+    def insync?(is)
+      plugin = @resource[:plugin]
+      should_value = @should.first
+
+      if plugin == 'caching_sha2_password' && should_value && !should_value.match?(/^0x[A-F0-9]+$/i)
+        unless defined?(Puppet::MysqlHasher)
+          require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql_hasher'))
+        end
+        hashed_should = Puppet::MysqlHasher.caching_sha2_password(should_value)
+        return secure_compare(is, hashed_should)
+      end
+
+      is == should_value
+    end
+
+    private
+
+    # Constant-time string comparison to prevent timing attacks
+    def secure_compare(a, b)
+      return false if a.nil? || b.nil? || a.bytesize != b.bytesize
+
+      result = 0
+      a.bytes.zip(b.bytes) { |x, y| result |= x ^ y }
+      result.zero?
     end
   end
 
