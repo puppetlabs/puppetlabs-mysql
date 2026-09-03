@@ -316,6 +316,55 @@ describe 'mysql::backup::xtrabackup' do
           )
         end
       end
+
+      package = if facts[:os]['family'] == 'RedHat'
+                  if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '8') >= 0
+                    'percona-xtrabackup-24'
+                  else
+                    'percona-xtrabackup'
+                  end
+                elsif facts[:os]['name'] == 'Debian'
+                  'percona-xtrabackup-24'
+                elsif facts[:os]['name'] == 'Ubuntu'
+                  if Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '20') < 0 &&
+                     Puppet::Util::Package.versioncmp(facts[:os]['release']['major'], '16') >= 0
+                    'percona-xtrabackup'
+                  else
+                    'percona-xtrabackup-24'
+                  end
+                elsif facts[:os]['family'] == 'Suse'
+                  'xtrabackup'
+                else
+                  'percona-xtrabackup'
+                end
+
+      context 'with ensure => present' do
+        let(:params) do
+          { ensure: 'present' }.merge(default_params)
+        end
+
+        it 'installs the backup method package' do
+          expect(subject).to contain_package(package).with_ensure('installed')
+        end
+
+        it 'manages the backup directory' do
+          expect(subject).to contain_file('/tmp').with_ensure('directory')
+        end
+      end
+
+      context 'with ensure => absent' do
+        let(:params) do
+          { ensure: 'absent' }.merge(default_params)
+        end
+
+        it 'removes the backup method package' do
+          expect(subject).to contain_package(package).with_ensure('absent')
+        end
+
+        it 'removes the backup directory' do
+          expect(subject).to contain_file('/tmp').with_ensure('absent')
+        end
+      end
     end
   end
 end

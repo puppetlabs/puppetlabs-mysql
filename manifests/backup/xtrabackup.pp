@@ -35,7 +35,7 @@ class mysql::backup::xtrabackup (
   String[1]                                     $backupmethod_package     = $mysql::params::xtrabackup_package_name,
   Array[String]                                 $excludedatabases = [],
 ) inherits mysql::params {
-  stdlib::ensure_packages($backupmethod_package)
+  stdlib::ensure_packages($backupmethod_package, { 'ensure' => $ensure })
 
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
@@ -174,8 +174,10 @@ class mysql::backup::xtrabackup (
     require => Package[$backupmethod_package],
   }
 
+  $backupdir_ensure = $ensure ? { 'absent' => 'absent', default => 'directory' }
+
   file { $backupdir:
-    ensure => 'directory',
+    ensure => $backupdir_ensure,
     mode   => $backupdirmode,
     owner  => $backupdirowner,
     group  => $backupdirgroup,
