@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_plugin).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL plugins.'
 
-  commands mysql_raw: 'mysql'
+  commands mysql_raw: pick_correct_binary('mysql', 'mariadb')
 
   def self.instances
     mysql_caller('show plugins', 'regular').split("\n").map do |line|
