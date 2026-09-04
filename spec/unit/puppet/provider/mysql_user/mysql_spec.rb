@@ -99,7 +99,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     allow(Facter).to receive(:value).with(:mysql_version).and_return('5.6.24')
     provider.class.instance_variable_set(:@mysqld_version_string, '5.6.24')
     allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
-    allow(Puppet::Util).to receive(:which).with('mysqld').and_return('/usr/sbin/mysqld')
+    allow(Puppet::Util).to receive(:which).with('mariadb').and_return('/usr/bin/mariadb')
     allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
     allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return('joe@localhost')
     allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').and_return('10	10	10	10					*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Layout/LineLength

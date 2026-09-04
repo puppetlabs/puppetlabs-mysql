@@ -27,6 +27,7 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
   before :each do
     allow(Facter.fact(:value)).to receive(:root_home).and_return('/root')
     allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
+    allow(Puppet::Util).to receive(:which).with('mariadb').and_return('/usr/bin/mariadb')
     allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
     allow(provider.class).to receive(:mysql_caller).with('show databases', 'regular').and_return('new_database')
     allow(provider.class).to receive(:mysql_caller).with(["show variables like '%_database'", 'new_database'], 'regular').and_return("character_set_database latin1\ncollation_database latin1_swedish_ci\nskip_show_database OFF") # rubocop:disable Layout/LineLength
