@@ -37,34 +37,22 @@ class Puppet::Provider::Mysql < Puppet::Provider
     '/usr/mysql/5.7/lib64',
   ].join(':')
 
-  # rubocop:disable Style/HashSyntax
-  commands :mysql_client     => 'mysql'
-  commands :mariadb_client   => 'mariadb'
-  commands :mysqld_service   => 'mysqld'
-  commands :mariadbd_service => 'mariadbd'
-  commands :mysql_admin      => 'mysqladmin'
-  commands :mariadb_admin    => 'mariadb-admin'
-  # rubocop:enable Style/HashSyntax
+  COMMANDS = {
+    mysql_raw: ['mysql', 'mariadb'],
+    mysqld: ['mysqld', 'mariadbd'],
+    mysqladmin: ['mysqladmin', 'mariadb-admin'],
+  }.freeze
 
-  def self.mysql_raw(*args)
-    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
-      return mariadb_client(*args)
-    end
-    mysql_client(*args)
-  end
+  COMMANDS.each_key do |method_name|
+    define_singleton_method(method_name) do |*args|
+      @mysql_commands ||= Hash.new do |hash, key|
+        hash[key] = COMMANDS[key].each_index.find(-> { 0 }) do |i|
+          respond_to?("#{key}#{i}") && command("#{key}#{i}")
+        end
+      end
 
-  def self.mysqld(*args)
-    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
-      return mariadb_client(*args)
+      send("#{method_name}#{@mysql_commands[method_name]}", *args)
     end
-    mysqld_service(*args)
-  end
-
-  def self.mysqladmin(*args)
-    if newer_than('mariadb' => '11.0.0') && mysqld_version_string.scan(%r{mariadb}i)
-      return mariadb_client(*args)
-    end
-    mysql_admin(*args)
   end
 
   # Optional defaults file
