@@ -45,11 +45,13 @@ class Puppet::Provider::Mysql < Puppet::Provider
 
   COMMANDS.each_key do |method_name|
     define_singleton_method(method_name) do |*args|
-      idx = COMMANDS[method_name].each_index.find(-> { 0 }) do |i|
-        respond_to?("#{method_name}#{i}") && command("#{method_name}#{i}")
+      @mysql_commands ||= Hash.new do |hash, key|
+        hash[key] = COMMANDS[key].each_index.find(-> { 0 }) do |i|
+          respond_to?("#{key}#{i}") && command("#{key}#{i}")
+        end
       end
 
-      send("#{method_name}#{idx}", *args)
+      send("#{method_name}#{@mysql_commands[method_name]}", *args)
     end
   end
 
