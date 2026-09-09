@@ -16,8 +16,8 @@ describe 'mysql::server::account_security' do
         let(:facts) do
           override_facts(
             super(),
-            'root_home' => '/root',
-            'networking' => {
+            root_home: '/root',
+            networking: {
               'fqdn' => 'myhost.mydomain',
               'hostname' => 'myhost',
             },
@@ -55,8 +55,8 @@ describe 'mysql::server::account_security' do
         let(:facts) do
           override_facts(
             super(),
-            'root_home' => '/root',
-            'networking' => {
+            root_home: '/root',
+            networking: {
               'fqdn' => 'localhost',
               'hostname' => 'localhost',
             },
@@ -79,8 +79,8 @@ describe 'mysql::server::account_security' do
         let(:facts) do
           override_facts(
             super(),
-            'root_home' => '/root',
-            'networking' => {
+            root_home: '/root',
+            networking: {
               'fqdn' => 'localhost.localdomain',
               'hostname' => 'localhost',
             },

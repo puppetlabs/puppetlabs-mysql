@@ -282,7 +282,7 @@ describe 'mysql_grant' do
 
         exec { 'mysql-create-table':
           command     => '/usr/bin/#{mysql_cmd} -NBe "CREATE TABLE foo.bar (name VARCHAR(20))"',
-          environment => "HOME=${::root_home}",
+          environment => "HOME=${facts['root_home']}",
           unless      => '/usr/bin/#{mysql_cmd} -NBe "SELECT 1 FROM foo.bar LIMIT 1;"',
           require     => Mysql_database['foo'],
         }
@@ -334,12 +334,12 @@ describe 'mysql_grant' do
           user       => "web@${dbSubnet}",
           require    => Mysql_user["web@${dbSubnet}"],
         }
-        mysql_user { "web@${::networking['ip']}":
+        mysql_user { "web@${facts['networking']['ip']}":
           ensure => present,
         }
-        mysql_grant { "web@${::networking['ip']}/*.*":
-          user       => "web@${::networking['ip']}",
-          require    => Mysql_user["web@${::networking['ip']}"],
+        mysql_grant { "web@${facts['networking']['ip']}/*.*":
+          user       => "web@${facts['networking']['ip']}",
+          require    => Mysql_user["web@${facts['networking']['ip']}"],
         }
         mysql_user { 'web@localhost':
           ensure => present,
