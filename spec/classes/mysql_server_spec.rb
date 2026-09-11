@@ -25,6 +25,12 @@ describe 'mysql::server' do
         it { is_expected.to contain_class('mysql::server::account_security') }
       end
 
+      context 'with purge_conf_dir set to an arbitrary string' do
+        let(:params) { { purge_conf_dir: 'foo' } }
+
+        it { is_expected.to compile.and_raise_error(%r{parameter 'purge_conf_dir' expects a value of type Boolean or Enum\['false', 'true'\], got String}) }
+      end
+
       context 'when not managing config file' do
         let(:params) { { manage_config_file: false } }
 
