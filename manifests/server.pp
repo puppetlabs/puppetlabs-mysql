@@ -105,7 +105,7 @@ class mysql::server (
   String[1]                                                             $package_name            = $mysql::params::server_package_name,
   Optional[String[1]]                                                   $package_provider        = undef,
   Optional[String[1]]                                                   $package_source          = undef,
-  Variant[Boolean, String[1]]                                           $purge_conf_dir          = false,
+  Variant[Boolean, Enum['false', 'true']]                               $purge_conf_dir          = false,
   Variant[Boolean, String[1]]                                           $remove_default_accounts = false,
   Variant[Boolean, String[1]]                                           $restart                 = false,
   String[1]                                                             $root_group              = $mysql::params::root_group,

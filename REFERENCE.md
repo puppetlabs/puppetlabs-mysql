@@ -604,7 +604,7 @@ Default value: `undef`
 
 ##### <a name="-mysql--server--purge_conf_dir"></a>`purge_conf_dir`
 
-Data type: `Variant[Boolean, String[1]]`
+Data type: `Variant[Boolean, Enum['false', 'true']]`
 
 Whether the `includedir` directory should be purged. Valid values are `true`, `false`. Defaults to `false`.
 
