@@ -637,10 +637,13 @@ describe 'mysql_grant' do
     MANIFEST
     it 'fails to execute while applying' do
       mysql_cmd = run_shell('which mysql').stdout.chomp
-      run_shell("mv #{mysql_cmd} #{mysql_cmd}.bak")
+      mariadb_cmd = run_shell('which mariadb').stdout.chomp
+      run_shell("mv #{mysql_cmd} #{mysql_cmd}.bak") unless mysql_cmd.empty?
+      run_shell("mv #{mariadb_cmd} #{mariadb_cmd}.bak") unless mariadb_cmd.empty?
       result = apply_manifest(pp_three, expect_failures: true)
       expect(result.stderr).to match(%r{Could not find a suitable provider for mysql_grant})
-      run_shell("mv #{mysql_cmd}.bak #{mysql_cmd}")
+      run_shell("mv #{mysql_cmd}.bak #{mysql_cmd}") unless mysql_cmd.empty?
+      run_shell("mv #{mariadb_cmd}.bak #{mariadb_cmd}") unless mariadb_cmd.empty?
     end
 
     pp_four = <<-MANIFEST
