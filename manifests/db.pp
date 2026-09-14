@@ -5,6 +5,7 @@
 #   mysql::db { 'mydb':
 #     user     => 'myuser',
 #     password => 'mypass',
+#     plugin   => 'caching_sha2_password',
 #     host     => 'localhost',
 #     grant    => ['SELECT', 'UPDATE'],
 #   }
@@ -19,6 +20,8 @@
 #   The user for the database you're creating.
 # @param password
 #   The password for $user for the database you're creating.
+# @param plugin
+#   The authentication plugin for $user for the database you're creating. Defaults to 'mysql_native_password'.
 # @param tls_options
 #   The tls_options for $user for the database you're creating.
 # @param dbname
@@ -49,6 +52,7 @@
 define mysql::db (
   String[1]                                      $user,
   Variant[String, Sensitive[String]]             $password,
+  Optional[String[1]]                            $plugin          = undef,
   Optional[Array[String[1]]]                     $tls_options     = undef,
   String                                         $dbname          = $name,
   String[1]                                      $charset         = 'utf8mb3',
@@ -103,6 +107,7 @@ define mysql::db (
   $user_resource = {
     ensure        => $ensure,
     password_hash => Deferred('mysql::password', [$password]),
+    plugin        => $plugin,
     tls_options   => $tls_options,
   }
   ensure_resource('mysql_user', "${user}@${host}", $user_resource)
