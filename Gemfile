@@ -41,7 +41,7 @@ group :development do
   gem "json", '= 2.18.0',                        require: false if Gem::Requirement.create(['>= 4.0.0', '< 5.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "racc", '~> 1.4.0',                        require: false if Gem::Requirement.create(['>= 2.7.0', '< 3.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "deep_merge", '~> 1.2.2',                  require: false
-  gem "voxpupuli-puppet-lint-plugins", '~> 5.0', require: false
+  gem "voxpupuli-puppet-lint-plugins", '~> 7.0', require: false
   gem "facterdb", '~> 2.1',                      require: false if Gem::Requirement.create(['< 3.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "facterdb", '~> 3.0',                      require: false if Gem::Requirement.create(['>= 3.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "metadata-json-lint", '~> 4.0',            require: false
@@ -65,11 +65,11 @@ group :development do
 end
 group :development, :release_prep do
   gem "puppet-strings", '~> 4.0',              require: false
-  gem "puppetlabs_spec_helper", '~> 8.0',      require: false
+  gem "puppetlabs_spec_helper", '~> 9.0',      require: false
   gem "puppet-blacksmith", '>= 7.0', '< 10.0', require: false
 end
 group :system_tests do
-  gem "puppet_litmus", '~> 2.5',   require: false
+  gem "puppet_litmus", '~> 2.8',   require: false
   gem "faraday", '~> 2.5',         require: false
   gem "CFPropertyList", '< 3.0.7', require: false if RUBY_PLATFORM.include?('darwin')
   gem "serverspec", '~> 2.41',     require: false
