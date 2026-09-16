@@ -6,14 +6,7 @@ describe 'mysql_user' do
   mysql_cmd = get_db_cmd
   describe 'setup' do
     pp_one = <<-MANIFEST
-        $ed25519_opts = versioncmp($facts['mysql_version'], '10.1.21') >= 0 ? {
-          true  => {
-            restart => true,
-            override_options => { 'mysqld' => { 'plugin_load_add' => 'auth_ed25519' } },
-          },
-          false => {}
-        }
-        class { 'mysql::server': * => $ed25519_opts }
+        class { 'mysql::server': }
     MANIFEST
     it 'works with no errors' do
       apply_manifest(pp_one, catch_failures: true)
@@ -80,6 +73,11 @@ describe 'mysql_user' do
     describe 'using ed25519 authentication plugin', if: Gem::Version.new(mysql_version) > Gem::Version.new('10.1.21') do
       it 'works without errors' do
         pp = <<-MANIFEST
+          class { 'mysql::server':
+            restart => true,
+            override_options => { 'mysqld' => { 'plugin_load_add' => 'auth_ed25519' } },
+          }
+
           mysql_user { 'ashp@localhost':
             plugin        => 'ed25519',
             password_hash => 'z0pjExBYbzbupUByZRrQvC6kRCcE8n/tC7kUdUD11fU',
