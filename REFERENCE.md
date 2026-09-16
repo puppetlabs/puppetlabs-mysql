@@ -58,7 +58,7 @@
 
 * [`mysql::innobackupex_args`](#mysql--innobackupex_args): This function populates and returns the string of arguments which later gets injected in template. Arguments that return string holds is conditional and decided by the the input given to function.
 * [`mysql::normalise_and_deepmerge`](#mysql--normalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashes and underscores.
-* [`mysql::password`](#mysql--password): Hash a string as mysql's "PASSWORD()" function would do it
+* [`mysql::password`](#mysql--password): Password hashing as mysql / mariadb would do it. Defaults to native `PASSWORD()` like hashing.
 * [`mysql::strip_hash`](#mysql--strip_hash): When given a hash this function strips out all blank entries.
 * [`mysql_password`](#mysql_password): DEPRECATED. Use the namespaced function [`mysql::password`](#mysqlpassword) instead.
 
@@ -1701,11 +1701,11 @@ Hash to be normalised
 
 Type: Ruby 4.x API
 
-Hash a string as mysql's "PASSWORD()" function would do it
+Password hashing as mysql / mariadb would do it. Defaults to native `PASSWORD()` like hashing.
 
-#### `mysql::password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive)`
+#### `mysql::password(Variant[String, Sensitive[String]] $password, Optional[Boolean] $sensitive, Optional[Enum["mysql_native_password", "caching_sha2_password", "ed25519"]] $hash, Optional[String[20,20]] $salt)`
 
-Hash a string as mysql's "PASSWORD()" function would do it
+Password hashing as mysql / mariadb would do it. Defaults to native `PASSWORD()` like hashing.
 
 Returns: `Variant[String, Sensitive[String]]` hash
 The mysql password hash from the clear text password.
@@ -1721,6 +1721,20 @@ Plain text password.
 Data type: `Optional[Boolean]`
 
 If the mysql password hash should be of datatype Sensitive[String]
+
+##### `hash`
+
+Data type: `Optional[Enum["mysql_native_password", "caching_sha2_password", "ed25519"]]`
+
+Set type for password hash
+
+Note: ed25519 does require gem openssl >= 3.2 meaning supported only with puppet >= 9
+
+##### `salt`
+
+Data type: `Optional[String[20,20]]`
+
+Use a specific salt value for caching_sha2_password
 
 ### <a name="mysql--strip_hash"></a>`mysql::strip_hash`
 
