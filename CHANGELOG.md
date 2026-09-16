@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v17.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.2.0) - 2026-09-16
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.1.1...v17.2.0)
+
+### Added
+
+- feat(MODULES-11715) Add puppet 9 support [#1742](https://github.com/puppetlabs/puppetlabs-mysql/pull/1742) ([imaqsood](https://github.com/imaqsood))
+
+### Fixed
+
+- Restrict mysql::server::purge_conf_dir type to valid values (#1740) [#1741](https://github.com/puppetlabs/puppetlabs-mysql/pull/1741) ([jst-cyr](https://github.com/jst-cyr))
+
 ## [v17.1.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.1.1) - 2026-09-02
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.1.0...v17.1.1)
