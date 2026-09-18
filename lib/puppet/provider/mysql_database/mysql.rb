@@ -4,7 +4,10 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL databases.'
 
-  commands mysql_raw: 'mysql'
+  superclass::COMMANDS[:mysql_raw].each_with_index do |binary_name, idx|
+    optional_commands "mysql_raw#{idx}": binary_name
+  end
+  confine true: -> { superclass::COMMANDS[:mysql_raw].any? { |binary_name| Puppet::Util.which(binary_name) } }
 
   def self.instances(managed_databases = nil)
     db_list = if managed_databases && !managed_databases.empty?
