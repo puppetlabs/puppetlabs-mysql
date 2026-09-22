@@ -77,6 +77,20 @@ describe 'mysql::db', type: :define do
         expect(subject).to contain_mysql_user('testuser@localhost').with_tls_options(['SSL'])
       end
 
+      it 'hashes caching_sha2_password users with mysql::caching_sha2_password' do
+        params['plugin'] = 'caching_sha2_password'
+        user = catalogue.resource('Mysql_user', 'testuser@localhost')
+        expect(user[:plugin]).to eq('caching_sha2_password')
+        expect(user[:password_hash]).to be_a(Puppet::Pops::Types::Deferred)
+        expect(user[:password_hash].name).to eq('mysql::caching_sha2_password')
+      end
+
+      it 'hashes other plugins with mysql::password' do
+        user = catalogue.resource('Mysql_user', 'testuser@localhost')
+        expect(user[:password_hash]).to be_a(Puppet::Pops::Types::Deferred)
+        expect(user[:password_hash].name).to eq('mysql::password')
+      end
+
       it 'uses grant_options for grant when set' do
         params['grant_options'] = ['GRANT']
         expect(subject).to contain_mysql_grant('testuser@localhost/test_db.*').with_options(['GRANT'])
