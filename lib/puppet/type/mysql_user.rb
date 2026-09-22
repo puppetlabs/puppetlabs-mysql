@@ -67,7 +67,7 @@ Puppet::Type.newtype(:mysql_user) do
       plugin = @resource[:plugin]
       should_value = @should.first
 
-      if plugin == 'caching_sha2_password' && should_value && !should_value.match?(/^0x[A-F0-9]+$/i)
+      if plugin == 'caching_sha2_password' && should_value && !should_value.match?(%r{^0x[A-F0-9]+$}i)
         unless defined?(Puppet::MysqlHasher)
           require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql_hasher'))
         end

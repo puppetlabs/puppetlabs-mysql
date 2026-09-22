@@ -19,7 +19,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     # To reduce the number of calls to MySQL we collect all the properties in
     # one big swoop.
     users.map do |name|
-      # Note: name comes from previous SELECT query, but still escape quotes for safety
+      # NOTE: name comes from previous SELECT query, but still escape quotes for safety
       escaped_name = name.gsub("'", "''")
 
       # rubocop:disable Layout/LineLength
@@ -82,7 +82,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
 
     password_hash = password_hash.unwrap if password_hash.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
 
-    if !password_hash.nil? && plugin == 'caching_sha2_password' && !password_hash.match?(/^0x[A-F0-9]+$/i)
+    if !password_hash.nil? && plugin == 'caching_sha2_password' && !password_hash.match?(%r{^0x[A-F0-9]+$}i)
       password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash)
     end
 
@@ -160,7 +160,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     merged_name = self.class.cmd_user(@resource[:name])
     plugin = @resource.value(:plugin)
 
-    if plugin == 'caching_sha2_password' && !string.match?(/^0x[A-F0-9]+$/i)
+    if plugin == 'caching_sha2_password' && !string.match?(%r{^0x[A-F0-9]+$}i)
       string = Puppet::MysqlHasher.caching_sha2_password(string)
     end
 
@@ -242,11 +242,11 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     merged_name = self.class.cmd_user(@resource[:name])
     password_hash = @resource[:password_hash]
 
-    if string == 'caching_sha2_password' && !password_hash.nil? && !password_hash.match?(/^0x[A-F0-9]+$/i)
+    if string == 'caching_sha2_password' && !password_hash.nil? && !password_hash.match?(%r{^0x[A-F0-9]+$}i)
       password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash)
     end
 
-      if newer_than('mariadb' => '10.1.21') && string == 'ed25519'
+    if newer_than('mariadb' => '10.1.21') && string == 'ed25519'
       if newer_than('mariadb' => '10.2.0')
         sql = "ALTER USER #{merged_name} IDENTIFIED WITH '#{string}' AS '#{password_hash}'"
       else

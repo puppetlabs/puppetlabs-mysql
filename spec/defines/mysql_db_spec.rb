@@ -81,14 +81,12 @@ describe 'mysql::db', type: :define do
         params['plugin'] = 'caching_sha2_password'
         user = catalogue.resource('Mysql_user', 'testuser@localhost')
         expect(user[:plugin]).to eq('caching_sha2_password')
-        expect(user[:password_hash]).to be_a(Puppet::Pops::Types::Deferred)
-        expect(user[:password_hash].name).to eq('mysql::caching_sha2_password')
+        expect(user[:password_hash]).to match(%r{\A0x[A-F0-9]+\z})
       end
 
       it 'hashes other plugins with mysql::password' do
         user = catalogue.resource('Mysql_user', 'testuser@localhost')
-        expect(user[:password_hash]).to be_a(Puppet::Pops::Types::Deferred)
-        expect(user[:password_hash].name).to eq('mysql::password')
+        expect(user[:password_hash]).to match(%r{\A\*[A-F0-9]{40}\z})
       end
 
       it 'uses grant_options for grant when set' do
