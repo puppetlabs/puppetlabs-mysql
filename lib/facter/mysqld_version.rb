@@ -6,6 +6,8 @@ Facter.add('mysqld_version') do
       Facter::Core::Execution.execute('mysqld --no-defaults -V 2>/dev/null')
     elsif Facter::Core::Execution.which('/usr/libexec/mysqld')
       Facter::Core::Execution.execute('/usr/libexec/mysqld --no-defaults -V 2>/dev/null')
+    elsif Facter::Core::Execution.which('/usr/local/libexec/mysqld')
+      Facter::Core::Execution.execute('/usr/local/libexec/mysqld --no-defaults -V 2>/dev/null')
     elsif Facter::Core::Execution.which('mariadbd')
       Facter::Core::Execution.execute('mariadbd --no-defaults -V 2>/dev/null')
     end
