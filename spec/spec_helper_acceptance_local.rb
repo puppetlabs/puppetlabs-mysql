@@ -28,10 +28,12 @@ def mysql_version
   configure_sles_repos_once
 
   shell_output = LitmusHelper.instance.run_shell('mysql --version', expect_failures: true)
+  shell_output = LitmusHelper.instance.run_shell('mariadb --version', expect_failures: true) unless shell_output.exit_code.zero?
   if shell_output.stdout.match(%r{\d+\.\d+\.\d+}).nil?
     # mysql is not yet installed, so we apply this class to install it
     LitmusHelper.instance.apply_manifest('include mysql::server', catch_failures: true)
-    shell_output = LitmusHelper.instance.run_shell('mysql --version')
+    shell_output = LitmusHelper.instance.run_shell('mysql --version', expect_failures: true)
+    shell_output = LitmusHelper.instance.run_shell('mariadb --version', expect_failures: true) unless shell_output.exit_code.zero?
     raise _('unable to get mysql version') if shell_output.stdout.match(%r{\d+\.\d+\.\d+}).nil?
   end
   shell_output.stdout.match(%r{\d+\.\d+\.\d+})[0]

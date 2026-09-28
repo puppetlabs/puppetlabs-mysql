@@ -18,6 +18,7 @@ describe Puppet::Type.type(:mysql_plugin).provider(:mysql) do
   before :each do
     allow(Facter).to receive(:value).with(:root_home).and_return('/root')
     allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
+    allow(Puppet::Util).to receive(:which).with('mariadb').and_return('/usr/bin/mariadb')
     allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
     allow(provider.class).to receive(:mysql_caller).with('show plugins', 'regular').and_return('auth_socket	ACTIVE	AUTHENTICATION	auth_socket.so	GPL')
   end
