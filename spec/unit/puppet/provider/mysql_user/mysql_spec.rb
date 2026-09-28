@@ -136,7 +136,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     it 'returns an array of users MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
-      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, CASE WHEN PLUGIN = 'caching_sha2_password' THEN CONCAT('0x',HEX(AUTHENTICATION_STRING)) ELSE AUTHENTICATION_STRING END AS PASSWORD_HASH, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
@@ -175,7 +175,8 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
 
       allow(provider.class).to receive(:mysql_caller).with(user_query, 'regular').and_return("joe@localhost\no'reilly@localhost")
       managed_users.each do |user|
-        allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') # rubocop:disable Layout/LineLength
+        escaped_user = user.gsub("'", "''")
+        allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{escaped_user}'", 'regular').and_return('10 10 10 10     ') # rubocop:disable Layout/LineLength
       end
 
       usernames = provider.class.instances(managed_users).map(&:name)
