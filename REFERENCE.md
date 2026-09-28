@@ -48,7 +48,7 @@
 * [`mysql_grant`](#mysql_grant): Manage a MySQL user's rights.
 * [`mysql_login_path`](#mysql_login_path): Manage a MySQL login path.
 * [`mysql_plugin`](#mysql_plugin): Manage MySQL plugins.
-* [`mysql_user`](#mysql_user): Manage a MySQL user. This includes management of users password as well as privileges.
+* [`mysql_user`](#mysql_user): @summary Manage a MySQL user. This includes management of users password as well as privileges.
 
 #### Private Resource types
 
@@ -56,6 +56,7 @@
 
 ### Functions
 
+* [`mysql::caching_sha2_password`](#mysql--caching_sha2_password): Generate MySQL caching_sha2_password hash in expected hex format or return already hashed password
 * [`mysql::innobackupex_args`](#mysql--innobackupex_args): This function populates and returns the string of arguments which later gets injected in template. Arguments that return string holds is conditional and decided by the the input given to function.
 * [`mysql::normalise_and_deepmerge`](#mysql--normalise_and_deepmerge): Recursively merges two or more hashes together, normalises keys with differing use of dashes and underscores.
 * [`mysql::password`](#mysql--password): Hash a string as mysql's "PASSWORD()" function would do it
@@ -1130,6 +1131,7 @@ Create and configure a MySQL database.
 mysql::db { 'mydb':
   user     => 'myuser',
   password => 'mypass',
+  plugin   => 'caching_sha2_password',
   host     => 'localhost',
   grant    => ['SELECT', 'UPDATE'],
 }
@@ -1142,6 +1144,7 @@ The following parameters are available in the `mysql::db` defined type:
 * [`name`](#-mysql--db--name)
 * [`user`](#-mysql--db--user)
 * [`password`](#-mysql--db--password)
+* [`plugin`](#-mysql--db--plugin)
 * [`tls_options`](#-mysql--db--tls_options)
 * [`dbname`](#-mysql--db--dbname)
 * [`charset`](#-mysql--db--charset)
@@ -1175,6 +1178,14 @@ The user for the database you're creating.
 Data type: `Variant[String, Sensitive[String]]`
 
 The password for $user for the database you're creating.
+
+##### <a name="-mysql--db--plugin"></a>`plugin`
+
+Data type: `Optional[String[1]]`
+
+The authentication plugin for $user for the database you're creating. Defaults to 'mysql_native_password'.
+
+Default value: `undef`
 
 ##### <a name="-mysql--db--tls_options"></a>`tls_options`
 
@@ -1533,6 +1544,7 @@ usually discover the appropriate provider for your platform.
 
 ### <a name="mysql_user"></a>`mysql_user`
 
+@summary
 Manage a MySQL user. This includes management of users password as well as privileges.
 
 #### Properties
@@ -1606,6 +1618,31 @@ The specific backend to use for this `mysql_user` resource. You will seldom need
 discover the appropriate provider for your platform.
 
 ## Functions
+
+### <a name="mysql--caching_sha2_password"></a>`mysql::caching_sha2_password`
+
+Type: Ruby 4.x API
+
+Generate MySQL caching_sha2_password hash in expected hex format or return already hashed password
+
+#### `mysql::caching_sha2_password(Variant[String, Sensitive[String]] $password, Optional[String] $salt)`
+
+The mysql::caching_sha2_password function.
+
+Returns: `String` String
+The MySQL caching_sha2_password hash in hex format (with 0x prefix)
+
+##### `password`
+
+Data type: `Variant[String, Sensitive[String]]`
+
+The plain text password to hash or an already hashed password (starting with 0x)
+
+##### `salt`
+
+Data type: `Optional[String]`
+
+Optional salt (20 bytes). If not provided, a deterministic salt is generated
 
 ### <a name="mysql--innobackupex_args"></a>`mysql::innobackupex_args`
 
