@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v17.3.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.3.0) - 2026-09-28
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.2.0...v17.3.0)
+
+### Added
+
+- Add ability to use hex hash with caching_sha2_password plugin [#1612](https://github.com/puppetlabs/puppetlabs-mysql/pull/1612) ([C24-AK](https://github.com/C24-AK))
+
+### Fixed
+
+- Correct Fact mysqld_version on FreeBSD [#1654](https://github.com/puppetlabs/puppetlabs-mysql/pull/1654) ([kapouik](https://github.com/kapouik))
+
 ## [v17.2.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.2.0) - 2026-09-16
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.1.1...v17.2.0)
