@@ -26,6 +26,7 @@ jobs:
         --platform-exclude almalinux-8
         --platform-exclude debian-10
         --platform-exclude ubuntu-20.04
+        --collection-platform-exclude 9:rhel-7
         --collection-platform-exclude 9:ubuntu-18.04
         --arch-exclude arm
     secrets: "inherit"
