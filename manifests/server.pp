@@ -99,7 +99,7 @@ class mysql::server (
   Optional[Array[String[1]]]                                            $install_options         = undef,
   Variant[Boolean, String[1]]                                           $manage_config_file      = true,
   Mysql::Options                                                        $options                 = {},
-  Hash                                                                  $override_options        = {},
+  Mysql::OverrideOptions                                                $override_options        = {},
   Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]] $package_ensure          = 'present',
   Boolean                                                               $package_manage          = true,
   String[1]                                                             $package_name            = $mysql::params::server_package_name,
