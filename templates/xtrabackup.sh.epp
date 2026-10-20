@@ -25,7 +25,7 @@ set -o pipefail
 
 cleanup()
 {
-    find "${DIR}/" -mindepth 1 -maxdepth 1 -mtime +${ROTATE} -print0 | xargs -0 -r rm -rf
+    find "${DIR}/" -mindepth 1 -maxdepth 1 -mtime +${ROTATE} ! -name 'prepare' -print0 | xargs -0 -r rm -rf
 }
 
 <% if $delete_before_dump { -%>
