@@ -35,7 +35,7 @@ class mysql::backup::xtrabackup (
   String[1]                                     $backupmethod_package     = $mysql::params::xtrabackup_package_name,
   Array[String]                                 $excludedatabases = [],
 ) inherits mysql::params {
-  stdlib::ensure_packages($backupmethod_package)
+  stdlib::ensure_packages($backupmethod_package, { 'ensure' => $ensure })
 
   $backuppassword_unsensitive = if $backuppassword =~ Sensitive {
     $backuppassword.unwrap
@@ -97,11 +97,17 @@ class mysql::backup::xtrabackup (
         }
       }
       else {
+        # RENAME CLIENT Renamed to BINLOG MONITOR in MariaDB 10.5.2 
+        if versioncmp($facts['mysql_version'], '10.5.2') >= 0 and (/(?i:mariadb)/ in $facts['mysqld_version']) {
+          $privs = ['BINLOG MONITOR', 'RELOAD', 'PROCESS', 'LOCK TABLES']
+        } else {
+          $privs = ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT']
+        }
         mysql_grant { "${backupuser}@localhost/*.*":
           ensure     => $ensure,
           user       => "${backupuser}@localhost",
           table      => '*.*',
-          privileges => ['RELOAD', 'PROCESS', 'LOCK TABLES', 'REPLICATION CLIENT'],
+          privileges => $privs,
           require    => Mysql_user["${backupuser}@localhost"],
         }
       }
@@ -168,8 +174,10 @@ class mysql::backup::xtrabackup (
     require => Package[$backupmethod_package],
   }
 
+  $backupdir_ensure = $ensure ? { 'absent' => 'absent', default => 'directory' }
+
   file { $backupdir:
-    ensure => 'directory',
+    ensure => $backupdir_ensure,
     mode   => $backupdirmode,
     owner  => $backupdirowner,
     group  => $backupdirgroup,

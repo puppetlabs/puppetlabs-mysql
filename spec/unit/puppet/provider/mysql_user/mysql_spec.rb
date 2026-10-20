@@ -99,7 +99,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     allow(Facter).to receive(:value).with(:mysql_version).and_return('5.6.24')
     provider.class.instance_variable_set(:@mysqld_version_string, '5.6.24')
     allow(Puppet::Util).to receive(:which).with('mysql').and_return('/usr/bin/mysql')
-    allow(Puppet::Util).to receive(:which).with('mysqld').and_return('/usr/sbin/mysqld')
+    allow(Puppet::Util).to receive(:which).with('mariadb').and_return('/usr/bin/mariadb')
     allow(File).to receive(:file?).with('/root/.my.cnf').and_return(true)
     allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return('joe@localhost')
     allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').and_return('10	10	10	10					*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4') # rubocop:disable Layout/LineLength
@@ -136,7 +136,7 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     it 'returns an array of users MySQL >= 5.7.6' do
       provider.class.instance_variable_set(:@mysqld_version_string, mysql_version_string_hash['mysql-5.7.6'][:string])
       allow(provider.class).to receive(:mysql_caller).with("SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''", 'regular').and_return(raw_users)
-      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, AUTHENTICATION_STRING, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
+      parsed_users.each { |user| allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, CASE WHEN PLUGIN = 'caching_sha2_password' THEN CONCAT('0x',HEX(AUTHENTICATION_STRING)) ELSE AUTHENTICATION_STRING END AS PASSWORD_HASH, PLUGIN FROM mysql.user WHERE CONCAT(user, '@', host) = '#{user}'", 'regular').and_return('10 10 10 10     ') } # rubocop:disable Layout/LineLength
 
       usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
@@ -168,10 +168,33 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
       usernames = provider.class.instances.map(&:name)
       expect(parsed_users).to match_array(usernames)
     end
+
+    it 'queries only managed users when user list is provided' do
+      managed_users = ['joe@localhost', "o'reilly@localhost"]
+      user_query = "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user WHERE HOST IS NOT NULL AND HOST != '' AND CONCAT(User, '@', Host) IN ('joe@localhost', 'o''reilly@localhost')"
+
+      allow(provider.class).to receive(:mysql_caller).with(user_query, 'regular').and_return("joe@localhost\no'reilly@localhost")
+      managed_users.each do |user|
+        escaped_user = user.gsub("'", "''")
+        allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = '#{escaped_user}'", 'regular').and_return('10 10 10 10     ') # rubocop:disable Layout/LineLength
+      end
+
+      usernames = provider.class.instances(managed_users).map(&:name)
+      expect(usernames).to match_array(managed_users)
+    end
+
+    it 'falls back to full user scan when managed user list is empty' do
+      full_scan_query = "SELECT CONCAT(User, '@',Host) AS User FROM mysql.user where HOST IS NOT NULL AND HOST != ''"
+      allow(provider.class).to receive(:mysql_caller).with(full_scan_query, 'regular').and_return('joe@localhost')
+      allow(provider.class).to receive(:mysql_caller).with("SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'", 'regular').and_return('10 10 10 10     ') # rubocop:disable Layout/LineLength
+
+      usernames = provider.class.instances([]).map(&:name)
+      expect(usernames).to eq(['joe@localhost'])
+    end
   end
 
   describe 'mysql version and type detection' do
-    mysql_version_string_hash.each do |_name, line|
+    mysql_version_string_hash.each_value do |line|
       version = line[:version]
       string = line[:string]
       mysql_type = line[:mysql_type]
@@ -191,6 +214,18 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     it 'exists' do
       provider.class.instances
       provider.class.prefetch({})
+    end
+
+    it 'only prefetches managed users from resources' do
+      resources = {
+        'joe@localhost' => instance_double(Puppet::Type.type(:mysql_user)),
+        'jane@localhost' => instance_double(Puppet::Type.type(:mysql_user))
+      }
+
+      expect(provider.class).to receive(:instances).with(['joe@localhost', 'jane@localhost']).and_return([])
+      resources.each_value { |res| allow(res).to receive(:provider=) }
+
+      provider.class.prefetch(resources)
     end
   end
 

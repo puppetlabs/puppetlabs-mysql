@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-mysql",
-  "version": "16.2.0",
+  "version": "17.3.0",
   "author": "puppetlabs",
   "summary": "Installs, configures, and manages the MySQL service.",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 9.0.0 < 10.0.0"
+      "version_requirement": ">= 9.0.0 < 11.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -19,7 +19,8 @@
       "operatingsystemrelease": [
         "7",
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
@@ -61,7 +62,8 @@
       "operatingsystemrelease": [
         "18.04",
         "20.04",
-        "22.04"
+        "22.04",
+        "24.04"
       ]
     },
     {
@@ -80,11 +82,11 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 7.0.0 < 9.0.0"
+      "version_requirement": ">= 8.0.0 < 10.0.0"
     }
   ],
   "description": "MySQL module",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "tags/3.2.0.4-0-g5d17ec1",
-  "pdk-version": "3.2.0"
+  "template-ref": "heads/main-0-gc391e21",
+  "pdk-version": "3.7.0"
 }

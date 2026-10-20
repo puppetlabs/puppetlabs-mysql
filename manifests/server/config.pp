@@ -86,8 +86,10 @@ class mysql::server::config {
       if $includedir == undef or $includedir == '' or
       ($configparentdir != $includedir and $configparentdir != dirname($includedir)) {
         file { $configparentdir:
-          ensure => directory,
-          mode   => '0755',
+          ensure  => directory,
+          mode    => '0755',
+          recurse => $mysql::server::purge_conf_dir,
+          purge   => $mysql::server::purge_conf_dir,
         }
       }
     }

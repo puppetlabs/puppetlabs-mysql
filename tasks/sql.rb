@@ -11,7 +11,7 @@ def get(sql, database, user, password)
   cmd << "--user=#{user}" unless user.nil?
   cmd << "--password=#{password}" unless password.nil?
   stdout, stderr, status = Open3.capture3(*cmd)
-  raise Puppet::Error, _("stderr: '%{stderr}'" % { stderr: stderr }) if status != 0
+  raise Puppet::Error, _("stderr: '%{stderr}'" % { stderr: }) if status != 0
 
   { status: stdout.strip }
 end

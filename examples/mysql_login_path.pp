@@ -27,7 +27,7 @@ class { 'mysql::server':
   create_root_my_cnf => false,
   require            => [
     Apt::Source['repo.mysql.com'],
-    Exec['apt-get update']
+    Exec['apt-get update'],
   ],
   notify             => Mysql_login_path['client'],
 }

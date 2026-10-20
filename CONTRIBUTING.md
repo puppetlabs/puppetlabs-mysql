@@ -1,3 +1,3 @@
 # Contributing to Puppet modules
 
-Check out our [Contributing to Supported Modules Blog Post](https://puppetlabs.github.io/iac/docs/contributing_to_a_module.html) to find all the information that you will need.
+Check out our [Contributing to Puppet modules docs](https://help.puppet.com/core//current/Content/PuppetCore/contributing.htm) to find all the information that you will need.

@@ -4,11 +4,15 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Set grants for users in MySQL.'
 
-  commands mysql_raw: 'mysql'
+  superclass::COMMANDS[:mysql_raw].each_with_index do |binary_name, idx|
+    optional_commands "mysql_raw#{idx}": binary_name
+  end
+  confine true: -> { superclass::COMMANDS[:mysql_raw].any? { |binary_name| Puppet::Util.which(binary_name) } }
 
-  def self.instances
+  def self.instances(managed_users = nil)
     instance_configs = {}
-    users.map do |user|
+    user_list = (managed_users && !managed_users.empty?) ? managed_users : users
+    user_list.map do |user|
       user_string = cmd_user(user)
       query = "SHOW GRANTS FOR #{user_string};"
       begin
@@ -99,7 +103,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
 
         instance_configs[name] = {
           privileges: sorted_privileges,
-          table: table,
+          table:,
           user: "#{user}@#{host}",
           options: options.uniq
         }
@@ -108,7 +112,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
     instances = []
     instance_configs.map do |name, config|
       instances << new(
-        name: name,
+        name:,
         ensure: :present,
         privileges: config[:privileges],
         table: config[:table],
@@ -120,7 +124,9 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
   end
 
   def self.prefetch(resources)
-    users = instances
+    # Extract unique user@host values from grant resource names (format: user@host/table)
+    managed_users = resources.keys.map { |name| name.rpartition('/').first }.uniq
+    users = instances(managed_users)
     resources.each_key do |name|
       if provider = users.find { |user| user.name == name } # rubocop:disable Lint/AssignmentInCondition
         resources[name].provider = provider

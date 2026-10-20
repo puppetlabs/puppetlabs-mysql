@@ -4,12 +4,15 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_plugin).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'Manages MySQL plugins.'
 
-  commands mysql_raw: 'mysql'
+  superclass::COMMANDS[:mysql_raw].each_with_index do |binary_name, idx|
+    optional_commands "mysql_raw#{idx}": binary_name
+  end
+  confine true: -> { superclass::COMMANDS[:mysql_raw].any? { |binary_name| Puppet::Util.which(binary_name) } }
 
   def self.instances
     mysql_caller('show plugins', 'regular').split("\n").map do |line|
       name, _status, _type, library, _license = line.split(%r{\t})
-      new(name: name,
+      new(name:,
           ensure: :present,
           soname: library)
     end
