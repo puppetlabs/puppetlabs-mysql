@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v18.0.0](https://github.com/puppetlabs/puppetlabs-mysql/tree/v18.0.0) - 2026-11-05
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.4.1...v18.0.0)
+
+### Changed
+
+- Remove SSL settings from default_options [#1714](https://github.com/puppetlabs/puppetlabs-mysql/pull/1714) ([cruelsmith](https://github.com/cruelsmith))
+
 ## [v17.4.1](https://github.com/puppetlabs/puppetlabs-mysql/tree/v17.4.1) - 2026-11-04
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-mysql/compare/v17.4.0...v17.4.1)
