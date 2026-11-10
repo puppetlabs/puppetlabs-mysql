@@ -23,11 +23,7 @@ Puppet::Type.type(:mysql_database).provide(:mysql, parent: Puppet::Provider::Mys
           attributes[k] = v
         end
       rescue Puppet::ExecutionFailure => e
-        # MySQL/MariaDB error 1049 is ER_BAD_DB_ERROR ("Unknown database").
-        # Match on the numeric error code rather than the message text, since
-        # the text is localized (e.g. "Unbekannte Datenbank" under a German
-        # locale) and would otherwise fail to match, causing prefetch to
-        # raise for a database that is simply absent as desired.
+        # MySQL/MariaDB error 1049 is ER_BAD_DB_ERROR ("Unknown database"). Match on the numeric error code to handle localized error text.
         raise unless e.message.include?('ERROR 1049 ')
 
         next
