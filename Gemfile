@@ -1,13 +1,24 @@
 # frozen_string_literal: true
 
-# For puppetcore, set GEM_SOURCE_PUPPETCORE = 'https://rubygems-puppetcore.puppet.com'
+# Defaults to puppetcore regardless of PUPPET_FORGE_TOKEN/network state.
+# Opt out: bundle config set gemsource.public true
 gemsource_default = ENV['GEM_SOURCE'] || 'https://rubygems.org'
-gemsource_puppetcore = if ENV['PUPPET_FORGE_TOKEN']
-  'https://rubygems-puppetcore.puppet.com'
+gemsource_public_opt_out = Bundler.settings['gemsource.public']
+gemsource_puppetcore = if gemsource_public_opt_out
+  gemsource_default
 else
-  ENV['GEM_SOURCE_PUPPETCORE'] || gemsource_default
+  'https://rubygems-puppetcore.puppet.com'
 end
 source gemsource_default
+
+unless ENV['PUPPET_FORGE_TOKEN'] || ENV['BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM'] ||
+       Bundler.settings['gemsource.airgapped'] || gemsource_public_opt_out
+  Bundler.ui.warn <<~WARNING
+    No puppetcore credentials detected.
+    On an airgapped install, run `bundle config set gemsource.airgapped true` to suppress this warning.
+    To use public gems instead, run `bundle config set gemsource.public true`.
+  WARNING
+end
 
 def location_for(place_or_constraint, fake_constraint = nil, opts = {})
   git_url_regex  = /\A(?<url>(?:https?|git)[:@][^#]*)(?:#(?<branch>.*))?/
@@ -27,6 +38,17 @@ def location_for(place_or_constraint, fake_constraint = nil, opts = {})
   end
 end
 
+# Works around a bundler multi_json/puppet resolution bug - see pdk-templates/docs/adr/0001.
+def puppet_floor_version(puppetcore_source)
+  return nil if puppetcore_source == 'https://rubygems.org'
+
+  ruby_version = Gem::Version.new(RUBY_VERSION.dup)
+  return '~> 9.0' if Gem::Requirement.create('>= 3.4.0').satisfied_by?(ruby_version)
+  return '~> 8.17' if Gem::Requirement.create('>= 3.1.0').satisfied_by?(ruby_version)
+
+  nil # puppet 8+ requires ruby >= 3.1; leave older rubies unconstrained
+end
+
 # Print debug information if DEBUG_GEMS or VERBOSE is set
 def print_gem_statement_for(gems)
   puts 'DEBUG: Gem definitions that will be generated:'
@@ -41,7 +63,8 @@ group :development do
   gem "json", '= 2.18.0',                        require: false if Gem::Requirement.create(['>= 4.0.0', '< 5.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "racc", '~> 1.4.0',                        require: false if Gem::Requirement.create(['>= 2.7.0', '< 3.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "deep_merge", '~> 1.2.2',                  require: false
-  gem "voxpupuli-puppet-lint-plugins", '~> 7.0', require: false
+  gem "voxpupuli-puppet-lint-plugins", '~> 7.0', require: false if gemsource_puppetcore != "https://rubygems.org"
+  gem "voxpupuli-puppet-lint-plugins", '~> 6.0', require: false if gemsource_puppetcore == "https://rubygems.org"
   gem "facterdb", '~> 2.1',                      require: false if Gem::Requirement.create(['< 3.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "facterdb", '~> 3.0',                      require: false if Gem::Requirement.create(['>= 3.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "metadata-json-lint", '~> 4.0',            require: false
@@ -64,12 +87,13 @@ group :development do
   gem "bigdecimal", '< 3.2.2',                   require: false, platforms: [:windows]
 end
 group :development, :release_prep do
-  gem "puppet-strings", '~> 4.0',              require: false
-  gem "puppetlabs_spec_helper", '~> 9.0',      require: false
+  gem "puppet-strings", '>= 4.0', '< 6.0',     require: false
+  gem "puppetlabs_spec_helper", '~> 9.0',      require: false if gemsource_puppetcore != "https://rubygems.org"
+  gem "puppetlabs_spec_helper", '~> 8.0',      require: false if gemsource_puppetcore == "https://rubygems.org"
   gem "puppet-blacksmith", '>= 7.0', '< 10.0', require: false
 end
 group :system_tests do
-  gem "puppet_litmus", '~> 2.8',   require: false
+  gem "puppet_litmus", '~> 2.5',   require: false
   gem "faraday", '~> 2.5',         require: false
   gem "CFPropertyList", '< 3.0.7', require: false if RUBY_PLATFORM.include?('darwin')
   gem "serverspec", '~> 2.41',     require: false
@@ -77,7 +101,7 @@ end
 
 gems = {}
 bolt_version = ENV.fetch('BOLT_GEM_VERSION', nil)
-puppet_version = ENV.fetch('PUPPET_GEM_VERSION', nil)
+puppet_version = ENV.fetch('PUPPET_GEM_VERSION', puppet_floor_version(gemsource_puppetcore))
 facter_version = ENV.fetch('FACTER_GEM_VERSION', nil)
 hiera_version = ENV.fetch('HIERA_GEM_VERSION', nil)
 

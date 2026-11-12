@@ -1,5 +1,4 @@
 ---
-inherit_from: .rubocop_todo.yml
 plugins:
 - rubocop-performance
 - rubocop-hash_inspect
@@ -24,9 +23,16 @@ AllCops:
   - "**/Puppetfile"
   - "**/Vagrantfile"
   - "**/Guardfile"
+inherit_from: ".rubocop_todo.yml"
+inherit_mode:
+  merge:
+  - Exclude
 Layout/LineLength:
   Description: People have wide screens, use them.
   Max: 200
+Layout/EndOfLine:
+  Description: We enforce lf to ensure consistency across platforms.
+  EnforcedStyle: lf
 RSpec/BeforeAfterAll:
   Description: Beware of using after(:all) as it may cause state to leak between tests.
     A necessary evil in acceptance testing.
@@ -77,657 +83,73 @@ Style/TrailingCommaInArrayLiteral:
 Style/SymbolArray:
   Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
-RSpec/MessageSpies:
-  EnforcedStyle: receive
-Style/Documentation:
-  Exclude:
-  - lib/puppet/parser/functions/**/*
-  - spec/**/*
 Style/WordArray:
+  Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
-Performance/AncestorsInclude:
-  Enabled: true
-Performance/BigDecimalWithNumericArgument:
-  Enabled: true
-Performance/BlockGivenWithExplicitBlock:
-  Enabled: true
-Performance/CaseWhenSplat:
-  Enabled: true
-Performance/ConstantRegexp:
-  Enabled: true
-Performance/MethodObjectAsBlock:
-  Enabled: true
-Performance/RedundantSortBlock:
-  Enabled: true
-Performance/RedundantStringChars:
-  Enabled: true
-Performance/ReverseFirst:
-  Enabled: true
-Performance/SortReverse:
-  Enabled: true
-Performance/Squeeze:
-  Enabled: true
-Performance/StringInclude:
-  Enabled: true
-Performance/Sum:
-  Enabled: true
-Security/IoMethods:
-  Enabled: true
-Style/CollectionMethods:
-  Enabled: true
-Style/MethodCalledOnDoEndBlock:
-  Enabled: true
-Style/StringMethods:
-  Enabled: true
-Bundler/GemFilename:
-  Enabled: false
-Bundler/InsecureProtocolSource:
-  Enabled: false
-Capybara/CurrentPathExpectation:
-  Enabled: false
-Capybara/VisibilityMatcher:
-  Enabled: false
-FactoryBot/AttributeDefinedStatically:
-  Enabled: false
-FactoryBot/CreateList:
-  Enabled: false
-FactoryBot/FactoryClassName:
-  Enabled: false
-Gemspec/DuplicatedAssignment:
-  Enabled: false
-Gemspec/OrderedDependencies:
-  Enabled: false
-Gemspec/RequiredRubyVersion:
-  Enabled: false
-Gemspec/RubyVersionGlobalsUsage:
-  Enabled: false
-Layout/ArgumentAlignment:
-  Enabled: false
-Layout/BeginEndAlignment:
-  Enabled: false
-Layout/ClosingHeredocIndentation:
-  Enabled: false
-Layout/EmptyComment:
-  Enabled: false
-Layout/EmptyLineAfterGuardClause:
-  Enabled: false
-Layout/EmptyLinesAroundArguments:
-  Enabled: false
-Layout/EmptyLinesAroundAttributeAccessor:
-  Enabled: false
-Layout/EndOfLine:
-  Enabled: false
-Layout/FirstArgumentIndentation:
-  Enabled: false
-Layout/HashAlignment:
-  Enabled: false
-Layout/HeredocIndentation:
-  Enabled: false
-Layout/LeadingEmptyLines:
-  Enabled: false
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: false
-Layout/SpaceInsideArrayLiteralBrackets:
-  Enabled: false
-Layout/SpaceInsideReferenceBrackets:
-  Enabled: false
-Lint/BigDecimalNew:
-  Enabled: false
-Lint/BooleanSymbol:
-  Enabled: false
-Lint/ConstantDefinitionInBlock:
-  Enabled: false
-Lint/DeprecatedOpenSSLConstant:
-  Enabled: false
-Lint/DisjunctiveAssignmentInConstructor:
-  Enabled: false
-Lint/DuplicateElsifCondition:
-  Enabled: false
-Lint/DuplicateRequire:
-  Enabled: false
-Lint/DuplicateRescueException:
-  Enabled: false
-Lint/EmptyConditionalBody:
-  Enabled: false
-Lint/EmptyFile:
-  Enabled: false
-Lint/ErbNewArguments:
-  Enabled: false
-Lint/FloatComparison:
-  Enabled: false
-Lint/HashCompareByIdentity:
-  Enabled: false
-Lint/IdentityComparison:
-  Enabled: false
-Lint/InterpolationCheck:
-  Enabled: false
-Lint/MissingCopEnableDirective:
-  Enabled: false
-Lint/MixedRegexpCaptureTypes:
-  Enabled: false
-Lint/NestedPercentLiteral:
-  Enabled: false
-Lint/NonDeterministicRequireOrder:
-  Enabled: false
-Lint/OrderedMagicComments:
-  Enabled: false
-Lint/OutOfRangeRegexpRef:
-  Enabled: false
-Lint/RaiseException:
-  Enabled: false
-Lint/RedundantCopEnableDirective:
-  Enabled: false
-Lint/RedundantRequireStatement:
-  Enabled: false
-Lint/RedundantSafeNavigation:
-  Enabled: false
-Lint/RedundantWithIndex:
-  Enabled: false
-Lint/RedundantWithObject:
-  Enabled: false
-Lint/RegexpAsCondition:
-  Enabled: false
-Lint/ReturnInVoidContext:
-  Enabled: false
-Lint/SafeNavigationConsistency:
-  Enabled: false
-Lint/SafeNavigationWithEmpty:
-  Enabled: false
-Lint/SelfAssignment:
-  Enabled: false
-Lint/SendWithMixinArgument:
-  Enabled: false
-Lint/ShadowedArgument:
-  Enabled: false
-Lint/StructNewOverride:
-  Enabled: false
-Lint/ToJSON:
-  Enabled: false
-Lint/TopLevelReturnWithArgument:
-  Enabled: false
-Lint/TrailingCommaInAttributeDeclaration:
-  Enabled: false
-Lint/UnreachableLoop:
-  Enabled: false
-Lint/UriEscapeUnescape:
-  Enabled: false
-Lint/UriRegexp:
-  Enabled: false
-Lint/UselessMethodDefinition:
-  Enabled: false
-Lint/UselessTimes:
-  Enabled: false
-Metrics/AbcSize:
-  Enabled: false
-Metrics/BlockLength:
-  Enabled: false
-Metrics/BlockNesting:
-  Enabled: false
-Metrics/ClassLength:
-  Enabled: false
-Metrics/CyclomaticComplexity:
-  Enabled: false
-Metrics/MethodLength:
-  Enabled: false
-Metrics/ModuleLength:
-  Enabled: false
-Metrics/ParameterLists:
-  Enabled: false
-Metrics/PerceivedComplexity:
-  Enabled: false
-Migration/DepartmentName:
-  Enabled: false
-Naming/AccessorMethodName:
-  Enabled: false
-Naming/BlockParameterName:
-  Enabled: false
-Naming/HeredocDelimiterCase:
-  Enabled: false
-Naming/HeredocDelimiterNaming:
-  Enabled: false
-Naming/MemoizedInstanceVariableName:
-  Enabled: false
-Naming/MethodParameterName:
-  Enabled: false
-Naming/RescuedExceptionsVariableName:
-  Enabled: false
-Naming/VariableNumber:
-  Enabled: false
-Performance/BindCall:
-  Enabled: false
-Performance/DeletePrefix:
-  Enabled: false
-Performance/DeleteSuffix:
-  Enabled: false
-Performance/InefficientHashSearch:
-  Enabled: false
-Performance/UnfreezeString:
-  Enabled: false
-Performance/UriDefaultParser:
-  Enabled: false
-RSpec/Be:
-  Enabled: false
-RSpec/ContainExactly:
-  Enabled: false
-RSpec/ContextMethod:
-  Enabled: false
-RSpec/ContextWording:
-  Enabled: false
-RSpec/DescribeClass:
-  Enabled: false
-RSpec/Dialect:
-  Enabled: false
-RSpec/EmptyHook:
-  Enabled: false
-RSpec/EmptyLineAfterExample:
-  Enabled: false
-RSpec/EmptyLineAfterExampleGroup:
-  Enabled: false
-RSpec/EmptyLineAfterHook:
-  Enabled: false
-RSpec/ExampleLength:
-  Enabled: false
-RSpec/ExampleWithoutDescription:
-  Enabled: false
-RSpec/ExpectChange:
-  Enabled: false
-RSpec/ExpectInHook:
-  Enabled: false
-RSpec/HooksBeforeExamples:
-  Enabled: false
-RSpec/ImplicitBlockExpectation:
-  Enabled: false
-RSpec/ImplicitSubject:
-  Enabled: false
-RSpec/LeakyConstantDeclaration:
-  Enabled: false
-RSpec/LetBeforeExamples:
-  Enabled: false
-RSpec/MatchArray:
-  Enabled: false
-RSpec/MissingExampleGroupArgument:
-  Enabled: false
-RSpec/MultipleExpectations:
-  Enabled: false
-RSpec/MultipleMemoizedHelpers:
-  Enabled: false
-RSpec/MultipleSubjects:
-  Enabled: false
-RSpec/NestedGroups:
-  Enabled: false
-RSpec/PredicateMatcher:
-  Enabled: false
-RSpec/ReceiveCounts:
-  Enabled: false
-RSpec/ReceiveNever:
-  Enabled: false
-RSpec/RepeatedExampleGroupBody:
-  Enabled: false
-RSpec/RepeatedExampleGroupDescription:
-  Enabled: false
-RSpec/RepeatedIncludeExample:
-  Enabled: false
-RSpec/ReturnFromStub:
-  Enabled: false
-RSpec/SharedExamples:
-  Enabled: false
-RSpec/StubbedMock:
-  Enabled: false
-RSpec/UnspecifiedException:
-  Enabled: false
-RSpec/VariableDefinition:
-  Enabled: false
-RSpec/VoidExpect:
-  Enabled: false
-RSpec/Yield:
-  Enabled: false
-Style/AccessModifierDeclarations:
-  Enabled: false
-Style/AccessorGrouping:
-  Enabled: false
-Style/BisectedAttrAccessor:
-  Enabled: false
-Style/CaseLikeIf:
-  Enabled: false
-Style/ClassEqualityComparison:
-  Enabled: false
-Style/ColonMethodDefinition:
-  Enabled: false
-Style/CombinableLoops:
-  Enabled: false
-Style/CommentedKeyword:
-  Enabled: false
-Style/Dir:
-  Enabled: false
-Style/DoubleCopDisableDirective:
-  Enabled: false
-Style/EmptyBlockParameter:
-  Enabled: false
-Style/EmptyLambdaParameter:
-  Enabled: false
-Style/Encoding:
-  Enabled: false
-Style/EvalWithLocation:
-  Enabled: false
-Style/ExpandPathArguments:
-  Enabled: false
-Style/ExplicitBlockArgument:
-  Enabled: false
-Style/ExponentialNotation:
-  Enabled: false
-Style/FloatDivision:
-  Enabled: false
-Style/FrozenStringLiteralComment:
-  Enabled: false
-Style/GlobalStdStream:
-  Enabled: false
-Style/HashAsLastArrayItem:
-  Enabled: false
-Style/HashLikeCase:
-  Enabled: false
-Style/HashTransformKeys:
-  Enabled: false
-Style/HashTransformValues:
-  Enabled: false
-Style/IfUnlessModifier:
-  Enabled: false
-Style/KeywordParametersOrder:
-  Enabled: false
-Style/MinMax:
-  Enabled: false
-Style/MixinUsage:
-  Enabled: false
-Style/MultilineWhenThen:
-  Enabled: false
-Style/NegatedUnless:
-  Enabled: false
-Style/NumericPredicate:
-  Enabled: false
-Style/OptionalBooleanParameter:
-  Enabled: false
-Style/OrAssignment:
-  Enabled: false
-Style/RandomWithOffset:
-  Enabled: false
-Style/RedundantAssignment:
-  Enabled: false
-Style/RedundantCondition:
-  Enabled: false
-Style/RedundantConditional:
-  Enabled: false
-Style/RedundantFetchBlock:
-  Enabled: false
-Style/RedundantFileExtensionInRequire:
-  Enabled: false
-Style/RedundantRegexpCharacterClass:
-  Enabled: false
-Style/RedundantRegexpEscape:
-  Enabled: false
-Style/RedundantSelfAssignment:
-  Enabled: false
-Style/RedundantSort:
-  Enabled: false
-Style/RescueStandardError:
-  Enabled: false
-Style/SingleArgumentDig:
-  Enabled: false
-Style/SlicingWithRange:
-  Enabled: false
-Style/SoleNestedConditional:
-  Enabled: false
-Style/StderrPuts:
-  Enabled: false
-Style/StringConcatenation:
-  Enabled: false
-Style/Strip:
-  Enabled: false
-Style/SymbolProc:
-  Enabled: false
-Style/TrailingBodyOnClass:
-  Enabled: false
-Style/TrailingBodyOnMethodDefinition:
-  Enabled: false
-Style/TrailingBodyOnModule:
-  Enabled: false
 Style/TrailingCommaInHashLiteral:
-  Enabled: false
-Style/TrailingMethodEndStatement:
-  Enabled: false
-Style/UnpackFirst:
-  Enabled: false
-Capybara/MatchStyle:
-  Enabled: false
-Capybara/NegationMatcher:
-  Enabled: false
-Capybara/SpecificActions:
-  Enabled: false
-Capybara/SpecificFinders:
-  Enabled: false
-Capybara/SpecificMatcher:
-  Enabled: false
-FactoryBot/ConsistentParenthesesStyle:
-  Enabled: false
-FactoryBot/FactoryNameStyle:
-  Enabled: false
-FactoryBot/SyntaxMethods:
-  Enabled: false
-Gemspec/DeprecatedAttributeAssignment:
-  Enabled: false
-Gemspec/DevelopmentDependencies:
-  Enabled: false
-Gemspec/RequireMFA:
-  Enabled: false
-Layout/LineContinuationLeadingSpace:
-  Enabled: false
-Layout/LineContinuationSpacing:
-  Enabled: false
-Layout/LineEndStringConcatenationIndentation:
-  Enabled: false
-Layout/SpaceBeforeBrackets:
-  Enabled: false
-Lint/AmbiguousAssignment:
-  Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Lint/AmbiguousRange:
-  Enabled: false
-Lint/ConstantOverwrittenInRescue:
-  Enabled: false
-Lint/DeprecatedConstants:
-  Enabled: false
-Lint/DuplicateBranch:
-  Enabled: false
-Lint/DuplicateMagicComment:
-  Enabled: false
-Lint/DuplicateMatchPattern:
-  Enabled: false
-Lint/DuplicateRegexpCharacterClassElement:
-  Enabled: false
-Lint/EmptyBlock:
-  Enabled: false
-Lint/EmptyClass:
-  Enabled: false
-Lint/EmptyInPattern:
-  Enabled: false
-Lint/IncompatibleIoSelectWithFiberScheduler:
-  Enabled: false
-Lint/LambdaWithoutLiteralBlock:
-  Enabled: false
-Lint/NoReturnInBeginEndBlocks:
-  Enabled: false
-Lint/NonAtomicFileOperation:
-  Enabled: false
-Lint/NumberedParameterAssignment:
-  Enabled: false
-Lint/OrAssignmentToConstant:
-  Enabled: false
-Lint/RedundantDirGlobSort:
-  Enabled: false
-Lint/RefinementImportMethods:
-  Enabled: false
-Lint/RequireRangeParentheses:
-  Enabled: false
-Lint/RequireRelativeSelfPath:
-  Enabled: false
-Lint/SymbolConversion:
-  Enabled: false
-Lint/ToEnumArguments:
-  Enabled: false
-Lint/TripleQuotes:
-  Enabled: false
-Lint/UnexpectedBlockArity:
-  Enabled: false
-Lint/UnmodifiedReduceAccumulator:
-  Enabled: false
-Lint/UselessRescue:
-  Enabled: false
-Lint/UselessRuby2Keywords:
-  Enabled: false
-Metrics/CollectionLiteralLength:
-  Enabled: false
-Naming/BlockForwarding:
-  Enabled: false
-Performance/CollectionLiteralInLoop:
-  Enabled: false
-Performance/ConcurrentMonotonicTime:
-  Enabled: false
-Performance/MapCompact:
-  Enabled: false
-Performance/RedundantEqualityComparisonBlock:
-  Enabled: false
-Performance/RedundantSplitRegexpArgument:
-  Enabled: false
-Performance/StringIdentifierArgument:
-  Enabled: false
-RSpec/BeEq:
-  Enabled: false
-RSpec/BeNil:
-  Enabled: false
-RSpec/ChangeByZero:
-  Enabled: false
-RSpec/ClassCheck:
-  Enabled: false
-RSpec/DuplicatedMetadata:
-  Enabled: false
-RSpec/ExcessiveDocstringSpacing:
-  Enabled: false
-RSpec/IdenticalEqualityAssertion:
-  Enabled: false
-RSpec/NoExpectationExample:
-  Enabled: false
-RSpec/PendingWithoutReason:
-  Enabled: false
-RSpec/RedundantAround:
-  Enabled: false
-RSpec/SkipBlockInsideExample:
-  Enabled: false
-RSpec/SortMetadata:
-  Enabled: false
-RSpec/SubjectDeclaration:
-  Enabled: false
+  Description: PDK generates multiline hashes with trailing commas. Align with Style/TrailingCommaInArguments
+    and Style/TrailingCommaInArrayLiteral (both comma) so hash literals follow the
+    same project style.
+  EnforcedStyleForMultiline: comma
+RSpec/DescribeClass:
+  Description: rspec-puppet describes its subject by string class/define name (no
+    Ruby constant exists to reference), so this cop is never satisfiable for puppet
+    specs. This is structurally inapplicable, not a style preference -- distinct from
+    D-08 which governs style cops.
+  Enabled: false
+RSpec/MessageSpies:
+  Description: PDK-generated specs and the rspec-puppet convention use the mock-style
+    `expect(...).to receive(...)` idiom throughout, not RuboCop's default spy-style
+    `have_received`. Restores the setting the old `strict` profile applied globally
+    (no Exclude needed -- provider/transport specs already comply).
+  EnforcedStyle: receive
+RSpec/ExampleLength:
+  Description: The resource-API provider specs PDK generates contain multi-line examples
+    covering multiple CRUD operations. Scoped to PDK-generated provider and transport
+    spec paths only (D-08).
+  Exclude:
+  - spec/unit/puppet/provider/**/*_spec.rb
+  - spec/unit/puppet/transport/**/*_spec.rb
+RSpec/MultipleExpectations:
+  Description: The resource-API provider specs PDK generates use multiple expectations
+    per example to cover resource attribute checks. Scoped to PDK-generated provider
+    and transport spec paths only (D-08).
+  Exclude:
+  - spec/unit/puppet/provider/**/*_spec.rb
+  - spec/unit/puppet/transport/**/*_spec.rb
 RSpec/VerifiedDoubleReference:
-  Enabled: false
-RSpecRails/AvoidSetupHook:
-  Enabled: false
-RSpecRails/HaveHttpStatus:
-  Enabled: false
-RSpecRails/InferredSpecType:
-  Enabled: false
-RSpecRails/MinitestAssertions:
-  Enabled: false
-RSpecRails/TravelAround:
-  Enabled: false
-Security/CompoundHash:
-  Enabled: false
-Style/ArgumentsForwarding:
-  Enabled: false
-Style/ArrayIntersect:
-  Enabled: false
-Style/CollectionCompact:
-  Enabled: false
-Style/ComparableClamp:
-  Enabled: false
-Style/ConcatArrayLiterals:
-  Enabled: false
-Style/DataInheritance:
-  Enabled: false
-Style/DirEmpty:
-  Enabled: false
-Style/DocumentDynamicEvalDefinition:
-  Enabled: false
-Style/EmptyHeredoc:
-  Enabled: false
-Style/EndlessMethod:
-  Enabled: false
-Style/EnvHome:
-  Enabled: false
-Style/FetchEnvVar:
-  Enabled: false
-Style/FileEmpty:
-  Enabled: false
-Style/FileRead:
-  Enabled: false
-Style/FileWrite:
-  Enabled: false
-Style/HashConversion:
-  Enabled: false
-Style/HashExcept:
-  Enabled: false
-Style/IfWithBooleanLiteralBranches:
-  Enabled: false
-Style/InPatternThen:
-  Enabled: false
-Style/MagicCommentFormat:
-  Enabled: false
-Style/MapCompactWithConditionalBlock:
-  Enabled: false
-Style/MapToHash:
-  Enabled: false
-Style/MapToSet:
-  Enabled: false
-Style/MinMaxComparison:
-  Enabled: false
-Style/MultilineInPatternThen:
-  Enabled: false
-Style/NegatedIfElseCondition:
-  Enabled: false
-Style/NestedFileDirname:
-  Enabled: false
-Style/NilLambda:
-  Enabled: false
-Style/NumberedParameters:
-  Enabled: false
-Style/NumberedParametersLimit:
-  Enabled: false
-Style/ObjectThen:
-  Enabled: false
-Style/OpenStructUse:
-  Enabled: false
-Style/OperatorMethodCall:
-  Enabled: false
-Style/QuotedSymbols:
-  Enabled: false
-Style/RedundantArgument:
-  Enabled: false
-Style/RedundantConstantBase:
-  Enabled: false
-Style/RedundantDoubleSplatHashBraces:
-  Enabled: false
-Style/RedundantEach:
-  Enabled: false
-Style/RedundantHeredocDelimiterQuotes:
-  Enabled: false
-Style/RedundantInitialize:
-  Enabled: false
-Style/RedundantLineContinuation:
-  Enabled: false
-Style/RedundantSelfAssignmentBranch:
-  Enabled: false
-Style/RedundantStringEscape:
-  Enabled: false
-Style/SelectByRegexp:
-  Enabled: false
-Style/StringChars:
-  Enabled: false
-Style/SwapValues:
-  Enabled: false
+  Description: The resource-API provider and transport specs PDK generates use string-referenced
+    instance doubles (the Puppet provider constant is not loaded in the spec context).
+    Scoped to PDK-generated provider and transport spec paths only (D-08).
+  Exclude:
+  - spec/unit/puppet/provider/**/*_spec.rb
+  - spec/unit/puppet/transport/**/*_spec.rb
+RSpec/ContextWording:
+  Description: rspec-puppet-facts uses the `context "on
+  Prefixes:
+  - when
+  - with
+  - without
+  - 'on'
+Style/MixinUsage:
+  Description: rspec-puppet-facts requires the top-level `include RspecPuppetFacts`
+    idiom in spec_helper, which cannot be cleanly restructured without breaking the
+    facts test harness. Scoped to spec_helper only (D-07).
+  Exclude:
+  - spec/spec_helper.rb
+Lint/EmptyClass:
+  Description: The generated transport device file uses the idiomatic Ruby namespace
+    forward-declaration `class Puppet::Util::NetworkDevice; end`. An empty class is
+    the standard namespace-shim idiom here and is not non-idiomatic code. Scoped to
+    the network_device path only (D-08).
+  Exclude:
+  - lib/puppet/util/network_device/**/*.rb
+Lint/BooleanSymbol:
+  Description: Puppet types and providers use the symbols :true and :false as parameter
+    and property values (e.g. newvalues(:true, :false)), and specs set and assert
+    them. Autocorrecting them to true/false breaks the types. Scoped to type, provider
+    and spec paths, matching puppet's own .rubocop.yml.
+  Exclude:
+  - lib/puppet/type/**/*.rb
+  - lib/puppet/provider/**/*.rb
+  - spec/**/*.rb

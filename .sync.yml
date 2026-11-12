@@ -33,3 +33,7 @@ Rakefile:
   extra_disabled_lint_checks:
     - anchor_resource
     - params_empty_string_assignment
+    - strict_indent
+.rubocop.yml:
+  # the module has a .rubocop_todo.yml (MODULES-11997 pdk update)
+  include_todos: true
