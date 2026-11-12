@@ -113,7 +113,7 @@ Puppet::Type.type(:mysql_grant).provide(:mysql, parent: Puppet::Provider::Mysql)
           privileges: sorted_privileges,
           table:,
           user: "#{user}@#{host}",
-          options: options.uniq
+          options: options.uniq,
         }
       end
     end
