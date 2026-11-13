@@ -92,6 +92,22 @@ describe 'mysql::server' do
           it { is_expected.to contain_mysql_datadir('/tmp') }
         end
 
+        context 'with log-error in its own directory' do
+          let(:params) { { override_options: { 'mysqld' => { 'log-error' => '/tmp/mysql-log/mysqld.err' } } } }
+
+          it { is_expected.to contain_file('/tmp/mysql-log').with(ensure: 'directory').that_comes_before('File[/tmp/mysql-log/mysqld.err]') }
+          it { is_expected.to contain_file('/tmp/mysql-log/mysqld.err').with(ensure: 'file') }
+          it { is_expected.not_to contain_file('/var/log/mysql') }
+        end
+
+        context 'with log-error directly under /var/log' do
+          let(:params) { { override_options: { 'mysqld' => { 'log-error' => '/var/log/mysqld.log' } } } }
+
+          it { is_expected.to contain_file('/var/log/mysqld.log').with(ensure: 'file') }
+          it { is_expected.not_to contain_file('/var/log') }
+          it { is_expected.not_to contain_file('/var/log/mysql') }
+        end
+
         context 'with package provider' do
           let(:params) do
             {
