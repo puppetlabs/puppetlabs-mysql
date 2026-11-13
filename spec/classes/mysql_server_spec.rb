@@ -92,6 +92,15 @@ describe 'mysql::server' do
           it { is_expected.to contain_mysql_datadir('/tmp') }
         end
 
+        context 'with initialize_datadir set to false' do
+          let(:params) { { initialize_datadir: false, override_options: { 'mysqld' => { 'datadir' => '/tmp' } } } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_package('mysql-server') }
+          it { is_expected.not_to contain_mysql_datadir('/tmp') }
+          it { is_expected.not_to contain_file('/var/log/mysql') }
+        end
+
         context 'with package provider' do
           let(:params) do
             {
