@@ -26,7 +26,7 @@
 class mysql::client (
   Boolean                                                               $bindings_enable  = $mysql::params::bindings_enable,
   Optional[Array[String[1]]]                                            $install_options  = undef,
-  Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]] $package_ensure   = $mysql::params::client_package_ensure,
+  Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]             $package_ensure   = $mysql::params::client_package_ensure,
   Boolean                                                               $package_manage   = $mysql::params::client_package_manage,
   String[1]                                                             $package_name     = $mysql::params::client_package_name,
   Optional[String[1]]                                                   $package_provider = undef,

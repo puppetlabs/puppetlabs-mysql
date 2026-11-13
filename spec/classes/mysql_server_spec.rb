@@ -86,6 +86,13 @@ describe 'mysql::server' do
           it { is_expected.not_to contain_package('mysql-server') }
         end
 
+        context 'with package_ensure set to a two-part version, as dnf module streams are named' do
+          let(:params) { { package_ensure: '10.11', package_provider: 'dnfmodule' } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_package('mysql-server').with(ensure: '10.11', provider: 'dnfmodule') }
+        end
+
         context 'with datadir overridden' do
           let(:params) { { override_options: { 'mysqld' => { 'datadir' => '/tmp' } } } }
 

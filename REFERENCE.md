@@ -191,7 +191,7 @@ Default value: `false`
 
 ##### <a name="-mysql--bindings--java_package_ensure"></a>`java_package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 Only applies if `java_enable => true`.
@@ -216,7 +216,7 @@ Default value: `$mysql::params::java_package_provider`
 
 ##### <a name="-mysql--bindings--perl_package_ensure"></a>`perl_package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 Only applies if `perl_enable => true`.
@@ -241,7 +241,7 @@ Default value: `$mysql::params::perl_package_provider`
 
 ##### <a name="-mysql--bindings--php_package_ensure"></a>`php_package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 Only applies if `php_enable => true`.
@@ -266,7 +266,7 @@ Default value: `$mysql::params::php_package_provider`
 
 ##### <a name="-mysql--bindings--python_package_ensure"></a>`python_package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 Only applies if `python_enable => true`.
@@ -291,7 +291,7 @@ Default value: `$mysql::params::python_package_provider`
 
 ##### <a name="-mysql--bindings--ruby_package_ensure"></a>`ruby_package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 Only applies if `ruby_enable => true`.
@@ -316,7 +316,7 @@ Default value: `$mysql::params::ruby_package_provider`
 
 ##### <a name="-mysql--bindings--client_dev_package_ensure"></a>`client_dev_package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 Only applies if `client_dev => true`.
@@ -341,7 +341,7 @@ Default value: `$mysql::params::client_dev_package_provider`
 
 ##### <a name="-mysql--bindings--daemon_dev_package_ensure"></a>`daemon_dev_package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 Only applies if `daemon_dev => true`.
@@ -410,7 +410,7 @@ Default value: `undef`
 
 ##### <a name="-mysql--client--package_ensure"></a>`package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the MySQL package should be present, absent, or a specific version. Valid values are 'present', 'absent', or 'x.y.z'.
 
@@ -565,7 +565,7 @@ Default value: `{}`
 
 ##### <a name="-mysql--server--package_ensure"></a>`package_ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 Whether the package exists or should be a specific version. Valid values are 'present', 'absent', or 'x.y.z'. Defaults to 'present'.
 
@@ -1011,7 +1011,7 @@ Default value: `true`
 
 ##### <a name="-mysql--server--backup--ensure"></a>`ensure`
 
-Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]]`
+Data type: `Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]`
 
 
 

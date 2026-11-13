@@ -100,7 +100,7 @@ class mysql::server (
   Variant[Boolean, String[1]]                                           $manage_config_file      = true,
   Mysql::Options                                                        $options                 = {},
   Hash                                                                  $override_options        = {},
-  Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)[\.](\d+)/]] $package_ensure          = 'present',
+  Variant[Enum['present','absent'], Pattern[/(\d+)[\.](\d+)/]]             $package_ensure          = 'present',
   Boolean                                                               $package_manage          = true,
   String[1]                                                             $package_name            = $mysql::params::server_package_name,
   Optional[String[1]]                                                   $package_provider        = undef,
