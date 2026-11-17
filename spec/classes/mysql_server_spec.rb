@@ -175,6 +175,31 @@ describe 'mysql::server' do
           it { is_expected.to contain_file('/tmp/error.log') }
         end
 
+        context 'with log-error and log-bin in the same directory' do
+          let(:params) do
+            { override_options: { 'mysqld' => { 'log-error' => '/tmp/mysql-log/mysqld.err', 'log-bin' => '/tmp/mysql-log/mysql-bin' } } }
+          end
+
+          it { is_expected.to compile.with_all_deps }
+          # declared once, by mysql::server::managed_dirs for log-bin
+          it { is_expected.to contain_file('/tmp/mysql-log').with(ensure: 'directory', mode: '0700') }
+          it { is_expected.to contain_file('/tmp/mysql-log/mysqld.err').with(ensure: 'file') }
+        end
+
+        context 'with log-error in a directory listed in managed_dirs' do
+          let(:params) do
+            {
+              managed_dirs: ['tmpdir'],
+              override_options: { 'mysqld' => { 'tmpdir' => '/tmp/mysql-work', 'log-error' => '/tmp/mysql-work/mysqld.err' } },
+            }
+          end
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_file('tmpdir-managed_dir').with(ensure: 'directory', path: '/tmp/mysql-work') }
+          it { is_expected.not_to contain_file('/tmp/mysql-work') }
+          it { is_expected.to contain_file('/tmp/mysql-work/mysqld.err').with(ensure: 'file') }
+        end
+
         context 'default bind-address' do
           it { is_expected.to contain_file('mysql-config-file').with_content(%r{^bind-address = 127.0.0.1}) }
         end

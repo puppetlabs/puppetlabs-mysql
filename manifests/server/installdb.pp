@@ -24,7 +24,20 @@ class mysql::server::installdb {
       # Most packages create the directory the error log lives in (/var/log/mariadb, /var/log/mysql), Debian 12
       # does not. Manage whichever directory log-error points into, but never /var/log itself.
       $log_dir = dirname($log_error)
-      if $log_dir != '/var/log' {
+
+      # mysql::server::managed_dirs already manages the directory of log-bin and every $managed_dirs entry. When
+      # log-error lives in one of those, declaring the directory here as well is a duplicate resource.
+      $log_bin = pick($mysql::server::_options['mysqld']['log-bin'], $mysql::server::_options['mysqld']['log_bin'], false)
+      $log_bin_dir = $log_bin ? {
+        false   => undef,
+        default => dirname($log_bin),
+      }
+      $managed_dirs_path = pick($mysql::server::managed_dirs, []).map |$entry| {
+        $mysql::server::_options['mysqld'][$entry]
+      }
+      $managed_elsewhere = $log_dir in ([$log_bin_dir] + $managed_dirs_path)
+
+      if $log_dir != '/var/log' and !$managed_elsewhere {
         file { $log_dir:
           ensure => 'directory',
           owner  => $mysqluser,
