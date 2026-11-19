@@ -77,7 +77,7 @@ describe Puppet::Type.type(:mysql_database).provider(:mysql) do
     it 'only prefetches managed databases from resources' do
       resources = {
         'db_one' => instance_double(Puppet::Type.type(:mysql_database)),
-        'db_two' => instance_double(Puppet::Type.type(:mysql_database))
+        'db_two' => instance_double(Puppet::Type.type(:mysql_database)),
       }
 
       expect(provider.class).to receive(:instances).with(['db_one', 'db_two']).and_return([])

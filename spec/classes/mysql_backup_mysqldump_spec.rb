@@ -57,7 +57,7 @@ describe 'mysql::backup::mysqldump' do
         let(:params) do
           {
             compression_command: 'TEST -TEST',
-            compression_extension: '.TEST'
+            compression_extension: '.TEST',
           }.merge(default_params)
         end
 
@@ -76,7 +76,7 @@ describe 'mysql::backup::mysqldump' do
         let(:params) do
           {
             'file_per_database' => true,
-            'excludedatabases' => ['information_schema', 'performance_schema']
+            'excludedatabases' => ['information_schema', 'performance_schema'],
           }.merge(default_params)
         end
 

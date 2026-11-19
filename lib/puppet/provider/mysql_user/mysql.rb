@@ -86,9 +86,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
 
     password_hash = password_hash.unwrap if password_hash.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
 
-    if !password_hash.nil? && plugin == 'caching_sha2_password' && !password_hash.match?(%r{^0x[A-F0-9]+$}i)
-      password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash)
-    end
+    password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash) if !password_hash.nil? && plugin == 'caching_sha2_password' && !password_hash.match?(%r{^0x[A-F0-9]+$}i)
 
     # Use CREATE USER to be compatible with NO_AUTO_CREATE_USER sql_mode
     # This is also required if you want to specify a authentication plugin
@@ -164,9 +162,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     merged_name = self.class.cmd_user(@resource[:name])
     plugin = @resource.value(:plugin)
 
-    if plugin == 'caching_sha2_password' && !string.match?(%r{^0x[A-F0-9]+$}i)
-      string = Puppet::MysqlHasher.caching_sha2_password(string)
-    end
+    string = Puppet::MysqlHasher.caching_sha2_password(string) if plugin == 'caching_sha2_password' && !string.match?(%r{^0x[A-F0-9]+$}i)
 
     # We have a fact for the mysql version ...
     if !mysqld_version.nil? && newer_than('mariadb' => '10.1.21') && plugin == 'ed25519'
@@ -246,9 +242,7 @@ Puppet::Type.type(:mysql_user).provide(:mysql, parent: Puppet::Provider::Mysql) 
     merged_name = self.class.cmd_user(@resource[:name])
     password_hash = @resource[:password_hash]
 
-    if string == 'caching_sha2_password' && !password_hash.nil? && !password_hash.match?(%r{^0x[A-F0-9]+$}i)
-      password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash)
-    end
+    password_hash = Puppet::MysqlHasher.caching_sha2_password(password_hash) if string == 'caching_sha2_password' && !password_hash.nil? && !password_hash.match?(%r{^0x[A-F0-9]+$}i)
 
     if newer_than('mariadb' => '10.1.21') && string == 'ed25519'
       if newer_than('mariadb' => '10.2.0')

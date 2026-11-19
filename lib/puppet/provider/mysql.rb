@@ -47,11 +47,11 @@ class Puppet::Provider::Mysql < Puppet::Provider
     define_singleton_method(method_name) do |*args|
       @mysql_commands ||= Hash.new do |hash, key|
         hash[key] = COMMANDS[key].each_index.find(-> { 0 }) do |i|
-          respond_to?("#{key}#{i}") && command("#{key}#{i}")
+          respond_to?(:"#{key}#{i}") && command("#{key}#{i}")
         end
       end
 
-      send("#{method_name}#{@mysql_commands[method_name]}", *args)
+      send(:"#{method_name}#{@mysql_commands[method_name]}", *args)
     end
   end
 
@@ -82,7 +82,7 @@ class Puppet::Provider::Mysql < Puppet::Provider
   def self.version_raw
     # get either version of mariadb or mysql
     `mariadbd -V`
-  rescue
+  rescue StandardError
     `mysqld -V`
   end
 

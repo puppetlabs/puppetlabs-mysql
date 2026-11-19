@@ -35,7 +35,7 @@ describe Puppet::Type.type(:mysql_grant).provider(:mysql) do
       resources = {
         'alice@localhost/db_one.*' => grant_one,
         'alice@localhost/db_two.*' => grant_two,
-        'bob@localhost/db_one.*' => grant_three
+        'bob@localhost/db_one.*' => grant_three,
       }
 
       alice_provider = instance_double(described_class, name: 'alice@localhost/db_one.*')
