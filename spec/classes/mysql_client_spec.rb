@@ -33,6 +33,13 @@ describe 'mysql::client' do
         it { is_expected.not_to contain_package('mysql_client') }
       end
 
+      context 'with package_ensure set to a two-part version, as dnf module streams are named' do
+        let(:params) { { package_ensure: '10.11', package_provider: 'dnfmodule' } }
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_package('mysql_client').with(ensure: '10.11', provider: 'dnfmodule') }
+      end
+
       context 'with package provider' do
         let(:params) do
           {
