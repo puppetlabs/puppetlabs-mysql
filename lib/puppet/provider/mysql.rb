@@ -43,15 +43,34 @@ class Puppet::Provider::Mysql < Puppet::Provider
     mysqladmin: ['mysqladmin', 'mariadb-admin'],
   }.freeze
 
+  # Prefer the mariadb-named binaries on MariaDB; fall back to the default order if detection fails.
+  def self.prefer_mariadb_commands?
+    mysqld_type == 'mariadb'
+  rescue StandardError
+    false
+  end
+
   COMMANDS.each_key do |method_name|
     define_singleton_method(method_name) do |*args|
       @mysql_commands ||= Hash.new do |hash, key|
-        hash[key] = COMMANDS[key].each_index.find(-> { 0 }) do |i|
+        indexes = COMMANDS[key].each_index.to_a
+        indexes = indexes.partition { |i| COMMANDS[key][i].start_with?('mariadb') }.flatten if prefer_mariadb_commands?
+        hash[key] = indexes.find(-> { 0 }) do |i|
           respond_to?(:"#{key}#{i}") && command("#{key}#{i}")
         end
       end
 
       send(:"#{method_name}#{@mysql_commands[method_name]}", *args)
+    end
+  end
+
+  # Leading "Deprecated program name" warnings printed by MariaDB 11+ when run as mysql; only the start is stripped.
+  DEPRECATION_WARNING = %r{\A(?:\S+: Deprecated program name\. It will be removed in a future release, use '[^'\r\n]+' instead[ \t]*(?:\r?\n|\z))+}
+
+  def self.strip_deprecation_warnings(text)
+    text.sub(DEPRECATION_WARNING) do |match|
+      warnonce("The MySQL/MariaDB client printed a deprecation warning, which was removed from the command output: #{match.strip}")
+      ''
     end
   end
 
@@ -125,16 +144,16 @@ class Puppet::Provider::Mysql < Puppet::Provider
     if type.eql? 'system'
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
         ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
-        mysql_raw([system_database, '-e', text_of_sql].flatten.compact).scrub
+        strip_deprecation_warnings(mysql_raw([system_database, '-e', text_of_sql].flatten.compact).scrub)
       else
-        mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact).scrub
+        strip_deprecation_warnings(mysql_raw([defaults_file, system_database, '-e', text_of_sql].flatten.compact).scrub)
       end
     elsif type.eql? 'regular'
       if File.file?("#{Facter.value(:root_home)}/.mylogin.cnf")
         ENV['MYSQL_TEST_LOGIN_FILE'] = "#{Facter.value(:root_home)}/.mylogin.cnf"
-        mysql_raw(['-NBe', text_of_sql].flatten.compact).scrub
+        strip_deprecation_warnings(mysql_raw(['-NBe', text_of_sql].flatten.compact).scrub)
       else
-        mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact).scrub
+        strip_deprecation_warnings(mysql_raw([defaults_file, '-NBe', text_of_sql].flatten.compact).scrub)
       end
     else
       raise Puppet::Error, _("#mysql_caller: Unrecognised type '%{type}'" % { type: type })
