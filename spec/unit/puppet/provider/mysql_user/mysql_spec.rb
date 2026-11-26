@@ -210,6 +210,22 @@ describe Puppet::Type.type(:mysql_user).provider(:mysql) do
     end
   end
 
+  describe 'MariaDB deprecated program name warning (#1775)' do
+    let(:user_query) { "SELECT MAX_USER_CONNECTIONS, MAX_CONNECTIONS, MAX_QUESTIONS, MAX_UPDATES, SSL_TYPE, SSL_CIPHER, X509_ISSUER, X509_SUBJECT, PASSWORD /*!50508 , PLUGIN */ FROM mysql.user WHERE CONCAT(user, '@', host) = 'joe@localhost'" } # rubocop:disable Layout/LineLength
+    let(:warning) { "/usr/bin/mysql: Deprecated program name. It will be removed in a future release, use '/usr/bin/mariadb' instead\n" }
+
+    it 'does not prefix the first field of the query output' do
+      allow(File).to receive(:file?).with('/root/.mylogin.cnf').and_return(false)
+      allow(provider.class).to receive(:mysql_caller).with(user_query, 'regular').and_call_original
+      allow(provider.class).to receive(:warnonce)
+      allow(provider.class).to receive(:mysql_raw).and_return("#{warning}3\t10\t10\t10\t\t\t\t\t*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4\n")
+
+      expect(instance.max_user_connections).to eq('3')
+      expect(instance.max_connections_per_hour).to eq('10')
+      expect(instance.password_hash).to eq('*6C8989366EAF75BB670AD8EA7A7FC1176A95CEF4')
+    end
+  end
+
   describe 'self.prefetch' do
     it 'exists' do
       provider.class.instances
