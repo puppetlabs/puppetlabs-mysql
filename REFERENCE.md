@@ -473,6 +473,7 @@ The following parameters are available in the `mysql::server` class:
 * [`config_file_mode`](#-mysql--server--config_file_mode)
 * [`includedir`](#-mysql--server--includedir)
 * [`install_options`](#-mysql--server--install_options)
+* [`initialize_datadir`](#-mysql--server--initialize_datadir)
 * [`manage_config_file`](#-mysql--server--manage_config_file)
 * [`options`](#-mysql--server--options)
 * [`override_options`](#-mysql--server--override_options)
@@ -537,6 +538,16 @@ Data type: `Optional[Array[String[1]]]`
 Passes [install_options](https://docs.puppetlabs.com/references/latest/type.html#package-attribute-install_options) array to managed package resources. You must pass the appropriate options for the specified package manager
 
 Default value: `undef`
+
+##### <a name="-mysql--server--initialize_datadir"></a>`initialize_datadir`
+
+Data type: `Boolean`
+
+Whether to initialize an empty data directory (`mysql_install_db` or `mysqld --initialize`) and manage the error
+log file and `/var/log/mysql`. Set to `false` when the data directory lives on storage this host does not always
+own, such as a cluster-managed mount, so that an unmounted directory is never initialized on local disk.
+
+Default value: `true`
 
 ##### <a name="-mysql--server--manage_config_file"></a>`manage_config_file`
 

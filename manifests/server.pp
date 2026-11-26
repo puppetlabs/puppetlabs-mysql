@@ -17,6 +17,10 @@
 #   The location, as a path, of !includedir for custom configuration overrides.
 # @param install_options
 #   Passes [install_options](https://docs.puppetlabs.com/references/latest/type.html#package-attribute-install_options) array to managed package resources. You must pass the appropriate options for the specified package manager
+# @param initialize_datadir
+#   Whether to initialize an empty data directory (`mysql_install_db` or `mysqld --initialize`) and manage the error
+#   log file and `/var/log/mysql`. Set to `false` when the data directory lives on storage this host does not always
+#   own, such as a cluster-managed mount, so that an unmounted directory is never initialized on local disk.
 # @param manage_config_file
 #   Whether the MySQL configuration file should be managed. Valid values are `true`, `false`. Defaults to `true`.
 # @param options
@@ -97,6 +101,7 @@ class mysql::server (
   String[1]                                                             $config_file_mode        = '0644',
   Optional[String]                                                      $includedir              = $mysql::params::includedir,
   Optional[Array[String[1]]]                                            $install_options         = undef,
+  Boolean                                                               $initialize_datadir      = true,
   Variant[Boolean, String[1]]                                           $manage_config_file      = true,
   Mysql::Options                                                        $options                 = {},
   Hash                                                                  $override_options        = {},
