@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+require 'etc'
+require 'fileutils'
+require 'puppet/util/selinux'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'mysql'))
 Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysql) do
   desc 'manage data directories for mysql instances'
+
+  include Puppet::Util::SELinux
 
   initvars
 
@@ -62,20 +67,43 @@ Puppet::Type.type(:mysql_datadir).provide(:mysql, parent: Puppet::Provider::Mysq
                  end
 
     opts = [defaults_extra_file]
-    ['basedir', 'datadir', 'user'].each do |opt|
+    ['basedir', 'datadir'].each do |opt|
       val = eval(opt) # rubocop:disable Security/Eval
       opts << "--#{opt}=#{val}" unless val.nil?
+    end
+
+    pw = Etc.getpwnam(user)
+    missing_datadir = !File.directory?(datadir)
+    # A missing datadir: root created it before, the user cannot create it in e.g. /var/lib.
+    FileUtils.mkdir_p(datadir, mode: 0o750) if missing_datadir
+    if missing_datadir || File.stat(datadir).uid != pw.uid
+      FileUtils.chown(pw.uid, pw.gid, datadir)
+      set_selinux_default_context(datadir, :directory)
     end
 
     if !mysqld_version.nil? && newer_than('mysql' => '5.7.6', 'percona' => '5.7.6')
       opts << "--log-error=#{log_error}"
       opts << initialize.to_s
-      debug("Initializing MySQL data directory >= 5.7.6 with mysqld: #{opts.compact.join(' ')}")
-      mysqld(opts.compact)
+      debug("Initializing MySQL data directory >= 5.7.6 with mysqld as #{user}: #{opts.compact.join(' ')}")
+      binary = Puppet::Provider::Mysql::COMMANDS[:mysqld].filter_map { |b| Puppet::Util.which(b) }.first
+      raise Puppet::MissingCommand, _('Command mysqld is missing') if binary.nil?
     else
-      debug("Installing MySQL data directory with mysql_install_db #{opts.compact.join(' ')}")
-      mysql_install_db(opts.compact)
+      debug("Installing MySQL data directory with mysql_install_db as #{user}: #{opts.compact.join(' ')}")
+      binary = command(:mysql_install_db)
+      raise Puppet::MissingCommand, _('Command mysql_install_db is missing') if binary.nil?
     end
+
+    # Run as the user instead of passing --user: mysqld as root would have to switch the user and
+    # override permissions, which SELinux does not allow mysqld_t (e.g. MariaDB on EL9).
+    execute(
+      [binary] + opts.compact,
+      uid: user,
+      gid: pw.gid,
+      cwd: '/',
+      custom_environment: { 'HOME' => pw.dir, 'USER' => pw.name },
+      failonfail: true,
+      combine: true,
+    )
 
     exists?
   end
